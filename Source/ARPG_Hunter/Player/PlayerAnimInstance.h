@@ -18,7 +18,7 @@ private:
 	TObjectPtr<class APlayerCharacter> Owner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	FVector MoveSpeed;
+	FVector2D MoveSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool IsMove{ false };
 

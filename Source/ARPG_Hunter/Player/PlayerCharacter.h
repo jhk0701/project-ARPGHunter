@@ -14,7 +14,6 @@ class ARPG_HUNTER_API APlayerCharacter : public ACharacter
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
-	
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
@@ -30,6 +29,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class UCameraComponent> CameraComp;
 
+	UPROPERTY(VisibleAnywhere)
+	FVector2D InputDirection;
+
 public:
 	APlayerCharacter();
 
@@ -40,4 +42,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetInputDirection(FVector2D _dir) { InputDirection = _dir; }
+	const FVector2D& GetInputDirection() { return InputDirection; }
 };

@@ -58,10 +58,9 @@ void APlayerCharacterController::SetupInputComponent()
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
 	FVector2D Dir = _value.Get<FVector2D>();
-
-
 	ControlledCharacter->AddMovementInput(ControlledCharacter->GetActorForwardVector(), Dir.X);
 	ControlledCharacter->AddMovementInput(ControlledCharacter->GetActorRightVector(), Dir.Y);
+	ControlledCharacter->SetInputDirection(Dir);
 }
 
 void APlayerCharacterController::InputRotate(const FInputActionValue& _value)
