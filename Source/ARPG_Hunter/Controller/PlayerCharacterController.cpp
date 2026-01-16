@@ -64,6 +64,10 @@ void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 
 void APlayerCharacterController::InputRotate(const FInputActionValue& _value)
 {
+	FVector2D Rot = _value.Get<FVector2D>();
+	AddPitchInput(Rot.X);
+	AddYawInput(Rot.Y);
+	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::White, FString::Printf(TEXT("Rot : (%f, %f)"), Rot.X, Rot.Y));
 }
 
 void APlayerCharacterController::InputDodge(const FInputActionValue& _value)

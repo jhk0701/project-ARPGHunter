@@ -11,7 +11,7 @@ APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-#pragma region Init Comp
+#pragma region Create Comp
 	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
 
 	HeadMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadMesh"));
@@ -27,11 +27,23 @@ APlayerCharacter::APlayerCharacter()
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(GetRootComponent());
-	SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp);
+#pragma endregion
+
+#pragma region Init Comp
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationRoll = false;
+	SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+	SpringArmComp->bUsePawnControlRotation = true;
+	SpringArmComp->bInheritPitch = true;
+	SpringArmComp->bInheritYaw = true;
+	SpringArmComp->bInheritRoll = true;
 
 #pragma endregion
+
+
 }
 
 // Called when the game starts or when spawned
