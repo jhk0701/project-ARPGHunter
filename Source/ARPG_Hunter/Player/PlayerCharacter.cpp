@@ -40,9 +40,7 @@ APlayerCharacter::APlayerCharacter()
 	SpringArmComp->bInheritPitch = true;
 	SpringArmComp->bInheritYaw = true;
 	SpringArmComp->bInheritRoll = true;
-
 #pragma endregion
-
 
 }
 
