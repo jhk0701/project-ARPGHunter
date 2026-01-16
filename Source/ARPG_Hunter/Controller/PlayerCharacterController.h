@@ -1,0 +1,55 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/PlayerController.h"
+#include "PlayerCharacterController.generated.h"
+
+class UInputAction;
+class UInputMappingContext;
+struct FInputActionValue;
+
+/**
+ * 
+ */
+UCLASS()
+class ARPG_HUNTER_API APlayerCharacterController : public APlayerController
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputMappingContext> PlayerIMC;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> MoveAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> DodgeAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> RotateAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> SprintAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> AttackAction;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class APlayerCharacter> ControlledCharacter;
+
+public:
+	APlayerCharacterController();
+	
+	UFUNCTION()
+	void InputMove(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputRotate(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputDodge(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputSprint(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputAttack(const FInputActionValue& _value);
+
+protected:
+	void BeginPlay() override;
+	void SetupInputComponent() override;
+};

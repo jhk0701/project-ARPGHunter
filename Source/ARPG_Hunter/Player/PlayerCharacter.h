@@ -23,7 +23,10 @@ private:
 	TObjectPtr<USkeletalMeshComponent> HandMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> FeetMeshComp;
-	
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<class USpringArmComponent> SpringArmComp;
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	TObjectPtr<class UCameraComponent> CameraComp;
 
 public:
 	APlayerCharacter();

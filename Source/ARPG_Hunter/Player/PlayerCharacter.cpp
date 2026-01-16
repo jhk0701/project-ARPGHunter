@@ -3,6 +3,8 @@
 
 #include "Player/PlayerCharacter.h"
 #include "Component/EquipmentComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -22,9 +24,14 @@ APlayerCharacter::APlayerCharacter()
 	HandMeshComp->SetupAttachment(GetMesh());
 	FeetMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FeetMesh"));
 	FeetMeshComp->SetupAttachment(GetMesh());
+
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComp->SetupAttachment(GetRootComponent());
+	SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComp->SetupAttachment(SpringArmComp);
+
 #pragma endregion
-
-
 }
 
 // Called when the game starts or when spawned
