@@ -18,6 +18,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
+	TObjectPtr<USkeletalMeshComponent> TopMeshComp;
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> BottomMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HandMeshComp;

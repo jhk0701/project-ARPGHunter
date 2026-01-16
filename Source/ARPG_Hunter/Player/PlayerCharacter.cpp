@@ -14,16 +14,17 @@ APlayerCharacter::APlayerCharacter()
 #pragma region Create Comp
 	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
 
+	TopMeshComp = GetMesh();
 	HeadMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadMesh"));
-	HeadMeshComp->SetupAttachment(GetMesh());
+	HeadMeshComp->SetupAttachment(TopMeshComp);
 	BottomMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BottomMesh"));
-	BottomMeshComp->SetupAttachment(GetMesh());
+	BottomMeshComp->SetupAttachment(TopMeshComp);
 
 	// temp
 	HandMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HandMesh"));
-	HandMeshComp->SetupAttachment(GetMesh());
+	HandMeshComp->SetupAttachment(TopMeshComp);
 	FeetMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FeetMesh"));
-	FeetMeshComp->SetupAttachment(GetMesh());
+	FeetMeshComp->SetupAttachment(TopMeshComp);
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(GetRootComponent());
@@ -32,6 +33,11 @@ APlayerCharacter::APlayerCharacter()
 #pragma endregion
 
 #pragma region Init Comp
+	HeadMeshComp->SetLeaderPoseComponent(TopMeshComp);
+	BottomMeshComp->SetLeaderPoseComponent(TopMeshComp);
+	HandMeshComp->SetLeaderPoseComponent(TopMeshComp);
+	FeetMeshComp->SetLeaderPoseComponent(TopMeshComp);
+	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
@@ -41,7 +47,6 @@ APlayerCharacter::APlayerCharacter()
 	SpringArmComp->bInheritYaw = true;
 	SpringArmComp->bInheritRoll = true;
 #pragma endregion
-
 }
 
 // Called when the game starts or when spawned
