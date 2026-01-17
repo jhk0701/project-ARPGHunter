@@ -24,11 +24,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> MoveAction;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> DodgeAction;
-	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> RotateAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> SprintAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> DodgeAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> AttackAction;
 

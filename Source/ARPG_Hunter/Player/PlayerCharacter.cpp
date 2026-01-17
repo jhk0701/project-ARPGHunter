@@ -44,9 +44,6 @@ APlayerCharacter::APlayerCharacter()
 	bUseControllerRotationRoll = false;
 	SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 	SpringArmComp->bUsePawnControlRotation = true;
-	SpringArmComp->bInheritPitch = true;
-	SpringArmComp->bInheritYaw = true;
-	SpringArmComp->bInheritRoll = true;
 #pragma endregion
 }
 
@@ -71,6 +68,20 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void APlayerCharacter::Dodge()
+{
+	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+	if (nullptr == DodgeMontage || AnimInst->Montage_IsPlaying(DodgeMontage))
+		return;
+	
+	AnimInst->Montage_Play(DodgeMontage);
+	if (InputDirection.SizeSquared() > 0) 
+	{
+		AnimInst->Montage_JumpToSection("Forward", DodgeMontage);
+
+	}
 }
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)

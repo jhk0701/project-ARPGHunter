@@ -15,6 +15,7 @@ private:
 #pragma region Component
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
+
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
@@ -25,6 +26,7 @@ private:
 	TObjectPtr<USkeletalMeshComponent> HandMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> FeetMeshComp;
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -32,14 +34,19 @@ private:
 #pragma endregion
 
 #pragma region Attribute
-	
-	FVector2D InputDirection;
+	FVector2D InputDirection{};
 	bool IsSprint{ false };
+
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
-	float WalkSpeed{300.0f}; 
+	float WalkSpeed{ 300.0f };
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float SprintSpeed{ 600.0f };
+#pragma endregion
 
+#pragma region Temp Montage
+	// TODO : 무기 종류별 애니메이션 데이터로 옮길 것
+	UPROPERTY(EditAnywhere, Category = "AnimMontage")
+	TObjectPtr<UAnimMontage> DodgeMontage;
 #pragma endregion
 
 public:
@@ -51,6 +58,8 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void Dodge();
 
 	void SetInputDirection(FVector2D _dir) { InputDirection = _dir; }
 	const FVector2D& GetInputDirection() { return InputDirection; }
