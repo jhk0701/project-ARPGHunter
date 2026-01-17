@@ -56,19 +56,12 @@ void APlayerCharacter::BeginPlay()
 		CharMove->MaxWalkSpeed = WalkSpeed;
 }
 
-// Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 
 void APlayerCharacter::Dodge()
 {
@@ -77,11 +70,28 @@ void APlayerCharacter::Dodge()
 		return;
 	
 	AnimInst->Montage_Play(DodgeMontage);
-	if (InputDirection.SizeSquared() > 0) 
-	{
-		AnimInst->Montage_JumpToSection("Forward", DodgeMontage);
 
+	if (InputDirection.SizeSquared() > 0)
+	{
+		if (InputDirection.X > 0 && InputDirection.Y > 0)
+			AnimInst->Montage_JumpToSection(TEXT("FRwd"), DodgeMontage);
+		else if (InputDirection.X > 0 && InputDirection.Y < 0)
+			AnimInst->Montage_JumpToSection(TEXT("FLwd"), DodgeMontage);
+		else if (InputDirection.X < 0 && InputDirection.Y > 0)
+			AnimInst->Montage_JumpToSection(TEXT("BRwd"), DodgeMontage);
+		else if (InputDirection.X < 0 && InputDirection.Y < 0)
+			AnimInst->Montage_JumpToSection(TEXT("BLwd"), DodgeMontage);
+		else if (InputDirection.X > 0)
+			AnimInst->Montage_JumpToSection(TEXT("Fwd"), DodgeMontage);
+		else if (InputDirection.X < 0)
+			AnimInst->Montage_JumpToSection(TEXT("Bwd"), DodgeMontage);
+		else if (InputDirection.Y > 0)
+			AnimInst->Montage_JumpToSection(TEXT("Rwd"), DodgeMontage);
+		else if (InputDirection.Y < 0)
+			AnimInst->Montage_JumpToSection(TEXT("Lwd"), DodgeMontage);
 	}
+	else
+		AnimInst->Montage_JumpToSection(TEXT("Bwd"), DodgeMontage);
 }
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)

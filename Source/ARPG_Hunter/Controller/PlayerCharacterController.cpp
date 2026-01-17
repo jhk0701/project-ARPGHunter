@@ -51,6 +51,7 @@ void APlayerCharacterController::SetupInputComponent()
 	if (UEnhancedInputComponent* InputComp = Cast<UEnhancedInputComponent>(InputComponent)) 
 	{
 		InputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputMove);
+		InputComp->BindAction(MoveAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputMoveEnd);
 		InputComp->BindAction(RotateAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputRotate);
 		InputComp->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacterController::InputSprintStart);
 		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
@@ -61,9 +62,23 @@ void APlayerCharacterController::SetupInputComponent()
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
 	FVector2D Dir = _value.Get<FVector2D>();
-	ControlledCharacter->AddMovementInput(ControlledCharacter->GetActorForwardVector(), Dir.X);
-	ControlledCharacter->AddMovementInput(ControlledCharacter->GetActorRightVector(), Dir.Y);
+
+	FVector Fwd = GetTransformComponent()->GetForwardVector();
+	Fwd.Z = 0;
+	Fwd.Normalize();
+
+	FVector Rht = GetTransformComponent()->GetRightVector();
+	Rht.Z = 0;
+	Rht.Normalize();
+
+	ControlledCharacter->AddMovementInput(Fwd, Dir.X);
+	ControlledCharacter->AddMovementInput(Rht, Dir.Y);
 	ControlledCharacter->SetInputDirection(Dir);
+}
+
+void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
+{
+	ControlledCharacter->SetInputDirection(FVector2D::ZeroVector);
 }
 
 void APlayerCharacterController::InputRotate(const FInputActionValue& _value)

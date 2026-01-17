@@ -41,6 +41,8 @@ public:
 	UFUNCTION()
 	void InputMove(const FInputActionValue& _value);
 	UFUNCTION()
+	void InputMoveEnd(const FInputActionValue& _value);
+	UFUNCTION()
 	void InputRotate(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputDodge(const FInputActionValue& _value);

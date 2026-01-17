@@ -44,9 +44,11 @@ private:
 #pragma endregion
 
 #pragma region Temp Montage
+	
 	// TODO : 무기 종류별 애니메이션 데이터로 옮길 것
 	UPROPERTY(EditAnywhere, Category = "AnimMontage")
 	TObjectPtr<UAnimMontage> DodgeMontage;
+
 #pragma endregion
 
 public:
@@ -57,8 +59,7 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	void Dodge();
 
 	void SetInputDirection(FVector2D _dir) { InputDirection = _dir; }
