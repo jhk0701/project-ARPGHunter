@@ -54,6 +54,7 @@ void APlayerCharacter::BeginPlay()
 	
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
+
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
