@@ -45,7 +45,9 @@ public:
 	UFUNCTION()
 	void InputDodge(const FInputActionValue& _value);
 	UFUNCTION()
-	void InputSprint(const FInputActionValue& _value);
+	void InputSprintStart(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputSprintEnd(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputAttack(const FInputActionValue& _value);
 

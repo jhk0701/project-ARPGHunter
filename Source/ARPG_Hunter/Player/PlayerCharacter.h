@@ -12,6 +12,7 @@ class ARPG_HUNTER_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 private:
+#pragma region Component
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
@@ -28,9 +29,18 @@ private:
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class UCameraComponent> CameraComp;
+#pragma endregion
 
-	UPROPERTY(VisibleAnywhere)
+#pragma region Attribute
+	
 	FVector2D InputDirection;
+	bool IsSprint{ false };
+	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
+	float WalkSpeed{300.0f}; 
+	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
+	float SprintSpeed{ 600.0f };
+
+#pragma endregion
 
 public:
 	APlayerCharacter();
@@ -44,4 +54,6 @@ public:
 
 	void SetInputDirection(FVector2D _dir) { InputDirection = _dir; }
 	const FVector2D& GetInputDirection() { return InputDirection; }
+	void SetIsSprint(bool _isSprint);
+	bool GetIsSprint() { return IsSprint; }
 };

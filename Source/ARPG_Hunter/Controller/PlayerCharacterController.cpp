@@ -52,6 +52,8 @@ void APlayerCharacterController::SetupInputComponent()
 	{
 		InputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputMove);
 		InputComp->BindAction(RotateAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputRotate);
+		InputComp->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacterController::InputSprintStart);
+		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
 	}	
 }
 
@@ -75,8 +77,16 @@ void APlayerCharacterController::InputDodge(const FInputActionValue& _value)
 {
 }
 
-void APlayerCharacterController::InputSprint(const FInputActionValue& _value)
+void APlayerCharacterController::InputSprintStart(const FInputActionValue& _value)
 {
+	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::White, TEXT("Sprint On"));
+	ControlledCharacter->SetIsSprint(true);
+}
+
+void APlayerCharacterController::InputSprintEnd(const FInputActionValue& _value)
+{
+	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::White, TEXT("Sprint Off"));
+	ControlledCharacter->SetIsSprint(false);
 }
 
 void APlayerCharacterController::InputAttack(const FInputActionValue& _value)

@@ -5,6 +5,7 @@
 #include "Component/EquipmentComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -54,6 +55,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+		CharMove->MaxWalkSpeed = WalkSpeed;
 }
 
 // Called every frame
@@ -68,4 +71,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void APlayerCharacter::SetIsSprint(bool _isSprint)
+{
+	IsSprint = _isSprint;
+
+	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
 }
