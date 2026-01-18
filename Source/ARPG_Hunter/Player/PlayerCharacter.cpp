@@ -54,7 +54,6 @@ void APlayerCharacter::BeginPlay()
 	
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
-
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -66,7 +65,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::Dodge()
 {
+	if (EquipComp->IsValid() == false)
+		return;
+
 	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+	UAnimMontage* DodgeMontage = EquipComp->GetDodgeMontage();
 	if (nullptr == DodgeMontage || AnimInst->Montage_IsPlaying(DodgeMontage))
 		return;
 	

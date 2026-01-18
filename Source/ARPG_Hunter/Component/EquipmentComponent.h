@@ -20,9 +20,15 @@ class ARPG_HUNTER_API UEquipmentComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	TObjectPtr<class UWeaponTypeProfile> WeaponProfile;
+
 public:	
 	UEquipmentComponent();
 
-protected:
-	virtual void BeginPlay() override;
+	void Init();
+	bool IsValid() { return WeaponProfile != nullptr; }
+	UAnimMontage* GetDodgeMontage();
+
 };

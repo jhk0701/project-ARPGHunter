@@ -2,14 +2,23 @@
 
 
 #include "Component/EquipmentComponent.h"
+#include "Data/WeaponTypeProfile.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	// TODO : 플레이어 장착 정보 기반으로 WeaponProfile 설정
+	static ConstructorHelpers::FObjectFinder<UWeaponTypeProfile> TmpProfileFinder(TEXT("/Script/ARPG_Hunter.WeaponTypeProfile'/Game/03-Data/WeaponTypeProfile/SwordProfile.SwordProfile'"));
+	if (TmpProfileFinder.Succeeded())
+		WeaponProfile = TmpProfileFinder.Object;
 }
 
-void UEquipmentComponent::BeginPlay()
+void UEquipmentComponent::Init()
 {
-	Super::BeginPlay();
-	
+}
+
+UAnimMontage* UEquipmentComponent::GetDodgeMontage()
+{
+	return WeaponProfile->DodgeMontage;
 }

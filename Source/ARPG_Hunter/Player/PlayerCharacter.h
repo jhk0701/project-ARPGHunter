@@ -43,13 +43,6 @@ private:
 	float SprintSpeed{ 600.0f };
 #pragma endregion
 
-#pragma region Temp Montage
-	
-	// TODO : 무기 종류별 애니메이션 데이터로 옮길 것
-	UPROPERTY(EditAnywhere, Category = "AnimMontage")
-	TObjectPtr<UAnimMontage> DodgeMontage;
-
-#pragma endregion
 
 public:
 	APlayerCharacter();
