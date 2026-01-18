@@ -6,6 +6,8 @@
 #include "Engine/DataTable.h"
 #include "WeaponTypeData.generated.h"
 
+enum class EWeaponType : uint8;
+
 /**
  * 
  */
@@ -14,6 +16,9 @@ struct ARPG_HUNTER_API FWeaponTypeData : public FTableRowBase
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(EditAnywhere)
+	EWeaponType Type;
+
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TSubclassOf<UAnimInstance> AnimInstance;
 	

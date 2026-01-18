@@ -6,19 +6,20 @@
 #include "Components/ActorComponent.h"
 #include "EquipmentComponent.generated.h"
 
+struct FWeaponTypeData;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UEquipmentComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
-	/*UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	TObjectPtr<struct FWeaponTypeProfile> WeaponProfile;*/
+	FWeaponTypeData* CurWeaponType;
 
 public:	
 	UEquipmentComponent();
 
 	void Init();
-	bool IsValid() { return false; } //return WeaponProfile != nullptr; 
+	bool IsValid() { return CurWeaponType != nullptr; }
 	UAnimMontage* GetDodgeMontage();
 };

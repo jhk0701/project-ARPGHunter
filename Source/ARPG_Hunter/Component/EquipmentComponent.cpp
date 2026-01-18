@@ -2,19 +2,22 @@
 
 
 #include "Component/EquipmentComponent.h"
+#include "Define/Define.h"
+#include "Subsystem/DataManager/DataManager.h"
 #include "Data/WeaponTypeData.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
 }
 
 void UEquipmentComponent::Init()
 {
+	UDataManager* DataManager = GetOwner()->GetGameInstance()->GetSubsystem<UDataManager>();
+	CurWeaponType = DataManager->GetWeaponTypeData(EWeaponType::SWORD);
 }
 
 UAnimMontage* UEquipmentComponent::GetDodgeMontage()
 {
-	return  nullptr;//;WeaponProfile->DodgeMontage;
+	return  CurWeaponType->DodgeMontage;
 }

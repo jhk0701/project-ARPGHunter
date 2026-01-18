@@ -6,6 +6,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "DataManager.generated.h"
 
+enum class EWeaponType :uint8;
+
 /**
  * 
  */
@@ -20,4 +22,6 @@ private:
 
 public:
 	UDataManager();
+
+	struct FWeaponTypeData* GetWeaponTypeData(EWeaponType _type);
 };

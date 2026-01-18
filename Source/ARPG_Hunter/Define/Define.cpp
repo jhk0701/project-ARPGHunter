@@ -2,3 +2,14 @@
 
 
 #include "Define/Define.h"
+
+FName EnumToName(EWeaponType _value)
+{
+	switch (_value)
+	{
+	case EWeaponType::SWORD:
+		return FName(TEXT("Sword"));
+	default:
+		return FName(TEXT("None"));
+	}
+}
