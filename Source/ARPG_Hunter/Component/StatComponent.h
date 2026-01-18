@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "StatComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnStatValueChanged, float)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, uint16, uint16)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UStatComponent : public UActorComponent
@@ -19,10 +19,15 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	uint16 MaxHealth{ 100 };
-	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	uint16 MaxStamina{ 100 };
-	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint16 StaminaRecovery{ 10 };
+	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
+	uint16 StaminaRecoveryPerSecond{ 10 };
+	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
+	float StaminaRecoveryRate{ 0.1f };
+	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
+	float StaminaRecoveryPauseTime{ 1.0f };
+	
 	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	// uint16 Strength{ 10 };
 	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
@@ -37,19 +42,20 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	uint16 Stamina{ 100 };
 
-	FTimerHandle StaminaRecoveryTimerHandle;
-
-protected:
-	virtual void BeginPlay() override;
+	FTimerHandle StaminaRecoveryTimer;
+	void StartStaminaRecovery();
 
 public:	
 	FOnStatValueChanged OnTakeDamage;
 	FOnStatValueChanged OnUseStamina;
 
-	void TakeDamage(uint16 _damage);
-	bool TryUseStamina(uint16 _amount);
+	void Init();
 
-	float GetHealthPercent() { return static_cast<float>(Health) / MaxHealth; }
-	float GetStaminaPercent() { return static_cast<float>(Stamina) / MaxStamina; }
+	void TakeDamage(uint16 _damage);
 	bool IsDead() { return Health == 0; }
+
+	bool TryUseStamina(uint16 _amount);
+	void RecoverStamina(uint16 _amount);
+
+	void PauseAndRestartStaminaRecovery(float _pauseSecond);
 };

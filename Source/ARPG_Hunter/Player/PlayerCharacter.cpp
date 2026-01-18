@@ -56,6 +56,9 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StatComp->Init();
+	EquipComp->Init();
+
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
 }
@@ -63,45 +66,45 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
-
 
 void APlayerCharacter::Dodge()
 {
-	if (EquipComp->IsValid() == false)
+	if (EquipComp->IsValid() == false || StatComp->IsDead())
 		return;
-
-	// 
-
 	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
 	UAnimMontage* DodgeMontage = EquipComp->GetDodgeMontage();
 	if (nullptr == DodgeMontage || AnimInst->Montage_IsPlaying(DodgeMontage))
 		return;
-	
+
+	// TODO : 매직 넘버 제거
+	constexpr uint16 STAMINA_USAGE = 15;
+	if (StatComp->TryUseStamina(STAMINA_USAGE) == false)
+		return;
+
 	AnimInst->Montage_Play(DodgeMontage);
 
 	if (InputDirection.SizeSquared() > 0)
 	{
 		if (InputDirection.X > 0 && InputDirection.Y > 0)
-			AnimInst->Montage_JumpToSection(TEXT("FRwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("FRwd")), DodgeMontage);
 		else if (InputDirection.X > 0 && InputDirection.Y < 0)
-			AnimInst->Montage_JumpToSection(TEXT("FLwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("FLwd")), DodgeMontage);
 		else if (InputDirection.X < 0 && InputDirection.Y > 0)
-			AnimInst->Montage_JumpToSection(TEXT("BRwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("BRwd")), DodgeMontage);
 		else if (InputDirection.X < 0 && InputDirection.Y < 0)
-			AnimInst->Montage_JumpToSection(TEXT("BLwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("BLwd")), DodgeMontage);
 		else if (InputDirection.X > 0)
-			AnimInst->Montage_JumpToSection(TEXT("Fwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeMontage);
 		else if (InputDirection.X < 0)
-			AnimInst->Montage_JumpToSection(TEXT("Bwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeMontage);
 		else if (InputDirection.Y > 0)
-			AnimInst->Montage_JumpToSection(TEXT("Rwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("Rwd")), DodgeMontage);
 		else if (InputDirection.Y < 0)
-			AnimInst->Montage_JumpToSection(TEXT("Lwd"), DodgeMontage);
+			AnimInst->Montage_JumpToSection(FName(TEXT("Lwd")), DodgeMontage);
 	}
 	else
-		AnimInst->Montage_JumpToSection(TEXT("Bwd"), DodgeMontage);
+		AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeMontage);
 }
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)
