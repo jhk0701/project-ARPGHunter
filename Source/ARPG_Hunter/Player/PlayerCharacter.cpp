@@ -72,6 +72,8 @@ void APlayerCharacter::Dodge()
 	if (EquipComp->IsValid() == false)
 		return;
 
+	// 
+
 	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
 	UAnimMontage* DodgeMontage = EquipComp->GetDodgeMontage();
 	if (nullptr == DodgeMontage || AnimInst->Montage_IsPlaying(DodgeMontage))
