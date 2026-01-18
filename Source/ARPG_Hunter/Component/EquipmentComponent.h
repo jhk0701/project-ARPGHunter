@@ -6,15 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "EquipmentComponent.generated.h"
 
-UENUM(BlueprintType)
-enum class EArmorType : uint8 
-{
-	HEAD	UMETA(DisplayName = "Head"),
-	TOP		UMETA(DisplayName = "Top"),
-	BOTTOM	UMETA(DisplayName = "Bottom"),
-	END
-};
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UEquipmentComponent : public UActorComponent
 {
@@ -30,5 +21,4 @@ public:
 	void Init();
 	bool IsValid() { return WeaponProfile != nullptr; }
 	UAnimMontage* GetDodgeMontage();
-
 };

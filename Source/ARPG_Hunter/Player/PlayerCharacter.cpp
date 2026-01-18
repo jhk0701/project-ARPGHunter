@@ -2,10 +2,11 @@
 
 
 #include "Player/PlayerCharacter.h"
-#include "Component/EquipmentComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Component/EquipmentComponent.h"
+#include "Component/StatComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -14,6 +15,7 @@ APlayerCharacter::APlayerCharacter()
 
 #pragma region Create Comp
 	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
+	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 
 	TopMeshComp = GetMesh();
 	HeadMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadMesh"));
@@ -21,6 +23,8 @@ APlayerCharacter::APlayerCharacter()
 	BottomMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BottomMesh"));
 	BottomMeshComp->SetupAttachment(TopMeshComp);
 
+	WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMeshComp->SetupAttachment(TopMeshComp, FName(TEXT("socket_hand_r")));
 	// temp
 	HandMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HandMesh"));
 	HandMeshComp->SetupAttachment(TopMeshComp);

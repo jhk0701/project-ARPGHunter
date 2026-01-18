@@ -15,6 +15,8 @@ private:
 #pragma region Component
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UStatComponent> StatComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
@@ -26,6 +28,9 @@ private:
 	TObjectPtr<USkeletalMeshComponent> HandMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> FeetMeshComp;
+
+	UPROPERTY(EditAnywhere, Category = "Mesh|Weapon")
+	TObjectPtr<USkeletalMeshComponent> WeaponMeshComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
