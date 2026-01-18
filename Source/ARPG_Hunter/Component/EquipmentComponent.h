@@ -12,13 +12,13 @@ class ARPG_HUNTER_API UEquipmentComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	TObjectPtr<class UWeaponTypeProfile> WeaponProfile;
+	/*UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	TObjectPtr<struct FWeaponTypeProfile> WeaponProfile;*/
 
 public:	
 	UEquipmentComponent();
 
 	void Init();
-	bool IsValid() { return WeaponProfile != nullptr; }
+	bool IsValid() { return false; } //return WeaponProfile != nullptr; 
 	UAnimMontage* GetDodgeMontage();
 };

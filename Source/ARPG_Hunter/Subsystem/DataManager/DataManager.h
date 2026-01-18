@@ -14,6 +14,10 @@ class ARPG_HUNTER_API UDataManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-public:
+private:
+	UPROPERTY()
+	TObjectPtr<class UDataTable> WeaponTypeDataTable;
 
+public:
+	UDataManager();
 };

@@ -3,18 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
-#include "WeaponTypeProfile.generated.h"
+#include "Engine/DataTable.h"
+#include "WeaponTypeData.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class ARPG_HUNTER_API UWeaponTypeProfile : public UDataAsset
+USTRUCT()
+struct ARPG_HUNTER_API FWeaponTypeData : public FTableRowBase
 {
 	GENERATED_BODY()
 	
-public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TSubclassOf<UAnimInstance> AnimInstance;
 	
