@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
@@ -25,11 +25,6 @@ APlayerCharacter::APlayerCharacter()
 
 	WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMeshComp->SetupAttachment(TopMeshComp, FName(TEXT("socket_hand_r")));
-	// temp
-	HandMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HandMesh"));
-	HandMeshComp->SetupAttachment(TopMeshComp);
-	FeetMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FeetMesh"));
-	FeetMeshComp->SetupAttachment(TopMeshComp);
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(GetRootComponent());
@@ -40,8 +35,6 @@ APlayerCharacter::APlayerCharacter()
 #pragma region Init Comp
 	HeadMeshComp->SetLeaderPoseComponent(TopMeshComp);
 	BottomMeshComp->SetLeaderPoseComponent(TopMeshComp);
-	HandMeshComp->SetLeaderPoseComponent(TopMeshComp);
-	FeetMeshComp->SetLeaderPoseComponent(TopMeshComp);
 	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
@@ -86,24 +79,7 @@ void APlayerCharacter::Dodge()
 	AnimInst->Montage_Play(DodgeMontage);
 
 	if (InputDirection.SizeSquared() > 0)
-	{
-		if (InputDirection.X > 0 && InputDirection.Y > 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("FRwd")), DodgeMontage);
-		else if (InputDirection.X > 0 && InputDirection.Y < 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("FLwd")), DodgeMontage);
-		else if (InputDirection.X < 0 && InputDirection.Y > 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("BRwd")), DodgeMontage);
-		else if (InputDirection.X < 0 && InputDirection.Y < 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("BLwd")), DodgeMontage);
-		else if (InputDirection.X > 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeMontage);
-		else if (InputDirection.X < 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeMontage);
-		else if (InputDirection.Y > 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("Rwd")), DodgeMontage);
-		else if (InputDirection.Y < 0)
-			AnimInst->Montage_JumpToSection(FName(TEXT("Lwd")), DodgeMontage);
-	}
+		AnimInst->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeMontage);
 	else
 		AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeMontage);
 }

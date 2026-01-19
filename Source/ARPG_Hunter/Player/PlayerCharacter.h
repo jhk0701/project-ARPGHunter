@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,11 +24,6 @@ private:
 	TObjectPtr<USkeletalMeshComponent> TopMeshComp;
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> BottomMeshComp;
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> HandMeshComp;
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> FeetMeshComp;
-
 	UPROPERTY(EditAnywhere, Category = "Mesh|Weapon")
 	TObjectPtr<USkeletalMeshComponent> WeaponMeshComp;
 
