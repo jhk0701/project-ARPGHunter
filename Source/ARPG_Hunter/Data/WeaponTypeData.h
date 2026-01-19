@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+// #include "Action/ActionBase.h"
 #include "WeaponTypeData.generated.h"
 
 enum class EWeaponType : uint8;
@@ -20,12 +21,9 @@ struct ARPG_HUNTER_API FWeaponTypeData : public FTableRowBase
 	EWeaponType Type;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	TSubclassOf<UAnimInstance> AnimInstance;
-	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> DodgeMontage;
-	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
-	TObjectPtr<UAnimMontage> AttackMontage;
-	
+	/*UPROPERTY(EditAnywhere, Category = "Animation|Attack")
+	TArray<FActionBase> AttackAction;*/
 };
