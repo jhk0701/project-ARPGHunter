@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerAnimInstance.h"
@@ -17,7 +17,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (nullptr == Owner)
 		return;
 
-	MoveSpeed.X = Owner->GetInputDirection().X;
+	MoveSpeed.X = Owner->GetInputDirection().SquaredLength() > 0 ? 1 : 0;
 
 	if(Owner->GetIsSprint())
 		MoveSpeed *= 2;

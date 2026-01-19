@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -86,8 +86,8 @@ void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 	ControlledCharacter->SetInputDirection(Dir);
 
 	FRotator Rot = GetTransformComponent()->GetComponentRotation();
-	// Rot
-
+	Rot.Add(0.0f, FMath::Atan2(Dir.Y, Dir.X) * 180.0f / PI, 0.0f);
+	ControlledCharacter->SetActorRotation(FRotator(0.0f, Rot.Yaw, 0.0f));
 }
 
 void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
