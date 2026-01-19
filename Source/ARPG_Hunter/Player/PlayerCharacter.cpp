@@ -5,8 +5,10 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Component/EquipmentComponent.h"
 #include "Component/StatComponent.h"
+#include "Component/EquipmentComponent.h"
+#include "Component/ActionComponent.h"
+#include "Data/WeaponTypeData.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -14,8 +16,9 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 #pragma region Create Comp
-	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
+	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
+	ActionComp = CreateDefaultSubobject<UActionComponent>(TEXT("ActionComp"));
 
 	TopMeshComp = GetMesh();
 	HeadMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadMesh"));
@@ -37,7 +40,7 @@ APlayerCharacter::APlayerCharacter()
 	BottomMeshComp->SetLeaderPoseComponent(TopMeshComp);
 	
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 	SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -52,6 +55,7 @@ void APlayerCharacter::BeginPlay()
 	// TODO : 플레이어 데이터 받아오기
 	StatComp->Init();
 	EquipComp->Init();
+	ActionComp->Init();
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
@@ -64,16 +68,17 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::Dodge()
 {
-	if (EquipComp->IsValid() == false || StatComp->IsDead())
+	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
+	
 	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
-	UAnimMontage* DodgeMontage = EquipComp->GetDodgeMontage();
+	const FAction& DodgeAction = ActionComp->GetDodgeAction();
+
+	UAnimMontage* DodgeMontage = DodgeAction.Montage;
 	if (nullptr == DodgeMontage || AnimInst->Montage_IsPlaying(DodgeMontage))
 		return;
 
-	// TODO : 매직 넘버 제거
-	constexpr uint16 STAMINA_USAGE = 15;
-	if (StatComp->TryUseStamina(STAMINA_USAGE) == false)
+	if (StatComp->TryUseStamina(DodgeAction.StaminaUsage) == false)
 		return;
 
 	AnimInst->Montage_Play(DodgeMontage);
@@ -90,4 +95,14 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
+}
+
+void APlayerCharacter::Attack()
+{
+	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("Attack Input"));
+	if (ActionComp->IsValid() == false || StatComp->IsDead())
+		return;
+
+	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+
 }

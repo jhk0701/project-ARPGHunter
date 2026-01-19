@@ -14,9 +14,12 @@ class ARPG_HUNTER_API APlayerCharacter : public ACharacter
 private:
 #pragma region Component
 	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UStatComponent> StatComp;
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UStatComponent> StatComp;
+	TObjectPtr<class UActionComponent> ActionComp;
+	
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
@@ -54,9 +57,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void Dodge();
+	void Attack();
 
 	void SetInputDirection(FVector2D _dir) { InputDirection = _dir; }
 	const FVector2D& GetInputDirection() { return InputDirection; }
 	void SetIsSprint(bool _isSprint);
 	bool GetIsSprint() { return IsSprint; }
+	
 };

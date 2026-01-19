@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,7 +30,10 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> DodgeAction;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> AttackAction;
+	TObjectPtr<UInputAction> AttackNormalAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> AttackSmashAction;
+
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class APlayerCharacter> ControlledCharacter;
@@ -51,7 +54,9 @@ public:
 	UFUNCTION()
 	void InputSprintEnd(const FInputActionValue& _value);
 	UFUNCTION()
-	void InputAttack(const FInputActionValue& _value);
+	void InputAttackNormal(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputAttackSmash(const FInputActionValue& _value);
 
 protected:
 	void BeginPlay() override;

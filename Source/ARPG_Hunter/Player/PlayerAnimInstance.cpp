@@ -17,7 +17,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (nullptr == Owner)
 		return;
 
-	MoveSpeed = Owner->GetInputDirection();
+	MoveSpeed.X = Owner->GetInputDirection().X;
 
 	if(Owner->GetIsSprint())
 		MoveSpeed *= 2;

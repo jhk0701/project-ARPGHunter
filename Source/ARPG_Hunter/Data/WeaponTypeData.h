@@ -42,15 +42,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	EWeaponType Type;
 
-	UPROPERTY(EditAnywhere, Category = "Animation")
-	TObjectPtr<UAnimMontage> DodgeMontage;
+
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> HitMontage;
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	FAction DodgeAction;
 
 	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
 	TArray<FNestedAction> AttackAction;
-
-
-	/*UPROPERTY(EditAnywhere, Category = "Animation|Attack")
-	TArray<FActionBase> AttackAction;*/
 };

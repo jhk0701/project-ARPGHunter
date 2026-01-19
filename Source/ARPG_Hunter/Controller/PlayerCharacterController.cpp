@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -26,9 +26,13 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> SprintActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Sprint.IA_Sprint'"));
 	if (SprintActionFinder.Succeeded())
 		SprintAction = SprintActionFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack.IA_Attack'"));
-	if (AttackActionFinder.Succeeded())
-		AttackAction = AttackActionFinder.Object;
+	
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackNormalActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Normal.IA_Attack_Normal'"));
+	if (AttackNormalActionFinder.Succeeded())
+		AttackNormalAction = AttackNormalActionFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackSmashActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Smash.IA_Attack_Smash'"));
+	if (AttackSmashActionFinder.Succeeded())
+		AttackSmashAction = AttackSmashActionFinder.Object;
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -52,10 +56,16 @@ void APlayerCharacterController::SetupInputComponent()
 	{
 		InputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputMove);
 		InputComp->BindAction(MoveAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputMoveEnd);
+		
 		InputComp->BindAction(RotateAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputRotate);
+		
 		InputComp->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacterController::InputSprintStart);
 		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
+		
 		InputComp->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputDodge);
+
+		InputComp->BindAction(AttackNormalAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackNormal);
+		InputComp->BindAction(AttackSmashAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackSmash);
 	}	
 }
 
@@ -74,6 +84,10 @@ void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 	ControlledCharacter->AddMovementInput(Fwd, Dir.X);
 	ControlledCharacter->AddMovementInput(Rht, Dir.Y);
 	ControlledCharacter->SetInputDirection(Dir);
+
+	FRotator Rot = GetTransformComponent()->GetComponentRotation();
+	// Rot
+
 }
 
 void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
@@ -106,6 +120,11 @@ void APlayerCharacterController::InputDodge(const FInputActionValue& _value)
 	ControlledCharacter->Dodge();
 }
 
-void APlayerCharacterController::InputAttack(const FInputActionValue& _value)
+void APlayerCharacterController::InputAttackNormal(const FInputActionValue& _value)
+{
+	ControlledCharacter->Attack();
+}
+
+void APlayerCharacterController::InputAttackSmash(const FInputActionValue& _value)
 {
 }
