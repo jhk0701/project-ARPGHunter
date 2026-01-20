@@ -26,6 +26,8 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 
 void UActionComponent::ResetAction()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Reset Action"));
+
 	for (uint8 i = 0; i < static_cast<uint8>(EAttackType::END); i++)
 		AttackActionID[i] = 0;
 
@@ -55,6 +57,8 @@ void UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _predica
 {
 	if (IsValidAttackInput(_type) == false)
 		return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Attack Type : %d, Normal : %d, Smash : %d"), static_cast<int>(_type), GetActionID(EAttackType::NORMAL), GetActionID(EAttackType::SMASH)));
 
 	FAction& Action = _type == EAttackType::NORMAL ?
 		CurWeaponType->AttackAction[GetActionID(EAttackType::NORMAL)].StartAction : 
@@ -94,9 +98,8 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 
 	// 마지막 콤보였는지 확인
 	uint8 NormalIdx = GetActionID(EAttackType::NORMAL);
-	if (NormalIdx >= CurWeaponType->AttackAction.Num())
-		return false;
-
+	if (_type == EAttackType::NORMAL)
+		return NormalIdx < CurWeaponType->AttackAction.Num();
 	if (_type == EAttackType::SMASH)
 		return GetActionID(EAttackType::SMASH) < CurWeaponType->AttackAction[NormalIdx - 1].LinkedAction.Num();
 
