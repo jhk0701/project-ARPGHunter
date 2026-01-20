@@ -78,6 +78,6 @@ void UStatComponent::RecoverStamina(uint16 _amount)
 	Stamina = FMath::Min<uint16>(Stamina + _amount, MaxStamina);
 
 	OnUseStamina.Broadcast(Stamina, MaxStamina);
-	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Green, FString::Printf(TEXT("Stamina : %d"), Stamina));
+	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Green, FString::Printf(TEXT("Stamina : %d"), Stamina));
 }
 

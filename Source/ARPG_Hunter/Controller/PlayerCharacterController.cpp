@@ -6,6 +6,8 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+
+#include "Define/Define.h"
 #include "Player/PlayerCharacter.h"
 
 APlayerCharacterController::APlayerCharacterController()
@@ -113,9 +115,10 @@ void APlayerCharacterController::InputDodge(const FInputActionValue& _value)
 
 void APlayerCharacterController::InputAttackNormal(const FInputActionValue& _value)
 {
-	ControlledCharacter->Attack();
+	ControlledCharacter->Attack(EAttackType::NORMAL);
 }
 
 void APlayerCharacterController::InputAttackSmash(const FInputActionValue& _value)
 {
+	ControlledCharacter->Attack(EAttackType::SMASH);
 }

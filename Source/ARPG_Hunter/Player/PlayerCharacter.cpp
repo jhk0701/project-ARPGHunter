@@ -55,7 +55,7 @@ void APlayerCharacter::BeginPlay()
 	// TODO : 플레이어 데이터 받아오기
 	StatComp->Init();
 	EquipComp->Init();
-	ActionComp->Init();
+	ActionComp->Init(GetMesh()->GetAnimInstance());
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
@@ -64,30 +64,19 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	SmoothRotateToInputDir();
+	SmoothRotateToInputDir(DeltaTime);
 }
 
-void APlayerCharacter::Dodge()
+void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 {
-	if (ActionComp->IsValid() == false || StatComp->IsDead())
-		return;
-	
-	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
-	const FAction& DodgeAction = ActionComp->GetDodgeAction();
-
-	UAnimMontage* DodgeMontage = DodgeAction.Montage;
-	if (nullptr == DodgeMontage || AnimInst->Montage_IsPlaying(DodgeMontage))
+	// 카메라 정면을 기준으로 입력 방향으로 부드럽게 회전시키기
+	if (InputDirection.SizeSquared() <= 0)
 		return;
 
-	if (StatComp->TryUseStamina(DodgeAction.StaminaUsage) == false)
-		return;
+	FRotator TargetRot = GetActorRotation();
+	TargetRot.Yaw = GetControlRotation().Yaw + FMath::RadiansToDegrees(FMath::Atan2(InputDirection.Y, InputDirection.X));
 
-	AnimInst->Montage_Play(DodgeMontage);
-
-	if (InputDirection.SizeSquared() > 0)
-		AnimInst->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeMontage);
-	else
-		AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeMontage);
+	SetActorRotation(FQuat::Slerp(GetActorQuat(), TargetRot.Quaternion(), RotateSpeedToInputDir * DeltaTime));
 }
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)
@@ -98,22 +87,24 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
 }
 
-void APlayerCharacter::Attack()
+void APlayerCharacter::Dodge()
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("Attack Input"));
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+	// ActionComp에 회피 액션 사용을 위한 조건 전달
+	ActionComp->Dodge(
+		InputDirection.SizeSquared() > 0,
+		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
+	);
 }
 
-void APlayerCharacter::SmoothRotateToInputDir()
+void APlayerCharacter::Attack(EAttackType _type)
 {
-	if (InputDirection.SizeSquared() <= 0)
+	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	FRotator TargetRot = GetActorRotation();
-	TargetRot.Yaw = GetControlRotation().Yaw + FMath::RadiansToDegrees(FMath::Atan2(InputDirection.Y, InputDirection.X));
-
-	SetActorRotation(FQuat::Slerp(GetActorQuat(), TargetRot.Quaternion(), 0.1f));
+	ActionComp->Attack(_type,
+		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
+	);
 }

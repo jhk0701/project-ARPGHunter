@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+enum class EAttackType : uint8;
+
 UCLASS()
 class ARPG_HUNTER_API APlayerCharacter : public ACharacter
 {
@@ -37,21 +39,25 @@ private:
 #pragma endregion
 
 #pragma region Attribute
+
 	FVector2D InputDirection{};
+	UPROPERTY(EditAnywhere, Category = "Attribute|Rotate")
+	float RotateSpeedToInputDir{ 10.0f };
+
 	bool IsSprint{ false };
 
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float WalkSpeed{ 300.0f };
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float SprintSpeed{ 600.0f };
-#pragma endregion
 
+#pragma endregion
 
 public:
 	APlayerCharacter();
 
 private:
-	void SmoothRotateToInputDir();
+	void SmoothRotateToInputDir(float DeltaTime);
 
 protected:
 	virtual void BeginPlay() override;
@@ -60,7 +66,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void Dodge();
-	void Attack();
+	void Attack(EAttackType _type);
 
 	void SetInputDirection(FVector2D _dir) 
 	{ 
@@ -70,5 +76,4 @@ public:
 	const FVector2D& GetInputDirection() { return InputDirection; }
 	void SetIsSprint(bool _isSprint);
 	bool GetIsSprint() { return IsSprint; }
-	
 };

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,6 +8,9 @@
 
 enum class EWeaponType : uint8;
 
+/*
+* 플레이어 액션 구조체
+*/
 USTRUCT()
 struct FAction
 {
@@ -20,6 +23,9 @@ public:
 	TObjectPtr<UAnimMontage> Montage;
 };
 
+/*
+* 데이터테이블 이중 배열용 구조체
+*/
 USTRUCT()
 struct FNestedAction 
 {
@@ -31,7 +37,7 @@ public:
 };
 
 /**
- * 
+ * 무기별 정보용 데이터 테이블 행
  */
 USTRUCT()
 struct ARPG_HUNTER_API FWeaponTypeData : public FTableRowBase
@@ -42,12 +48,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	EWeaponType Type;
 
-
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	FAction DodgeAction;
-
 	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
 	TArray<FNestedAction> AttackAction;
 };
