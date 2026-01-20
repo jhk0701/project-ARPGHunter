@@ -24,16 +24,18 @@ public:
 };
 
 /*
-* 데이터테이블 이중 배열용 구조체
+* Action
 */
 USTRUCT()
-struct FNestedAction 
+struct FActionList
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<FAction> ActionArray;
+	FAction StartAction;
+	UPROPERTY(EditAnywhere)
+	TArray<FAction> LinkedAction;
 };
 
 /**
@@ -53,5 +55,5 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	FAction DodgeAction;
 	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
-	TArray<FNestedAction> AttackAction;
+	TArray<FActionList> AttackAction;
 };

@@ -21,7 +21,6 @@ private:
 	FWeaponTypeData* CurWeaponType;
 
 	EAttackType LastAttackType;
-	FAction* LastAttackAction{ nullptr };
 	uint8 AttackActionID[static_cast<uint8>(EAttackType::END)];
 	bool IsEnableNextAction{ true };
 
@@ -43,8 +42,8 @@ public:
 	void ResetAction();
 
 	bool IsValid() { return CurWeaponType != nullptr; }
-	bool Dodge(bool _isMoving, TFunction<bool(float)> _condition);
-	bool Attack(EAttackType _type, TFunction<bool(float)> _condition);
+	void Dodge(bool _isMoving, TFunction<bool(float)> _predicate);
+	void Attack(EAttackType _type, TFunction<bool(float)> _predicate);
 
 	void SetEnableNextAction(bool _enable) { IsEnableNextAction = _enable; }
 };

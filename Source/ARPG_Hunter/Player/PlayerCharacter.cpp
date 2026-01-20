@@ -96,7 +96,8 @@ void APlayerCharacter::Dodge()
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
 	ActionComp->Dodge(
 		InputDirection.SizeSquared() > 0,
-		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
+		[this](float _staminaUsage) 
+		{ return StatComp->TryUseStamina(_staminaUsage); }
 	);
 }
 
@@ -106,7 +107,8 @@ void APlayerCharacter::Attack(EAttackType _type)
 		return;
 
 	ActionComp->Attack(_type,
-		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
+		[this](float _staminaUsage) 
+		{ return StatComp->TryUseStamina(_staminaUsage); }
 	);
 }
 
