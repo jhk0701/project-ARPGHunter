@@ -24,15 +24,14 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 	CurWeaponType = DataManager->GetWeaponTypeData(EWeaponType::SWORD);
 }
 
-void UActionComponent::ResetCombo()
+void UActionComponent::ResetAction()
 {
-	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Red, TEXT("Init Attack Action"));
-
 	for (uint8 i = 0; i < static_cast<uint8>(EAttackType::END); i++)
 		AttackActionID[i] = 0;
 
 	LastAttackAction = nullptr;
-	LastAttackType = EAttackType::END;
+	LastAttackType = EAttackType::END; 
+	IsEnableNextAction = true;
 }
 
 bool UActionComponent::Dodge(bool _isMoving, TFunction<bool(float)> _condition)
@@ -56,49 +55,51 @@ bool UActionComponent::Dodge(bool _isMoving, TFunction<bool(float)> _condition)
 
 bool UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _condition)
 {
-	if ((LastAttackAction && OwnerAnimInstance->Montage_IsPlaying(LastAttackAction->Montage)) ||
-		(LastAttackType == EAttackType::SMASH && _type == EAttackType::NORMAL))
+	if (IsValidAttackInput(_type) == false)
 		return false;
 
-	uint8& NormalIdx = AttackActionID[static_cast<uint8>(EAttackType::NORMAL)];
-	uint8& SmashIdx = AttackActionID[static_cast<uint8>(EAttackType::SMASH)];
-	FAction& Action = CurWeaponType->AttackAction[NormalIdx].ActionArray[SmashIdx];
-
-	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Red, FString::Printf(TEXT("Normal Atk : %d, Smash Atk : %d"), NormalIdx, SmashIdx));
-	
-	switch (_type)
-	{
-	case EAttackType::NORMAL:
-		NormalIdx++;
-		if (NormalIdx >= CurWeaponType->AttackAction.Num())
-			NormalIdx = 0;
-		break;
-	case EAttackType::SMASH:
-		SmashIdx++;
-		if (SmashIdx >= CurWeaponType->AttackAction[NormalIdx].ActionArray.Num())
-			SmashIdx = 0;
-		break;
-	}
-
-	LastAttackType = _type;
-	LastAttackAction = &Action;
+	FAction& Action = CurWeaponType->AttackAction[GetActionID(EAttackType::NORMAL)].ActionArray[GetActionID(EAttackType::SMASH)];
 
 	if (_condition && _condition(Action.StaminaUsage) == false)
 		return false;
 
+	++AttackActionID[static_cast<uint8>(_type)];
+
+	LastAttackType = _type;
+	LastAttackAction = &Action;
+	IsEnableNextAction = false;
+
 	OwnerAnimInstance->Montage_Play(Action.Montage);
 
-	SetComboResetTimer(ComboResetSecond);
+	SetActionResetTimer(ActionResetSecond);
 
 	return true;
 }
 
-void UActionComponent::SetComboResetTimer(float _second)
+void UActionComponent::SetActionResetTimer(float _second)
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	
-	if (TimerManager.IsTimerActive(ComboResetTimer))
-		TimerManager.ClearTimer(ComboResetTimer);
+	if (TimerManager.IsTimerActive(ActionResetTimer))
+		TimerManager.ClearTimer(ActionResetTimer);
 
-	TimerManager.SetTimer(ComboResetTimer, this, &UActionComponent::ResetCombo, _second, false);
+	TimerManager.SetTimer(ActionResetTimer, this, &UActionComponent::ResetAction, _second, false);
+}
+
+bool UActionComponent::IsValidAttackInput(EAttackType _type)
+{
+	if (IsEnableNextAction == false ||
+		(LastAttackType == EAttackType::SMASH && _type == EAttackType::NORMAL))
+		return false;
+
+	uint8 NormalIdx = GetActionID(EAttackType::NORMAL);
+	switch (_type)
+	{
+	case EAttackType::NORMAL:
+		return NormalIdx < CurWeaponType->AttackAction.Num();
+	case EAttackType::SMASH:
+		return GetActionID(EAttackType::SMASH) < CurWeaponType->AttackAction[NormalIdx].ActionArray.Num();
+	}
+
+	return false;
 }

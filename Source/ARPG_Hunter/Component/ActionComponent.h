@@ -23,12 +23,16 @@ private:
 	EAttackType LastAttackType;
 	FAction* LastAttackAction{ nullptr };
 	uint8 AttackActionID[static_cast<uint8>(EAttackType::END)];
+	bool IsEnableNextAction{ true };
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float ComboResetSecond{ 2.0f };
-	FTimerHandle ComboResetTimer;
+	float ActionResetSecond{ 2.0f };
+	
+	FTimerHandle ActionResetTimer;
 
-	void SetComboResetTimer(float _second);
+	void SetActionResetTimer(float _second);
+	bool IsValidAttackInput(EAttackType _type);
+	const uint8 GetActionID(EAttackType _type) { return AttackActionID[static_cast<uint8>(_type)]; }
 
 public:	
 	UActionComponent();
@@ -36,9 +40,11 @@ public:
 	void BeginPlay() override;
 
 	void Init(UAnimInstance* _ownerAnimInstance);
-	void ResetCombo();
+	void ResetAction();
 
 	bool IsValid() { return CurWeaponType != nullptr; }
 	bool Dodge(bool _isMoving, TFunction<bool(float)> _condition);
 	bool Attack(EAttackType _type, TFunction<bool(float)> _condition);
+
+	void SetEnableNextAction(bool _enable) { IsEnableNextAction = _enable; }
 };

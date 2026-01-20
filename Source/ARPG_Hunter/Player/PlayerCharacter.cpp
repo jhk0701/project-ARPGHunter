@@ -87,6 +87,7 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
 }
 
+
 void APlayerCharacter::Dodge()
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
@@ -107,4 +108,11 @@ void APlayerCharacter::Attack(EAttackType _type)
 	ActionComp->Attack(_type,
 		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
 	);
+}
+
+void APlayerCharacter::EnableNextAction(bool _enable)
+{
+	if (ActionComp->IsValid() == false)
+		return;
+	ActionComp->SetEnableNextAction(_enable);
 }

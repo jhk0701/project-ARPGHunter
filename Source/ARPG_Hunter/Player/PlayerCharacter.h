@@ -76,4 +76,5 @@ public:
 	const FVector2D& GetInputDirection() { return InputDirection; }
 	void SetIsSprint(bool _isSprint);
 	bool GetIsSprint() { return IsSprint; }
+	void EnableNextAction(bool _enable);
 };
