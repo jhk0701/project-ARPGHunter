@@ -25,9 +25,10 @@ private:
 	uint8 AttackActionID[static_cast<uint8>(EAttackType::END)];
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float InitSecond{1.0f};
+	float ComboResetSecond{ 2.0f };
+	FTimerHandle ComboResetTimer;
 
-	FTimerHandle InitAttackActionTimer;
+	void SetComboResetTimer(float _second);
 
 public:	
 	UActionComponent();
@@ -35,10 +36,9 @@ public:
 	void BeginPlay() override;
 
 	void Init(UAnimInstance* _ownerAnimInstance);
-	void InitAttackAction();
+	void ResetCombo();
 
 	bool IsValid() { return CurWeaponType != nullptr; }
-
 	bool Dodge(bool _isMoving, TFunction<bool(float)> _condition);
 	bool Attack(EAttackType _type, TFunction<bool(float)> _condition);
 };

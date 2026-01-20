@@ -5,6 +5,7 @@
 #include "Subsystem/DataManager/DataManager.h"
 #include "Data/WeaponTypeData.h"
 
+
 UActionComponent::UActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -23,8 +24,10 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 	CurWeaponType = DataManager->GetWeaponTypeData(EWeaponType::SWORD);
 }
 
-void UActionComponent::InitAttackAction()
+void UActionComponent::ResetCombo()
 {
+	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Red, TEXT("Init Attack Action"));
+
 	for (uint8 i = 0; i < static_cast<uint8>(EAttackType::END); i++)
 		AttackActionID[i] = 0;
 
@@ -57,22 +60,24 @@ bool UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _conditi
 		(LastAttackType == EAttackType::SMASH && _type == EAttackType::NORMAL))
 		return false;
 
-	// AttackActionID[static_cast<uint8>(_type)];
 	uint8& NormalIdx = AttackActionID[static_cast<uint8>(EAttackType::NORMAL)];
 	uint8& SmashIdx = AttackActionID[static_cast<uint8>(EAttackType::SMASH)];
 	FAction& Action = CurWeaponType->AttackAction[NormalIdx].ActionArray[SmashIdx];
+
+	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Red, FString::Printf(TEXT("Normal Atk : %d, Smash Atk : %d"), NormalIdx, SmashIdx));
 	
-	if (_type == EAttackType::NORMAL)
+	switch (_type)
 	{
+	case EAttackType::NORMAL:
 		NormalIdx++;
 		if (NormalIdx >= CurWeaponType->AttackAction.Num())
 			NormalIdx = 0;
-	}
-	else if (_type == EAttackType::SMASH)
-	{
+		break;
+	case EAttackType::SMASH:
 		SmashIdx++;
 		if (SmashIdx >= CurWeaponType->AttackAction[NormalIdx].ActionArray.Num())
 			SmashIdx = 0;
+		break;
 	}
 
 	LastAttackType = _type;
@@ -81,9 +86,19 @@ bool UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _conditi
 	if (_condition && _condition(Action.StaminaUsage) == false)
 		return false;
 
-	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Red, FString::Printf(TEXT("Normal Atk : %d, Smash Atk : %d"), NormalIdx, SmashIdx));
-
 	OwnerAnimInstance->Montage_Play(Action.Montage);
 
+	SetComboResetTimer(ComboResetSecond);
+
 	return true;
+}
+
+void UActionComponent::SetComboResetTimer(float _second)
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	
+	if (TimerManager.IsTimerActive(ComboResetTimer))
+		TimerManager.ClearTimer(ComboResetTimer);
+
+	TimerManager.SetTimer(ComboResetTimer, this, &UActionComponent::ResetCombo, _second, false);
 }
