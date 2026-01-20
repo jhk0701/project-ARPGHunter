@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
@@ -64,6 +64,7 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	SmoothRotateToInputDir();
 }
 
 void APlayerCharacter::Dodge()
@@ -104,5 +105,15 @@ void APlayerCharacter::Attack()
 		return;
 
 	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+}
 
+void APlayerCharacter::SmoothRotateToInputDir()
+{
+	if (InputDirection.SizeSquared() <= 0)
+		return;
+
+	FRotator TargetRot = GetActorRotation();
+	TargetRot.Yaw = GetControlRotation().Yaw + FMath::RadiansToDegrees(FMath::Atan2(InputDirection.Y, InputDirection.X));
+
+	SetActorRotation(FQuat::Slerp(GetActorQuat(), TargetRot.Quaternion(), 0.1f));
 }

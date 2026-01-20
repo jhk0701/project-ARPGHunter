@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -50,6 +50,9 @@ private:
 public:
 	APlayerCharacter();
 
+private:
+	void SmoothRotateToInputDir();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -59,7 +62,11 @@ public:
 	void Dodge();
 	void Attack();
 
-	void SetInputDirection(FVector2D _dir) { InputDirection = _dir; }
+	void SetInputDirection(FVector2D _dir) 
+	{ 
+		InputDirection = _dir; 
+		InputDirection.Normalize(); 
+	}
 	const FVector2D& GetInputDirection() { return InputDirection; }
 	void SetIsSprint(bool _isSprint);
 	bool GetIsSprint() { return IsSprint; }

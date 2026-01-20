@@ -72,11 +72,9 @@ void APlayerCharacterController::SetupInputComponent()
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
 	FVector2D Dir = _value.Get<FVector2D>();
-
 	FVector Fwd = GetTransformComponent()->GetForwardVector();
 	Fwd.Z = 0;
 	Fwd.Normalize();
-
 	FVector Rht = GetTransformComponent()->GetRightVector();
 	Rht.Z = 0;
 	Rht.Normalize();
@@ -84,10 +82,6 @@ void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 	ControlledCharacter->AddMovementInput(Fwd, Dir.X);
 	ControlledCharacter->AddMovementInput(Rht, Dir.Y);
 	ControlledCharacter->SetInputDirection(Dir);
-
-	FRotator Rot = GetTransformComponent()->GetComponentRotation();
-	Rot.Add(0.0f, FMath::Atan2(Dir.Y, Dir.X) * 180.0f / PI, 0.0f);
-	ControlledCharacter->SetActorRotation(FRotator(0.0f, Rot.Yaw, 0.0f));
 }
 
 void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
@@ -100,18 +94,15 @@ void APlayerCharacterController::InputRotate(const FInputActionValue& _value)
 	FVector2D Rot = _value.Get<FVector2D>();
 	AddPitchInput(Rot.X);
 	AddYawInput(Rot.Y);
-	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::White, FString::Printf(TEXT("Rot : (%f, %f)"), Rot.X, Rot.Y));
 }
 
 void APlayerCharacterController::InputSprintStart(const FInputActionValue& _value)
 {
-	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::White, TEXT("Sprint On"));
 	ControlledCharacter->SetIsSprint(true);
 }
 
 void APlayerCharacterController::InputSprintEnd(const FInputActionValue& _value)
 {
-	// GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::White, TEXT("Sprint Off"));
 	ControlledCharacter->SetIsSprint(false);
 }
 
