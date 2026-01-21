@@ -52,6 +52,8 @@ public:
 	void Init();
 
 	void TakeDamage(uint16 _damage);
+
+	uint16 GetAttack() { return Attack; }
 	bool IsDead() { return Health == 0; }
 
 	bool TryUseStamina(uint16 _amount);

@@ -140,9 +140,9 @@ void APlayerCharacter::HandleAttackNotify()
 	TArray<FHitResult> HitResults;
 	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
 		GetWorld(),
-		GetActorLocation() + actorFwd * 30.0f,
+		GetActorLocation() + actorFwd * 20.0f,
 		GetActorLocation() + actorFwd * 150.0f,
-		FVector(100, 30, 50),
+		FVector(100, 100, 10),
 		actorFwd.Rotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 		false,
@@ -155,5 +155,14 @@ void APlayerCharacter::HandleAttackNotify()
 	);
 
 	if (IsHit)
-		GEngine->AddOnScreenDebugMessage(4, 3.0f, FColor::Red, TEXT("Something Hit"));
+	{
+		for (const FHitResult& hit : HitResults)
+		{
+			IHitable* Hitable = Cast<IHitable>(hit.GetActor());
+			if (Hitable == nullptr)
+				continue;
+
+			Hitable->HitBy(StatComp->GetAttack());
+		}
+	}
 }
