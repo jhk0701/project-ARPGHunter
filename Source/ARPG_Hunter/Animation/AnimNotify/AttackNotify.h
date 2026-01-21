@@ -13,5 +13,7 @@ UCLASS()
 class ARPG_HUNTER_API UAttackNotify : public UAnimNotify
 {
 	GENERATED_BODY()
-	
+
+public :
+	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 };

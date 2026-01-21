@@ -135,12 +135,23 @@ void APlayerCharacter::HandleAttackNotify()
 	// TODO : 플레이어 캐릭터는 장비에 따라서 공격 호출 트레이스가 달라질 것
 	
 	// 테스트용 임시 트레이스
-	//bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
-	//	GetWorld(),
-	//	GetActorLocation() + GetActorForwardVector() * 30.0f,
-	//	GetActorLocation() + GetActorForwardVector() * 150.0f,
-	//	FVector(100, 30, 50),
-	//	FRotator::ZeroRotator,
+	TArray<FHitResult> HitResults;
+	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
+		GetWorld(),
+		GetActorLocation() + GetActorForwardVector() * 30.0f,
+		GetActorLocation() + GetActorForwardVector() * 150.0f,
+		FVector(100, 30, 50),
+		FRotator::ZeroRotator,
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+		false,
+		{},
+		EDrawDebugTrace::ForDuration,
+		HitResults,
+		true,
+		FColor::Red,
+		FColor::Green
+	);
 
-	//);
+	if (IsHit)
+		GEngine->AddOnScreenDebugMessage(4, 3.0f, FColor::Red, TEXT("Something Hit"));
 }
