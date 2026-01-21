@@ -24,10 +24,15 @@ void AMonsterBase::BeginPlay()
 void AMonsterBase::OnTakeDamage(uint16 _remainHp, uint16 _maxHp)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (HitMontage == nullptr || AnimInstance->Montage_IsPlaying(HitMontage))
+	if (HitMontage == nullptr) //  || AnimInstance->Montage_IsPlaying(HitMontage)
 		return;
 	
 	AnimInstance->Montage_Play(HitMontage);
+	
+	if(StatComp->IsDead())
+		AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
+	else
+		AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), HitMontage);
 }
 
 void AMonsterBase::HitBy(uint16 _damage)

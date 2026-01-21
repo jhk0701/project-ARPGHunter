@@ -147,7 +147,7 @@ void APlayerCharacter::HandleAttackNotify()
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 		false,
 		{this},
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::ForOneFrame,
 		HitResults,
 		true,
 		FColor::Red,

@@ -23,7 +23,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
 
-
 protected:
 	virtual void BeginPlay() override;
 
