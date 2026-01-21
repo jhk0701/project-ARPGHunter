@@ -1,4 +1,4 @@
-﻿
+
 
 #include "Component/ActionComponent.h"
 
@@ -26,8 +26,6 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 
 void UActionComponent::ResetAction()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Reset Action"));
-
 	for (uint8 i = 0; i < static_cast<uint8>(EAttackType::END); i++)
 		AttackActionID[i] = 0;
 
@@ -57,8 +55,6 @@ void UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _predica
 {
 	if (IsValidAttackInput(_type) == false)
 		return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Attack Type : %d, Normal : %d, Smash : %d"), static_cast<int>(_type), GetActionID(EAttackType::NORMAL), GetActionID(EAttackType::SMASH)));
 
 	FAction& Action = _type == EAttackType::NORMAL ?
 		CurWeaponType->AttackAction[GetActionID(EAttackType::NORMAL)].StartAction : 

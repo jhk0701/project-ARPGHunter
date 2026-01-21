@@ -1,14 +1,17 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
 #include "Data/WeaponTypeData.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -88,7 +91,7 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 }
 
 
-void APlayerCharacter::Dodge()
+void APlayerCharacter::InputDodge()
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
@@ -101,7 +104,7 @@ void APlayerCharacter::Dodge()
 	);
 }
 
-void APlayerCharacter::Attack(EAttackType _type)
+void APlayerCharacter::InputAttack(EAttackType _type)
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
@@ -117,4 +120,27 @@ void APlayerCharacter::EnableNextAction(bool _enable)
 	if (ActionComp->IsValid() == false)
 		return;
 	ActionComp->SetEnableNextAction(_enable);
+}
+
+void APlayerCharacter::HitBy(uint16 _damage)
+{
+	if (StatComp->IsDead())
+		return;
+
+	StatComp->TakeDamage(_damage);
+}
+
+void APlayerCharacter::HandleAttackNotify()
+{
+	// TODO : 플레이어 캐릭터는 장비에 따라서 공격 호출 트레이스가 달라질 것
+	
+	// 테스트용 임시 트레이스
+	//bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
+	//	GetWorld(),
+	//	GetActorLocation() + GetActorForwardVector() * 30.0f,
+	//	GetActorLocation() + GetActorForwardVector() * 150.0f,
+	//	FVector(100, 30, 50),
+	//	FRotator::ZeroRotator,
+
+	//);
 }

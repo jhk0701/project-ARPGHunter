@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,11 +18,11 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint16 MaxHealth{ 100 };
+	uint32 MaxHealth{ 100 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint16 MaxStamina{ 100 };
+	uint32 MaxStamina{ 100 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint16 StaminaRecoveryPerSecond{ 10 };
+	uint32 StaminaRecoveryPerSecond{ 10 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	float StaminaRecoveryRate{ 0.1f };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -78,6 +78,5 @@ void UStatComponent::RecoverStamina(uint16 _amount)
 	Stamina = FMath::Min<uint16>(Stamina + _amount, MaxStamina);
 
 	OnUseStamina.Broadcast(Stamina, MaxStamina);
-	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Green, FString::Printf(TEXT("Stamina : %d"), Stamina));
 }
 

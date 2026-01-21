@@ -1,15 +1,17 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/Hitable.h"
+#include "Interface/AttackNotifyHandler.h"
 #include "PlayerCharacter.generated.h"
 
 enum class EAttackType : uint8;
 
 UCLASS()
-class ARPG_HUNTER_API APlayerCharacter : public ACharacter
+class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler
 {
 	GENERATED_BODY()
 
@@ -65,8 +67,8 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	
-	void Dodge();
-	void Attack(EAttackType _type);
+	void InputDodge();
+	void InputAttack(EAttackType _type);
 
 	void SetInputDirection(FVector2D _dir) 
 	{ 
@@ -77,4 +79,11 @@ public:
 	void SetIsSprint(bool _isSprint);
 	bool GetIsSprint() { return IsSprint; }
 	void EnableNextAction(bool _enable);
+
+
+	// IHitable을(를) 통해 상속됨
+	void HitBy(uint16 _damage) override;
+
+	// IAttackNotifyHandler을(를) 통해 상속됨
+	void HandleAttackNotify() override;
 };

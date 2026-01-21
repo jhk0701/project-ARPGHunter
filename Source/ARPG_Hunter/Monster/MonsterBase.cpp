@@ -16,6 +16,27 @@ void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StatComp->OnTakeDamage.AddUObject(this, &AMonsterBase::OnTakeDamage);
+}
+
+void AMonsterBase::OnTakeDamage(uint16 _remainHp, uint16 _maxHp)
+{
+	// GEngine->AddOnScreenDebugMessage(10, 5.0f, FColor::Blue, FString::Printf(TEXT("Monster")));
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (HitMontage == nullptr || AnimInstance->Montage_IsPlaying(HitMontage))
+		return;
+	
+	AnimInstance->Montage_Play(HitMontage);
+}
+
+void AMonsterBase::HitBy(uint16 _damage)
+{
+	StatComp->TakeDamage(_damage);
+}
+
+void AMonsterBase::HandleAttackNotify()
+{
 }
 
 //// Called every frame
