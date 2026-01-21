@@ -21,10 +21,16 @@ private:
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
+
+#pragma region TmpData
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> AttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	float RecognitionRange{ 1000.0f };
+#pragma endregion
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,4 +47,5 @@ public:
 	void HandleAttackNotify() override;
 
 	bool IsDead();
+	float GetRecognitionRange() { return RecognitionRange; }
 };
