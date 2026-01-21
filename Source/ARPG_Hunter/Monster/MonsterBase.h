@@ -38,4 +38,5 @@ public:
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify() override;
 
+	bool IsDead();
 };

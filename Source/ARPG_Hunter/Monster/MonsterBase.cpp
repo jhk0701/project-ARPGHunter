@@ -23,8 +23,6 @@ void AMonsterBase::BeginPlay()
 
 void AMonsterBase::OnTakeDamage(uint16 _remainHp, uint16 _maxHp)
 {
-	// GEngine->AddOnScreenDebugMessage(10, 5.0f, FColor::Blue, FString::Printf(TEXT("Monster")));
-	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (HitMontage == nullptr || AnimInstance->Montage_IsPlaying(HitMontage))
 		return;
@@ -39,6 +37,11 @@ void AMonsterBase::HitBy(uint16 _damage)
 
 void AMonsterBase::HandleAttackNotify()
 {
+}
+
+bool AMonsterBase::IsDead()
+{
+	return StatComp->IsDead();
 }
 
 //// Called every frame
