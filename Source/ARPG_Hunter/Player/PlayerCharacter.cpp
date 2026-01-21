@@ -135,16 +135,18 @@ void APlayerCharacter::HandleAttackNotify()
 	// TODO : 플레이어 캐릭터는 장비에 따라서 공격 호출 트레이스가 달라질 것
 	
 	// 테스트용 임시 트레이스
+	FVector actorFwd = GetActorForwardVector();
+
 	TArray<FHitResult> HitResults;
 	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
 		GetWorld(),
-		GetActorLocation() + GetActorForwardVector() * 30.0f,
-		GetActorLocation() + GetActorForwardVector() * 150.0f,
+		GetActorLocation() + actorFwd * 30.0f,
+		GetActorLocation() + actorFwd * 150.0f,
 		FVector(100, 30, 50),
-		FRotator::ZeroRotator,
+		actorFwd.Rotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 		false,
-		{},
+		{this},
 		EDrawDebugTrace::ForDuration,
 		HitResults,
 		true,

@@ -15,6 +15,8 @@ AMonsterBase::AMonsterBase()
 void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	StatComp->Init();
 	
 	StatComp->OnTakeDamage.AddUObject(this, &AMonsterBase::OnTakeDamage);
 }

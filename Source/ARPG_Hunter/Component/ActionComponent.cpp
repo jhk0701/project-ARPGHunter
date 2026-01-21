@@ -96,8 +96,9 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 	uint8 NormalIdx = GetActionID(EAttackType::NORMAL);
 	if (_type == EAttackType::NORMAL)
 		return NormalIdx < CurWeaponType->AttackAction.Num();
-	if (_type == EAttackType::SMASH)
+
+	if (NormalIdx - 1 >= 0 && _type == EAttackType::SMASH)
 		return GetActionID(EAttackType::SMASH) < CurWeaponType->AttackAction[NormalIdx - 1].LinkedAction.Num();
 
-	return true;
+	return false;
 }
