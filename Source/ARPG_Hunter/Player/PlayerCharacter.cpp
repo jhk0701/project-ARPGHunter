@@ -147,11 +147,9 @@ void APlayerCharacter::HandleAttackNotify()
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 		false,
 		{this},
-		EDrawDebugTrace::ForOneFrame,
+		EDrawDebugTrace::None,
 		HitResults,
-		true,
-		FColor::Red,
-		FColor::Green
+		true
 	);
 
 	if (IsHit)

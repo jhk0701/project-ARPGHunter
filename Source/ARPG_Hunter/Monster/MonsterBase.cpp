@@ -9,6 +9,8 @@ AMonsterBase::AMonsterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
+	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
+	WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
 }
 
 // Called when the game starts or when spawned

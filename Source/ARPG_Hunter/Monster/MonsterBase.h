@@ -19,9 +19,12 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
-	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMeshComponent> WeaponComp;
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
+	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
+	TObjectPtr<UAnimMontage> AttackMontage;
 
 protected:
 	virtual void BeginPlay() override;
