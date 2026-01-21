@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Define/Define.h"
+#include "Define/Enum.h"
 #include "ActionComponent.generated.h"
 
 struct FWeaponTypeData;

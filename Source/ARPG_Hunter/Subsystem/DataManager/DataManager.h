@@ -22,6 +22,5 @@ private:
 
 public:
 	UDataManager();
-
 	struct FWeaponTypeData* GetWeaponTypeData(EWeaponType _type);
 };

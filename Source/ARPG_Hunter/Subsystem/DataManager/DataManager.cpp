@@ -3,7 +3,7 @@
 
 #include "Subsystem/DataManager/DataManager.h"
 #include "Engine/DataTable.h"
-#include "Define/Define.h"
+#include "Define/Enum.h"
 #include "Data/WeaponTypeData.h"
 
 UDataManager::UDataManager()

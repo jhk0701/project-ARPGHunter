@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -7,7 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
-#include "Define/Define.h"
+#include "Define/Enum.h"
 #include "Player/PlayerCharacter.h"
 
 APlayerCharacterController::APlayerCharacterController()

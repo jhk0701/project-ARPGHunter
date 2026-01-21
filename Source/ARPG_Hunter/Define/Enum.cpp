@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Define/Define.h"
+#include "Define/Enum.h"
 
 FName EnumToName(EWeaponType _value)
 {

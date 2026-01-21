@@ -1,4 +1,4 @@
-
+﻿
 
 #include "Component/ActionComponent.h"
 
@@ -97,7 +97,7 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 	if (_type == EAttackType::NORMAL)
 		return NormalIdx < CurWeaponType->AttackAction.Num();
 
-	if (NormalIdx - 1 >= 0 && _type == EAttackType::SMASH)
+	if (NormalIdx >= 1 && _type == EAttackType::SMASH)
 		return GetActionID(EAttackType::SMASH) < CurWeaponType->AttackAction[NormalIdx - 1].LinkedAction.Num();
 
 	return false;
