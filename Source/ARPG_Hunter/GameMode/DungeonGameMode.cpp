@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameMode/DungeonGameMode.h"
 #include "Player/PlayerCharacter.h"
 #include "Controller/PlayerCharacterController.h"
+#include "UI/PlayerHUD.h"
 
 ADungeonGameMode::ADungeonGameMode()
 {
@@ -12,4 +13,5 @@ ADungeonGameMode::ADungeonGameMode()
 		DefaultPawnClass = PlayerFinder.Class;
 
 	PlayerControllerClass = APlayerCharacterController::StaticClass();
+	HUDClass = APlayerHUD::StaticClass();
 }

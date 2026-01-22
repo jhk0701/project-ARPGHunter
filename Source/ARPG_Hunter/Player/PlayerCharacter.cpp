@@ -11,6 +11,10 @@
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
 #include "Data/WeaponTypeData.h"
+#include "Controller/PlayerCharacterController.h"
+#include "UI/PlayerHUD.h"
+#include "UI/UserWidget/UWPlayerHUD.h"
+#include "UI/UserWidget/UWPlayerStatusBar.h"
 
 
 // Sets default values
@@ -62,6 +66,21 @@ void APlayerCharacter::BeginPlay()
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		APlayerHUD* PlayerHUD = PlayerController->GetHUD<APlayerHUD>();
+		ensure(PlayerHUD);
+
+		UUWPlayerHUD* PlayerUI = Cast<UUWPlayerHUD>(PlayerHUD->GetPlayerUI());
+		UUWPlayerStatusBar* StatusBar = PlayerUI->GetPlayerStatusBar();
+		
+		StatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
+		StatusBar->SetStaminaBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
+
+		StatComp->OnTakeDamage.AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
+		StatComp->OnUseStamina.AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
