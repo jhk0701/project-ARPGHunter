@@ -14,10 +14,13 @@ class ARPG_HUNTER_API AMonsterAIController : public AAIController
 {
 	GENERATED_BODY()
 
+public:
+	AMonsterAIController();
+
+protected:
+	virtual void OnPossess(APawn* InPawn) override;
+
 private:
 	void PlayBT(APawn* _inPawn);
 
-public:
-	AMonsterAIController();
-	virtual void OnPossess(APawn* InPawn) override;
 };

@@ -13,6 +13,7 @@ AMonsterAIController::AMonsterAIController()
 void AMonsterAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
 	PlayBT(InPawn);
 }
 
@@ -23,9 +24,6 @@ void AMonsterAIController::PlayBT(APawn* _inPawn)
 		return;
 
 	UBlackboardComponent* BlackboardComp = Blackboard.Get();
-	if (BlackboardComp == nullptr)
-		return;
-
 	if (UseBlackboard(Monster->GetBlackboardData(), BlackboardComp))
 		ensure(RunBehaviorTree(Monster->GetBehaviorTree()));
 }
