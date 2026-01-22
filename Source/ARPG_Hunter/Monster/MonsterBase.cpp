@@ -4,6 +4,7 @@
 #include "Monster/MonsterBase.h"
 #include "Component/StatComponent.h"
 #include "AI/MonsterAIController.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -17,6 +18,15 @@ AMonsterBase::AMonsterBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
+void AMonsterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+}
+
 // Called when the game starts or when spawned
 void AMonsterBase::BeginPlay()
 {
@@ -26,10 +36,15 @@ void AMonsterBase::BeginPlay()
 	StatComp->OnTakeDamage.AddUObject(this, &AMonsterBase::OnTakeDamage);
 }
 
+void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
+{
+	if (_montage == AttackMontage || _montage == HitMontage)
+		OnAttackMontageEnded.ExecuteIfBound();
+}
+
 void AMonsterBase::OnTakeDamage(uint16 _remainHp, uint16 _maxHp)
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (HitMontage == nullptr) //  || AnimInstance->Montage_IsPlaying(HitMontage)
+	if (HitMontage == nullptr)
 		return;
 	
 	AnimInstance->Montage_Play(HitMontage);
@@ -47,11 +62,35 @@ void AMonsterBase::HitBy(uint16 _damage)
 
 void AMonsterBase::Attack()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Monster Attack"));
+	AnimInstance->Montage_Play(AttackMontage);
 }
 
 void AMonsterBase::HandleAttackNotify()
 {
+	// 히트 판정
+	FVector Loc = GetActorLocation();
+
+	TArray<FHitResult> HitResults;
+	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
+		this,
+		Loc, Loc + GetActorForwardVector() * AttackRange,
+		FVector(50.0f, 50.0f, 50.0f), GetActorRotation(),
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3),
+		false,	{ this },
+		EDrawDebugTrace::None,
+		HitResults,
+		true
+	);
+
+	if (IsHit == false)
+		return;
+
+	for (const FHitResult& hit : HitResults)
+	{
+		IHitable* Hitable = Cast<IHitable>(hit.GetActor());
+		if (Hitable)
+			Hitable->HitBy(StatComp->GetAttack());
+	}
 }
 
 bool AMonsterBase::IsDead()

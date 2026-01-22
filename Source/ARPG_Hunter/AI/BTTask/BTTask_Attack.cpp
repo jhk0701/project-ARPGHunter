@@ -25,6 +25,10 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (Target == nullptr)
 		return EBTNodeResult::Failed;
 
+	Owner->OnAttackMontageEnded.BindLambda([&]()
+		{
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		});
 	Owner->Attack();
 
 	return EBTNodeResult::InProgress;

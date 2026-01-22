@@ -17,6 +17,8 @@ enum class EMonsterType : uint8
 	END			UMETA(DisplayName = "End")
 };
 
+DECLARE_DELEGATE(FOnAttackMontageEnded);
+
 UCLASS()
 class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IAttackNotifyHandler
 {
@@ -36,6 +38,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
+	TObjectPtr<UAnimInstance> AnimInstance;
+
 #pragma region TmpData
 	
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
@@ -51,16 +55,24 @@ private:
 #pragma endregion
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 
-public:	
+	UFUNCTION()
+	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
+
+public:
+	FOnAttackMontageEnded OnAttackMontageEnded;
+
 	virtual void Attack();
-	void HandleAttackNotify() override; // IAttackNotifyHandler을(를) 통해 상속됨
-	
-	void HitBy(uint16 _damage) override; // IHitable을(를) 통해 상속됨
+	// IAttackNotifyHandler을(를) 통해 상속됨
+	virtual void HandleAttackNotify() override;
+
+	// IHitable을(를) 통해 상속됨
+	virtual void HitBy(uint16 _damage) override; 
 	void OnTakeDamage(uint16 _remainHp, uint16 _maxHp);
 
 	bool IsDead();
