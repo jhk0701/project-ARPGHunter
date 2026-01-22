@@ -47,6 +47,7 @@ void AMonsterBase::HitBy(uint16 _damage)
 
 void AMonsterBase::Attack()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Monster Attack"));
 }
 
 void AMonsterBase::HandleAttackNotify()

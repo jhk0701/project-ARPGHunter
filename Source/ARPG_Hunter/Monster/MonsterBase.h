@@ -43,8 +43,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> AttackMontage;
 
-	UPROPERTY(EditAnywhere, Category = "AI")
+	UPROPERTY(EditAnywhere, Category = "AI|Param")
 	float RecognitionRange{ 1000.0f };
+	UPROPERTY(EditAnywhere, Category = "AI|Param")
+	float AttackRange{ 150.0f };
 
 #pragma endregion
 
@@ -62,9 +64,9 @@ public:
 	void OnTakeDamage(uint16 _remainHp, uint16 _maxHp);
 
 	bool IsDead();
-	
-	float GetRecognitionRange() { return RecognitionRange; }
-
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() { return MonsterBB; }
+
+	float GetRecognitionRange() { return RecognitionRange; }
+	float GetAttackRange() { return AttackRange; }
 };
