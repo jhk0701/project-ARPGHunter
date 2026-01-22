@@ -5,6 +5,7 @@
 #include "Component/StatComponent.h"
 #include "AI/MonsterAIController.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/CapsuleComponent.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -100,7 +101,9 @@ void AMonsterBase::OnDead()
 {
 	// 사망 시, 오브젝트 풀로 복귀
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
-	AICon->
+	AICon->StopBT();
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	// TODO : 몬스터 오브젝트 풀로 복귀
 }

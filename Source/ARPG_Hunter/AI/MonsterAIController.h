@@ -16,11 +16,12 @@ class ARPG_HUNTER_API AMonsterAIController : public AAIController
 
 public:
 	AMonsterAIController();
-
-protected:
-	virtual void OnPossess(APawn* InPawn) override;
-
 private:
 	void PlayBT(APawn* _inPawn);
+protected:
+	virtual void OnPossess(APawn* InPawn) override;
+public:
+	void StopBT();
+	void RestartBT();
 
 };
