@@ -185,3 +185,8 @@ void APlayerCharacter::HandleAttackNotify()
 		}
 	}
 }
+
+bool APlayerCharacter::IsDead()
+{
+	return StatComp->IsDead();
+}

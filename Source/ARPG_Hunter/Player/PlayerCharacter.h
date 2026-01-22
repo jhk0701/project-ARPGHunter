@@ -80,10 +80,10 @@ public:
 	bool GetIsSprint() { return IsSprint; }
 	void EnableNextAction(bool _enable);
 
-
 	// IHitable을(를) 통해 상속됨
 	void HitBy(uint16 _damage) override;
-
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify() override;
+
+	bool IsDead();
 };

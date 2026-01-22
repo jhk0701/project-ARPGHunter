@@ -24,12 +24,22 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target")))); 
 	if (Target == nullptr)
 		return EBTNodeResult::Failed;
+	
+	if (Owner->OnAttackMontageEnded.IsBound() == false) 
+	{
+		Owner->OnAttackMontageEnded.BindLambda(
+			[&]()
+			{
+				APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
 
-	Owner->OnAttackMontageEnded.BindLambda([&]()
-		{
-			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		});
+				if (Target == nullptr || Target->IsDead())
+					OwnerComp.GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
+
+				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			}
+		);
+	}
+
 	Owner->Attack();
-
 	return EBTNodeResult::InProgress;
 }

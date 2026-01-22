@@ -6,6 +6,7 @@
 #include "AIController.h"
 
 #include "Monster/MonsterBase.h"
+#include "Player/PlayerCharacter.h"
 
 UBTDecorator_IsInAttackRange::UBTDecorator_IsInAttackRange()
 {
@@ -20,8 +21,8 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	if (Owner == nullptr)
 		return false;
 
-	ACharacter* Target = Cast<ACharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
-	if (Target == nullptr)
+	APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
+	if (Target == nullptr || Target->IsDead())
 		return false;
 
 	float Range = Owner->GetAttackRange();

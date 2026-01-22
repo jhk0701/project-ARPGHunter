@@ -33,7 +33,6 @@ void AMonsterBase::BeginPlay()
 	Super::BeginPlay();
 
 	StatComp->Init();
-	StatComp->OnTakeDamage.AddUObject(this, &AMonsterBase::OnTakeDamage);
 }
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
@@ -42,26 +41,30 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 		OnAttackMontageEnded.ExecuteIfBound();
 }
 
-void AMonsterBase::OnTakeDamage(uint16 _remainHp, uint16 _maxHp)
-{
-	if (HitMontage == nullptr)
-		return;
-	
-	AnimInstance->Montage_Play(HitMontage);
-	
-	if(StatComp->IsDead())
-		AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
-	else
-		AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), HitMontage);
-}
-
 void AMonsterBase::HitBy(uint16 _damage)
 {
 	StatComp->TakeDamage(_damage);
+
+	if (HitMontage == nullptr)
+		return;
+
+	AnimInstance->Montage_Play(HitMontage);
+
+	if (StatComp->IsDead())
+	{
+		AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
+		OnDead();
+		return;
+	}
+
+	AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), HitMontage);
 }
 
 void AMonsterBase::Attack()
 {
+	if (AttackMontage == nullptr || AnimInstance->Montage_IsPlaying(AttackMontage))
+		return;
+
 	AnimInstance->Montage_Play(AttackMontage);
 }
 
@@ -91,6 +94,15 @@ void AMonsterBase::HandleAttackNotify()
 		if (Hitable)
 			Hitable->HitBy(StatComp->GetAttack());
 	}
+}
+
+void AMonsterBase::OnDead()
+{
+	// 사망 시, 오브젝트 풀로 복귀
+	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
+	AICon->
+
+	// TODO : 몬스터 오브젝트 풀로 복귀
 }
 
 bool AMonsterBase::IsDead()

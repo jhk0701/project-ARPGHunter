@@ -63,6 +63,7 @@ protected:
 
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
+	virtual void OnDead();
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
@@ -72,8 +73,7 @@ public:
 	virtual void HandleAttackNotify() override;
 
 	// IHitable을(를) 통해 상속됨
-	virtual void HitBy(uint16 _damage) override; 
-	void OnTakeDamage(uint16 _remainHp, uint16 _maxHp);
+	virtual void HitBy(uint16 _damage) override;
 
 	bool IsDead();
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() { return MonsterBT; }
