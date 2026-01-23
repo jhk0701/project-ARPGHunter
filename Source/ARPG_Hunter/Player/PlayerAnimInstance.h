@@ -21,6 +21,8 @@ private:
 	FVector2D MoveSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool IsMove{ false };
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool IsFalling{ false };
 
 public:
 	virtual void NativeInitializeAnimation() override;
