@@ -40,10 +40,12 @@ public:
 
 	void Init(UAnimInstance* _ownerAnimInstance);
 	void ResetAction();
+	void SetEnableNextAction(bool _enable) { IsEnableNextAction = _enable; }
 
 	bool IsValid() { return CurWeaponType != nullptr; }
-	void Dodge(bool _isMoving, TFunction<bool(float)> _predicate);
-	void Attack(EAttackType _type, TFunction<bool(float)> _predicate);
 
-	void SetEnableNextAction(bool _enable) { IsEnableNextAction = _enable; }
+	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
+	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
+
+	void PlayHitAction(bool _isDead);
 };

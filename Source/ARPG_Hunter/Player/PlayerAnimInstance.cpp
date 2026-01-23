@@ -24,7 +24,5 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		MoveSpeed *= 2;
 
 	IsMove = MoveSpeed.X > 0;
-	GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Red, FString::Printf(TEXT("IsMove : %d"), IsMove ? 1 : 0));
-
 	IsFalling = Owner->GetMovementComponent()->IsFalling();
 }

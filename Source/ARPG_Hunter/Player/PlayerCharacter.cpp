@@ -78,6 +78,7 @@ void APlayerCharacter::BeginPlay()
 		StatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
 		StatusBar->SetStaminaBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
 
+		// UI 이벤트 바인딩
 		StatComp->OnTakeDamage.AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
 		StatComp->OnUseStamina.AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
 	}
@@ -116,10 +117,8 @@ void APlayerCharacter::InputDodge()
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
-	ActionComp->Dodge(
-		InputDirection.SizeSquared() > 0,
-		[this](float _staminaUsage) 
-		{ return StatComp->TryUseStamina(_staminaUsage); }
+	ActionComp->PlayDodgeAction(InputDirection.SizeSquared() > 0,
+		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
 	);
 }
 
@@ -128,9 +127,8 @@ void APlayerCharacter::InputAttack(EAttackType _type)
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	ActionComp->Attack(_type,
-		[this](float _staminaUsage) 
-		{ return StatComp->TryUseStamina(_staminaUsage); }
+	ActionComp->PlayAttackAction(_type,
+		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
 	);
 }
 
@@ -147,8 +145,10 @@ void APlayerCharacter::HitBy(uint16 _damage)
 		return;
 
 	StatComp->TakeDamage(_damage);
+	ActionComp->PlayHitAction(StatComp->IsDead());
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Player Take Damage : %d"), _damage));
+	if (StatComp->IsDead())
+		OnDead();
 }
 
 void APlayerCharacter::HandleAttackNotify()
@@ -189,4 +189,8 @@ void APlayerCharacter::HandleAttackNotify()
 bool APlayerCharacter::IsDead()
 {
 	return StatComp->IsDead();
+}
+
+void APlayerCharacter::OnDead()
+{
 }

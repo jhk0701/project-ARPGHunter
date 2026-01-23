@@ -23,7 +23,6 @@ private:
 	TObjectPtr<class UEquipmentComponent> EquipComp;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UActionComponent> ActionComp;
-	
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
@@ -86,4 +85,5 @@ public:
 	void HandleAttackNotify() override;
 
 	bool IsDead();
+	void OnDead();
 };

@@ -73,6 +73,9 @@ void APlayerCharacterController::SetupInputComponent()
 
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
+	if (ControlledCharacter->IsDead())
+		return;
+
 	FVector2D Dir = _value.Get<FVector2D>();
 	FVector Fwd = GetTransformComponent()->GetForwardVector();
 	Fwd.Z = 0;

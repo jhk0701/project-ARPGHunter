@@ -9,6 +9,7 @@
 UActionComponent::UActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	ResetAction();
 }
 
 void UActionComponent::BeginPlay()
@@ -33,7 +34,7 @@ void UActionComponent::ResetAction()
 	IsEnableNextAction = true;
 }
 
-void UActionComponent::Dodge(bool _isMoving, TFunction<bool(float)> _predicate)
+void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
 	if (CurWeaponType->DodgeAction.Montage == nullptr ||
 		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->DodgeAction.Montage))
@@ -48,10 +49,9 @@ void UActionComponent::Dodge(bool _isMoving, TFunction<bool(float)> _predicate)
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Fwd")), CurWeaponType->DodgeAction.Montage);
 	else
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Bwd")), CurWeaponType->DodgeAction.Montage);
-
 }
 
-void UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _predicate)
+void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
 {
 	if (IsValidAttackInput(_type) == false)
 		return;
@@ -73,6 +73,24 @@ void UActionComponent::Attack(EAttackType _type, TFunction<bool(float)> _predica
 	SetActionResetTimer(ActionResetSecond);
 }
 
+void UActionComponent::PlayHitAction(bool _isDead)
+{
+	if (CurWeaponType->HitMontage == nullptr)
+		return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Hit Action Play"));
+
+	// 피격 모션 실행 시, 콤보 초기화
+	OwnerAnimInstance->Montage_Play(CurWeaponType->HitMontage);
+
+	if (_isDead)
+		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), CurWeaponType->HitMontage);
+	else
+		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), CurWeaponType->HitMontage);
+
+	SetActionResetTimer(1.0f);
+}
+
 void UActionComponent::SetActionResetTimer(float _second)
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -89,7 +107,8 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 	// 스매시 공격 중 일반 공격으로 전환 불가
 	if (IsEnableNextAction == false ||
 		(LastAttackType == EAttackType::SMASH && _type == EAttackType::NORMAL) ||
-		(LastAttackType == EAttackType::END && _type == EAttackType::SMASH) )
+		(LastAttackType == EAttackType::END && _type == EAttackType::SMASH) ||
+		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->HitMontage))
 		return false;
 
 	// 마지막 콤보였는지 확인
