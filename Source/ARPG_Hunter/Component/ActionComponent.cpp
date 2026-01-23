@@ -78,8 +78,6 @@ void UActionComponent::PlayHitAction(bool _isDead)
 	if (CurWeaponType->HitMontage == nullptr)
 		return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Hit Action Play"));
-
 	// 피격 모션 실행 시, 콤보 초기화
 	OwnerAnimInstance->Montage_Play(CurWeaponType->HitMontage);
 

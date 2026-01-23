@@ -25,7 +25,7 @@ private:
 	bool IsEnableNextAction{ true };
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float ActionResetSecond{ 2.0f };
+	float ActionResetSecond{ 1.5f };
 	
 	FTimerHandle ActionResetTimer;
 

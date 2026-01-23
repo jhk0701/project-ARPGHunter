@@ -23,6 +23,8 @@ private:
 	bool IsMove{ false };
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool IsFalling{ false };
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool IsDead{ false };
 
 public:
 	virtual void NativeInitializeAnimation() override;
