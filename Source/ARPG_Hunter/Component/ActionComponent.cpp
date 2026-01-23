@@ -1,10 +1,12 @@
 ﻿
 
 #include "Component/ActionComponent.h"
-
 #include "Subsystem/DataManager/DataManager.h"
-#include "Data/WeaponTypeData.h"
 
+#include "Define/Enum.h"
+#include "Data/WeaponTypeData.h"
+#include "Data/Action.h"
+#include "Data/ActionComboData.h"
 
 UActionComponent::UActionComponent()
 {
@@ -27,28 +29,29 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 
 void UActionComponent::ResetAction()
 {
-	for (uint8 i = 0; i < static_cast<uint8>(EAttackType::END); i++)
-		AttackActionID[i] = 0;
-
-	LastAttackType = EAttackType::END; 
-	IsEnableNextAction = true;
+	CurAttackActionID = 0;
+	bIsInAttackCombo = false;
+	bIsEnableNextAction = true;
 }
 
 void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
-	if (CurWeaponType->DodgeAction.Montage == nullptr ||
-		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->DodgeAction.Montage))
+	TObjectPtr<UAction> DodgeAction = CurWeaponType->DodgeAction;
+
+	if (DodgeAction == nullptr || 
+		DodgeAction->Montage == nullptr ||
+		OwnerAnimInstance->Montage_IsPlaying(DodgeAction->Montage))
 		return;
 
-	if (_predicate && _predicate(CurWeaponType->DodgeAction.StaminaUsage) == false)
+	if (_predicate && _predicate(DodgeAction->StaminaUsage) == false)
 		return;
 
-	OwnerAnimInstance->Montage_Play(CurWeaponType->DodgeAction.Montage);
+	OwnerAnimInstance->Montage_Play(DodgeAction->Montage);
 
 	if (_isMoving)
-		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Fwd")), CurWeaponType->DodgeAction.Montage);
+		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeAction->Montage);
 	else
-		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Bwd")), CurWeaponType->DodgeAction.Montage);
+		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeAction->Montage);
 }
 
 void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
@@ -56,19 +59,20 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	if (IsValidAttackInput(_type) == false)
 		return;
 
-	FAction& Action = _type == EAttackType::NORMAL ?
-		CurWeaponType->AttackAction[GetActionID(EAttackType::NORMAL)].StartAction : 
-		CurWeaponType->AttackAction[GetActionID(EAttackType::NORMAL) - 1].LinkedAction[GetActionID(EAttackType::SMASH)];
+	uint8 id = !bIsInAttackCombo ? 
+		*CurWeaponType->AttackCombo->Start.Find(_type) :
+		*CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type);
 	
-	if (_predicate && _predicate(Action.StaminaUsage) == false)
+	UAction* Action = CurWeaponType->AttackCombo->AttackAcionArray[id];
+
+	if (_predicate && _predicate(Action->StaminaUsage) == false)
 		return;
 
-	++AttackActionID[static_cast<uint8>(_type)];
+	CurAttackActionID = id;
+	bIsInAttackCombo = true;
+	bIsEnableNextAction = false;
 
-	LastAttackType = _type;
-	IsEnableNextAction = false;
-
-	OwnerAnimInstance->Montage_Play(Action.Montage);
+	OwnerAnimInstance->Montage_Play(Action->Montage);
 
 	SetActionResetTimer(ActionResetSecond);
 }
@@ -103,19 +107,13 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 {
 	// 다음 공격이 가능한 상태인지 확인
 	// 스매시 공격 중 일반 공격으로 전환 불가
-	if (IsEnableNextAction == false ||
-		(LastAttackType == EAttackType::SMASH && _type == EAttackType::NORMAL) ||
-		(LastAttackType == EAttackType::END && _type == EAttackType::SMASH) ||
+	if (bIsEnableNextAction == false ||
 		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->HitMontage))
 		return false;
 
+	if (bIsInAttackCombo == false) // 첫 공격인 경우
+		return CurWeaponType->AttackCombo->Start.Find(_type) != nullptr;
+
 	// 마지막 콤보였는지 확인
-	uint8 NormalIdx = GetActionID(EAttackType::NORMAL);
-	if (_type == EAttackType::NORMAL)
-		return NormalIdx < CurWeaponType->AttackAction.Num();
-
-	if (NormalIdx >= 1 && _type == EAttackType::SMASH)
-		return GetActionID(EAttackType::SMASH) < CurWeaponType->AttackAction[NormalIdx - 1].LinkedAction.Num();
-
-	return false;
+	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
 }

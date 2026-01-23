@@ -4,39 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Data/Action.h"
 #include "WeaponTypeData.generated.h"
 
 enum class EWeaponType : uint8;
-
-/*
-* 플레이어 액션 구조체
-*/
-USTRUCT()
-struct FAction
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	uint16 StaminaUsage;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAnimMontage> Montage;
-};
-
-/*
-* Action
-*/
-USTRUCT()
-struct FActionList
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	FAction StartAction;
-	UPROPERTY(EditAnywhere)
-	TArray<FAction> LinkedAction;
-};
 
 /**
  * 무기별 정보용 데이터 테이블 행
@@ -53,7 +24,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	FAction DodgeAction;
+	TObjectPtr<class UAction> DodgeAction;
 	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
-	TArray<FActionList> AttackAction;
+	TObjectPtr<class UActionComboData> AttackCombo;
 };

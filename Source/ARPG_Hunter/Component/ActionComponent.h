@@ -8,7 +8,6 @@
 #include "ActionComponent.generated.h"
 
 struct FWeaponTypeData;
-struct FAction;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
@@ -16,13 +15,13 @@ class ARPG_HUNTER_API UActionComponent : public UActorComponent
 	GENERATED_BODY()
 
 private:
-	UAnimInstance* OwnerAnimInstance;
+	TObjectPtr<UAnimInstance> OwnerAnimInstance;
+	
+	TObjectPtr<FWeaponTypeData> CurWeaponType;
+	uint8 CurAttackActionID{ 0 };
+	bool bIsInAttackCombo{ false };
 
-	FWeaponTypeData* CurWeaponType;
-
-	EAttackType LastAttackType;
-	uint8 AttackActionID[static_cast<uint8>(EAttackType::END)];
-	bool IsEnableNextAction{ true };
+	bool bIsEnableNextAction{ true };
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float ActionResetSecond{ 1.5f };
@@ -31,7 +30,6 @@ private:
 
 	void SetActionResetTimer(float _second);
 	bool IsValidAttackInput(EAttackType _type);
-	const uint8 GetActionID(EAttackType _type) { return AttackActionID[static_cast<uint8>(_type)]; }
 
 public:	
 	UActionComponent();
@@ -40,7 +38,7 @@ public:
 
 	void Init(UAnimInstance* _ownerAnimInstance);
 	void ResetAction();
-	void SetEnableNextAction(bool _enable) { IsEnableNextAction = _enable; }
+	void SetEnableNextAction(bool _enable) { bIsEnableNextAction = _enable; }
 
 	bool IsValid() { return CurWeaponType != nullptr; }
 
