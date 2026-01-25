@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/StatComponent.h"
 #include "PlayerStatComponent.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ARPG_HUNTER_API UPlayerStatComponent : public UStatComponent
 {
 	GENERATED_BODY()

@@ -24,7 +24,7 @@ UENUM(BlueprintType)
 enum class EAttackType : uint8
 {
 	NORMAL		UMETA(DisplayName = "Normal"),
-	SMASH		UMETA(DisplayName = "SMASH"),
+	SMASH		UMETA(DisplayName = "Smash"),
 	SKILL 		UMETA(DisplayName = "Skill"),
 
 	END			UMETA(Hidden),

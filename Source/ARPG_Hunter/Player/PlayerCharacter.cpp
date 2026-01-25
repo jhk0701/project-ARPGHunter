@@ -110,7 +110,6 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
 }
 
-
 void APlayerCharacter::InputDodge()
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())

@@ -3,7 +3,7 @@
 
 #include "Monster/MonsterBase.h"
 #include "Component/Stat/MonsterStatComponent.h"
-#include "AI/MonsterAIController.h"
+#include "Controller/MonsterAIController.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/CapsuleComponent.h"
 
