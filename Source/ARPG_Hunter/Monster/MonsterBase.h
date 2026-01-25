@@ -29,7 +29,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UStatComponent> StatComp;
+	TObjectPtr<class UMonsterStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
 
@@ -73,7 +73,7 @@ public:
 	virtual void HandleAttackNotify() override;
 
 	// IHitable을(를) 통해 상속됨
-	virtual void HitBy(uint16 _damage) override;
+	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool IsDead();
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() { return MonsterBT; }

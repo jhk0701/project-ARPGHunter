@@ -18,7 +18,7 @@ class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, pub
 private:
 #pragma region Component
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UStatComponent> StatComp;
+	TObjectPtr<class UPlayerStatComponent> StatComp;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
 	UPROPERTY(VisibleAnywhere)
@@ -80,7 +80,7 @@ public:
 	void EnableNextAction(bool _enable);
 
 	// IHitable을(를) 통해 상속됨
-	void HitBy(uint16 _damage) override;
+	void HitBy(const FHitInfo& _hitInfo) override;
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify() override;
 

@@ -7,7 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#include "Component/StatComponent.h"
+#include "Component/Stat/PlayerStatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
 #include "Data/WeaponTypeData.h"
@@ -23,7 +23,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 #pragma region Create Comp
-	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
+	StatComp = CreateDefaultSubobject<UPlayerStatComponent>(TEXT("StatComp"));
 	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
 	ActionComp = CreateDefaultSubobject<UActionComponent>(TEXT("ActionComp"));
 
@@ -79,8 +79,8 @@ void APlayerCharacter::BeginPlay()
 		StatusBar->SetStaminaBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
 
 		// UI 이벤트 바인딩
-		StatComp->OnTakeDamage.AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
-		StatComp->OnUseStamina.AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
+		StatComp->OnHealthChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
+		StatComp->OnStaminaChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
 	}
 }
 
@@ -139,12 +139,12 @@ void APlayerCharacter::EnableNextAction(bool _enable)
 	ActionComp->SetEnableNextAction(_enable);
 }
 
-void APlayerCharacter::HitBy(uint16 _damage)
+void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 {
 	if (StatComp->IsDead())
 		return;
 
-	StatComp->TakeDamage(_damage);
+	StatComp->TakeDamage(_hitInfo.Damage);
 	ActionComp->PlayHitAction(StatComp->IsDead());
 
 	if (StatComp->IsDead())
@@ -181,7 +181,13 @@ void APlayerCharacter::HandleAttackNotify()
 			if (Hitable == nullptr)
 				continue;
 
-			Hitable->HitBy(StatComp->GetAttack());
+			FHitInfo Hit
+			{
+				ActionComp->GetAttackActionDamage(StatComp->GetAttack()),
+				ActionComp->GetAttackActionStaggerDamage()
+			};
+
+			Hitable->HitBy(Hit);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 
 #include "Monster/MonsterBase.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/MonsterStatComponent.h"
 #include "AI/MonsterAIController.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/CapsuleComponent.h"
@@ -11,7 +11,7 @@ AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
 
-	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
+	StatComp = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("StatComp"));
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
 	WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
 
@@ -42,9 +42,10 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 		OnAttackMontageEnded.ExecuteIfBound();
 }
 
-void AMonsterBase::HitBy(uint16 _damage)
+void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
-	StatComp->TakeDamage(_damage);
+	StatComp->TakeDamage(_hitInfo.Damage);
+	StatComp->TakeStaggerDamage(_hitInfo.StaggerDamage);
 
 	if (HitMontage == nullptr)
 		return;
@@ -92,8 +93,16 @@ void AMonsterBase::HandleAttackNotify()
 	for (const FHitResult& hit : HitResults)
 	{
 		IHitable* Hitable = Cast<IHitable>(hit.GetActor());
+
 		if (Hitable)
-			Hitable->HitBy(StatComp->GetAttack());
+		{
+			FHitInfo HitInfo
+			{
+				StatComp->GetAttack(),
+				0
+			};
+			Hitable->HitBy(HitInfo);
+		}
 	}
 }
 

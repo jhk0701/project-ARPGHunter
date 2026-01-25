@@ -44,6 +44,8 @@ public:
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
 	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
-
 	void PlayHitAction(bool _isDead);
+
+	uint16 GetAttackActionDamage(uint16 _baseAttack);
+	uint16 GetAttackActionStaggerDamage();
 };

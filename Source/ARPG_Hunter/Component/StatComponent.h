@@ -19,15 +19,6 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	uint32 MaxHealth{ 100 };
-	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint32 MaxStamina{ 100 };
-	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint32 StaminaRecoveryPerSecond{ 10 };
-	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	float StaminaRecoveryRate{ 0.1f };
-	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	float StaminaRecoveryPauseTime{ 1.0f };
-	
 	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	// uint16 Strength{ 10 };
 	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
@@ -39,30 +30,16 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	uint16 Health{ 100 };
-	UPROPERTY(VisibleAnywhere)
-	uint16 Stamina{ 100 };
-
-	FTimerHandle StaminaRecoveryTimer;
-	void StartStaminaRecovery();
 
 public:	
-	FOnStatValueChanged OnTakeDamage;
-	FOnStatValueChanged OnUseStamina;
+	FOnStatValueChanged OnHealthChanged;
 
-	void Init();
+	virtual void Init();
+	virtual void TakeDamage(uint16 _damage);
 
-	void TakeDamage(uint16 _damage);
-
+	bool IsDead() { return Health == 0; }
 	uint16 GetHealth() { return Health; }
 	uint16 GetMaxHealth() { return MaxHealth; }
-	uint16 GetStamina() { return Stamina; }
-	uint16 GetMaxStamina() { return MaxStamina; }
 
 	uint16 GetAttack() { return Attack; }
-	bool IsDead() { return Health == 0; }
-
-	bool TryUseStamina(uint16 _amount);
-	void RecoverStamina(uint16 _amount);
-
-	void PauseAndRestartStaminaRecovery(float _pauseSecond);
 };

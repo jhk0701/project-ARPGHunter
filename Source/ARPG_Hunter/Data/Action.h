@@ -6,6 +6,13 @@
 #include "Engine/DataAsset.h"
 #include "Action.generated.h"
 
+UENUM(BlueprintType)
+enum class EActionInput : uint8
+{
+	NORMAL		UMETA(DisplayName = "Normal"),
+	HOLD		UMETA(DisplayName = "Hold"),
+};
+
 /**
  * 
  */
@@ -13,10 +20,16 @@ UCLASS()
 class ARPG_HUNTER_API UAction : public UDataAsset
 {
 	GENERATED_BODY()
+
 public:
 	UPROPERTY(EditAnywhere)
-	uint16 StaminaUsage;
-
+	EActionInput InputType;
+	UPROPERTY(EditAnywhere)
+	uint16 StaminaUsage{ 0 };
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> Montage;
+	UPROPERTY(EditAnywhere)
+	uint16 AttackDamagePer{ 100 };
+	UPROPERTY(EditAnywhere)
+	uint16 StaggerDamage{ 10 };
 };

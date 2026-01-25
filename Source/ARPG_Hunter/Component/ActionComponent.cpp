@@ -77,6 +77,22 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	SetActionResetTimer(ActionResetSecond);
 }
 
+bool UActionComponent::IsValidAttackInput(EAttackType _type)
+{
+	// 다음 공격이 가능한 상태인지 확인
+	// 스매시 공격 중 일반 공격으로 전환 불가
+	if (bIsEnableNextAction == false ||
+		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->HitMontage))
+		return false;
+
+	if (bIsInAttackCombo == false) // 첫 공격인 경우
+		return CurWeaponType->AttackCombo->Start.Find(_type) != nullptr;
+
+	// 마지막 콤보였는지 확인
+	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
+}
+
+
 void UActionComponent::PlayHitAction(bool _isDead)
 {
 	if (CurWeaponType->HitMontage == nullptr)
@@ -103,17 +119,16 @@ void UActionComponent::SetActionResetTimer(float _second)
 	TimerManager.SetTimer(ActionResetTimer, this, &UActionComponent::ResetAction, _second, false);
 }
 
-bool UActionComponent::IsValidAttackInput(EAttackType _type)
+uint16 UActionComponent::GetAttackActionDamage(uint16 _baseAttack)
 {
-	// 다음 공격이 가능한 상태인지 확인
-	// 스매시 공격 중 일반 공격으로 전환 불가
-	if (bIsEnableNextAction == false ||
-		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->HitMontage))
-		return false;
+	uint16 per = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackDamagePer;
+	
+	float result = _baseAttack * (1.0f + per * 0.01f);
 
-	if (bIsInAttackCombo == false) // 첫 공격인 경우
-		return CurWeaponType->AttackCombo->Start.Find(_type) != nullptr;
+	return static_cast<uint16>(result);
+}
 
-	// 마지막 콤보였는지 확인
-	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
+uint16 UActionComponent::GetAttackActionStaggerDamage()
+{
+	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->StaggerDamage;
 }
