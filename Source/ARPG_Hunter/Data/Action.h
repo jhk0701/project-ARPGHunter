@@ -13,6 +13,17 @@ enum class EActionInput : uint8
 	HOLD		UMETA(DisplayName = "Hold"),
 };
 
+USTRUCT(BlueprintType)
+struct FActionEffect 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	uint32 EffectValue;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UEffect> Effect;
+};
+
 /**
  * 
  */
@@ -34,4 +45,7 @@ public:
 	float AttackRange{ 100.0f };
 	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
+
+	UPROPERTY(EditAnywhere, Category = "ActionEffect")
+	TArray<FActionEffect> EffectOnStart;
 };

@@ -6,6 +6,8 @@
 #include "Component/Stat/StatComponent.h"
 #include "PlayerStatComponent.generated.h"
 
+
+
 /**
  * 
  */
@@ -49,5 +51,5 @@ public:
 	uint8 GetMaxSkill() { return MaxSkill; }
 	uint8 GetSkill() { return Skill; }
 	bool TryUseSkill(uint8 _amount);
-	void GainSkill(uint8 _amount);
+	void RecoverSkill(uint8 _amount);
 };

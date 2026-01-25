@@ -36,6 +36,7 @@ public:
 
 	virtual void Init();
 	virtual void TakeDamage(uint16 _damage);
+	void RecoverHealth(uint16 _amount);
 
 	bool IsDead() { return Health == 0; }
 	uint16 GetHealth() { return Health; }

@@ -7,6 +7,7 @@
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
+#include "Data/Effect.h"
 
 UActionComponent::UActionComponent()
 {
@@ -88,6 +89,17 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	bIsInAttackCombo = true;
 
 	OwnerAnimInstance->Montage_Play(Action->Montage);
+
+	// 액션 시작 시, 효과 발동
+	for(const FActionEffect& effect :Action->EffectOnStart)
+	{
+		FEffectContext context
+		{
+			effect.EffectValue,
+			GetOwner()
+		};
+		effect.Effect->ActivateEffect(context);
+	}
 
 	SetActionResetTimer(ActionResetSecond);
 }

@@ -78,7 +78,7 @@ bool UPlayerStatComponent::TryUseSkill(uint8 _amount)
 	return true;
 }
 
-void UPlayerStatComponent::GainSkill(uint8 _amount)
+void UPlayerStatComponent::RecoverSkill(uint8 _amount)
 {
 	if (Skill == MaxSkill)
 		return;

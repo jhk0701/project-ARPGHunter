@@ -25,3 +25,13 @@ void UStatComponent::TakeDamage(uint16 _damage)
 
 	OnHealthChanged.Broadcast(Health, MaxHealth);
 }
+
+void UStatComponent::RecoverHealth(uint16 _amount)
+{
+	if (Health == MaxHealth)
+		return;
+
+	Health = FMath::Min<uint16>(Health + _amount, MaxHealth);
+
+	OnHealthChanged.Broadcast(Health, MaxHealth);
+}

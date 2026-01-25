@@ -70,7 +70,6 @@ public:
 	void InputDodge();
 	void InputAttack(EAttackType _eType);
 	void InputAttackEnd();
-
 	void SetInputDirection(FVector2D _dir) 
 	{ 
 		InputDirection = _dir; 
@@ -86,7 +85,9 @@ public:
 	void HitBy(const FHitInfo& _hitInfo) override;
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify(EAttackDirection _eAttackDir) override;
-
+	
 	bool IsDead();
 	void OnDead();
+
+	UPlayerStatComponent* GetStatComp() { return StatComp; }
 };
