@@ -32,6 +32,8 @@ private:
 	TObjectPtr<class UMonsterStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UWidgetComponent> WidgetComp;
 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;

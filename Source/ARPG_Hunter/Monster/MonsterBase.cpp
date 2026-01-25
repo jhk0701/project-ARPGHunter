@@ -2,10 +2,13 @@
 
 
 #include "Monster/MonsterBase.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Component/Stat/MonsterStatComponent.h"
 #include "Controller/MonsterAIController.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Components/CapsuleComponent.h"
+#include "UI/UserWidget/UWMonsterStatusBar.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -14,6 +17,8 @@ AMonsterBase::AMonsterBase()
 	StatComp = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("StatComp"));
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
 	WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
+	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
+	WidgetComp->SetupAttachment(GetRootComponent());
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -34,6 +39,15 @@ void AMonsterBase::BeginPlay()
 	Super::BeginPlay();
 
 	StatComp->Init();
+
+	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
+	{
+		MonsterStatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
+		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetStagger(), StatComp->GetMaxStagger());
+
+		StatComp->OnHealthChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
+		StatComp->OnStaggerChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
+	}
 }
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)

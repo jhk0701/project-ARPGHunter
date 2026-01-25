@@ -4,15 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UWPlayerStatusBar.generated.h"
+#include "UWMonsterStatusBar.generated.h"
 
 class UProgressBar;
 class UTextBlock;
+
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UUWPlayerStatusBar : public UUserWidget
+class ARPG_HUNTER_API UUWMonsterStatusBar : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -21,14 +22,10 @@ private:
 	TObjectPtr<UProgressBar> HealthBar;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> HealthLabel;
-
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UProgressBar> StaminaBar;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> StaminaLabel;
+	TObjectPtr<UProgressBar> StaggerBar;
 
 public:
 	void SetHealthBarPercent(uint16 _remain, uint16 _max);
-	void SetStaminaBarPercent(uint16 _remain, uint16 _max);
-
+	void SetStaggerBarPercent(uint16 _remain, uint16 _max);
 };
