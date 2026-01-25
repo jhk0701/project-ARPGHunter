@@ -82,7 +82,7 @@ public:
 	// IHitable을(를) 통해 상속됨
 	void HitBy(const FHitInfo& _hitInfo) override;
 	// IAttackNotifyHandler을(를) 통해 상속됨
-	void HandleAttackNotify() override;
+	void HandleAttackNotify(EAttackDirection _eAttackDir) override;
 
 	bool IsDead();
 	void OnDead();

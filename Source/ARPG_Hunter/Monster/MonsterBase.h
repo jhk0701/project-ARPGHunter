@@ -72,7 +72,7 @@ public:
 
 	virtual void Attack();
 	// IAttackNotifyHandler을(를) 통해 상속됨
-	virtual void HandleAttackNotify() override;
+	virtual void HandleAttackNotify(EAttackDirection _eAttackDir) override;
 
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;

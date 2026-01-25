@@ -150,27 +150,58 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 		OnDead();
 }
 
-void APlayerCharacter::HandleAttackNotify()
+void APlayerCharacter::HandleAttackNotify(EAttackDirection _eAttackDir)
 {
-	// TODO : 플레이어 캐릭터는 장비에 따라서 공격 호출 트레이스가 달라질 것
-	
-	// 테스트용 임시 트레이스
+	// TODO : 리팩토링 필요
 	FVector actorFwd = GetActorForwardVector();
-
 	TArray<FHitResult> HitResults;
-	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
-		GetWorld(),
-		GetActorLocation() + actorFwd * 20.0f,
-		GetActorLocation() + actorFwd * 150.0f,
-		FVector(100, 100, 10),
-		actorFwd.Rotation(),
-		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
-		false,
-		{this},
-		EDrawDebugTrace::None,
-		HitResults,
-		true
-	);
+	bool IsHit = false;
+	float range = ActionComp->GetAttackRange();
+
+	switch (_eAttackDir)
+	{
+	case EAttackDirection::FRONT:
+		IsHit = UKismetSystemLibrary::BoxTraceMulti(
+			GetWorld(),
+			GetActorLocation() + actorFwd * 100.0f,
+			GetActorLocation() + actorFwd * 100.0f,
+			FVector(range, 100, 10),
+			actorFwd.Rotation(),
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+			false, { this }, 
+			EDrawDebugTrace::ForDuration,
+			HitResults,
+			true
+		);
+		break;
+	case EAttackDirection::FRONT_WIDE:
+		IsHit = UKismetSystemLibrary::BoxTraceMulti(
+			GetWorld(),
+			GetActorLocation() + actorFwd * 100.0f,
+			GetActorLocation() + actorFwd * 100.0f,
+			FVector(100, range, 10),
+			actorFwd.Rotation(),
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+			false, { this }, 
+			EDrawDebugTrace::ForDuration,
+			HitResults,
+			true
+		);
+		break;
+	case EAttackDirection::AROUND:
+		IsHit = UKismetSystemLibrary::SphereTraceMulti(
+			GetWorld(),
+			GetActorLocation(),
+			GetActorLocation(), 
+			range,
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+			false, { this }, 
+			EDrawDebugTrace::ForDuration,
+			HitResults,
+			true
+		);
+		break;
+	}
 
 	if (IsHit)
 	{

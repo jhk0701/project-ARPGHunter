@@ -48,4 +48,6 @@ public:
 
 	uint16 GetAttackActionDamage(uint16 _baseAttack);
 	uint16 GetAttackActionStaggerDamage();
+
+	float GetAttackRange();
 };

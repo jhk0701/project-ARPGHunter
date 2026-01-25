@@ -31,5 +31,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
 	UPROPERTY(EditAnywhere)
+	float AttackRange{ 100.0f };
+	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
 };

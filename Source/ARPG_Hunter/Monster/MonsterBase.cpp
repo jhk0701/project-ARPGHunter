@@ -84,7 +84,7 @@ void AMonsterBase::Attack()
 	AnimInstance->Montage_Play(AttackMontage);
 }
 
-void AMonsterBase::HandleAttackNotify()
+void AMonsterBase::HandleAttackNotify(EAttackDirection _eAttackDir)
 {
 	// 히트 판정
 	FVector Loc = GetActorLocation();

@@ -122,7 +122,6 @@ void UActionComponent::SetActionResetTimer(float _second)
 uint16 UActionComponent::GetAttackActionDamage(uint16 _baseAttack)
 {
 	uint16 per = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackDamagePer;
-	
 	float result = _baseAttack * (1.0f + per * 0.01f);
 
 	return static_cast<uint16>(result);
@@ -131,4 +130,9 @@ uint16 UActionComponent::GetAttackActionDamage(uint16 _baseAttack)
 uint16 UActionComponent::GetAttackActionStaggerDamage()
 {
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->StaggerDamage;
+}
+
+float UActionComponent::GetAttackRange()
+{
+	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackRange;
 }
