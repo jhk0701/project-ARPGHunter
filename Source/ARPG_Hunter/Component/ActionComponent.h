@@ -43,11 +43,12 @@ public:
 	bool IsValid() { return CurWeaponType != nullptr; }
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
-	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
 	void PlayHitAction(bool _isDead);
+
+	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
+	void ProcessAttackEnd();
 
 	uint16 GetAttackActionDamage(uint16 _baseAttack);
 	uint16 GetAttackActionStaggerDamage();
-
 	float GetAttackRange();
 };

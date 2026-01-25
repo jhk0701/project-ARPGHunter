@@ -30,11 +30,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> DodgeAction;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> AttackNormalAction;
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> AttackSmashAction;
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> AttackSkillAction;
+	TObjectPtr<UInputAction> AttackAction;
 
 
 	UPROPERTY(VisibleAnywhere)
@@ -56,11 +52,9 @@ public:
 	UFUNCTION()
 	void InputSprintEnd(const FInputActionValue& _value);
 	UFUNCTION()
-	void InputAttackNormal(const FInputActionValue& _value);
+	void InputAttack(const FInputActionValue& _value);
 	UFUNCTION()
-	void InputAttackSmash(const FInputActionValue& _value);
-	UFUNCTION()
-	void InputAttackSkill(const FInputActionValue& _value);
+	void InputAttackEnd(const FInputActionValue& _value);
 
 protected:
 	void BeginPlay() override;

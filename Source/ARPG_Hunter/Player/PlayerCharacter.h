@@ -69,6 +69,7 @@ public:
 	
 	void InputDodge();
 	void InputAttack(EAttackType _eType);
+	void InputAttackEnd();
 
 	void SetInputDirection(FVector2D _dir) 
 	{ 

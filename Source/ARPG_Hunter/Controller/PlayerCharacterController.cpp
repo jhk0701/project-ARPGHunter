@@ -29,15 +29,9 @@ APlayerCharacterController::APlayerCharacterController()
 	if (SprintActionFinder.Succeeded())
 		SprintAction = SprintActionFinder.Object;
 	
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackNormalActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Normal.IA_Attack_Normal'"));
-	if (AttackNormalActionFinder.Succeeded())
-		AttackNormalAction = AttackNormalActionFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackSmashActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Smash.IA_Attack_Smash'"));
-	if (AttackSmashActionFinder.Succeeded())
-		AttackSmashAction = AttackSmashActionFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackSkillActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Skill.IA_Attack_Skill'"));
-	if (AttackSkillActionFinder.Succeeded())
-		AttackSkillAction = AttackSkillActionFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack.IA_Attack'"));
+	if (AttackActionFinder.Succeeded())
+		AttackAction = AttackActionFinder.Object;
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -69,9 +63,8 @@ void APlayerCharacterController::SetupInputComponent()
 		
 		InputComp->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputDodge);
 
-		InputComp->BindAction(AttackNormalAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackNormal);
-		InputComp->BindAction(AttackSmashAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackSmash);
-		InputComp->BindAction(AttackSkillAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackSkill);
+		InputComp->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttack);
+		InputComp->BindAction(AttackAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputAttackEnd);
 	}	
 }
 
@@ -120,17 +113,13 @@ void APlayerCharacterController::InputDodge(const FInputActionValue& _value)
 	ControlledCharacter->InputDodge();
 }
 
-void APlayerCharacterController::InputAttackNormal(const FInputActionValue& _value)
+void APlayerCharacterController::InputAttack(const FInputActionValue& _value)
 {
-	ControlledCharacter->InputAttack(EAttackType::NORMAL);
+	uint8 val = static_cast<uint8>(_value.Get<float>()) - 1;
+	ControlledCharacter->InputAttack(static_cast<EAttackType>(val));
 }
 
-void APlayerCharacterController::InputAttackSmash(const FInputActionValue& _value)
+void APlayerCharacterController::InputAttackEnd(const FInputActionValue& _value)
 {
-	ControlledCharacter->InputAttack(EAttackType::SMASH);
-}
-
-void APlayerCharacterController::InputAttackSkill(const FInputActionValue& _value)
-{
-	ControlledCharacter->InputAttack(EAttackType::SKILL);
+	ControlledCharacter->InputAttackEnd();
 }

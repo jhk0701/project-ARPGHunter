@@ -38,8 +38,7 @@ void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _p
 {
 	TObjectPtr<UAction> DodgeAction = CurWeaponType->DodgeAction;
 
-	if (DodgeAction == nullptr || 
-		DodgeAction->Montage == nullptr ||
+	if (DodgeAction->Montage == nullptr ||
 		OwnerAnimInstance->Montage_IsPlaying(DodgeAction->Montage))
 		return;
 
@@ -52,6 +51,22 @@ void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _p
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeAction->Montage);
 	else
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeAction->Montage);
+}
+
+void UActionComponent::PlayHitAction(bool _isDead)
+{
+	if (CurWeaponType->HitMontage == nullptr)
+		return;
+
+	// 피격 모션 실행 시, 콤보 초기화
+	OwnerAnimInstance->Montage_Play(CurWeaponType->HitMontage);
+
+	if (_isDead)
+		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), CurWeaponType->HitMontage);
+	else
+		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), CurWeaponType->HitMontage);
+
+	SetActionResetTimer(1.0f);
 }
 
 void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
@@ -92,21 +107,10 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
 }
 
-
-void UActionComponent::PlayHitAction(bool _isDead)
+void UActionComponent::ProcessAttackEnd()
 {
-	if (CurWeaponType->HitMontage == nullptr)
-		return;
+	
 
-	// 피격 모션 실행 시, 콤보 초기화
-	OwnerAnimInstance->Montage_Play(CurWeaponType->HitMontage);
-
-	if (_isDead)
-		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), CurWeaponType->HitMontage);
-	else
-		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), CurWeaponType->HitMontage);
-
-	SetActionResetTimer(1.0f);
 }
 
 void UActionComponent::SetActionResetTimer(float _second)

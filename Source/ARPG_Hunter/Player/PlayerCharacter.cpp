@@ -131,6 +131,16 @@ void APlayerCharacter::InputAttack(EAttackType _eType)
 	);
 }
 
+void APlayerCharacter::InputAttackEnd()
+{
+	// 현재 모든 입력 중 작업 완료 처리
+	// 필요한 경우에 각 공격 입력 액션을 분리해서 처리
+	if (ActionComp->IsValid() == false || StatComp->IsDead())
+		return;
+
+	
+}
+
 void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 {
 	if (ActionComp->IsValid() == false)
