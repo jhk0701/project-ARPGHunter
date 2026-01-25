@@ -35,6 +35,9 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> AttackSmashActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Smash.IA_Attack_Smash'"));
 	if (AttackSmashActionFinder.Succeeded())
 		AttackSmashAction = AttackSmashActionFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackSkillActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack_Skill.IA_Attack_Skill'"));
+	if (AttackSkillActionFinder.Succeeded())
+		AttackSkillAction = AttackSkillActionFinder.Object;
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -68,6 +71,7 @@ void APlayerCharacterController::SetupInputComponent()
 
 		InputComp->BindAction(AttackNormalAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackNormal);
 		InputComp->BindAction(AttackSmashAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackSmash);
+		InputComp->BindAction(AttackSkillAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttackSkill);
 	}	
 }
 
@@ -124,4 +128,9 @@ void APlayerCharacterController::InputAttackNormal(const FInputActionValue& _val
 void APlayerCharacterController::InputAttackSmash(const FInputActionValue& _value)
 {
 	ControlledCharacter->InputAttack(EAttackType::SMASH);
+}
+
+void APlayerCharacterController::InputAttackSkill(const FInputActionValue& _value)
+{
+	ControlledCharacter->InputAttack(EAttackType::SKILL);
 }

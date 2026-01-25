@@ -25,6 +25,7 @@ enum class EAttackType : uint8
 {
 	NORMAL		UMETA(DisplayName = "Normal"),
 	SMASH		UMETA(DisplayName = "SMASH"),
+	SKILL 		UMETA(DisplayName = "Skill"),
 
 	END			UMETA(Hidden),
 };

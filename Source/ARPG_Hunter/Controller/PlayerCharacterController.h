@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -33,6 +33,8 @@ private:
 	TObjectPtr<UInputAction> AttackNormalAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> AttackSmashAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> AttackSkillAction;
 
 
 	UPROPERTY(VisibleAnywhere)
@@ -57,6 +59,8 @@ public:
 	void InputAttackNormal(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputAttackSmash(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputAttackSkill(const FInputActionValue& _value);
 
 protected:
 	void BeginPlay() override;
