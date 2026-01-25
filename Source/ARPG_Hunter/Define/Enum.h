@@ -27,5 +27,15 @@ enum class EAttackType : uint8
 	SMASH		UMETA(DisplayName = "Smash"),
 	SKILL 		UMETA(DisplayName = "Skill"),
 
-	END			UMETA(Hidden),
+	END			UMETA(Hidden)
+};
+
+UENUM(BlueprintType)
+enum class EActionProcess : uint8
+{
+	START			UMETA(DisplayName = "Start"),
+	IN_PROGRESS		UMETA(DisplayName = "InProgress"),
+	COMPLETE		UMETA(DisplayName = "Complete"),
+
+	NONE			UMETA(Hidden)
 };

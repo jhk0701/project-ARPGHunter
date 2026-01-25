@@ -4,15 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "SetEnableNextAction.generated.h"
+#include "Define/Enum.h"
+#include "ActionProcessNotify.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API USetEnableNextAction : public UAnimNotify
+class ARPG_HUNTER_API UActionProcessNotify : public UAnimNotify
 {
 	GENERATED_BODY()
+private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess="true"))
+	EActionProcess ProcessType;
+
 public:
 	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 };

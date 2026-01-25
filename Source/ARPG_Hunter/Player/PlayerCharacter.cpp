@@ -121,21 +121,21 @@ void APlayerCharacter::InputDodge()
 	);
 }
 
-void APlayerCharacter::InputAttack(EAttackType _type)
+void APlayerCharacter::InputAttack(EAttackType _eType)
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	ActionComp->PlayAttackAction(_type,
+	ActionComp->PlayAttackAction(_eType,
 		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
 	);
 }
 
-void APlayerCharacter::EnableNextAction(bool _enable)
+void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 {
 	if (ActionComp->IsValid() == false)
 		return;
-	ActionComp->SetEnableNextAction(_enable);
+	ActionComp->SetActionProcess(_eProcess);
 }
 
 void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
@@ -152,12 +152,12 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 
 void APlayerCharacter::HandleAttackNotify(EAttackDirection _eAttackDir)
 {
-	// TODO : 리팩토링 필요
 	FVector actorFwd = GetActorForwardVector();
 	TArray<FHitResult> HitResults;
 	bool IsHit = false;
 	float range = ActionComp->GetAttackRange();
 
+	// TODO : 리팩토링 필요
 	switch (_eAttackDir)
 	{
 	case EAttackDirection::FRONT:
@@ -165,11 +165,11 @@ void APlayerCharacter::HandleAttackNotify(EAttackDirection _eAttackDir)
 			GetWorld(),
 			GetActorLocation() + actorFwd * 100.0f,
 			GetActorLocation() + actorFwd * 100.0f,
-			FVector(range, 100, 10),
+			FVector(range, 100, 100),
 			actorFwd.Rotation(),
 			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 			false, { this }, 
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			HitResults,
 			true
 		);
@@ -179,11 +179,11 @@ void APlayerCharacter::HandleAttackNotify(EAttackDirection _eAttackDir)
 			GetWorld(),
 			GetActorLocation() + actorFwd * 100.0f,
 			GetActorLocation() + actorFwd * 100.0f,
-			FVector(100, range, 10),
+			FVector(100, range, 100),
 			actorFwd.Rotation(),
 			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 			false, { this }, 
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			HitResults,
 			true
 		);
@@ -196,7 +196,7 @@ void APlayerCharacter::HandleAttackNotify(EAttackDirection _eAttackDir)
 			range,
 			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 			false, { this }, 
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			HitResults,
 			true
 		);

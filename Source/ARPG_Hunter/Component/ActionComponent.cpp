@@ -30,8 +30,8 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 void UActionComponent::ResetAction()
 {
 	CurAttackActionID = 0;
+	CurActionProcess = EActionProcess::NONE;
 	bIsInAttackCombo = false;
-	bIsEnableNextAction = true;
 }
 
 void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
@@ -69,8 +69,8 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 		return;
 
 	CurAttackActionID = id;
+	CurActionProcess = EActionProcess::START;
 	bIsInAttackCombo = true;
-	bIsEnableNextAction = false;
 
 	OwnerAnimInstance->Montage_Play(Action->Montage);
 
@@ -81,7 +81,7 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 {
 	// 다음 공격이 가능한 상태인지 확인
 	// 스매시 공격 중 일반 공격으로 전환 불가
-	if (bIsEnableNextAction == false ||
+	if (CurActionProcess < EActionProcess::COMPLETE ||
 		OwnerAnimInstance->Montage_IsPlaying(CurWeaponType->HitMontage))
 		return false;
 

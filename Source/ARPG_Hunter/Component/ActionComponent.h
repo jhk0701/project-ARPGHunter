@@ -9,6 +9,7 @@
 
 struct FWeaponTypeData;
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
 {
@@ -19,9 +20,8 @@ private:
 	
 	TObjectPtr<FWeaponTypeData> CurWeaponType;
 	uint8 CurAttackActionID{ 0 };
+	EActionProcess CurActionProcess{ EActionProcess::NONE };
 	bool bIsInAttackCombo{ false };
-
-	bool bIsEnableNextAction{ true };
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float ActionResetSecond{ 1.5f };
@@ -38,7 +38,7 @@ public:
 
 	void Init(UAnimInstance* _ownerAnimInstance);
 	void ResetAction();
-	void SetEnableNextAction(bool _enable) { bIsEnableNextAction = _enable; }
+	void SetActionProcess(EActionProcess _eProcess) { CurActionProcess = _eProcess; }
 
 	bool IsValid() { return CurWeaponType != nullptr; }
 

@@ -9,6 +9,7 @@
 #include "PlayerCharacter.generated.h"
 
 enum class EAttackType : uint8;
+enum class EActionProcess : uint8;
 
 UCLASS()
 class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler
@@ -67,7 +68,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void InputDodge();
-	void InputAttack(EAttackType _type);
+	void InputAttack(EAttackType _eType);
 
 	void SetInputDirection(FVector2D _dir) 
 	{ 
@@ -77,7 +78,8 @@ public:
 	const FVector2D& GetInputDirection() { return InputDirection; }
 	void SetIsSprint(bool _isSprint);
 	bool GetIsSprint() { return IsSprint; }
-	void EnableNextAction(bool _enable);
+
+	void SetActionProcess(EActionProcess _eProcess);
 
 	// IHitable을(를) 통해 상속됨
 	void HitBy(const FHitInfo& _hitInfo) override;
