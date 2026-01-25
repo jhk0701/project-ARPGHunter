@@ -16,28 +16,38 @@ class ARPG_HUNTER_API UPlayerStatComponent : public UStatComponent
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint32 MaxStamina{ 100 };
+	uint16 MaxStamina{ 100 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint32 StaminaRecoveryPerSecond{ 10 };
+	uint16 StaminaRecoveryPerSecond{ 10 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	float StaminaRecoveryRate{ 0.1f };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	float StaminaRecoveryPauseTime{ 1.0f };
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
 	uint16 Stamina{ 100 };
+
+	UPROPERTY(EditAnywhere, Category = "Stat|Skill", meta = (AllowPrivateAccess = "true"))
+	uint8 MaxSkill{ 100 };
+	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
+	uint8 Skill{ 0 };
 
 	FTimerHandle StaminaRecoveryTimer;
 	void StartStaminaRecovery();
 
 public:
 	FOnStatValueChanged OnStaminaChanged;
+	FOnStatValueChanged OnSkillChanged;
+
 	void Init() override;
 
-	uint16 GetStamina() { return Stamina; }
 	uint16 GetMaxStamina() { return MaxStamina; }
-
+	uint16 GetStamina() { return Stamina; }
 	bool TryUseStamina(uint16 _amount);
 	void RecoverStamina(uint16 _amount);
-
 	void PauseAndRestartStaminaRecovery(float _pauseSecond);
+
+	uint8 GetMaxSkill() { return MaxSkill; }
+	uint8 GetSkill() { return Skill; }
+	bool TryUseSkill(uint8 _amount);
+	void GainSkill(uint8 _amount);
 };

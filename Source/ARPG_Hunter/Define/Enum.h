@@ -39,3 +39,5 @@ enum class EActionProcess : uint8
 
 	NONE			UMETA(Hidden)
 };
+
+FName EnumToName(EActionProcess _value);

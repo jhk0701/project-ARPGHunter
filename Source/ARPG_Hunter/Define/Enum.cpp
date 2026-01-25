@@ -13,3 +13,19 @@ FName EnumToName(EWeaponType _value)
 		return FName(TEXT("None"));
 	}
 }
+
+FName EnumToName(EActionProcess _value)
+{
+	switch (_value)
+	{
+	case EActionProcess::START:
+		return FName(TEXT("Start"));
+	case EActionProcess::IN_PROGRESS:
+		return FName(TEXT("InProgress"));
+	case EActionProcess::COMPLETE:
+		return FName(TEXT("Complete"));
+	case EActionProcess::NONE: __fallthrough;
+	default:
+		return FName(TEXT("None"));
+	}
+}

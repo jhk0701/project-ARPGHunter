@@ -9,6 +9,8 @@ void UPlayerStatComponent::Init()
 
 	Stamina = MaxStamina;
 	StartStaminaRecovery();
+
+	Skill = 0;
 }
 
 void UPlayerStatComponent::StartStaminaRecovery()
@@ -63,4 +65,25 @@ void UPlayerStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond)
 		true,
 		_pauseSecond
 	);
+}
+
+bool UPlayerStatComponent::TryUseSkill(uint8 _amount)
+{
+	if (Skill < _amount)
+		return false;
+
+	Skill -= _amount;
+	OnSkillChanged.Broadcast(Skill, MaxSkill);
+
+	return true;
+}
+
+void UPlayerStatComponent::GainSkill(uint8 _amount)
+{
+	if (Skill == MaxSkill)
+		return;
+
+	Skill = FMath::Min<uint8>(MaxSkill, Skill + _amount);
+
+	OnSkillChanged.Broadcast(Skill, MaxSkill);
 }

@@ -18,7 +18,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint32 MaxHealth{ 100 };
+	uint16 MaxHealth{ 100 };
 	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	// uint16 Strength{ 10 };
 	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))

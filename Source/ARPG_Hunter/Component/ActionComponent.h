@@ -19,9 +19,10 @@ private:
 	TObjectPtr<UAnimInstance> OwnerAnimInstance;
 	
 	TObjectPtr<FWeaponTypeData> CurWeaponType;
+	bool bIsInAttackCombo{ false };
+
 	uint8 CurAttackActionID{ 0 };
 	EActionProcess CurActionProcess{ EActionProcess::NONE };
-	bool bIsInAttackCombo{ false };
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float ActionResetSecond{ 1.5f };
