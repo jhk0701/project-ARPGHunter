@@ -206,6 +206,7 @@ uint16 APlayerCharacter::CalculateBaseDamage()
 uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
 {
 	int32 critial = FMath::Rand() % 100;
+
 	if (critial <= StatComp->GetCriticalPer())
 		_damage *= (1.0f + StatComp->GetCriticalDamagePer() * 0.01f);
 

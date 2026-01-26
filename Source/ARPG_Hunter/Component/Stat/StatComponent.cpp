@@ -7,7 +7,6 @@ UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
-
 void UStatComponent::Init()
 {
 	Health = MaxHealth;

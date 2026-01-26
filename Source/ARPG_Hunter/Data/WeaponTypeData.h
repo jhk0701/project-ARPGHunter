@@ -1,12 +1,12 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "Data/Action.h"
 #include "WeaponTypeData.generated.h"
 
+class UAction;
 enum class EWeaponType : uint8;
 
 /**

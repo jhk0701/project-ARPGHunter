@@ -8,7 +8,7 @@
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
-#include "Data/Effect.h"
+// #include "Effect/Effect.h"
 
 UActionComponent::UActionComponent()
 {
@@ -105,7 +105,7 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	OwnerAnimInstance->Montage_Play(Action->Montage);
 
 	// 액션 시작 시, 효과 발동
-	ActivateActionEffect(Action->EffectOnStart);
+	// ActivateActionEffect(Action->EffectOnStart);
 
 	/*if (CurActionInput < EActionInput::HOLD)
 		SetActionResetTimer(ActionResetSecond);*/
@@ -223,7 +223,7 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 	}
 
 	// 공격 히트 시, 효과 발동 (자기 버프)
-	ActivateActionEffect(CurAction->EffectOnHit);
+	// ActivateActionEffect(CurAction->EffectOnHit);
 
 	return IsHit;
 }
@@ -231,15 +231,15 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 
 void UActionComponent::ActivateActionEffect(const TArray<FActionEffect>& _effectArray)
 {
-	for (const FActionEffect& effect : _effectArray)
-	{
-		FEffectContext context
-		{
-			effect.Value,
-			effect.Duration,
-			GetOwner()
-		};
+	//for (const FActionEffect& effect : _effectArray)
+	//{
+	//	FEffectContext context
+	//	{
+	//		effect.Value,
+	//		effect.Duration,
+	//		GetOwner()
+	//	};
 
-		effect.Effect->Activate(context);
-	}
+	//	effect.Effect->Activate(context);
+	//}
 }

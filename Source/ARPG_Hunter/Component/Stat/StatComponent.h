@@ -6,6 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "StatComponent.generated.h"
 
+//struct FEffectHandle 
+//{
+//	FTimerHandle Timer;
+//	FEffectContext Context;
+//};
+
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, uint16, uint16)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,6 +36,18 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	uint16 Health{ 100 };
+
+	// 효과 처리
+	// 상시 효과
+	TMap<TObjectPtr<class UEffect>, FTimerHandle> MapEffect;
+	// 피격 이벤트
+	
+	// 핸들 - 이펙트
+	// 이펙트 -> 타이머 핸들 찾기
+	// 이펙트 도입 시, FTimerHandle - 이펙트 객체 맵핑, 컨텍스트
+	// FTimerHandler -> 0.5초 간격 반복 -> 기간 완료 시, 해당 FTimerHandle 해제
+	// 중복 효과? -> Duration 추가
+	
 
 public:	
 	FOnStatValueChanged OnHealthChanged;

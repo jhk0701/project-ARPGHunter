@@ -19,18 +19,18 @@ public:
 };
 
 
-USTRUCT(BlueprintType)
-struct FActionEffect 
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	uint32 Value;
-	UPROPERTY(EditAnywhere)
-	float Duration;
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UEffect> Effect;
-};
+//USTRUCT(BlueprintType)
+//struct FActionEffect 
+//{
+//	GENERATED_BODY()
+//public:
+//	UPROPERTY(EditAnywhere)
+//	uint32 Value;
+//	UPROPERTY(EditAnywhere)
+//	float Duration;
+//	UPROPERTY(EditAnywhere)
+//	TObjectPtr<class UEffect> Effect;
+//};
 
 /**
  * 
@@ -54,8 +54,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
 
-	UPROPERTY(EditAnywhere, Category = "ActionEffect")
+	/*UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<FActionEffect> EffectOnStart;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<FActionEffect> EffectOnHit;
+	TArray<FActionEffect> EffectOnHit;*/
 };
