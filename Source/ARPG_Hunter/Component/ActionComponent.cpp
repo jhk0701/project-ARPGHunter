@@ -105,15 +105,7 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	OwnerAnimInstance->Montage_Play(Action->Montage);
 
 	// 액션 시작 시, 효과 발동
-	for(const FActionEffect& effect :Action->EffectOnStart)
-	{
-		FEffectContext context
-		{
-			effect.EffectValue,
-			GetOwner()
-		};
-		effect.Effect->ActivateEffect(context);
-	}
+	ActivateActionEffect(Action->EffectOnStart);
 
 	/*if (CurActionInput < EActionInput::HOLD)
 		SetActionResetTimer(ActionResetSecond);*/
@@ -233,5 +225,23 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 		break;
 	}
 
+	// 공격 히트 시, 효과 발동 (자기 버프)
+	ActivateActionEffect(CurAction->EffectOnHit);
+
 	return IsHit;
+}
+
+
+void UActionComponent::ActivateActionEffect(const TArray<FActionEffect>& _effectArray)
+{
+	for (const FActionEffect& effect : _effectArray)
+	{
+		FEffectContext context
+		{
+			effect.EffectValue,
+			GetOwner()
+		};
+
+		effect.Effect->ActivateEffect(context);
+	}
 }

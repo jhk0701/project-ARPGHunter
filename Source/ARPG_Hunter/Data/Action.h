@@ -54,4 +54,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<FActionEffect> EffectOnStart;
+	UPROPERTY(EditAnywhere, Category = "ActionEffect")
+	TArray<FActionEffect> EffectOnHit;
 };
