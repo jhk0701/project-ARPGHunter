@@ -198,6 +198,7 @@ void APlayerCharacter::OnDead()
 	// 던전 실패 UI 표시 등등
 }
 
+
 uint16 APlayerCharacter::CalculateBaseDamage()
 {
 	return StatComp->GetAttack() * (1.0f + ActionComp->GetAttackActionDamagePer() * 0.01f);
@@ -211,4 +212,9 @@ uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
 		_damage *= (1.0f + StatComp->GetCriticalDamagePer() * 0.01f);
 
 	return _damage;
+}
+
+void APlayerCharacter::AddEffect(TObjectPtr<class UEffect> _effect)
+{
+	StatComp->AddEffect(_effect);
 }

@@ -92,5 +92,5 @@ public:
 	bool IsDead();
 	void OnDead();
 
-	UPlayerStatComponent* GetStatComp() { return StatComp; }
+	void AddEffect(TObjectPtr<class UEffect> _effect);
 };

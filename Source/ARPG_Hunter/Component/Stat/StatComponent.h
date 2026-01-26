@@ -6,13 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "StatComponent.generated.h"
 
-//struct FEffectHandle 
-//{
-//	FTimerHandle Timer;
-//	FEffectContext Context;
-//};
+class UEffect;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, uint16, uint16)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UStatComponent : public UActorComponent
@@ -36,21 +33,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	uint16 Health{ 100 };
-
-	// 효과 처리
-	// 상시 효과
-	TMap<TObjectPtr<class UEffect>, FTimerHandle> MapEffect;
-	// 피격 이벤트
 	
-	// 핸들 - 이펙트
-	// 이펙트 -> 타이머 핸들 찾기
-	// 이펙트 도입 시, FTimerHandle - 이펙트 객체 맵핑, 컨텍스트
-	// FTimerHandler -> 0.5초 간격 반복 -> 기간 완료 시, 해당 FTimerHandle 해제
+	// 효과 관리용 컨테이너 : 이펙트 -> 타이머 핸들 찾기
+	TMap<TObjectPtr<UEffect>, FTimerHandle> MapEffect;
 	// 중복 효과? -> Duration 추가
+	// 효과 중복인지 판단 -> UEffect의 ID -> 데이터테이블 기준 ID
 	
-
 public:	
 	FOnStatValueChanged OnHealthChanged;
+	FOnHitEvent OnHitEvent; // 피격 이벤트
 
 	virtual void Init();
 	virtual void TakeDamage(uint16 _damage);
@@ -65,4 +56,7 @@ public:
 
 	uint8 GetCriticalPer() { return CriticalPer; }
 	uint16 GetCriticalDamagePer() { return CriticalDamagePer; }
+
+	void AddEffect(TObjectPtr<UEffect> _effect);
+	void RemoveEffect(TObjectPtr<UEffect> _effect);
 };

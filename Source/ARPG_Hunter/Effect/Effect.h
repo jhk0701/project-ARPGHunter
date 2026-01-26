@@ -33,4 +33,6 @@ protected:
 public:
 	virtual void Activate(uint16 _id, TWeakObjectPtr<AActor> _target, FEffectContext* _context);
 	virtual void Deactivate() {};
+
+	float GetDuration() { return Duration; }
 };
