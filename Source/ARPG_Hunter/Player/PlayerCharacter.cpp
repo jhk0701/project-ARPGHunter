@@ -76,10 +76,12 @@ void APlayerCharacter::BeginPlay()
 		
 		StatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
 		StatusBar->SetStaminaBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
+		StatusBar->SetSkillBarPercent(StatComp->GetSkill(), StatComp->GetMaxSkill());
 
 		// UI 이벤트 바인딩
 		StatComp->OnHealthChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
 		StatComp->OnStaminaChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
+		StatComp->OnSkillChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetSkillBarPercent);
 	}
 }
 

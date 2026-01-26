@@ -44,7 +44,7 @@ void UActionComponent::SetActionProcess(EActionProcess _eProcess)
 	CurActionProcess = _eProcess;
 
 	if (CurActionProcess == EActionProcess::COMPLETE)
-		SetActionResetTimer(1.0);
+		SetActionResetTimer(ActionResetSecond);
 }
 
 void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
@@ -79,7 +79,7 @@ void UActionComponent::PlayHitAction(bool _isDead)
 	else
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), CurWeaponType->HitMontage);
 
-	SetActionResetTimer(1.0f);
+	SetActionResetTimer(ActionResetSecond);
 }
 
 void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)

@@ -27,7 +27,7 @@ private:
 	TObjectPtr<UAnimMontage> CurActionMontage{nullptr};
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float ActionResetSecond{ 1.5f };
+	float ActionResetSecond{ 1.0f };
 	
 	FTimerHandle ActionResetTimer;
 

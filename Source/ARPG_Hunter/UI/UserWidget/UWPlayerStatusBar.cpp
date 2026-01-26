@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWPlayerStatusBar.h"
@@ -15,4 +15,9 @@ void UUWPlayerStatusBar::SetStaminaBarPercent(uint16 _remain, uint16 _max)
 {
 	StaminaBar->SetPercent(static_cast<float>(_remain) / _max);
 	StaminaLabel->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), _remain, _max)));
+}
+
+void UUWPlayerStatusBar::SetSkillBarPercent(uint16 _remain, uint16 _max)
+{
+	SkillBar->SetPercent(static_cast<float>(_remain) / _max);
 }
