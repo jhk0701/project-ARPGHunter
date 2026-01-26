@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,7 +8,8 @@
 
 struct FEffectContext 
 {
-	uint32 EffectValue;
+	uint32 EffectValue{0};
+	float Duration{0.0f};
 	AActor* Target;
 };
 
@@ -21,5 +22,5 @@ class ARPG_HUNTER_API UEffect : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	virtual void ActivateEffect(const FEffectContext& _context) {};
+	virtual void Activate(const FEffectContext& _context) {};
 };

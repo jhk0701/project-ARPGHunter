@@ -168,6 +168,8 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	
 	if (IsHit)
 	{
+		uint16 Damage = CalculateBaseDamage();
+		
 		for (const FHitResult& hit : HitResults)
 		{
 			IHitable* Hitable = Cast<IHitable>(hit.GetActor());
@@ -176,7 +178,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 
 			FHitInfo Hit
 			{
-				ActionComp->GetAttackActionDamage(StatComp->GetAttack()),
+				CalculateCritical(Damage),
 				ActionComp->GetAttackActionStaggerDamage()
 			};
 
@@ -194,4 +196,18 @@ void APlayerCharacter::OnDead()
 {
 	// TODO : 플레이어 사망 후 처리
 	// 던전 실패 UI 표시 등등
+}
+
+uint16 APlayerCharacter::CalculateBaseDamage()
+{
+	return StatComp->GetAttack() * (1.0f + ActionComp->GetAttackActionDamagePer() * 0.01f);
+}
+
+uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
+{
+	int32 critial = FMath::Rand() % 100;
+	if (critial <= StatComp->GetCriticalPer())
+		_damage *= (1.0f + StatComp->GetCriticalDamagePer() * 0.01f);
+
+	return _damage;
 }

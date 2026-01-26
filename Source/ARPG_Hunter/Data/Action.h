@@ -25,7 +25,9 @@ struct FActionEffect
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	uint32 EffectValue;
+	uint32 Value;
+	UPROPERTY(EditAnywhere)
+	float Duration;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UEffect> Effect;
 };

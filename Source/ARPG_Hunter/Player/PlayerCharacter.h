@@ -60,6 +60,9 @@ public:
 
 private:
 	void SmoothRotateToInputDir(float DeltaTime);
+	// 기본 데미지 계산
+	uint16 CalculateBaseDamage(); 
+	uint16 CalculateCritical(uint16 _damage);
 
 protected:
 	virtual void BeginPlay() override;

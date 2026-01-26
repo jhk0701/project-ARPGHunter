@@ -1,11 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Data/ResourceRecoveryEffect.h"
 #include "Player/PlayerCharacter.h"
 #include "Component/Stat/PlayerStatComponent.h"
 
-void UResourceRecoveryEffect::ActivateEffect(const FEffectContext& _context)
+void UResourceRecoveryEffect::Activate(const FEffectContext& _context)
 {
 	if (APlayerCharacter* TargetChar = Cast<APlayerCharacter>(_context.Target))
 	{

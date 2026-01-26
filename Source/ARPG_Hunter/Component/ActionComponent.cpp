@@ -154,12 +154,9 @@ void UActionComponent::SetActionResetTimer(float _second)
 	TimerManager.SetTimer(ActionResetTimer, this, &UActionComponent::ResetAction, _second, false);
 }
 
-uint16 UActionComponent::GetAttackActionDamage(uint16 _baseAttack)
+uint16 UActionComponent::GetAttackActionDamagePer()
 {
-	uint16 per = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackDamagePer;
-	float result = _baseAttack * (1.0f + per * 0.01f);
-
-	return static_cast<uint16>(result);
+	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackDamagePer;
 }
 
 uint16 UActionComponent::GetAttackActionStaggerDamage()
@@ -238,10 +235,11 @@ void UActionComponent::ActivateActionEffect(const TArray<FActionEffect>& _effect
 	{
 		FEffectContext context
 		{
-			effect.EffectValue,
+			effect.Value,
+			effect.Duration,
 			GetOwner()
 		};
 
-		effect.Effect->ActivateEffect(context);
+		effect.Effect->Activate(context);
 	}
 }

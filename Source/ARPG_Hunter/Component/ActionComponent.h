@@ -55,7 +55,7 @@ public:
 	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
 	void ProcessAttackEnd();
 
-	uint16 GetAttackActionDamage(uint16 _baseAttack);
+	uint16 GetAttackActionDamagePer();
 	uint16 GetAttackActionStaggerDamage();
 	
 	bool TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult);

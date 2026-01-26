@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,14 +19,14 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	uint16 MaxHealth{ 100 };
-	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	// uint16 Strength{ 10 };
-	// UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	// uint16 Agility{ 10 };
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	uint16 Attack{ 10 };
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	uint16 Defense{ 10 };
+	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	uint8 CriticalPer{ 20 }; // 크리티컬 확률
+	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
+	uint8 CriticalDamagePer{ 100 }; // 크리티컬 시, 증가 데미지
 
 	UPROPERTY(VisibleAnywhere)
 	uint16 Health{ 100 };
@@ -43,4 +43,8 @@ public:
 	uint16 GetMaxHealth() { return MaxHealth; }
 
 	uint16 GetAttack() { return Attack; }
+	uint16 GetDefense() { return Defense; }
+
+	uint8 GetCriticalPer() { return CriticalPer; }
+	uint16 GetCriticalDamagePer() { return CriticalDamagePer; }
 };
