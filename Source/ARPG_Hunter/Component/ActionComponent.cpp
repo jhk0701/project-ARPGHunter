@@ -1,8 +1,9 @@
 
 
 #include "Component/ActionComponent.h"
-#include "Subsystem/DataManager/DataManager.h"
+#include "Kismet/KismetSystemLibrary.h"
 
+#include "Subsystem/DataManager/DataManager.h"
 #include "Define/Enum.h"
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
@@ -174,7 +175,63 @@ uint16 UActionComponent::GetAttackActionStaggerDamage()
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->StaggerDamage;
 }
 
-float UActionComponent::GetAttackRange()
+bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult)
 {
-	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackRange;
+	UAction* CurAction = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID];
+	if (CurAction == nullptr || 
+		CurAction->RangeArray.Num() <= _opt)
+		return false;
+
+	const FActionRange& Range = CurAction->RangeArray[_opt];
+	bool IsHit = false;
+
+	FVector ActorLoc = GetOwner()->GetActorLocation();
+	FVector ActorFwd = GetOwner()->GetActorForwardVector();
+
+	// TODO : 리팩토링 필요
+	switch (Range.Direction)
+	{
+	case EAttackDirection::FRONT:
+		IsHit = UKismetSystemLibrary::BoxTraceMulti(
+			GetWorld(),
+			ActorLoc + ActorFwd * 100.0f,
+			ActorLoc + ActorFwd * 100.0f,
+			FVector(Range.Range, 100, 100),
+			ActorFwd.Rotation(),
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+			false, { GetOwner() },
+			EDrawDebugTrace::None,
+			_outHitResult,
+			true
+		);
+		break;
+	case EAttackDirection::FRONT_WIDE:
+		IsHit = UKismetSystemLibrary::BoxTraceMulti(
+			GetWorld(),
+			ActorLoc + ActorFwd * 100.0f,
+			ActorLoc + ActorFwd * 100.0f,
+			FVector(100, Range.Range, 100),
+			ActorFwd.Rotation(),
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+			false, { GetOwner() },
+			EDrawDebugTrace::None,
+			_outHitResult,
+			true
+		);
+		break;
+	case EAttackDirection::AROUND:
+		IsHit = UKismetSystemLibrary::SphereTraceMulti(
+			GetWorld(),
+			ActorLoc, ActorLoc,
+			Range.Range,
+			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
+			false, { GetOwner() },
+			EDrawDebugTrace::None,
+			_outHitResult,
+			true
+		);
+		break;
+	}
+
+	return IsHit;
 }

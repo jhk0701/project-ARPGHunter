@@ -8,6 +8,18 @@
 #include "Action.generated.h"
 
 USTRUCT(BlueprintType)
+struct FActionRange 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float Range;
+	UPROPERTY(EditAnywhere)
+	EAttackDirection Direction;
+};
+
+
+USTRUCT(BlueprintType)
 struct FActionEffect 
 {
 	GENERATED_BODY()
@@ -36,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
 	UPROPERTY(EditAnywhere)
-	float AttackRange{ 100.0f };
+	TArray<FActionRange> RangeArray;
 	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
 

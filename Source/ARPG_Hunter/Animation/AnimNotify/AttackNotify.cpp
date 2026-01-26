@@ -1,7 +1,8 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Animation/AnimNotify/AttackNotify.h"
+#include "Interface/AttackNotifyHandler.h"
 
 void UAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -9,5 +10,5 @@ void UAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* 
 
 	IAttackNotifyHandler* Handler = Cast<IAttackNotifyHandler>(MeshComp->GetOwner());
 	if (Handler)
-		Handler->HandleAttackNotify(AttackDirection);
+		Handler->HandleAttackNotify(Option);
 }

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -72,7 +72,7 @@ public:
 
 	virtual void Attack();
 	// IAttackNotifyHandler을(를) 통해 상속됨
-	virtual void HandleAttackNotify(EAttackDirection _eAttackDir) override;
+	virtual void HandleAttackNotify(uint8 _opt) override;
 
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;

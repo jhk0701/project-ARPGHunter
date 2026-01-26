@@ -5,7 +5,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 #include "Component/Stat/PlayerStatComponent.h"
 #include "Component/EquipmentComponent.h"
@@ -160,59 +159,11 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 		OnDead();
 }
 
-void APlayerCharacter::HandleAttackNotify(EAttackDirection _eAttackDir)
+void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
-	FVector actorFwd = GetActorForwardVector();
 	TArray<FHitResult> HitResults;
-	bool IsHit = false;
-	float range = ActionComp->GetAttackRange();
-
-	// TODO : 리팩토링 필요
-	switch (_eAttackDir)
-	{
-	case EAttackDirection::FRONT:
-		IsHit = UKismetSystemLibrary::BoxTraceMulti(
-			GetWorld(),
-			GetActorLocation() + actorFwd * 100.0f,
-			GetActorLocation() + actorFwd * 100.0f,
-			FVector(range, 100, 100),
-			actorFwd.Rotation(),
-			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
-			false, { this }, 
-			EDrawDebugTrace::None,
-			HitResults,
-			true
-		);
-		break;
-	case EAttackDirection::FRONT_WIDE:
-		IsHit = UKismetSystemLibrary::BoxTraceMulti(
-			GetWorld(),
-			GetActorLocation() + actorFwd * 100.0f,
-			GetActorLocation() + actorFwd * 100.0f,
-			FVector(100, range, 100),
-			actorFwd.Rotation(),
-			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
-			false, { this }, 
-			EDrawDebugTrace::None,
-			HitResults,
-			true
-		);
-		break;
-	case EAttackDirection::AROUND:
-		IsHit = UKismetSystemLibrary::SphereTraceMulti(
-			GetWorld(),
-			GetActorLocation(),
-			GetActorLocation(), 
-			range,
-			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
-			false, { this }, 
-			EDrawDebugTrace::None,
-			HitResults,
-			true
-		);
-		break;
-	}
-
+	bool IsHit = ActionComp->TraceAttack(_opt, HitResults);
+	
 	if (IsHit)
 	{
 		for (const FHitResult& hit : HitResults)

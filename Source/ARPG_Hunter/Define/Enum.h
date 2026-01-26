@@ -31,6 +31,15 @@ enum class EAttackType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EAttackDirection : uint8
+{
+	FRONT		UMETA(DisplayName = "Front"),
+	FRONT_WIDE	UMETA(DisplayName = "Front Wide"),
+	AROUND		UMETA(DisplayName = "Around"),
+};
+
+
+UENUM(BlueprintType)
 enum class EActionProcess : uint8
 {
 	START			UMETA(DisplayName = "Start"),
@@ -48,3 +57,4 @@ enum class EActionInput : uint8
 	NORMAL		UMETA(DisplayName = "Normal"),
 	HOLD		UMETA(DisplayName = "Hold"),
 };
+

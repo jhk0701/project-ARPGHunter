@@ -8,7 +8,7 @@
 #include "ActionComponent.generated.h"
 
 struct FWeaponTypeData;
-
+struct FActionRange;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
@@ -54,5 +54,6 @@ public:
 
 	uint16 GetAttackActionDamage(uint16 _baseAttack);
 	uint16 GetAttackActionStaggerDamage();
-	float GetAttackRange();
+	
+	bool TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult);
 };

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -84,7 +84,7 @@ void AMonsterBase::Attack()
 	AnimInstance->Montage_Play(AttackMontage);
 }
 
-void AMonsterBase::HandleAttackNotify(EAttackDirection _eAttackDir)
+void AMonsterBase::HandleAttackNotify(uint8 _opt)
 {
 	// 히트 판정
 	FVector Loc = GetActorLocation();
