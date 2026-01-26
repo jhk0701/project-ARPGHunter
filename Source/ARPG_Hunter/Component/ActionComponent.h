@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,6 +23,8 @@ private:
 
 	uint8 CurAttackActionID{ 0 };
 	EActionProcess CurActionProcess{ EActionProcess::NONE };
+	EActionInput CurActionInput{EActionInput::NORMAL};
+	TObjectPtr<UAnimMontage> CurActionMontage{nullptr};
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float ActionResetSecond{ 1.5f };
@@ -39,9 +41,10 @@ public:
 
 	void Init(UAnimInstance* _ownerAnimInstance);
 	void ResetAction();
-	void SetActionProcess(EActionProcess _eProcess) { CurActionProcess = _eProcess; }
+	void SetActionProcess(EActionProcess _eProcess);
 
 	bool IsValid() { return CurWeaponType != nullptr; }
+	bool IsInProgress() { return CurActionProcess == EActionProcess::IN_PROGRESS; }
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
 	void PlayHitAction(bool _isDead);

@@ -1,4 +1,4 @@
-﻿
+
 
 #include "Component/ActionComponent.h"
 #include "Subsystem/DataManager/DataManager.h"
@@ -24,6 +24,7 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 {
 	OwnerAnimInstance = _ownerAnimInstance;
 
+	// TODO: 플레이어 데이터를 기반으로 장비 모션을 적용
 	UDataManager* DataManager = GetOwner()->GetGameInstance()->GetSubsystem<UDataManager>();
 	CurWeaponType = DataManager->GetWeaponTypeData(EWeaponType::SWORD);
 }
@@ -32,14 +33,24 @@ void UActionComponent::ResetAction()
 {
 	CurAttackActionID = 0;
 	CurActionProcess = EActionProcess::NONE;
+	CurActionInput = EActionInput::NORMAL;
+	CurActionMontage = nullptr;
 	bIsInAttackCombo = false;
+}
+
+void UActionComponent::SetActionProcess(EActionProcess _eProcess)
+{
+	CurActionProcess = _eProcess;
+
+	if (CurActionProcess == EActionProcess::COMPLETE)
+		SetActionResetTimer(1.0);
 }
 
 void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
 	TObjectPtr<UAction> DodgeAction = CurWeaponType->DodgeAction;
 
-	if (DodgeAction->Montage == nullptr ||
+	if (IsInProgress() || DodgeAction->Montage == nullptr ||
 		OwnerAnimInstance->Montage_IsPlaying(DodgeAction->Montage))
 		return;
 
@@ -86,6 +97,8 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 
 	CurAttackActionID = id;
 	CurActionProcess = EActionProcess::START;
+	CurActionInput = Action->InputType;
+	CurActionMontage = Action->Montage;
 	bIsInAttackCombo = true;
 
 	OwnerAnimInstance->Montage_Play(Action->Montage);
@@ -101,9 +114,11 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 		effect.Effect->ActivateEffect(context);
 	}
 
-	SetActionResetTimer(ActionResetSecond);
+	/*if (CurActionInput < EActionInput::HOLD)
+		SetActionResetTimer(ActionResetSecond);*/
 }
 
+// 현재 받은 공격 입력이 유효한 입력인지 확인
 bool UActionComponent::IsValidAttackInput(EAttackType _type)
 {
 	// 다음 공격이 가능한 상태인지 확인
@@ -121,6 +136,19 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 
 void UActionComponent::ProcessAttackEnd()
 {
+	if (CurActionInput < EActionInput::HOLD || CurActionMontage == nullptr)
+		return;
+
+	if (CurActionProcess < EActionProcess::IN_PROGRESS)
+	{
+		OwnerAnimInstance->Montage_Stop(0.25f, CurActionMontage);
+		ResetAction();
+		return;
+	}
+
+	// 누르는 입력이 종료됨
+	// 현재 재생중인 몽타주를 강제로 Complete 섹션으로 전환
+	OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Complete")), CurActionMontage);
 }
 
 void UActionComponent::SetActionResetTimer(float _second)

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -110,16 +110,16 @@ void APlayerCharacterController::InputSprintEnd(const FInputActionValue& _value)
 
 void APlayerCharacterController::InputDodge(const FInputActionValue& _value)
 {
-	ControlledCharacter->InputDodge();
+	ControlledCharacter->Dodge();
 }
 
 void APlayerCharacterController::InputAttack(const FInputActionValue& _value)
 {
 	uint8 val = static_cast<uint8>(_value.Get<float>()) - 1;
-	ControlledCharacter->InputAttack(static_cast<EAttackType>(val));
+	ControlledCharacter->Attack(static_cast<EAttackType>(val));
 }
 
 void APlayerCharacterController::InputAttackEnd(const FInputActionValue& _value)
 {
-	ControlledCharacter->InputAttackEnd();
+	ControlledCharacter->AttackEnd();
 }

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -41,3 +41,10 @@ enum class EActionProcess : uint8
 };
 
 FName EnumToName(EActionProcess _value);
+
+UENUM(BlueprintType)
+enum class EActionInput : uint8
+{
+	NORMAL		UMETA(DisplayName = "Normal"),
+	HOLD		UMETA(DisplayName = "Hold"),
+};

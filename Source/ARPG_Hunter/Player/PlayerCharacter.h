@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -67,9 +67,9 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	
-	void InputDodge();
-	void InputAttack(EAttackType _eType);
-	void InputAttackEnd();
+	void Dodge();
+	void Attack(EAttackType _eType);
+	void AttackEnd();
 	void SetInputDirection(FVector2D _dir) 
 	{ 
 		InputDirection = _dir; 

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
@@ -110,7 +110,7 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
 }
 
-void APlayerCharacter::InputDodge()
+void APlayerCharacter::Dodge()
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
@@ -121,7 +121,7 @@ void APlayerCharacter::InputDodge()
 	);
 }
 
-void APlayerCharacter::InputAttack(EAttackType _eType)
+void APlayerCharacter::Attack(EAttackType _eType)
 {
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
@@ -131,14 +131,14 @@ void APlayerCharacter::InputAttack(EAttackType _eType)
 	);
 }
 
-void APlayerCharacter::InputAttackEnd()
+void APlayerCharacter::AttackEnd()
 {
 	// 현재 모든 입력 중 작업 완료 처리
 	// 필요한 경우에 각 공격 입력 액션을 분리해서 처리
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	
+	ActionComp->ProcessAttackEnd();
 }
 
 void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
