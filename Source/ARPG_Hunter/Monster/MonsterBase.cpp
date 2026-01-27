@@ -133,20 +133,5 @@ void AMonsterBase::OnDead()
 
 bool AMonsterBase::IsDead()
 {
-	return StatComp->IsDead();
+	return false; //StatComp->IsDead();
 }
-
-//// Called every frame
-//void AMonsterBase::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
-//
-//// Called to bind functionality to input
-//void AMonsterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-//{
-//	Super::SetupPlayerInputComponent(PlayerInputComponent);
-//
-//}
-

@@ -16,10 +16,4 @@ void UMonsterAnimInstance::NativeUpdateAnimation(float DeltaSecond)
 	IsMove = MoveSpeed > 0.0f;
 	IsDead = Owner->IsDead();
 
-	/*
-
-	GEngine->AddOnScreenDebugMessage(0, 3.0f, FColor::Red, FString::Printf(TEXT("IsMove : %d"), IsMove ? 1 : 0));
-	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Red, FString::Printf(TEXT("(%f)"), MoveSpeed));
-
-	*/
 }

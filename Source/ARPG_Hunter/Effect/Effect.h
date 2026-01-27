@@ -26,6 +26,7 @@ struct FEffectParam
 	EEffectTargetStat TargetStat;
 	uint32 Value;
 	float Duration;
+	float RepeatInterval{1.0f};
 };
 
 /**
