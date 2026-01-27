@@ -2,7 +2,7 @@
 
 
 #include "Effect/PeriodicalEffect/PeriodicalEffect.h"
-#include "Define/Struct.h"
+#include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
 void UPeriodicalEffect::Activate(UStatComponent* _target, FEffectParam* _param)

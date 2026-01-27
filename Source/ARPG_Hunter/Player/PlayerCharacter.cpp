@@ -9,7 +9,6 @@
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
-#include "Data/WeaponTypeData.h"
 #include "Controller/PlayerCharacterController.h"
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"

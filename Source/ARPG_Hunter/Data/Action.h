@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "Define/Struct.h"
 #include "Action.generated.h"
 
+class UEffectData;
 enum class EActionInput : uint8;
 enum class EAttackDirection : uint8;
 
@@ -21,16 +21,6 @@ public:
 	EAttackDirection Direction;
 };
 
-
-USTRUCT()
-struct FActionEffect : public FEffectParam
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UEffectData> EffectData;
-};
 
 /**
  * 
@@ -55,7 +45,7 @@ public:
 	uint16 StaggerDamage{ 10 };
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<FActionEffect> EffectOnStart;
+	TArray<TObjectPtr<UEffectData>> EffectOnStart;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<FActionEffect> EffectOnHit;
+	TArray<TObjectPtr<UEffectData>> EffectOnHit;
 };

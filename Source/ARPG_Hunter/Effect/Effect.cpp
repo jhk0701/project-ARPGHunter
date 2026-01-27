@@ -2,7 +2,7 @@
 
 
 #include "Effect/Effect.h"
-#include "Define/Struct.h"
+#include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
 float UEffect::GetDuration() 

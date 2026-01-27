@@ -9,7 +9,6 @@
 
 struct FWeaponTypeData;
 struct FActionRange;
-struct FActionEffect;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
@@ -35,7 +34,7 @@ private:
 	void SetActionResetTimer(float _second);
 	bool IsValidAttackInput(EAttackType _type);
 
-	void ActivateActionEffect(TArray<FActionEffect>& _effectArray, TObjectPtr<AActor> _target);
+	void ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target);
 
 public:	
 	UActionComponent();

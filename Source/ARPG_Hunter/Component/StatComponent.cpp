@@ -35,10 +35,10 @@ void UStatComponent::TakeDamage(uint16 _damage)
 		return;
 	
 	// 피격 발생
-	bool bHitPredicate = false;
-	OnHitEvent.Broadcast(bHitPredicate); // 피격 시 이벤트 델리게이트 호출
+	bool bHitCanceled = false;
+	OnHitEvent.Broadcast(bHitCanceled); // 피격 시 이벤트 델리게이트 호출
 	
-	if (bHitPredicate) // 결과 true인 경우 return
+	if (bHitCanceled)
 		return;
 
 	if (Health < _damage)
@@ -158,6 +158,13 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 
 void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 {
+	if (MapEffect.Find(_effect) == nullptr)
+		return;
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	if (TimerManager.IsTimerActive(MapEffect[_effect]))
+		TimerManager.ClearTimer(MapEffect[_effect]);
+
 	_effect->Deactivate();
 	MapEffect.Remove(_effect);
 }

@@ -2,7 +2,7 @@
 
 
 #include "Effect/TermEffect/TermEffect.h"
-#include "Define/Struct.h"
+#include "Data/EffectData.h"
 
 void UTermEffect::Activate(UStatComponent* _target, FEffectParam* _param)
 {

@@ -6,6 +6,23 @@
 #include "Engine/DataAsset.h"
 #include "EffectData.generated.h"
 
+USTRUCT()
+struct FEffectParam
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Common")
+	uint32 Value{ 0 };
+	UPROPERTY(EditAnywhere, Category = "Common")
+	float Duration{ 0.0f };
+	UPROPERTY(EditAnywhere, Category = "Repeated")
+	float RepeatInterval{ 1.0f };
+	UPROPERTY(EditAnywhere, Category = "Event")
+	TArray<TObjectPtr<class UEffectData>> EffectsOnEvent;
+};
+
+
 UCLASS()
 class ARPG_HUNTER_API UEffectData : public UDataAsset
 {
@@ -19,5 +36,8 @@ public:
 	TObjectPtr<class UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UEffect> Effect; // 효과 내용
+	TSubclassOf<class UEffect> Effect; // 효과 클래스
+
+	UPROPERTY(EditAnywhere)
+	FEffectParam Param; // 효과값
 };

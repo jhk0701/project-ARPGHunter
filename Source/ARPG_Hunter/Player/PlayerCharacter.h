@@ -13,7 +13,7 @@ enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
 
 UCLASS()
-class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
+class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler, public IEffectable
 {
 	GENERATED_BODY()
 

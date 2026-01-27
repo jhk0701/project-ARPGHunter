@@ -231,13 +231,13 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 }
 
 
-void UActionComponent::ActivateActionEffect(TArray<FActionEffect>& _effectArray, TObjectPtr<AActor> _target)
+void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
 {
 	IEffectable* Effectable = Cast<IEffectable>(_target);
 
 	if (Effectable == nullptr)
 		return;
 
-	for (FActionEffect& effect : _effectArray)
-		Effectable->ApplyEffect(effect.EffectData->Effect, static_cast<FEffectParam*>(&effect));
+	for (const TObjectPtr<class UEffectData>& effect : _effectArray)
+		Effectable->ApplyEffect(effect->Effect, &effect->Param);
 }

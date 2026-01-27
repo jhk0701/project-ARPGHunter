@@ -17,11 +17,11 @@ class ARPG_HUNTER_API UEffect : public UObject
 
 private:
 	TWeakObjectPtr<UStatComponent> TargetComp; // 효과 대상 : 약참조 소유
-	const FEffectParam* Param; // 입력받은 포인터가 가리키는 값은 상수화
+	FEffectParam* Param;
 
 protected:
 	TWeakObjectPtr<UStatComponent> GetTarget() { return TargetComp; }
-	const FEffectParam* GetParam() { return Param; }
+	FEffectParam* GetParam() { return Param; }
 	bool IsValid() { return TargetComp.IsValid() && Param != nullptr; }
 
 public:
