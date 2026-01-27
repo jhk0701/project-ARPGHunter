@@ -151,7 +151,7 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 	FTimerHandle& EffectTimer = MapEffect.Add(_effect);
 	GetWorld()->GetTimerManager().SetTimer(
 		EffectTimer,
-		[&]() { RemoveEffect(_effect); },
+		[this, _effect]() { RemoveEffect(_effect); },
 		_effect->GetDuration(),
 		false);
 }

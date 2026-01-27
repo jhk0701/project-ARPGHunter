@@ -4,17 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Hitable.generated.h"
-
-struct FHitInfo
-{
-	uint16 Damage;
-	uint16 StaggerDamage;
-};
+#include "Effectable.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UHitable : public UInterface
+class UEffectable : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -22,11 +16,11 @@ class UHitable : public UInterface
 /**
  * 
  */
-class ARPG_HUNTER_API IHitable
+class ARPG_HUNTER_API IEffectable
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void HitBy(const FHitInfo& _hitInfo) = 0;
+	 virtual void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam) = 0;
 };

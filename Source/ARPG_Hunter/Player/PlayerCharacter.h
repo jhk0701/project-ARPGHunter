@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/Hitable.h"
+#include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
 #include "PlayerCharacter.generated.h"
 
@@ -12,7 +13,7 @@ enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
 
 UCLASS()
-class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler
+class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
 {
 	GENERATED_BODY()
 
@@ -92,5 +93,6 @@ public:
 	bool IsDead();
 	void OnDead();
 
-	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam);
+	// IEffectable을(를) 통해 상속됨
+	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam) override;
 };

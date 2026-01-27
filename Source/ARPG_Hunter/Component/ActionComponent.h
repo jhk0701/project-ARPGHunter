@@ -35,7 +35,7 @@ private:
 	void SetActionResetTimer(float _second);
 	bool IsValidAttackInput(EAttackType _type);
 
-	void ActivateActionEffect(const TArray<FActionEffect>& _effectArray);
+	void ActivateActionEffect(TArray<FActionEffect>& _effectArray, TObjectPtr<AActor> _target);
 
 public:	
 	UActionComponent();

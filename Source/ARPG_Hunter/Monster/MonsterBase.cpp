@@ -135,3 +135,8 @@ bool AMonsterBase::IsDead()
 {
 	return StatComp->IsDead();
 }
+
+void AMonsterBase::ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam)
+{
+	StatComp->ApplyEffect(_effectClass, _effectParam);
+}

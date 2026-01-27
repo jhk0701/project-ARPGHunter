@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/Hitable.h"
+#include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
 #include "MonsterBase.generated.h"
 
@@ -20,7 +21,7 @@ enum class EMonsterType : uint8
 DECLARE_DELEGATE(FOnAttackMontageEnded);
 
 UCLASS()
-class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IAttackNotifyHandler
+class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
 {
 	GENERATED_BODY()
 
@@ -83,4 +84,8 @@ public:
 
 	float GetRecognitionRange() { return RecognitionRange; }
 	float GetAttackRange() { return AttackRange; }
+
+	// IEffectable을(를) 통해 상속됨
+	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam) override;
+
 };

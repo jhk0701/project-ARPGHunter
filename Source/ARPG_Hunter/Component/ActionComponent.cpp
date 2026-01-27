@@ -1,14 +1,15 @@
-
+﻿
 
 #include "Component/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 #include "Subsystem/DataManager/DataManager.h"
-#include "Define/Enum.h"
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
-// #include "Effect/Effect.h"
+
+#include "Interface/Effectable.h"
+#include "Data/EffectData.h"
 
 UActionComponent::UActionComponent()
 {
@@ -105,7 +106,7 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	OwnerAnimInstance->Montage_Play(Action->Montage);
 
 	// 액션 시작 시, 효과 발동
-	// ActivateActionEffect(Action->EffectOnStart);
+	ActivateActionEffect(Action->EffectOnStart, GetOwner());
 
 	/*if (CurActionInput < EActionInput::HOLD)
 		SetActionResetTimer(ActionResetSecond);*/
@@ -222,24 +223,21 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 		break;
 	}
 
-	// 공격 히트 시, 효과 발동 (자기 버프)
-	// ActivateActionEffect(CurAction->EffectOnHit);
+	// 공격 히트 시, 효과 발동
+	// 자기 버프
+	ActivateActionEffect(CurAction->EffectOnHit, GetOwner());
 
 	return IsHit;
 }
 
 
-void UActionComponent::ActivateActionEffect(const TArray<FActionEffect>& _effectArray)
+void UActionComponent::ActivateActionEffect(TArray<FActionEffect>& _effectArray, TObjectPtr<AActor> _target)
 {
-	//for (const FActionEffect& effect : _effectArray)
-	//{
-	//	FEffectContext context
-	//	{
-	//		effect.Value,
-	//		effect.Duration,
-	//		GetOwner()
-	//	};
+	IEffectable* Effectable = Cast<IEffectable>(_target);
 
-	//	effect.Effect->Activate(context);
-	//}
+	if (Effectable == nullptr)
+		return;
+
+	for (FActionEffect& effect : _effectArray)
+		Effectable->ApplyEffect(effect.EffectData->Effect, static_cast<FEffectParam*>(&effect));
 }
