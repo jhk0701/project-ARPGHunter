@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Define/Struct.h"
 #include "Action.generated.h"
 
 enum class EActionInput : uint8;
@@ -22,17 +23,13 @@ public:
 
 
 USTRUCT()
-struct FActionEffect 
+struct FActionEffect : public FEffectParam
 {
 	GENERATED_BODY()
+
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UEffectData> EffectData;
-
-	UPROPERTY(EditAnywhere)
-	uint32 Value;
-	UPROPERTY(EditAnywhere)
-	float Duration;
 };
 
 /**

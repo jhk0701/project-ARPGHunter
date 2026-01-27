@@ -3,54 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Component/StatComponent.h"
 #include "Effect.generated.h"
 
-class UStatComponent;
-
-UENUM()
-enum class EEffectTargetStat
-{
-	STAT_ATTACK					UMETA(DisplayName = "Attack"),
-	STAT_DEFENSE				UMETA(DisplayName = "Defense"),
-	STAT_CRITICAL_PER			UMETA(DisplayName = "Critical Percent"),
-	STAT_CRITICAL_DMG			UMETA(DisplayName = "Critical Damage"),
-
-	RESOURCE_HEALTH = 100		UMETA(DisplayName = "Health"),
-	RESOURCE_STAMINA			UMETA(DisplayName = "Stamina"),
-	RESOURCE_SKILL				UMETA(DisplayName = "Skill"),
-	RESOURCE_STAGGER			UMETA(DisplayName = "Stagger"),
-};
-
-struct FEffectParam
-{
-	EEffectTargetStat TargetStat;
-	uint32 Value;
-	float Duration;
-	float RepeatInterval{1.0f};
-};
-
+struct FEffectParam;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class ARPG_HUNTER_API UEffect : public UObject
 {
 	GENERATED_BODY()
 
 private:
 	TWeakObjectPtr<UStatComponent> TargetComp; // 효과 대상 : 약참조 소유
-	FEffectParam* Param;
+	const FEffectParam* Param; // 입력받은 포인터가 가리키는 값은 상수화
 
 protected:
 	TWeakObjectPtr<UStatComponent> GetTarget() { return TargetComp; }
+	const FEffectParam* GetParam() { return Param; }
+	bool IsValid() { return TargetComp.IsValid() && Param != nullptr; }
 
 public:
-	virtual void Activate(TWeakObjectPtr<UStatComponent> _target, FEffectParam* _param) 
+	virtual void Activate(UStatComponent* _target, FEffectParam* _param)
 	{
 		TargetComp = _target;
 		Param = _param;
 	};
 	virtual void Deactivate() {};
 
-	float GetDuration() { return Param->Duration; }
+	float GetDuration();
 };
