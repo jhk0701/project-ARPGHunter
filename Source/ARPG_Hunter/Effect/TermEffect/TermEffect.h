@@ -16,6 +16,7 @@ class ARPG_HUNTER_API UTermEffect : public UEffect
 
 public:
 	virtual void Activate(UStatComponent* _target, FEffectParam* _param) override;
+	virtual void Deactivate() override;
 };
 
 

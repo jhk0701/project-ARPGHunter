@@ -11,9 +11,16 @@ void UTermEffect::Activate(UStatComponent* _target, FEffectParam* _param)
 	if (_target == nullptr || _param == nullptr)
 		return;
 
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Term Effect Activate"));
+
 	// 효과의 유효기간 타이머 설정
 	// 타이머 경과 이후, Deactivate 호출
 	_target->RegisterEffect(this); 
+}
+
+void UTermEffect::Deactivate()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, TEXT("Term Effect Deactivate"));
 }
 
 void UAddAttack::Activate(UStatComponent* _target, FEffectParam* _param)

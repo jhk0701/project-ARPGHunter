@@ -65,6 +65,8 @@ void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _p
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeAction->Montage);
 	else
 		OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeAction->Montage);
+
+	ActivateActionEffect(DodgeAction->EffectOnStart, GetOwner());
 }
 
 void UActionComponent::PlayHitAction(bool _isDead)
@@ -238,6 +240,6 @@ void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffec
 	if (Effectable == nullptr)
 		return;
 
-	for (const TObjectPtr<class UEffectData>& effect : _effectArray)
-		Effectable->ApplyEffect(effect->Effect, &effect->Param);
+	for (const TObjectPtr<class UEffectData>& effectData : _effectArray)
+		Effectable->ApplyEffect(effectData->Effect, &effectData->Param);
 }
