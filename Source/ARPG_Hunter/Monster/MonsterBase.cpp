@@ -133,5 +133,5 @@ void AMonsterBase::OnDead()
 
 bool AMonsterBase::IsDead()
 {
-	return false; //StatComp->IsDead();
+	return StatComp->IsDead();
 }
