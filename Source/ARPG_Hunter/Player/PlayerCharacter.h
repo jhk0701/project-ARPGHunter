@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,7 +19,7 @@ class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, pub
 private:
 #pragma region Component
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UPlayerStatComponent> StatComp;
+	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
 	UPROPERTY(VisibleAnywhere)
@@ -92,5 +92,5 @@ public:
 	bool IsDead();
 	void OnDead();
 
-	void AddEffect(TObjectPtr<class UEffect> _effect);
+	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam);
 };

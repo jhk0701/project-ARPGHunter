@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
@@ -6,7 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "Component/Stat/PlayerStatComponent.h"
+#include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
 #include "Data/WeaponTypeData.h"
@@ -22,7 +22,7 @@ APlayerCharacter::APlayerCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 #pragma region Create Comp
-	StatComp = CreateDefaultSubobject<UPlayerStatComponent>(TEXT("StatComp"));
+	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
 	ActionComp = CreateDefaultSubobject<UActionComponent>(TEXT("ActionComp"));
 
@@ -161,6 +161,17 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 		OnDead();
 }
 
+bool APlayerCharacter::IsDead()
+{
+	return StatComp->IsDead();
+}
+
+void APlayerCharacter::OnDead()
+{
+	// TODO : 플레이어 사망 후 처리
+	// 던전 실패 UI 표시 등등
+}
+
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
 	TArray<FHitResult> HitResults;
@@ -187,18 +198,6 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	}
 }
 
-bool APlayerCharacter::IsDead()
-{
-	return StatComp->IsDead();
-}
-
-void APlayerCharacter::OnDead()
-{
-	// TODO : 플레이어 사망 후 처리
-	// 던전 실패 UI 표시 등등
-}
-
-
 uint16 APlayerCharacter::CalculateBaseDamage()
 {
 	return StatComp->GetAttack() * (1.0f + ActionComp->GetAttackActionDamagePer() * 0.01f);
@@ -214,7 +213,7 @@ uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
 	return _damage;
 }
 
-void APlayerCharacter::AddEffect(TObjectPtr<class UEffect> _effect)
+void APlayerCharacter::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
 {
-	StatComp->AddEffect(_effect);
+	StatComp->ApplyEffect(_effectClass, _effectParam);
 }

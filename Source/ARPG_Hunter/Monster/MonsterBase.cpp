@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -6,7 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#include "Component/Stat/MonsterStatComponent.h"
+#include "Component/StatComponent.h"
 #include "Controller/MonsterAIController.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 
@@ -14,7 +14,7 @@ AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
 
-	StatComp = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("StatComp"));
+	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
 	WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
 	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
@@ -43,10 +43,10 @@ void AMonsterBase::BeginPlay()
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
 	{
 		MonsterStatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
-		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetStagger(), StatComp->GetMaxStagger());
+		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
 
 		StatComp->OnHealthChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
-		StatComp->OnStaggerChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
+		StatComp->OnStaminaChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
 	}
 }
 
@@ -59,7 +59,7 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	StatComp->TakeDamage(_hitInfo.Damage);
-	StatComp->TakeStaggerDamage(_hitInfo.StaggerDamage);
+	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
 
 	if (HitMontage == nullptr)
 		return;
