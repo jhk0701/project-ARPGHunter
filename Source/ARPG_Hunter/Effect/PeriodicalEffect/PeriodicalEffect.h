@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Effect/Effect.h"
-#include "RepeatlyActivateEffect.generated.h"
+#include "Effect/TermEffect/TermEffect.h"
+#include "PeriodicalEffect.generated.h"
 
 /**
  * 
  */
 UCLASS(Abstract)
-class ARPG_HUNTER_API URepeatlyActivateEffect : public UEffect
+class ARPG_HUNTER_API UPeriodicalEffect : public UTermEffect
 {
 	GENERATED_BODY()
 private:
@@ -24,7 +24,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URepeatlyRecoverHealth : public URepeatlyActivateEffect
+class ARPG_HUNTER_API URepeatlyRecoverHealth : public UPeriodicalEffect
 {
 	GENERATED_BODY()
 public:
@@ -32,7 +32,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URepeatlyRecoverStamina : public URepeatlyActivateEffect
+class ARPG_HUNTER_API URepeatlyRecoverStamina : public UPeriodicalEffect
 {
 	GENERATED_BODY()
 public:
@@ -40,7 +40,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URepeatlyRecoverSkill : public URepeatlyActivateEffect
+class ARPG_HUNTER_API URepeatlyRecoverSkill : public UPeriodicalEffect
 {
 	GENERATED_BODY()
 public:
@@ -48,7 +48,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URepeatlyDamageHealth : public URepeatlyActivateEffect
+class ARPG_HUNTER_API URepeatlyDamageHealth : public UPeriodicalEffect
 {
 	GENERATED_BODY()
 public:
@@ -56,7 +56,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URepeatlyDamageStamina : public URepeatlyActivateEffect
+class ARPG_HUNTER_API URepeatlyDamageStamina : public UPeriodicalEffect
 {
 	GENERATED_BODY()
 public:

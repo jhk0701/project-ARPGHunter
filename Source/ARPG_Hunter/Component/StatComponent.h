@@ -12,6 +12,21 @@ struct FEffectParam;
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, uint16, uint16)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
 
+USTRUCT()
+struct FStat 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	uint16 Attack{ 10 };
+	UPROPERTY(EditAnywhere)
+	uint16 Defense{ 10 };
+	UPROPERTY(EditAnywhere)
+	uint8 CriticalPer{ 20 }; // 크리티컬 확률
+	UPROPERTY(EditAnywhere)
+	uint8 CriticalDamagePer{ 100 }; // 크리티컬 시, 증가 데미지
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UStatComponent : public UActorComponent
 {
@@ -21,15 +36,8 @@ public:
 	UStatComponent();
 
 private:
-
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint16 Attack{ 10 };
-	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint16 Defense{ 10 };
-	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint8 CriticalPer{ 20 }; // 크리티컬 확률
-	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	uint8 CriticalDamagePer{ 100 }; // 크리티컬 시, 증가 데미지
+	FStat Stat;
 
 	UPROPERTY(EditAnywhere, Category = "Stat|Health", meta = (AllowPrivateAccess = "true"))
 	uint16 MaxHealth{ 100 };
@@ -49,17 +57,21 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
 	uint16 Stamina{ 100 };
 
+	FTimerHandle StaminaRecoveryTimer;
+	void StartStaminaRecovery();
+
 	UPROPERTY(EditAnywhere, Category = "Stat|Skill", meta = (AllowPrivateAccess = "true"))
 	uint8 MaxSkill{ 100 };
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
 	uint8 Skill{ 0 };
-
-	FTimerHandle StaminaRecoveryTimer;
-	void StartStaminaRecovery();
 	
 	// 효과 관리용 컨테이너 : 이펙트 -> 타이머 핸들 찾기
 	UPROPERTY()
 	TMap<TObjectPtr<UEffect>, FTimerHandle> MapEffect;
+
+	// 효과로 얻은 스탯
+	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
+	FStat EffectedStat;
 	
 public:	
 	FOnStatValueChanged OnHealthChanged;
@@ -70,10 +82,10 @@ public:
 
 	void Init();
 
-	uint16 GetAttack() { return Attack; }
-	uint16 GetDefense() { return Defense; }
-	uint8 GetCriticalPer() { return CriticalPer; }
-	uint16 GetCriticalDamagePer() { return CriticalDamagePer; }
+	uint16 GetAttack() { return Stat.Attack + EffectedStat.Attack; }
+	uint16 GetDefense() { return Stat.Defense + EffectedStat.Defense; }
+	uint8 GetCriticalPer() { return FMath::Min(100, Stat.CriticalPer + EffectedStat.CriticalPer); }
+	uint8 GetCriticalDamagePer() { return Stat.CriticalDamagePer + EffectedStat.CriticalDamagePer; }
 
 	uint16 GetMaxHealth() { return MaxHealth; }
 	uint16 GetHealth() { return Health; }
@@ -97,4 +109,14 @@ public:
 	void ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam);
 	void RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
+
+	void AddAttack(uint16 _amount) { EffectedStat.Attack += _amount; }
+	void AddDefense(uint16 _amount) { EffectedStat.Defense += _amount; }
+	void AddCritPer(uint8 _amount) { EffectedStat.CriticalPer += _amount; }
+	void AddCritDmg(uint8 _amount) { EffectedStat.CriticalDamagePer += _amount; }
+
+	void SubAttack(uint16 _amount) { EffectedStat.Attack -= _amount; }
+	void SubDefense(uint16 _amount) { EffectedStat.Defense -= _amount; }
+	void SubCritPer(uint8 _amount) { EffectedStat.CriticalPer -= _amount; }
+	void SubCritDmg(uint8 _amount) { EffectedStat.CriticalDamagePer -= _amount; }
 };

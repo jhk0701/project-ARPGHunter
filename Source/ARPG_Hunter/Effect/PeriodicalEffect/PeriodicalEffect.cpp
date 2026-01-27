@@ -1,29 +1,28 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Effect/RepeatlyActivateEffect/RepeatlyActivateEffect.h"
+#include "Effect/PeriodicalEffect/PeriodicalEffect.h"
 #include "Define/Struct.h"
 #include "Component/StatComponent.h"
 
-void URepeatlyActivateEffect::Activate(UStatComponent* _target, FEffectParam* _param)
+void UPeriodicalEffect::Activate(UStatComponent* _target, FEffectParam* _param)
 {
 	Super::Activate(_target, _param);
 
 	if (_target == nullptr || _param == nullptr)
 		return;
 
-	_target->RegisterEffect(this);
-
+	// 내부적 호출 사이클용 타이머 설정
 	_target->GetWorld()->GetTimerManager().SetTimer(
 		RepeatTimer,
 		this,
-		&URepeatlyActivateEffect::RepeatedActivate,
+		&UPeriodicalEffect::RepeatedActivate,
 		_param->RepeatInterval,
 		true
 	);
 }
 
-void URepeatlyActivateEffect::Deactivate()
+void UPeriodicalEffect::Deactivate()
 {
 	if (!IsValid()) return;
 
@@ -38,41 +37,31 @@ void URepeatlyActivateEffect::Deactivate()
 // 리소스 회복
 void URepeatlyRecoverHealth::RepeatedActivate()
 {
-	if (!IsValid()) 
-		return;
-
-	GetTarget()->RecoverHealth(GetParam()->Value);
+	if (IsValid())
+		GetTarget()->RecoverHealth(GetParam()->Value);
 }
 
 void URepeatlyRecoverStamina::RepeatedActivate()
 {
-	if (!IsValid())
-		return;
-
-	GetTarget()->RecoverStamina(GetParam()->Value);
+	if (IsValid())
+		GetTarget()->RecoverStamina(GetParam()->Value);
 }
 
 void URepeatlyRecoverSkill::RepeatedActivate()
 {
-	if (!IsValid())
-		return;
-
-	GetTarget()->RecoverSkill(GetParam()->Value);
+	if (IsValid())
+		GetTarget()->RecoverSkill(GetParam()->Value);
 }
 
 // 리소스 데미지
 void URepeatlyDamageHealth::RepeatedActivate()
 {
-	if (!IsValid())
-		return;
-
-	GetTarget()->TakeDamage(GetParam()->Value);
+	if (IsValid())
+		GetTarget()->TakeDamage(GetParam()->Value);
 }
 
 void URepeatlyDamageStamina::RepeatedActivate()
 {
-	if (!IsValid())
-		return;
-
-	GetTarget()->TakeStaminaDamage(GetParam()->Value);
+	if (IsValid())
+		GetTarget()->TakeStaminaDamage(GetParam()->Value);
 }
