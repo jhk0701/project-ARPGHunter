@@ -1,28 +1,29 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Effect/RepeatedActivateEffect/RepeatedActivateEffect.h"
+#include "Effect/RepeatlyActivateEffect/RepeatlyActivateEffect.h"
 #include "Define/Struct.h"
 #include "Component/StatComponent.h"
 
-void URepeatedActivateEffect::Activate(UStatComponent* _target, FEffectParam* _param)
+void URepeatlyActivateEffect::Activate(UStatComponent* _target, FEffectParam* _param)
 {
 	Super::Activate(_target, _param);
 
 	if (_target == nullptr || _param == nullptr)
 		return;
 
+	_target->RegisterEffect(this);
+
 	_target->GetWorld()->GetTimerManager().SetTimer(
 		RepeatTimer,
 		this,
-		&URepeatedActivateEffect::RepeatedActivate,
+		&URepeatlyActivateEffect::RepeatedActivate,
 		_param->RepeatInterval,
 		true
 	);
 }
 
-
-void URepeatedActivateEffect::Deactivate()
+void URepeatlyActivateEffect::Deactivate()
 {
 	if (!IsValid()) return;
 
@@ -35,7 +36,7 @@ void URepeatedActivateEffect::Deactivate()
 
 
 // 리소스 회복
-void URecoverHealth::RepeatedActivate()
+void URepeatlyRecoverHealth::RepeatedActivate()
 {
 	if (!IsValid()) 
 		return;
@@ -43,7 +44,7 @@ void URecoverHealth::RepeatedActivate()
 	GetTarget()->RecoverHealth(GetParam()->Value);
 }
 
-void URecoverStamina::RepeatedActivate()
+void URepeatlyRecoverStamina::RepeatedActivate()
 {
 	if (!IsValid())
 		return;
@@ -51,7 +52,7 @@ void URecoverStamina::RepeatedActivate()
 	GetTarget()->RecoverStamina(GetParam()->Value);
 }
 
-void URecoverSkill::RepeatedActivate()
+void URepeatlyRecoverSkill::RepeatedActivate()
 {
 	if (!IsValid())
 		return;
@@ -60,7 +61,7 @@ void URecoverSkill::RepeatedActivate()
 }
 
 // 리소스 데미지
-void UDamageHealth::RepeatedActivate()
+void URepeatlyDamageHealth::RepeatedActivate()
 {
 	if (!IsValid())
 		return;
@@ -68,7 +69,7 @@ void UDamageHealth::RepeatedActivate()
 	GetTarget()->TakeDamage(GetParam()->Value);
 }
 
-void UDamageStamina::RepeatedActivate()
+void URepeatlyDamageStamina::RepeatedActivate()
 {
 	if (!IsValid())
 		return;

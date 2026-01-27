@@ -95,5 +95,6 @@ public:
 	void RecoverSkill(uint8 _amount);
 
 	void ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam);
+	void RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 };

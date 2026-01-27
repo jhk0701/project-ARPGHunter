@@ -31,6 +31,29 @@ public:
 		Param = _param;
 	};
 	virtual void Deactivate() {};
-
 	float GetDuration();
+};
+
+UCLASS()
+class ARPG_HUNTER_API URecoverHealth : public UEffect 
+{
+	GENERATED_BODY()
+public:
+	void Activate(UStatComponent* _target, FEffectParam* _param) override;
+};
+
+UCLASS()
+class ARPG_HUNTER_API URecoverSkill : public UEffect
+{
+	GENERATED_BODY()
+public:
+	void Activate(UStatComponent* _target, FEffectParam* _param) override;
+};
+
+UCLASS()
+class ARPG_HUNTER_API URecoverStamina : public UEffect
+{
+	GENERATED_BODY()
+public:
+	void Activate(UStatComponent* _target, FEffectParam* _param) override;
 };

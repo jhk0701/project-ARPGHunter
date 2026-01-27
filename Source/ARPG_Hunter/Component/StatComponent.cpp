@@ -141,16 +141,18 @@ void UStatComponent::RecoverSkill(uint8 _amount)
 
 void UStatComponent::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
 {
-	// 이펙트 등록
 	TObjectPtr<UEffect> EffectInst = NewObject<UEffect>(this, _effectClass);
 	EffectInst->Activate(this, _effectParam);
+}
 
-	FTimerHandle& EffectTimer = MapEffect.Add(EffectInst);
-
+void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
+{
+	// 이펙트 등록
+	FTimerHandle& EffectTimer = MapEffect.Add(_effect);
 	GetWorld()->GetTimerManager().SetTimer(
 		EffectTimer,
-		[&]() { RemoveEffect(EffectInst); },
-		EffectInst->GetDuration(),
+		[&]() { RemoveEffect(_effect); },
+		_effect->GetDuration(),
 		false);
 }
 

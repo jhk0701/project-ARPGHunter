@@ -15,6 +15,9 @@ public:
 	UPROPERTY(EditAnywhere);
 	TObjectPtr<UTexture> Icon;
 
+	UPROPERTY(EditAnywhere);
+	TObjectPtr<class UParticleSystem> Particle;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UEffect> Effect; // 효과 내용
 };

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Effect/Effect.h"
-#include "RepeatedActivateEffect.generated.h"
+#include "RepeatlyActivateEffect.generated.h"
 
 /**
  * 
  */
 UCLASS(Abstract)
-class ARPG_HUNTER_API URepeatedActivateEffect : public UEffect
+class ARPG_HUNTER_API URepeatlyActivateEffect : public UEffect
 {
 	GENERATED_BODY()
 private:
@@ -24,7 +24,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URecoverHealth : public URepeatedActivateEffect
+class ARPG_HUNTER_API URepeatlyRecoverHealth : public URepeatlyActivateEffect
 {
 	GENERATED_BODY()
 public:
@@ -32,7 +32,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URecoverStamina : public URepeatedActivateEffect
+class ARPG_HUNTER_API URepeatlyRecoverStamina : public URepeatlyActivateEffect
 {
 	GENERATED_BODY()
 public:
@@ -40,7 +40,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API URecoverSkill : public URepeatedActivateEffect
+class ARPG_HUNTER_API URepeatlyRecoverSkill : public URepeatlyActivateEffect
 {
 	GENERATED_BODY()
 public:
@@ -48,7 +48,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API UDamageHealth : public URepeatedActivateEffect
+class ARPG_HUNTER_API URepeatlyDamageHealth : public URepeatlyActivateEffect
 {
 	GENERATED_BODY()
 public:
@@ -56,7 +56,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API UDamageStamina : public URepeatedActivateEffect
+class ARPG_HUNTER_API URepeatlyDamageStamina : public URepeatlyActivateEffect
 {
 	GENERATED_BODY()
 public:
