@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -52,6 +52,14 @@ public:
 
 UCLASS()
 class ARPG_HUNTER_API URecoverStamina : public UEffect
+{
+	GENERATED_BODY()
+public:
+	void Activate(UStatComponent* _target, FEffectParam* _param) override;
+};
+
+UCLASS()
+class ARPG_HUNTER_API UAddEffectUsingSkill : public UEffect
 {
 	GENERATED_BODY()
 public:

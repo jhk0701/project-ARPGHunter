@@ -134,6 +134,7 @@ void UActionComponent::ProcessAttackEnd()
 	{
 		OwnerAnimInstance->Montage_Stop(0.25f, CurActionMontage);
 		ResetAction();
+
 		return;
 	}
 
