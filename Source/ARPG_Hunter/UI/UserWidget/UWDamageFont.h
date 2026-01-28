@@ -13,5 +13,17 @@ UCLASS()
 class ARPG_HUNTER_API UUWDamageFont : public UUserWidget
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> DamageLabel;
+
+	UPROPERTY(EditAnywhere, Category = "Color")
+	FColor ColorOnNormal;
+
+	UPROPERTY(EditAnywhere, Category = "Color")
+	FColor ColorOnCritical;
 	
+public:
+	void SetDamage(uint32 _amount, bool _bIsCritical);
 };
