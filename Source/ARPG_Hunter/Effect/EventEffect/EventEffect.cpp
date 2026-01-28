@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Effect/EventEffect/EventEffect.h"
@@ -13,19 +13,15 @@ void UEventEffect::Activate(UStatComponent* _target, FEffectParam* _param)
 		return;
 
 	EventHandle = Subscribe(); // 어디에 구독할지는 하위에서 결정
-
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Event Effect Activate"));
 }
 
 void UEventEffect::Deactivate()
 {
-	if (!IsValid() || EventHandle.IsValid()) return;
+	if (!IsValid() || EventHandle.IsValid() == false) return;
 
 	// 타이머 종료 시, 델리게이트 핸들 제거
 	GetTarget()->OnHitEvent.Remove(EventHandle);
 	EventHandle.Reset();
-
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Event Effect Deactivate"));
 }
 
 
@@ -39,8 +35,6 @@ void UInvincibleEffect::OnHitEvent(bool& _outbCancleHit)
 {
 	// 무적 버프 중, 피격 발생
 	_outbCancleHit = true; // 피격 무효 처리
-
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Invincible Hit"));
 }
 
 void UJustDodgeEffect::OnHitEvent(bool& _outbCancleHit)
@@ -48,8 +42,6 @@ void UJustDodgeEffect::OnHitEvent(bool& _outbCancleHit)
 	// 버프를 가진 상태에서 피격을 당함
 	if (!IsValid())
 		return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Just Dodge Hit"));
 
 	for (TObjectPtr<UEffectData>& subEffect : GetParam()->EffectsOnEvent)
 		GetTarget()->ApplyEffect(subEffect->Effect, &subEffect->Param);
