@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MeleeMonster/MeleeMonster.h"
@@ -15,4 +15,11 @@ AMeleeMonster::AMeleeMonster()
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> MeleeMonsterBBFinder(TEXT("/Script/AIModule.BlackboardData'/Game/02-BP/Monster/AI/BB_MeleeMonster.BB_MeleeMonster'"));
 	if (MeleeMonsterBBFinder.Succeeded())
 		SetBlackboardData(MeleeMonsterBBFinder.Object);
+}
+
+void AMeleeMonster::HitBy(const FHitInfo& _hitInfo)
+{
+	Super::HitBy(_hitInfo);
+
+	KnockBack(_hitInfo);
 }

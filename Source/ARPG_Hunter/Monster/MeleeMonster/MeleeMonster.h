@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,5 +16,7 @@ class ARPG_HUNTER_API AMeleeMonster : public AMonsterBase
 
 public:
 	AMeleeMonster();
+
+	void HitBy(const FHitInfo& _hitInfo) override;
 	
 };

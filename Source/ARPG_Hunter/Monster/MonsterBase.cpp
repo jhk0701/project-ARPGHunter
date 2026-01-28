@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Component/StatComponent.h"
 #include "Controller/MonsterAIController.h"
@@ -54,13 +55,19 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
 	if (_montage == AttackMontage || _montage == HitMontage)
 		OnAttackMontageEnded.ExecuteIfBound();
+
+	SetWalkable(true);
+}
+
+void AMonsterBase::SetWalkable(bool _bIsWalkable)
+{
+	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? Speed : 0.0f;
 }
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
-	KnockBack(_hitInfo);
 
 	if (HitMontage == nullptr)
 		return;
@@ -75,6 +82,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	}
 
 	AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), HitMontage);
+	SetWalkable(false);
 }
 
 void AMonsterBase::Attack()
@@ -83,6 +91,7 @@ void AMonsterBase::Attack()
 		return;
 
 	AnimInstance->Montage_Play(AttackMontage);
+	SetWalkable(false);
 }
 
 void AMonsterBase::HandleAttackNotify(uint8 _opt)
@@ -129,7 +138,8 @@ void AMonsterBase::OnDead()
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
 	AICon->StopBT();
 
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
 
 	// TODO : 몬스터 오브젝트 풀로 복귀
 }
@@ -147,6 +157,7 @@ void AMonsterBase::ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectP
 void AMonsterBase::KnockBack(const FHitInfo& _hitInfo)
 {
 	FVector Dir = GetActorLocation() - _hitInfo.Attacker->GetActorLocation();
+	Dir.Z = 0.0f;
 	Dir.Normalize();
-	LaunchCharacter(Dir * _hitInfo.KnockBackStrength, true, false);
+	LaunchCharacter(Dir * _hitInfo.KnockBackStrength, true, true);
 }

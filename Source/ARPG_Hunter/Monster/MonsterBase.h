@@ -15,6 +15,7 @@ enum class EMonsterType : uint8
 	MELEE		UMETA(DisplayName = "Melee"),
 	RANGED		UMETA(DisplayName = "Ranged"),
 	BOSS		UMETA(DisplayName = "Boss"),
+
 	END			UMETA(DisplayName = "End")
 };
 
@@ -36,15 +37,15 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 
+	TObjectPtr<UAnimInstance> AnimInstance;
+
+#pragma region TmpData
+
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
-	TObjectPtr<UAnimInstance> AnimInstance;
-
-#pragma region TmpData
-	
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
@@ -54,6 +55,8 @@ private:
 	float RecognitionRange{ 1000.0f };
 	UPROPERTY(EditAnywhere, Category = "AI|Param")
 	float AttackRange{ 150.0f };
+	UPROPERTY(EditAnywhere, Category = "AI|Param")
+	float Speed{200.0f};
 
 #pragma endregion
 
@@ -66,7 +69,8 @@ protected:
 
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
-	virtual void OnDead();
+
+	void SetWalkable(bool _bIsWalkable);
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
@@ -79,6 +83,8 @@ public:
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool IsDead();
+	virtual void OnDead();
+
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() { return MonsterBB; }
 
@@ -87,7 +93,5 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam) override;
-
 	void KnockBack(const FHitInfo& _hitInfo);
-
 };
