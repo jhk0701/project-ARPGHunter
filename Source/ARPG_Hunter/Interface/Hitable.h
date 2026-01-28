@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,6 +10,9 @@ struct FHitInfo
 {
 	uint16 Damage;
 	uint16 StaggerDamage;
+
+	TWeakObjectPtr<AActor> Attacker; // 공격자 약참조로 전달
+	float KnockBackStrength;
 };
 
 // This class does not need to be modified.

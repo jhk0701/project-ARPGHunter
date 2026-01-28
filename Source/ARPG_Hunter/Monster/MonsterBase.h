@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -87,5 +87,7 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam) override;
+
+	void KnockBack(const FHitInfo& _hitInfo);
 
 };

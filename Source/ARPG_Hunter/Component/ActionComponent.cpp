@@ -162,28 +162,33 @@ uint16 UActionComponent::GetAttackActionStaggerDamage()
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->StaggerDamage;
 }
 
+float UActionComponent::GetAttackActionKnockBack(uint8 _opt)
+{
+	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->ArrOption[_opt].KnockBackStr;
+}
+
 bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult)
 {
 	UAction* CurAction = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID];
 	if (CurAction == nullptr || 
-		CurAction->RangeArray.Num() <= _opt)
+		CurAction->ArrOption.Num() <= _opt)
 		return false;
 
-	const FActionRange& Range = CurAction->RangeArray[_opt];
+	const FActionOption& Option = CurAction->ArrOption[_opt];
 	bool IsHit = false;
 
 	FVector ActorLoc = GetOwner()->GetActorLocation();
 	FVector ActorFwd = GetOwner()->GetActorForwardVector();
 
 	// TODO : 리팩토링 필요
-	switch (Range.Direction)
+	switch (Option.Direction)
 	{
 	case EAttackDirection::FRONT:
 		IsHit = UKismetSystemLibrary::BoxTraceMulti(
 			GetWorld(),
 			ActorLoc + ActorFwd * 100.0f,
 			ActorLoc + ActorFwd * 100.0f,
-			FVector(Range.Range, 100, 100),
+			FVector(Option.Range, 100, 100),
 			ActorFwd.Rotation(),
 			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 			false, { GetOwner() },
@@ -197,7 +202,7 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 			GetWorld(),
 			ActorLoc + ActorFwd * 100.0f,
 			ActorLoc + ActorFwd * 100.0f,
-			FVector(100, Range.Range, 100),
+			FVector(100, Option.Range, 100),
 			ActorFwd.Rotation(),
 			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 			false, { GetOwner() },
@@ -210,7 +215,7 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 		IsHit = UKismetSystemLibrary::SphereTraceMulti(
 			GetWorld(),
 			ActorLoc, ActorLoc,
-			Range.Range,
+			Option.Range,
 			UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4),
 			false, { GetOwner() },
 			EDrawDebugTrace::None,

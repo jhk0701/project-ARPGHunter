@@ -8,7 +8,6 @@
 #include "ActionComponent.generated.h"
 
 struct FWeaponTypeData;
-struct FActionRange;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
@@ -18,7 +17,7 @@ class ARPG_HUNTER_API UActionComponent : public UActorComponent
 private:
 	TObjectPtr<UAnimInstance> OwnerAnimInstance;
 	
-	TObjectPtr<FWeaponTypeData> CurWeaponType;
+	FWeaponTypeData* CurWeaponType;
 	bool bIsInAttackCombo{ false };
 
 	uint8 CurAttackActionID{ 0 };
@@ -54,6 +53,8 @@ public:
 
 	uint16 GetAttackActionDamagePer();
 	uint16 GetAttackActionStaggerDamage();
+	float GetAttackActionKnockBack(uint8 _opt);
 	
 	bool TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult);
+	
 };

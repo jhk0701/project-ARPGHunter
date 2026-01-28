@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,7 +11,7 @@ enum class EActionInput : uint8;
 enum class EAttackDirection : uint8;
 
 USTRUCT()
-struct FActionRange 
+struct FActionOption
 {
 	GENERATED_BODY()
 public:
@@ -19,6 +19,9 @@ public:
 	float Range;
 	UPROPERTY(EditAnywhere)
 	EAttackDirection Direction;
+
+	UPROPERTY(EditAnywhere)
+	float KnockBackStr{100.0f};
 };
 
 
@@ -40,9 +43,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
 	UPROPERTY(EditAnywhere)
-	TArray<FActionRange> RangeArray;
-	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
+	UPROPERTY(EditAnywhere)
+	TArray<FActionOption> ArrOption;
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnStart;

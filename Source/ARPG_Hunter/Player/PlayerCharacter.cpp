@@ -204,7 +204,9 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			FHitInfo Hit
 			{
 				CalculateCritical(Damage),
-				ActionComp->GetAttackActionStaggerDamage()
+				ActionComp->GetAttackActionStaggerDamage(),
+				this,
+				ActionComp->GetAttackActionKnockBack(_opt)
 			};
 
 			Hitable->HitBy(Hit);

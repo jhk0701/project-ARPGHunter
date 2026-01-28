@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -60,6 +60,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
+	KnockBack(_hitInfo);
 
 	if (HitMontage == nullptr)
 		return;
@@ -113,6 +114,8 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 			FHitInfo HitInfo
 			{
 				StatComp->GetAttack(),
+				0,
+				this,
 				0
 			};
 			Hitable->HitBy(HitInfo);
@@ -139,4 +142,11 @@ bool AMonsterBase::IsDead()
 void AMonsterBase::ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam)
 {
 	StatComp->ApplyEffect(_effectClass, _effectParam);
+}
+
+void AMonsterBase::KnockBack(const FHitInfo& _hitInfo)
+{
+	FVector Dir = GetActorLocation() - _hitInfo.Attacker->GetActorLocation();
+	Dir.Normalize();
+	LaunchCharacter(Dir * _hitInfo.KnockBackStrength, true, false);
 }
