@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -29,17 +29,17 @@ void UStatComponent::StartStaminaRecovery()
 	);
 }
 
-void UStatComponent::TakeDamage(uint16 _damage)
+bool UStatComponent::TakeDamage(uint16 _damage)
 {
 	if (IsDead())
-		return;
+		return false;
 	
 	// 피격 발생
 	bool bHitCanceled = false;
 	OnHitEvent.Broadcast(bHitCanceled); // 피격 시 이벤트 델리게이트 호출
 	
 	if (bHitCanceled)
-		return;
+		return false;
 
 	if (Health < _damage)
 		Health = 0;
@@ -47,6 +47,7 @@ void UStatComponent::TakeDamage(uint16 _damage)
 		Health -= _damage;
 
 	OnHealthChanged.Broadcast(Health, MaxHealth);
+	return true;
 }
 
 void UStatComponent::RecoverHealth(uint16 _amount)

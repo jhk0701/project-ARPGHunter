@@ -1,4 +1,4 @@
-﻿
+
 
 #include "Component/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -15,11 +15,6 @@ UActionComponent::UActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	ResetAction();
-}
-
-void UActionComponent::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
@@ -144,7 +139,7 @@ void UActionComponent::ProcessAttackEnd()
 
 	// 누르는 입력이 종료됨
 	// 현재 재생중인 몽타주를 강제로 Complete 섹션으로 전환
-	OwnerAnimInstance->Montage_JumpToSection(FName(TEXT("Complete")), CurActionMontage);
+	OwnerAnimInstance->Montage_JumpToSection(EnumToName(EActionProcess::COMPLETE), CurActionMontage);
 }
 
 void UActionComponent::SetActionResetTimer(float _second)

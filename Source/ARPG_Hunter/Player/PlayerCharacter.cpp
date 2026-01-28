@@ -1,10 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraShakeBase.h"
 
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
@@ -50,6 +51,17 @@ APlayerCharacter::APlayerCharacter()
 	SpringArmComp->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 	SpringArmComp->bUsePawnControlRotation = true;
 #pragma endregion
+
+#pragma region Find Resource
+	static ConstructorHelpers::FClassFinder<UCameraShakeBase> CamShakeOnAttackFinder(TEXT("/Game/02-BP/CameraShake/BP_CameraShake_OnAttack.BP_CameraShake_OnAttack_C"));
+	if (CamShakeOnAttackFinder.Succeeded())
+		CameraShakeOnAttack = CamShakeOnAttackFinder.Class;
+
+	static ConstructorHelpers::FClassFinder<UCameraShakeBase> CamShakeOnHitFinder(TEXT("/Game/02-BP/CameraShake/BP_CameraShake_OnHit.BP_CameraShake_OnHit_C"));
+	if (CamShakeOnHitFinder.Succeeded())
+		CameraShakeOnHit = CamShakeOnHitFinder.Class;
+#pragma endregion
+
 }
 
 // Called when the game starts or when spawned
@@ -153,8 +165,11 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 	if (StatComp->IsDead())
 		return;
 
-	StatComp->TakeDamage(_hitInfo.Damage);
+	if (StatComp->TakeDamage(_hitInfo.Damage) == false)
+		return;
+
 	ActionComp->PlayHitAction(StatComp->IsDead());
+	ShakeCamera(CameraShakeOnHit);
 
 	if (StatComp->IsDead())
 		OnDead();
@@ -194,6 +209,8 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 
 			Hitable->HitBy(Hit);
 		}
+
+		ShakeCamera(CameraShakeOnAttack, Damage * 0.01f);
 	}
 }
 
@@ -215,4 +232,13 @@ uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
 void APlayerCharacter::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
 {
 	StatComp->ApplyEffect(_effectClass, _effectParam);
+}
+
+void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController == nullptr)
+		return;
+
+	PlayerController->ClientStartCameraShake(_shakeClass, _scale);
 }

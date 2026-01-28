@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,8 +9,10 @@
 #include "Interface/AttackNotifyHandler.h"
 #include "PlayerCharacter.generated.h"
 
+class UCameraShakeBase;
 enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
+
 
 UCLASS()
 class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler, public IEffectable
@@ -53,7 +55,13 @@ private:
 	float WalkSpeed{ 300.0f };
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float SprintSpeed{ 600.0f };
+#pragma endregion
 
+#pragma region Sub Effect
+	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
+	TSubclassOf<UCameraShakeBase> CameraShakeOnAttack;
+	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
+	TSubclassOf<UCameraShakeBase> CameraShakeOnHit;
 #pragma endregion
 
 public:
@@ -95,4 +103,6 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam) override;
+
+	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
 };

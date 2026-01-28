@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -90,7 +90,7 @@ public:
 	uint16 GetMaxHealth() { return MaxHealth; }
 	uint16 GetHealth() { return Health; }
 	bool IsDead() { return Health == 0; }
-	void TakeDamage(uint16 _damage);
+	bool TakeDamage(uint16 _damage);
 	void RecoverHealth(uint16 _amount);
 
 	uint16 GetMaxStamina() { return MaxStamina; }
