@@ -4,19 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "DungeonGameMode.generated.h"
+#include "CombatGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API ADungeonGameMode : public AGameModeBase
+class ARPG_HUNTER_API ACombatGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	ADungeonGameMode();
-
-protected:
-	void BeginPlay() override;
+	ACombatGameMode();
 };

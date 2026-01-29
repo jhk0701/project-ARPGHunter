@@ -1,0 +1,48 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Controller/PlayerCombatController.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
+
+#include "Player/PlayerCharacter.h"
+
+APlayerCombatController::APlayerCombatController()
+{
+	static ConstructorHelpers::FObjectFinder<UInputAction> DodgeActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Dodge.IA_Dodge'"));
+	if (DodgeActionFinder.Succeeded())
+		DodgeAction = DodgeActionFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> AttackActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack.IA_Attack'"));
+	if (AttackActionFinder.Succeeded())
+		AttackAction = AttackActionFinder.Object;
+}
+
+void APlayerCombatController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	
+	if (UEnhancedInputComponent* InputComp = Cast<UEnhancedInputComponent>(InputComponent)) 
+	{
+		InputComp->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &APlayerCombatController::InputDodge);
+
+		InputComp->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCombatController::InputAttack);
+		InputComp->BindAction(AttackAction, ETriggerEvent::Completed, this, &APlayerCombatController::InputAttackEnd);
+	}
+}
+
+void APlayerCombatController::InputDodge(const FInputActionValue& _value)
+{
+	GetControlledPlayer()->Dodge();
+}
+
+void APlayerCombatController::InputAttack(const FInputActionValue& _value)
+{
+	uint8 val = static_cast<uint8>(_value.Get<float>()) - 1;
+	GetControlledPlayer()->Attack(static_cast<EAttackType>(val));
+}
+
+void APlayerCombatController::InputAttackEnd(const FInputActionValue& _value)
+{
+	GetControlledPlayer()->AttackEnd();
+}

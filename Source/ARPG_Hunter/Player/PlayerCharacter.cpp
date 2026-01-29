@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
@@ -10,7 +10,7 @@
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
-#include "Controller/PlayerCharacterController.h"
+#include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
@@ -77,9 +77,9 @@ void APlayerCharacter::BeginPlay()
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	if (APlayerCombatController* CombatController = Cast<APlayerCombatController>(GetController()))
 	{
-		APlayerHUD* PlayerHUD = PlayerController->GetHUD<APlayerHUD>();
+		APlayerHUD* PlayerHUD = CombatController->GetHUD<APlayerHUD>();
 		ensure(PlayerHUD);
 
 		UUWPlayerHUD* PlayerUI = Cast<UUWPlayerHUD>(PlayerHUD->GetPlayerUI());

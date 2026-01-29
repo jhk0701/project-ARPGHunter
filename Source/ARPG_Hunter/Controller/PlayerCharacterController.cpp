@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -19,19 +19,12 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> MoveActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Move.IA_Move'"));
 	if (MoveActionFinder.Succeeded())
 		MoveAction = MoveActionFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> DodgeActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Dodge.IA_Dodge'"));
-	if (DodgeActionFinder.Succeeded())
-		DodgeAction = DodgeActionFinder.Object;
 	static ConstructorHelpers::FObjectFinder<UInputAction> RotateActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Rotate.IA_Rotate'"));
 	if (RotateActionFinder.Succeeded())
 		RotateAction = RotateActionFinder.Object;
 	static ConstructorHelpers::FObjectFinder<UInputAction> SprintActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Sprint.IA_Sprint'"));
 	if (SprintActionFinder.Succeeded())
 		SprintAction = SprintActionFinder.Object;
-	
-	static ConstructorHelpers::FObjectFinder<UInputAction> AttackActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack.IA_Attack'"));
-	if (AttackActionFinder.Succeeded())
-		AttackAction = AttackActionFinder.Object;
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -41,10 +34,10 @@ void APlayerCharacterController::BeginPlay()
 	if (nullptr == PlayerIMC)
 		return;
 
+	ControlledCharacter = Cast<APlayerCharacter>(GetPawn());
+
 	if (UEnhancedInputLocalPlayerSubsystem* InputSubsytem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()) 
 		InputSubsytem->AddMappingContext(PlayerIMC, 0);
-
-	ControlledCharacter = Cast<APlayerCharacter>(GetPawn());
 }
 
 void APlayerCharacterController::SetupInputComponent()
@@ -60,13 +53,9 @@ void APlayerCharacterController::SetupInputComponent()
 		
 		InputComp->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacterController::InputSprintStart);
 		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
-		
-		InputComp->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputDodge);
-
-		InputComp->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputAttack);
-		InputComp->BindAction(AttackAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputAttackEnd);
 	}	
 }
+
 
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
@@ -106,20 +95,4 @@ void APlayerCharacterController::InputSprintStart(const FInputActionValue& _valu
 void APlayerCharacterController::InputSprintEnd(const FInputActionValue& _value)
 {
 	ControlledCharacter->SetIsSprint(false);
-}
-
-void APlayerCharacterController::InputDodge(const FInputActionValue& _value)
-{
-	ControlledCharacter->Dodge();
-}
-
-void APlayerCharacterController::InputAttack(const FInputActionValue& _value)
-{
-	uint8 val = static_cast<uint8>(_value.Get<float>()) - 1;
-	ControlledCharacter->Attack(static_cast<EAttackType>(val));
-}
-
-void APlayerCharacterController::InputAttackEnd(const FInputActionValue& _value)
-{
-	ControlledCharacter->AttackEnd();
 }
