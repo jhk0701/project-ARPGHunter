@@ -25,6 +25,11 @@ AMonsterBase::AMonsterBase()
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	UWidgetComponent* Widget = GetWidgetComp();
+	static ConstructorHelpers::FClassFinder<UUserWidget> StatusUIFinder(TEXT("/Game/06-UI/WBP_MonsterStatusBar.WBP_MonsterStatusBar_C"));
+	if (StatusUIFinder.Succeeded() && Widget)
+		Widget->SetWidgetClass(StatusUIFinder.Class);
 }
 
 void AMonsterBase::PostInitializeComponents()
