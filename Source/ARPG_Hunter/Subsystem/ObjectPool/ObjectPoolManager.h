@@ -16,7 +16,7 @@ public:
 	UActorObjectPool();
 
 private:
-	TSubclassOf<AActor> ActorClass;
+	TFunction<TObjectPtr<AActor>()> CreateFunc;
 
 	UPROPERTY()
 	TArray<TObjectPtr<AActor>> Container;
@@ -27,7 +27,7 @@ private:
 	void DeactivateActor(TObjectPtr<AActor> _actor);
 
 public:
-	void Init(TSubclassOf<AActor> _actorClass, int _initialSize);
+	void Init(TFunction<TObjectPtr<AActor>()> _createFunc, int _initialSize);
 	TObjectPtr<AActor> Get();
 	void Release(TObjectPtr<AActor> _instance);
 };
@@ -46,7 +46,7 @@ private:
 	TMap<UClass*, TObjectPtr<UActorObjectPool>> MapObjectPool;
 
 public:
-	void RegisterObject(TSubclassOf<AActor> _class, int _initialSize = 30);
-	TObjectPtr<AActor> Get(TSubclassOf<AActor> _class);
-	void Release(TObjectPtr<AActor> _inst);
+	void Register(UClass* _class, TFunction<TObjectPtr<AActor>()> _createFunc, int _initialSize = 30);
+	TObjectPtr<AActor> Get(UClass* _class);
+	void Release(UClass* _class, TObjectPtr<AActor> _inst);
 };

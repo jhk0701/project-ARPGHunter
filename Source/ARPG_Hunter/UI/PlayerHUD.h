@@ -16,7 +16,10 @@ class ARPG_HUNTER_API APlayerHUD : public AHUD
 
 private:
 	TSubclassOf<UUserWidget> PlayerUIWidget;
+	UPROPERTY()
 	TObjectPtr<UUserWidget> PlayerUI;
+
+	TSubclassOf<class ADamageFont> DamageUIClass;
 
 public:
 	APlayerHUD();

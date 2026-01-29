@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,7 +19,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 
-public:
-	
+	FTimerHandle ShowTimer;
 
+public:
+	void UpdateUI(uint32 _damage, bool _bIsCritial);
+	void ShowUI(float _duration = 3.0f);
+	void HideUI();
 };

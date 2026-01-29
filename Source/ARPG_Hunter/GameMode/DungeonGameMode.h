@@ -13,7 +13,10 @@ UCLASS()
 class ARPG_HUNTER_API ADungeonGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	ADungeonGameMode();
+
+protected:
+	void BeginPlay() override;
 };

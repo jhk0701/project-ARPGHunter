@@ -1,8 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/Actor/DamageFont.h"
 #include "Components/WidgetComponent.h"
+#include "UI/UserWidget/UWDamageFont.h"
+#include "Subsystem/ObjectPool/ObjectPoolManager.h"
 
 // Sets default values
 ADamageFont::ADamageFont()
@@ -15,4 +17,25 @@ ADamageFont::ADamageFont()
 	if (WidgetFinder.Succeeded())
 		WidgetComp->SetWidgetClass(WidgetFinder.Class);
 
+}
+
+void ADamageFont::ShowUI(float _duration)
+{
+	FTimerManager& Timer = GetWorld()->GetTimerManager();
+	if (Timer.IsTimerActive(ShowTimer))
+		Timer.ClearTimer(ShowTimer);
+
+	Timer.SetTimer(ShowTimer, this, &ADamageFont::HideUI, _duration);
+}
+
+void ADamageFont::HideUI()
+{
+	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>())
+		ObjectPool->Release(StaticClass(), this);
+}
+
+void ADamageFont::UpdateUI(uint32 _damage, bool _bIsCritial)
+{
+	if (UUWDamageFont* UI = Cast<UUWDamageFont>(WidgetComp->GetWidget()))
+		UI->SetDamage(_damage, _bIsCritial);
 }

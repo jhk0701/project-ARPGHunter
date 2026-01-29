@@ -7,9 +7,9 @@ UActorObjectPool::UActorObjectPool()
 {
 }
 
-void UActorObjectPool::Init(TSubclassOf<AActor> _actorClass, int _initialSize)
+void UActorObjectPool::Init(TFunction<TObjectPtr<AActor>()> _createFunc, int _initialSize)
 {
-	ActorClass = _actorClass;
+	CreateFunc = _createFunc;
 	Container.Reserve(_initialSize);
 
 	for (int i = 0; i < _initialSize; ++i)
@@ -21,7 +21,7 @@ void UActorObjectPool::Init(TSubclassOf<AActor> _actorClass, int _initialSize)
 
 TObjectPtr<AActor> UActorObjectPool::Create()
 {
-	TObjectPtr<AActor> inst = GetWorld()->SpawnActor(ActorClass);
+	TObjectPtr<AActor> inst = CreateFunc();
 
 	Container.Add(inst);
 	Pool.Enqueue(inst);
@@ -40,6 +40,7 @@ void UActorObjectPool::DeactivateActor(TObjectPtr<AActor> _actor)
 	_actor->SetActorHiddenInGame(true);
 	_actor->SetActorEnableCollision(false);
 }
+
 
 TObjectPtr<AActor> UActorObjectPool::Get()
 {
@@ -66,27 +67,27 @@ UObjectPoolManager::UObjectPoolManager()
 {
 }
 
-void UObjectPoolManager::RegisterObject(TSubclassOf<AActor> _class, int _initialSize)
+void UObjectPoolManager::Register(UClass* _class, TFunction<TObjectPtr<AActor>()> _createFunc, int _initialSize)
 {
 	if (MapObjectPool.Find(_class) != nullptr)
 		return;
 
-	TObjectPtr<UActorObjectPool> Pool = MapObjectPool.Add(_class.Get());
-	Pool->Init(_class, _initialSize);
+	TObjectPtr<UActorObjectPool>& Pool = MapObjectPool.Add(_class, NewObject<UActorObjectPool>(this));
+	Pool->Init(_createFunc, _initialSize);
 }
 
-TObjectPtr<AActor> UObjectPoolManager::Get(TSubclassOf<AActor> _class)
+TObjectPtr<AActor> UObjectPoolManager::Get(UClass* _class)
 {
-	if (MapObjectPool.Find(_class.Get()) == nullptr)
+	if (MapObjectPool.Find(_class) == nullptr)
 		return nullptr;
 
-	return MapObjectPool[_class.Get()]->Get();
+	return MapObjectPool[_class]->Get();
 }
 
-void UObjectPoolManager::Release(TObjectPtr<AActor> _inst)
+void UObjectPoolManager::Release(UClass* _class, TObjectPtr<AActor> _inst)
 {
-	if (MapObjectPool.Find(_inst.GetClass()) == nullptr)
+	if (MapObjectPool.Find(_class) == nullptr)
 		return;
 
-	MapObjectPool[_inst.GetClass()]->Release(_inst);
+	MapObjectPool[_class]->Release(_inst);
 }

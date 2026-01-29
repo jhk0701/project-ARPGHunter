@@ -64,6 +64,7 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
+	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 
@@ -71,6 +72,7 @@ protected:
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
 
 	void SetWalkable(bool _bIsWalkable);
+
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;

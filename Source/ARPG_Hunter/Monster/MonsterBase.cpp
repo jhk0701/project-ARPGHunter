@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -10,6 +10,8 @@
 #include "Component/StatComponent.h"
 #include "Controller/MonsterAIController.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
+#include "Subsystem/ObjectPool/ObjectPoolManager.h"
+#include "UI/Actor/DamageFont.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -68,6 +70,14 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
+
+	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>()) 
+	{
+		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
+		ADamage->SetActorLocation(WidgetComp->GetComponentLocation());
+		ADamage->UpdateUI(_hitInfo.Damage, false);
+		ADamage->ShowUI();
+	}
 
 	if (HitMontage == nullptr)
 		return;

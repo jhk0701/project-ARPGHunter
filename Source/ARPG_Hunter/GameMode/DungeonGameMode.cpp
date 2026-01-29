@@ -2,6 +2,7 @@
 
 
 #include "GameMode/DungeonGameMode.h"
+
 #include "Player/PlayerCharacter.h"
 #include "Controller/PlayerCharacterController.h"
 #include "UI/PlayerHUD.h"
@@ -14,4 +15,9 @@ ADungeonGameMode::ADungeonGameMode()
 
 	PlayerControllerClass = APlayerCharacterController::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
+}
+
+void ADungeonGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 }
