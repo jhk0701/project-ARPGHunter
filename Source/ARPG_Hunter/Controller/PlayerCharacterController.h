@@ -31,6 +31,8 @@ private:
 	TObjectPtr<UInputAction> RotateAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> SprintAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> InteractAction;
 
 public:
 	APlayerCharacterController();
@@ -45,6 +47,8 @@ public:
 	void InputSprintStart(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputSprintEnd(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputInteract(const FInputActionValue& _value);
 
 protected:
 	virtual void BeginPlay() override;

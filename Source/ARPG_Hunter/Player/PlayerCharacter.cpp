@@ -6,7 +6,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraShakeBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 
+#include "Interface/Interactable.h"
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
@@ -14,6 +16,7 @@
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
+
 
 
 // Sets default values
@@ -243,4 +246,31 @@ void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, fl
 		return;
 
 	PlayerController->ClientStartCameraShake(_shakeClass, _scale);
+}
+
+void APlayerCharacter::Interact()
+{
+	FHitResult HitResult;
+
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * 300.0f;
+
+	bool IsHit = UKismetSystemLibrary::BoxTraceSingle(
+		GetWorld(), 
+		Start, End,
+		FVector(50.0f, 50.0f, 50.0f),
+		GetActorForwardVector().Rotation(),
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel6),
+		false,
+		{ this },
+		EDrawDebugTrace::ForDuration, 
+		HitResult,
+		true
+	);
+
+	if (IsHit == false)
+		return;
+
+	if (IInteractable* Interactable = Cast<IInteractable>(HitResult.GetActor())) 
+		Interactable->Interact();
 }

@@ -25,6 +25,9 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> SprintActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Sprint.IA_Sprint'"));
 	if (SprintActionFinder.Succeeded())
 		SprintAction = SprintActionFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> InteractActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Interact.IA_Interact'"));
+	if (InteractActionFinder.Succeeded())
+		InteractAction = InteractActionFinder.Object;
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -53,6 +56,8 @@ void APlayerCharacterController::SetupInputComponent()
 		
 		InputComp->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacterController::InputSprintStart);
 		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
+
+		InputComp->BindAction(InteractAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputInteract);
 	}	
 }
 
@@ -95,4 +100,9 @@ void APlayerCharacterController::InputSprintStart(const FInputActionValue& _valu
 void APlayerCharacterController::InputSprintEnd(const FInputActionValue& _value)
 {
 	ControlledCharacter->SetIsSprint(false);
+}
+
+void APlayerCharacterController::InputInteract(const FInputActionValue& _value)
+{
+	ControlledCharacter->Interact();
 }
