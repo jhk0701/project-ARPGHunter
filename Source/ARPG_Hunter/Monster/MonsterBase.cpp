@@ -50,11 +50,11 @@ void AMonsterBase::BeginPlay()
 
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
 	{
-		MonsterStatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
-		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
+		MonsterStatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
 
-		StatComp->OnHealthChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
-		StatComp->OnStaminaChanged.AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
 	}
 }
 
@@ -137,7 +137,7 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 		{
 			FHitInfo HitInfo
 			{
-				StatComp->GetAttack(),
+				StatComp->GetStat(ECharacterStatType::ATTACK),
 				0,
 				this,
 				0

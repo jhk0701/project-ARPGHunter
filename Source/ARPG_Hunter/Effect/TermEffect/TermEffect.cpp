@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Effect/TermEffect/TermEffect.h"
@@ -25,14 +25,14 @@ void UAddAttack::Activate(UStatComponent* _target, FEffectParam* _param)
 	Super::Activate(_target, _param);
 	if (!IsValid()) return;
 
-	_target->AddAttack(_param->Value);
+	_target->AddStat(ECharacterStatType::ATTACK, _param->Value);
 }
 
 void UAddAttack::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubAttack(GetParam()->Value);
+	GetTarget()->SubStat(ECharacterStatType::ATTACK, GetParam()->Value);
 }
 
 void UAddDefense::Activate(UStatComponent* _target, FEffectParam* _param)
@@ -40,14 +40,14 @@ void UAddDefense::Activate(UStatComponent* _target, FEffectParam* _param)
 	Super::Activate(_target, _param);
 	if (!IsValid()) return;
 
-	_target->AddDefense(_param->Value);
+	GetTarget()->AddStat(ECharacterStatType::DEFENSE, _param->Value);
 }
 
 void UAddDefense::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubDefense(GetParam()->Value);
+	GetTarget()->SubStat(ECharacterStatType::DEFENSE, GetParam()->Value);
 }
 
 void UAddCriticalPercent::Activate(UStatComponent* _target, FEffectParam* _param)
@@ -55,14 +55,14 @@ void UAddCriticalPercent::Activate(UStatComponent* _target, FEffectParam* _param
 	Super::Activate(_target, _param);
 	if (!IsValid()) return;
 
-	_target->AddCritPer(_param->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, _param->Value);
 }
 
 void UAddCriticalPercent::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubCritPer(GetParam()->Value);
+	GetTarget()->SubStat(ECharacterStatType::CRITICAL_PERCENT, GetParam()->Value);
 }
 
 void UAddCriticalDamagePercent::Activate(UStatComponent* _target, FEffectParam* _param)
@@ -70,12 +70,12 @@ void UAddCriticalDamagePercent::Activate(UStatComponent* _target, FEffectParam* 
 	Super::Activate(_target, _param);
 	if (!IsValid()) return;
 
-	_target->AddCritDmg(_param->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, _param->Value);
 }
 
 void UAddCriticalDamagePercent::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubCritDmg(GetParam()->Value);
+	GetTarget()->SubStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetParam()->Value);
 }

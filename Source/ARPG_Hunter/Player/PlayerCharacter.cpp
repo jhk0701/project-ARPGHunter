@@ -88,14 +88,14 @@ void APlayerCharacter::BeginPlay()
 		UUWPlayerHUD* PlayerUI = Cast<UUWPlayerHUD>(PlayerHUD->GetPlayerUI());
 		UUWPlayerStatusBar* StatusBar = PlayerUI->GetPlayerStatusBar();
 		
-		StatusBar->SetHealthBarPercent(StatComp->GetHealth(), StatComp->GetMaxHealth());
-		StatusBar->SetStaminaBarPercent(StatComp->GetStamina(), StatComp->GetMaxStamina());
-		StatusBar->SetSkillBarPercent(StatComp->GetSkill(), StatComp->GetMaxSkill());
+		StatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+		StatusBar->SetStaminaBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
+		StatusBar->SetSkillBarPercent(StatComp->GetResourceValue(ECharacterResourceType::SKILL), StatComp->GetResourceMaxValue(ECharacterResourceType::SKILL));
 
 		// UI 이벤트 바인딩
-		StatComp->OnHealthChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
-		StatComp->OnStaminaChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
-		StatComp->OnSkillChanged.AddUObject(StatusBar, &UUWPlayerStatusBar::SetSkillBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBar, &UUWPlayerStatusBar::SetSkillBarPercent);
 	}
 }
 
@@ -221,15 +221,15 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 
 uint16 APlayerCharacter::CalculateBaseDamage()
 {
-	return StatComp->GetAttack() * (1.0f + ActionComp->GetAttackActionDamagePer() * 0.01f);
+	return StatComp->GetStat(ECharacterStatType::ATTACK) * (1.0f + ActionComp->GetAttackActionDamagePer() * 0.01f);
 }
 
 uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
 {
-	int32 critial = FMath::Rand() % 100;
+	uint32 critial = FMath::Rand() % 100;
 
-	if (critial <= StatComp->GetCriticalPer())
-		_damage *= (1.0f + StatComp->GetCriticalDamagePer() * 0.01f);
+	if (critial <= StatComp->GetStat(ECharacterStatType::CRITICAL_PERCENT))
+		_damage *= (1.0f + StatComp->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT) * 0.01f);
 
 	return _damage;
 }
@@ -253,12 +253,12 @@ void APlayerCharacter::Interact()
 	FHitResult HitResult;
 
 	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * 300.0f;
+	FVector End = Start + GetActorForwardVector() * 500.0f;
 
 	bool IsHit = UKismetSystemLibrary::BoxTraceSingle(
 		GetWorld(), 
 		Start, End,
-		FVector(50.0f, 50.0f, 50.0f),
+		FVector(20.0f, 20.0f, 20.0f),
 		GetActorForwardVector().Rotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel6),
 		false,

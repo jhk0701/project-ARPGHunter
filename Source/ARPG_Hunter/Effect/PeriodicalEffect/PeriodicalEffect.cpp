@@ -38,19 +38,19 @@ void UPeriodicalEffect::Deactivate()
 void URepeatlyRecoverHealth::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->RecoverHealth(GetParam()->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::HEALTH, GetParam()->Value);
 }
 
 void URepeatlyRecoverStamina::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->RecoverStamina(GetParam()->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::STAMINA, GetParam()->Value);
 }
 
 void URepeatlyRecoverSkill::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->RecoverSkill(GetParam()->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::SKILL, GetParam()->Value);
 }
 
 // 리소스 데미지

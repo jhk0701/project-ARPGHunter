@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,25 +6,55 @@
 #include "Components/ActorComponent.h"
 #include "StatComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
+
 class UEffect;
 struct FEffectParam;
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, uint16, uint16)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
+UENUM()
+enum class ECharacterStatType : uint8
+{
+	HEALTH						UMETA(DisplayName = "Health"),
+	STAMINA						UMETA(DisplayName = "Stamina"),
+	SKILL						UMETA(DisplayName = "Skill"),
+	ATTACK						UMETA(DisplayName = "Attack"),
+	DEFENSE						UMETA(DisplayName = "Defense"),
+	CRITICAL_PERCENT			UMETA(DisplayName = "Critical Per"), // 크리티컬 확률
+	CRITICAL_DAMAGE_PERCENT		UMETA(DisplayName = "Critical Damage Per"), // 크리티컬 시, 증가 데미지
+
+	END							UMETA(Hidden),
+};
+
+UENUM()
+enum class ECharacterResourceType : uint8
+{
+	HEALTH		UMETA(DisplayName = "Health"),
+	STAMINA		UMETA(DisplayName = "Stamina"),
+	SKILL		UMETA(DisplayName = "Skill"),
+
+	END			UMETA(Hidden),
+};
 
 USTRUCT()
-struct FStat 
+struct FCharacterResource
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
-	uint16 Attack{ 10 };
-	UPROPERTY(EditAnywhere)
-	uint16 Defense{ 10 };
-	UPROPERTY(EditAnywhere)
-	uint8 CriticalPer{ 20 }; // 크리티컬 확률
-	UPROPERTY(EditAnywhere)
-	uint8 CriticalDamagePer{ 100 }; // 크리티컬 시, 증가 데미지
+	uint32 MaxValue;
+	uint32 Value;
+	FOnValueChanged OnValueChanged;
+
+	void Init(uint32 _max, bool _bFull = true)
+	{
+		MaxValue = _max;
+		Value = _bFull ? MaxValue : 0;
+	}
+
+	void InvokeDelegate() 
+	{
+		OnValueChanged.Broadcast(Value, MaxValue);
+	}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -37,15 +67,10 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
-	FStat Stat;
+	TMap<ECharacterStatType, uint32> Stat;
+	UPROPERTY(VisibleAnywhere, Category = "Resource", meta = (AllowPrivateAccess = "true"))
+	TMap<ECharacterResourceType, FCharacterResource> Resource;
 
-	UPROPERTY(EditAnywhere, Category = "Stat|Health", meta = (AllowPrivateAccess = "true"))
-	uint16 MaxHealth{ 100 };
-	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
-	uint16 Health{ 100 };
-
-	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
-	uint16 MaxStamina{ 100 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	uint16 StaminaRecoveryPerSecond{ 10 };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
@@ -54,69 +79,41 @@ private:
 	float StaminaRecoveryPauseTime{ 1.0f };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	float PenaltyTimeOnStaminaExhaustion{ 5.0f };
-	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
-	uint16 Stamina{ 100 };
 
 	FTimerHandle StaminaRecoveryTimer;
 	void StartStaminaRecovery();
 
-	UPROPERTY(EditAnywhere, Category = "Stat|Skill", meta = (AllowPrivateAccess = "true"))
-	uint8 MaxSkill{ 100 };
-	UPROPERTY(VisibleAnywhere, Category = "Stat|Resource")
-	uint8 Skill{ 0 };
-	
 	// 효과 관리용 컨테이너 : 이펙트 -> 타이머 핸들 찾기
 	UPROPERTY()
 	TMap<TObjectPtr<UEffect>, FTimerHandle> MapEffect;
-
 	// 효과로 얻은 스탯
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
-	FStat EffectedStat;
-	
-public:	
-	FOnStatValueChanged OnHealthChanged;
-	FOnStatValueChanged OnStaminaChanged;
-	FOnStatValueChanged OnSkillChanged;
+	TMap<ECharacterStatType, uint32> EffectedStat;
 
+public:	
 	FOnHitEvent OnHitEvent; // 피격 이벤트
 
 	void Init();
 
-	uint16 GetAttack() { return Stat.Attack + EffectedStat.Attack; }
-	uint16 GetDefense() { return Stat.Defense + EffectedStat.Defense; }
-	uint8 GetCriticalPer() { return FMath::Min(100, Stat.CriticalPer + EffectedStat.CriticalPer); }
-	uint8 GetCriticalDamagePer() { return Stat.CriticalDamagePer + EffectedStat.CriticalDamagePer; }
+	uint32 GetStat(ECharacterStatType _type) const { return Stat[_type] + EffectedStat[_type]; }
+	uint32 GetResourceValue(ECharacterResourceType _type) const { return Resource[_type].Value; }
+	uint32 GetResourceMaxValue(ECharacterResourceType _type) const { return Resource[_type].MaxValue; }
+	FOnValueChanged& GetResourceEvent(ECharacterResourceType _type) { return Resource[_type].OnValueChanged; }
+	bool TryUseResource(ECharacterResourceType _type, uint32 _amount);
+	void RecoverResource(ECharacterResourceType _type, uint32 _amount);
 
-	uint16 GetMaxHealth() { return MaxHealth; }
-	uint16 GetHealth() { return Health; }
-	bool IsDead() { return Health == 0; }
-	bool TakeDamage(uint16 _damage);
-	void RecoverHealth(uint16 _amount);
+	bool IsDead() { return GetStat(ECharacterStatType::HEALTH) == 0; }
+	bool TakeDamage(uint32 _damage);
 
-	uint16 GetMaxStamina() { return MaxStamina; }
-	uint16 GetStamina() const { return Stamina; }
-	bool IsStaggering() { return Stamina == 0; }
-	bool TryUseStamina(uint16 _amount);
-	void TakeStaminaDamage(uint16 _damage);
-	void RecoverStamina(uint16 _amount);
+	bool IsStaggering() { return GetStat(ECharacterStatType::STAMINA) == 0; }
+	void TakeStaminaDamage(uint32 _damage);
+	bool TryUseStamina(uint32 _amount);
 	void PauseAndRestartStaminaRecovery(float _pauseSecond);
-
-	uint8 GetMaxSkill() { return MaxSkill; }
-	uint8 GetSkill() { return Skill; }
-	bool TryUseSkill(uint8 _amount);
-	void RecoverSkill(uint8 _amount);
 
 	void ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam);
 	void RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 
-	void AddAttack(uint16 _amount) { EffectedStat.Attack += _amount; }
-	void AddDefense(uint16 _amount) { EffectedStat.Defense += _amount; }
-	void AddCritPer(uint8 _amount) { EffectedStat.CriticalPer += _amount; }
-	void AddCritDmg(uint8 _amount) { EffectedStat.CriticalDamagePer += _amount; }
-
-	void SubAttack(uint16 _amount) { EffectedStat.Attack -= _amount; }
-	void SubDefense(uint16 _amount) { EffectedStat.Defense -= _amount; }
-	void SubCritPer(uint8 _amount) { EffectedStat.CriticalPer -= _amount; }
-	void SubCritDmg(uint8 _amount) { EffectedStat.CriticalDamagePer -= _amount; }
+	void AddStat(ECharacterStatType _type, uint32 _amount) { EffectedStat[_type] += _amount; }
+	void SubStat(ECharacterStatType _type, uint32 _amount) { EffectedStat[_type] -= _amount; }
 };

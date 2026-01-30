@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -10,9 +10,28 @@ UStatComponent::UStatComponent()
 }
 void UStatComponent::Init()
 {
-	Health = MaxHealth;
-	Stamina = MaxStamina;
-	Skill = 0;
+	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
+	{
+		ECharacterStatType type = static_cast<ECharacterStatType>(i);
+		
+		if (!Stat.Find(type))
+			Stat.Add(type);
+
+		Stat[type] = 100;
+	}
+
+	for (uint8 i = 0; i < static_cast<uint8>(ECharacterResourceType::END); ++i)
+	{
+		ECharacterResourceType type = static_cast<ECharacterResourceType>(i);
+
+		if (!Resource.Find(type))
+			Resource.Add(type);
+	}
+
+	Resource[ECharacterResourceType::HEALTH].Init(Stat[ECharacterStatType::HEALTH]);
+	Resource[ECharacterResourceType::STAMINA].Init(Stat[ECharacterStatType::STAMINA]);
+	Resource[ECharacterResourceType::SKILL].Init(Stat[ECharacterStatType::SKILL], false);
+
 	StartStaminaRecovery();
 }
 
@@ -22,14 +41,49 @@ void UStatComponent::StartStaminaRecovery()
 		StaminaRecoveryTimer,
 		[this]()
 		{
-			RecoverStamina(StaminaRecoveryPerSecond * StaminaRecoveryRate);
+			RecoverResource(ECharacterResourceType::STAMINA, StaminaRecoveryPerSecond * StaminaRecoveryRate);
 		},
 		StaminaRecoveryRate,
 		true
 	);
 }
 
-bool UStatComponent::TakeDamage(uint16 _damage)
+bool UStatComponent::TryUseResource(ECharacterResourceType _type, uint32 _amount)
+{
+	FCharacterResource* pResource = &Resource[_type];
+
+	if (pResource->Value < _amount)
+		return false;
+
+	pResource->Value -= _amount;
+	pResource->InvokeDelegate();
+
+	return true;
+}
+
+void UStatComponent::RecoverResource(ECharacterResourceType _type, uint32 _amount)
+{
+	FCharacterResource* pResource = &Resource[_type];
+
+	if (pResource->Value == pResource->MaxValue)
+		return;
+
+	pResource->Value = FMath::Min<uint32>(pResource->Value + _amount, pResource->MaxValue);
+	pResource->InvokeDelegate();
+}
+
+bool UStatComponent::TryUseStamina(uint32 _amount)
+{
+	bool bIsUsed = TryUseResource(ECharacterResourceType::STAMINA, _amount);
+
+	// 스태미나 소진 시, 페널티 시간 부여
+	if (bIsUsed)
+		PauseAndRestartStaminaRecovery(IsStaggering() ? PenaltyTimeOnStaminaExhaustion : StaminaRecoveryPauseTime);
+
+	return bIsUsed;
+}
+
+bool UStatComponent::TakeDamage(uint32 _damage)
 {
 	if (IsDead())
 		return false;
@@ -41,61 +95,27 @@ bool UStatComponent::TakeDamage(uint16 _damage)
 	if (bHitCanceled)
 		return false;
 
-	if (Health < _damage)
-		Health = 0;
-	else
-		Health -= _damage;
-
-	OnHealthChanged.Broadcast(Health, MaxHealth);
-	return true;
-}
-
-void UStatComponent::RecoverHealth(uint16 _amount)
-{
-	if (Health == MaxHealth)
-		return;
-
-	Health = FMath::Min<uint16>(Health + _amount, MaxHealth);
-
-	OnHealthChanged.Broadcast(Health, MaxHealth);
-}
-
-bool UStatComponent::TryUseStamina(uint16 _amount)
-{
-	if (Stamina < _amount)
-		return false;
-
-	Stamina -= _amount;
-	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
-
-	// 스태미나 소진 시, 페널티 시간 부여
-	PauseAndRestartStaminaRecovery(IsStaggering() ? PenaltyTimeOnStaminaExhaustion : StaminaRecoveryPauseTime);
+	if (TryUseResource(ECharacterResourceType::HEALTH, _damage) == false)
+	{
+		Resource[ECharacterResourceType::HEALTH].Value = 0;
+		Resource[ECharacterResourceType::HEALTH].InvokeDelegate();
+	}
 
 	return true;
 }
 
-void UStatComponent::TakeStaminaDamage(uint16 _damage)
+void UStatComponent::TakeStaminaDamage(uint32 _damage)
 {
 	if (IsStaggering())
 		return;
 
-	if (Stamina < _damage)
-		Stamina = 0;
-	else
-		Stamina -= _damage;
-
-	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
+	if (TryUseResource(ECharacterResourceType::STAMINA, _damage) == false)
+	{
+		Resource[ECharacterResourceType::STAMINA].Value = 0;
+		Resource[ECharacterResourceType::STAMINA].InvokeDelegate();
+	}
 }
 
-void UStatComponent::RecoverStamina(uint16 _amount)
-{
-	if (Stamina == MaxStamina)
-		return;
-
-	Stamina = FMath::Min<uint16>(Stamina + _amount, MaxStamina);
-
-	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
-}
 
 void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond)
 {
@@ -107,38 +127,18 @@ void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond)
 	TimerManager.SetTimer(StaminaRecoveryTimer,
 		[this]()
 		{
-			if(IsStaggering())
-				RecoverStamina(static_cast<uint16>(MaxStamina * 0.5f));
+			FCharacterResource* pStamina = &Resource[ECharacterResourceType::STAMINA];
 
-			RecoverStamina(StaminaRecoveryPerSecond * StaminaRecoveryRate);
+			if (IsStaggering())
+				RecoverResource(ECharacterResourceType::STAMINA, pStamina->MaxValue * 0.5f);
+			else
+				RecoverResource(ECharacterResourceType::STAMINA, StaminaRecoveryPerSecond * StaminaRecoveryRate);
 		},
 		StaminaRecoveryRate,
 		true,
 		_pauseSecond
 	);
 }
-
-bool UStatComponent::TryUseSkill(uint8 _amount)
-{
-	if (Skill < _amount)
-		return false;
-
-	Skill -= _amount;
-	OnSkillChanged.Broadcast(Skill, MaxSkill);
-
-	return true;
-}
-
-void UStatComponent::RecoverSkill(uint8 _amount)
-{
-	if (Skill == MaxSkill)
-		return;
-
-	Skill = FMath::Min<uint8>(MaxSkill, Skill + _amount);
-
-	OnSkillChanged.Broadcast(Skill, MaxSkill);
-}
-
 
 void UStatComponent::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
 {
