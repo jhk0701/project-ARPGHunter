@@ -30,3 +30,19 @@ FName EnumToName(EActionProcess _value)
 		return FName(TEXT("None"));
 	}
 }
+
+FString EnumToString(EMonsterType _type)
+{
+	switch (_type)
+	{
+	case EMonsterType::MELEE:
+		return FString(TEXT("Melee"));
+	case EMonsterType::RANGED:
+		return FString(TEXT("Ranged"));
+	case EMonsterType::BOSS:
+		return FString(TEXT("Boss"));
+
+	default:
+		return FString();
+	}
+}

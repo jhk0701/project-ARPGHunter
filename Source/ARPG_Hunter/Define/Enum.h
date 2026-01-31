@@ -78,3 +78,16 @@ enum class ECharacterResourceType : uint8
 
 	END			UMETA(Hidden),
 };
+
+
+UENUM(BlueprintType)
+enum class EMonsterType : uint8
+{
+	MELEE		UMETA(DisplayName = "Melee"),
+	RANGED		UMETA(DisplayName = "Ranged"),
+	BOSS		UMETA(DisplayName = "Boss"),
+
+	END			UMETA(DisplayName = "End")
+};
+
+FString EnumToString(EMonsterType _type);

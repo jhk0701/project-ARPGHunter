@@ -7,12 +7,15 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Subsystem/DataManager/DataManager.h"
 #include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
 #include "Controller/MonsterAIController.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
+
+#include "Define/Debug.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -32,10 +35,12 @@ AMonsterBase::AMonsterBase()
 	if (StatusUIFinder.Succeeded() && Widget)
 		Widget->SetWidgetClass(StatusUIFinder.Class);
 }
-
-void AMonsterBase::Init(FMonsterData* _data)
+// Called when the game starts or when spawned
+void AMonsterBase::BeginPlay()
 {
-	Data = _data; // 데이터 의존성 주입 및 초기화
+	Super::BeginPlay();
+
+	FMonsterData* Data = GetData();
 
 	USkeletalMeshComponent* MeshComp = GetMesh();
 	MeshComp->SetSkeletalMesh(Data->Mesh);
@@ -44,21 +49,7 @@ void AMonsterBase::Init(FMonsterData* _data)
 	AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
-}
 
-// Called when the game starts or when spawned
-void AMonsterBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (bIsTest) 
-	{
-		AnimInstance = GetMesh()->GetAnimInstance();
-		if (AnimInstance)
-			AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
-		return;
-	}
-	
 	// TODO : 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
@@ -90,6 +81,11 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 void AMonsterBase::SetWalkable(bool _bIsWalkable)
 {
 	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? GetMoveSpeed() : 0.0f;
+}
+
+FMonsterData* AMonsterBase::GetData() const
+{
+	return GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
 }
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
@@ -189,27 +185,27 @@ bool AMonsterBase::IsDead()
 
 float AMonsterBase::GetRecognitionRange() const
 {
-	return Data->RecoginitionRange;
+	return GetData()->RecoginitionRange;
 }
 
 float AMonsterBase::GetAttackRange() const
 {
-	return Data->AttackRange;
+	return GetData()->AttackRange;
 }
 
 float AMonsterBase::GetMoveSpeed() const
 {
-	return Data->MoveSpeed;
+	return GetData()->MoveSpeed;
 }
 
 TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 {
-	return Data->HitMontage;
+	return GetData()->HitMontage;
 }
 
 TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 {
-	return Data->AttackMontages[_idx];
+	return GetData()->AttackMontages[_idx];
 }
 
 void AMonsterBase::ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam)

@@ -7,16 +7,6 @@
 #include "Define/Enum.h"
 #include "MonsterData.generated.h"
 
-UENUM(BlueprintType)
-enum class EMonsterType : uint8
-{
-	MELEE		UMETA(DisplayName = "Melee"),
-	RANGED		UMETA(DisplayName = "Ranged"),
-	BOSS		UMETA(DisplayName = "Boss"),
-
-	END			UMETA(DisplayName = "End")
-};
-
 /**
  * 
  */

@@ -12,6 +12,7 @@ ADamageFont::ADamageFont()
 	PrimaryActorTick.bCanEverTick = false;
 
 	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
+	SetRootComponent(WidgetComp);
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetFinder(TEXT("/Game/06-UI/WBP_DamageFont.WBP_DamageFont_C"));
 	if (WidgetFinder.Succeeded())

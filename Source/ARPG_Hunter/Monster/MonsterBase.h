@@ -25,6 +25,9 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug|Test")
 	bool bIsTest{ false };
+	
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+	FName ID;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
@@ -34,7 +37,6 @@ private:
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
-	FMonsterData* Data; 
 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;
@@ -55,10 +57,12 @@ protected:
 
 	void SetWalkable(bool _bIsWalkable);
 
+	struct FMonsterData* GetData() const;
+
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
 
-	virtual void Init(FMonsterData* _data);
+	void SetID(const FName& _id) { ID = _id; }
 	virtual void Attack();
 	
 	// IAttackNotifyHandler을(를) 통해 상속됨

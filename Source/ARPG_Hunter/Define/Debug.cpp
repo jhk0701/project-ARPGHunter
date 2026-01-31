@@ -1,4 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Data/MonsterData.h"
+#include "Define/Debug.h"
+
+DEFINE_LOG_CATEGORY(LogARPG);
