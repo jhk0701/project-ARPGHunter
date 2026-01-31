@@ -2,6 +2,7 @@
 
 
 #include "Define/Enum.h"
+#include "CoreMinimal.h"
 
 FName EnumToName(EWeaponType _value)
 {

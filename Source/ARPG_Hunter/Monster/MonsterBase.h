@@ -9,8 +9,9 @@
 #include "Interface/AttackNotifyHandler.h"
 #include "MonsterBase.generated.h"
 
-
 enum class EMonsterType : uint8;
+struct FMonsterData;
+
 DECLARE_DELEGATE(FOnAttackMontageEnded);
 
 UCLASS()
@@ -30,30 +31,16 @@ private:
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 
 	TObjectPtr<UAnimInstance> AnimInstance;
-
-#pragma region TmpData
-
+	
+	FMonsterData* Data; 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
-	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
-	TObjectPtr<UAnimMontage> HitMontage;
-	UPROPERTY(EditAnywhere, Category = "Animation|Montage")
-	TObjectPtr<UAnimMontage> AttackMontage;
-
-	UPROPERTY(EditAnywhere, Category = "AI|Param")
-	float RecognitionRange{ 1000.0f };
-	UPROPERTY(EditAnywhere, Category = "AI|Param")
-	float AttackRange{ 150.0f };
-	UPROPERTY(EditAnywhere, Category = "AI|Param")
-	float Speed{200.0f};
-
-#pragma endregion
+	int CurAttackMontageIdx{0};
 
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
@@ -65,25 +52,29 @@ protected:
 
 	void SetWalkable(bool _bIsWalkable);
 
-
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
 
+	virtual void Init(FMonsterData* _data);
 	virtual void Attack();
+	
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;
-
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool IsDead();
 	virtual void OnDead();
 
-	TObjectPtr<UBehaviorTree> GetBehaviorTree() { return MonsterBT; }
-	TObjectPtr<UBlackboardData> GetBlackboardData() { return MonsterBB; }
+	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
+	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 
-	float GetRecognitionRange() { return RecognitionRange; }
-	float GetAttackRange() { return AttackRange; }
+	float GetRecognitionRange() const;
+	float GetAttackRange() const;
+	float GetMoveSpeed() const;
+
+	TObjectPtr<UAnimMontage> GetHitMontage() const;
+	TObjectPtr<UAnimMontage> GetAttackMontage(int _idx = 0) const;
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam) override;

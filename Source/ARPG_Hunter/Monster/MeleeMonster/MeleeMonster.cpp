@@ -8,13 +8,13 @@
 
 AMeleeMonster::AMeleeMonster()
 {
-	static ConstructorHelpers::FObjectFinder<UBehaviorTree> MeleeMonsterBTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_MeleeMonster.BT_MeleeMonster'"));
-	if (MeleeMonsterBTFinder.Succeeded())
-		SetBehaviorTree(MeleeMonsterBTFinder.Object);
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_MeleeMonster.BT_MeleeMonster'"));
+	if (BTFinder.Succeeded())
+		SetBehaviorTree(BTFinder.Object);
 
-	static ConstructorHelpers::FObjectFinder<UBlackboardData> MeleeMonsterBBFinder(TEXT("/Script/AIModule.BlackboardData'/Game/02-BP/Monster/AI/BB_MeleeMonster.BB_MeleeMonster'"));
-	if (MeleeMonsterBBFinder.Succeeded())
-		SetBlackboardData(MeleeMonsterBBFinder.Object);
+	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBFinder(TEXT("/Script/AIModule.BlackboardData'/Game/02-BP/Monster/AI/BB_MeleeMonster.BB_MeleeMonster'"));
+	if (BBFinder.Succeeded())
+		SetBlackboardData(BBFinder.Object);
 }
 
 void AMeleeMonster::HitBy(const FHitInfo& _hitInfo)

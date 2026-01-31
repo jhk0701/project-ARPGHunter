@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
 #include "Controller/MonsterAIController.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
@@ -32,9 +33,13 @@ AMonsterBase::AMonsterBase()
 		Widget->SetWidgetClass(StatusUIFinder.Class);
 }
 
-void AMonsterBase::PostInitializeComponents()
+void AMonsterBase::Init(FMonsterData* _data)
 {
-	Super::PostInitializeComponents();
+	Data = _data; // 데이터 의존성 주입 및 초기화
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	MeshComp->SetSkeletalMesh(Data->Mesh);
+	MeshComp->SetAnimInstanceClass(Data->AnimBP);
 
 	AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
@@ -46,6 +51,7 @@ void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// TODO : 레벨 반영 스탯 계산
 	StatComp->Init();
 
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
@@ -60,7 +66,7 @@ void AMonsterBase::BeginPlay()
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == AttackMontage || _montage == HitMontage)
+	if (_montage == GetAttackMontage(CurAttackMontageIdx) || _montage == GetHitMontage())
 		OnAttackMontageEnded.ExecuteIfBound();
 
 	SetWalkable(true);
@@ -68,7 +74,7 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 
 void AMonsterBase::SetWalkable(bool _bIsWalkable)
 {
-	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? Speed : 0.0f;
+	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? GetMoveSpeed() : 0.0f;
 }
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
@@ -84,24 +90,26 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 		ADamage->ShowUI();
 	}
 
-	if (HitMontage == nullptr)
+	if (GetHitMontage() == nullptr)
 		return;
 
-	AnimInstance->Montage_Play(HitMontage);
+	AnimInstance->Montage_Play(GetHitMontage());
 
 	if (StatComp->IsDead())
 	{
-		AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
+		AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), GetHitMontage());
 		OnDead();
 		return;
 	}
 
-	AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), HitMontage);
+	AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
 	SetWalkable(false);
 }
 
 void AMonsterBase::Attack()
 {
+	TObjectPtr<UAnimMontage> AttackMontage = GetAttackMontage(CurAttackMontageIdx);
+
 	if (AttackMontage == nullptr || AnimInstance->Montage_IsPlaying(AttackMontage))
 		return;
 
@@ -117,7 +125,7 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 	TArray<FHitResult> HitResults;
 	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
 		this,
-		Loc, Loc + GetActorForwardVector() * AttackRange,
+		Loc, Loc + GetActorForwardVector() * GetAttackRange(),
 		FVector(50.0f, 50.0f, 50.0f), GetActorRotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3),
 		false,	{ this },
@@ -162,6 +170,31 @@ void AMonsterBase::OnDead()
 bool AMonsterBase::IsDead()
 {
 	return StatComp->IsDead();
+}
+
+float AMonsterBase::GetRecognitionRange() const
+{
+	return Data->RecoginitionRange;
+}
+
+float AMonsterBase::GetAttackRange() const
+{
+	return Data->AttackRange;
+}
+
+float AMonsterBase::GetMoveSpeed() const
+{
+	return Data->MoveSpeed;
+}
+
+TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
+{
+	return Data->HitMontage;
+}
+
+TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
+{
+	return Data->AttackMontages[_idx];
 }
 
 void AMonsterBase::ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam)

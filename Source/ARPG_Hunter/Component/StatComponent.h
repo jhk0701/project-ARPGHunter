@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Define/Enum.h"
 #include "StatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
@@ -12,29 +13,6 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
 class UEffect;
 struct FEffectParam;
 
-UENUM()
-enum class ECharacterStatType : uint8
-{
-	HEALTH						UMETA(DisplayName = "Health"),
-	STAMINA						UMETA(DisplayName = "Stamina"),
-	SKILL						UMETA(DisplayName = "Skill"),
-	ATTACK						UMETA(DisplayName = "Attack"),
-	DEFENSE						UMETA(DisplayName = "Defense"),
-	CRITICAL_PERCENT			UMETA(DisplayName = "Critical Per"), // 크리티컬 확률
-	CRITICAL_DAMAGE_PERCENT		UMETA(DisplayName = "Critical Damage Per"), // 크리티컬 시, 증가 데미지
-
-	END							UMETA(Hidden),
-};
-
-UENUM()
-enum class ECharacterResourceType : uint8
-{
-	HEALTH		UMETA(DisplayName = "Health"),
-	STAMINA		UMETA(DisplayName = "Stamina"),
-	SKILL		UMETA(DisplayName = "Skill"),
-
-	END			UMETA(Hidden),
-};
 
 USTRUCT()
 struct FCharacterResource
