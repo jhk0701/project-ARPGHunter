@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USkeletalMesh> Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UAnimBlueprint> AnimBP;
+	TSubclassOf<UAnimInstance> AnimBP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UAnimMontage> HitMontage;
@@ -41,7 +41,7 @@ public:
 	TArray<TObjectPtr<UAnimMontage>> AttackMontages;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<ECharacterStatType, int32> BaseStat;
+	TMap<ECharacterStatType, uint8> BaseStat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RecoginitionRange{ 1000.0f };

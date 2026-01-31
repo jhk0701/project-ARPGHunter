@@ -8,16 +8,16 @@
 #include "Camera/CameraShakeBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#include "Interface/Interactable.h"
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
 #include "Controller/PlayerCombatController.h"
+#include "Subsystem/PlayerManager/PlayerManager.h"
+
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
-
-
+#include "Interface/Interactable.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -72,8 +72,10 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// TODO : 플레이어 데이터 받아오기
-	StatComp->Init();
+	// 플레이어 데이터 받아오기
+	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
+	StatComp->Init(PlayerManager->GetPlayerStat());
 	EquipComp->Init();
 	ActionComp->Init(GetMesh()->GetAnimInstance());
 
@@ -103,6 +105,7 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
+	// 액터 제거 시, 컴포넌트도 정리
 	StatComp->Clear();
 	ActionComp->Clear();
 }

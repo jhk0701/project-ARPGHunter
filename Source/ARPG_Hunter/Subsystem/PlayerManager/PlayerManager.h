@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Define/Enum.h"
 #include "PlayerManager.generated.h"
 
 /**
@@ -14,4 +15,11 @@ class ARPG_HUNTER_API UPlayerManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 	
+private:
+	TMap<ECharacterStatType, uint32> Stat;
+
+public:
+	UPlayerManager();
+
+	const TMap<ECharacterStatType, uint32>& GetPlayerStat() const { return Stat; }
 };

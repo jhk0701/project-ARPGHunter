@@ -31,8 +31,10 @@ UStatComponent::UStatComponent()
 	}
 }
 
-void UStatComponent::Init()
+void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)
 {
+	Stat = _initStat;
+
 	Resource[ECharacterResourceType::HEALTH].Init(Stat[ECharacterStatType::HEALTH]);
 	Resource[ECharacterResourceType::STAMINA].Init(Stat[ECharacterStatType::STAMINA]);
 	Resource[ECharacterResourceType::SKILL].Init(Stat[ECharacterStatType::SKILL], false);

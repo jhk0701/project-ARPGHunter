@@ -13,7 +13,6 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
 class UEffect;
 struct FEffectParam;
 
-
 USTRUCT()
 struct FCharacterResource
 {
@@ -71,7 +70,7 @@ private:
 public:	
 	FOnHitEvent OnHitEvent; // 피격 이벤트
 
-	void Init();
+	void Init(const TMap<ECharacterStatType, uint32>& _initStat);
 	void Clear();
 
 	uint32 GetStat(ECharacterStatType _type) const { return Stat[_type] + EffectedStat[_type]; }

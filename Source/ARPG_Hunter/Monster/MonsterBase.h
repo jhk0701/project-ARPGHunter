@@ -29,10 +29,10 @@ private:
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UWidgetComponent> WidgetComp;
-
+	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
-	
 	FMonsterData* Data; 
+
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;
 	UPROPERTY(EditAnywhere, Category = "AI|BT")

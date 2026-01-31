@@ -50,9 +50,16 @@ void AMonsterBase::Init(FMonsterData* _data)
 void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	// TODO : 레벨 반영 스탯 계산
-	StatComp->Init();
+	TMap<ECharacterStatType, uint32> BaseStat;
+	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
+	{
+		ECharacterStatType type = static_cast<ECharacterStatType>(i);
+		BaseStat.Add(type, Data->BaseStat[type]);
+	}
+
+	StatComp->Init(BaseStat);
 
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
 	{
