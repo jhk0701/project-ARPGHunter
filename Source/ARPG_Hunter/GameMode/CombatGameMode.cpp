@@ -3,17 +3,11 @@
 
 #include "GameMode/CombatGameMode.h"
 
-#include "Player/PlayerCharacter.h"
-#include "Controller/PlayerCharacterController.h"
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 
 ACombatGameMode::ACombatGameMode()
 {
-	static ConstructorHelpers::FClassFinder<ACharacter> PlayerFinder(TEXT("/Game/02-BP/Player/BP_Player.BP_Player_C"));
-	if (PlayerFinder.Succeeded())
-		DefaultPawnClass = PlayerFinder.Class;
-
 	PlayerControllerClass = APlayerCombatController::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
 }

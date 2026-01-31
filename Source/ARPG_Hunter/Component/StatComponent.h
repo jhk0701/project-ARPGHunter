@@ -94,6 +94,7 @@ public:
 	FOnHitEvent OnHitEvent; // 피격 이벤트
 
 	void Init();
+	void Clear();
 
 	uint32 GetStat(ECharacterStatType _type) const { return Stat[_type] + EffectedStat[_type]; }
 	uint32 GetResourceValue(ECharacterResourceType _type) const { return Resource[_type].Value; }

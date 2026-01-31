@@ -4,6 +4,8 @@
 #include "Object/StageSelector.h"
 #include "Components/BoxComponent.h"
 
+#include "GameMode/ARPGGameMode.h"
+
 // Sets default values
 AStageSelector::AStageSelector()
 {
@@ -18,4 +20,6 @@ AStageSelector::AStageSelector()
 void AStageSelector::Interact()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Interact"));
+
+	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(FName(TEXT("Test")));
 }

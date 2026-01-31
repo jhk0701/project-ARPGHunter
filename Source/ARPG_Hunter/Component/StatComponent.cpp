@@ -40,6 +40,20 @@ void UStatComponent::Init()
 	StartStaminaRecovery();
 }
 
+void UStatComponent::Clear()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	if (TimerManager.IsTimerActive(StaminaRecoveryTimer))
+		TimerManager.ClearTimer(StaminaRecoveryTimer);
+
+	for (TPair<TObjectPtr<UEffect>, FTimerHandle>& pair : MapEffect)
+	{
+		if (TimerManager.IsTimerActive(pair.Value))
+			TimerManager.ClearTimer(pair.Value);
+	}
+}
+
 void UStatComponent::StartStaminaRecovery()
 {
 	GetWorld()->GetTimerManager().SetTimer(

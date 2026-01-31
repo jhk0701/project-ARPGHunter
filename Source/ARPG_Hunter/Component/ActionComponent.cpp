@@ -1,4 +1,4 @@
-
+﻿
 
 #include "Component/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -24,6 +24,13 @@ void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
 	// TODO: 플레이어 데이터를 기반으로 장비 모션을 적용
 	UDataManager* DataManager = GetOwner()->GetGameInstance()->GetSubsystem<UDataManager>();
 	CurWeaponType = DataManager->GetWeaponTypeData(EWeaponType::SWORD);
+}
+
+void UActionComponent::Clear()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	if (TimerManager.IsTimerActive(ActionResetTimer))
+		TimerManager.ClearTimer(ActionResetTimer);
 }
 
 void UActionComponent::ResetAction()

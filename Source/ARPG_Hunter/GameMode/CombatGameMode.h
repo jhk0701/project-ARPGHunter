@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameMode/ARPGGameMode.h"
 #include "CombatGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API ACombatGameMode : public AGameModeBase
+class ARPG_HUNTER_API ACombatGameMode : public AARPGGameMode
 {
 	GENERATED_BODY()
 
