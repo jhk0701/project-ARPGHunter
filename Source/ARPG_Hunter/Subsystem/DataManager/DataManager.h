@@ -19,8 +19,12 @@ class ARPG_HUNTER_API UDataManager : public UGameInstanceSubsystem
 private:
 	UPROPERTY()
 	TObjectPtr<class UDataTable> WeaponTypeDataTable;
+	UPROPERTY()
+	TObjectPtr<class UDataTable> MonsterDataTable;
 
 public:
 	UDataManager();
+	
 	struct FWeaponTypeData* GetWeaponTypeData(EWeaponType _type);
+	struct FMonsterData* GetMonsterData(FName _id);
 };

@@ -50,6 +50,14 @@ void AMonsterBase::Init(FMonsterData* _data)
 void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (bIsTest) 
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+			AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+		return;
+	}
 	
 	// TODO : 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;

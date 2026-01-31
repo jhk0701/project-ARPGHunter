@@ -23,6 +23,9 @@ public:
 	AMonsterBase();
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Debug|Test")
+	bool bIsTest{ false };
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
