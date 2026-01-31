@@ -7,17 +7,19 @@
 UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-}
-void UStatComponent::Init()
-{
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
 	{
 		ECharacterStatType type = static_cast<ECharacterStatType>(i);
-		
+
 		if (!Stat.Find(type))
 			Stat.Add(type);
 
 		Stat[type] = 100;
+
+		if(!EffectedStat.Find(type))
+			EffectedStat.Add(type);
+
+		EffectedStat[type] = 0;
 	}
 
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterResourceType::END); ++i)
@@ -27,7 +29,10 @@ void UStatComponent::Init()
 		if (!Resource.Find(type))
 			Resource.Add(type);
 	}
+}
 
+void UStatComponent::Init()
+{
 	Resource[ECharacterResourceType::HEALTH].Init(Stat[ECharacterStatType::HEALTH]);
 	Resource[ECharacterResourceType::STAMINA].Init(Stat[ECharacterStatType::STAMINA]);
 	Resource[ECharacterResourceType::SKILL].Init(Stat[ECharacterStatType::SKILL], false);

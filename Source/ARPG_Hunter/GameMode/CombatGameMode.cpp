@@ -5,6 +5,7 @@
 
 #include "Player/PlayerCharacter.h"
 #include "Controller/PlayerCharacterController.h"
+#include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 
 ACombatGameMode::ACombatGameMode()
@@ -13,6 +14,6 @@ ACombatGameMode::ACombatGameMode()
 	if (PlayerFinder.Succeeded())
 		DefaultPawnClass = PlayerFinder.Class;
 
-	PlayerControllerClass = APlayerCharacterController::StaticClass();
+	PlayerControllerClass = APlayerCombatController::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
 }
