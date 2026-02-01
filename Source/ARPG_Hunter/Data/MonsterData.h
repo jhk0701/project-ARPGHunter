@@ -21,7 +21,10 @@ public:
 	FName Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TObjectPtr<USkeletalMesh> Mesh;
+	TObjectPtr<USkeletalMesh> BodyMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<USkeletalMesh> WeaponMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UAnimInstance> AnimBP;
 

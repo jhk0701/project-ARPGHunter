@@ -43,7 +43,8 @@ void AMonsterBase::BeginPlay()
 	FMonsterData* Data = GetData();
 
 	USkeletalMeshComponent* MeshComp = GetMesh();
-	MeshComp->SetSkeletalMesh(Data->Mesh);
+	MeshComp->SetSkeletalMesh(Data->BodyMesh);
+	WeaponComp->SetSkeletalMesh(Data->WeaponMesh);
 	MeshComp->SetAnimInstanceClass(Data->AnimBP);
 
 	AnimInstance = GetMesh()->GetAnimInstance();

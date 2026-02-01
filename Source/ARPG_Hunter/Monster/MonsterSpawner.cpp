@@ -33,8 +33,9 @@ void AMonsterSpawner::SpawnMonster()
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	for (const FName& id : MonsterIDs)
 	{
+		// 박스 크기 내에서 랜덤하게 생성
 		FVector Loc = UKismetMathLibrary::RandomPointInBoundingBox(GetActorLocation(), BoxComp->GetScaledBoxExtent());
-
+		FRotator Rot(0, FMath::Rand() % 360, 0);
 		FMonsterData* MonsterData = DataManager->GetMonsterData(id);
 
 		// 생성 후 즉시 ID 부여
@@ -45,6 +46,6 @@ void AMonsterSpawner::SpawnMonster()
 				AMonsterBase* Inst = Cast<AMonsterBase>(_inst);
 				Inst->SetID(id);
 			};
-		AMonsterBase* Instance = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[MonsterData->Type], Loc, FRotator::ZeroRotator, param);
+		AMonsterBase* Instance = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[MonsterData->Type], Loc, Rot, param);
 	}
 }
