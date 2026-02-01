@@ -52,17 +52,6 @@ void AMonsterBase::PostInitializeComponents()
 	}
 
 #pragma endregion
-	
-	FMonsterData* Data = GetData();
-
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	MeshComp->SetSkeletalMesh(Data->BodyMesh);
-	WeaponComp->SetSkeletalMesh(Data->WeaponMesh);
-	MeshComp->SetAnimInstanceClass(Data->AnimBP);
-
-	AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance)
-		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
 }
 
 // Called when the game starts or when spawned
@@ -84,8 +73,16 @@ void AMonsterBase::BeginPlay()
 		return;
 	}
 #pragma endregion
-
 	FMonsterData* Data = GetData();
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	MeshComp->SetSkeletalMesh(Data->BodyMesh);
+	WeaponComp->SetSkeletalMesh(Data->WeaponMesh);
+	MeshComp->SetAnimInstanceClass(Data->AnimBP);
+
+	AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
 
 	// TODO : 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;

@@ -6,6 +6,7 @@
 #include "Define/Enum.h"
 #include "Data/WeaponTypeData.h"
 #include "Data/MonsterData.h"
+#include "Data/StageData.h"
 
 UDataManager::UDataManager()
 {
@@ -16,14 +17,23 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> MonsterDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_MonsterData.DT_MonsterData'"));
 	if (MonsterDataTableFinder.Succeeded())
 		MonsterDataTable = MonsterDataTableFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> StageDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_StageData.DT_StageData'"));
+	if (StageDataTableFinder.Succeeded())
+		StageDataTable = StageDataTableFinder.Object;
 }
 
-FWeaponTypeData* UDataManager::GetWeaponTypeData(EWeaponType _type)
+FWeaponTypeData* UDataManager::GetWeaponTypeData(EWeaponType _type) const
 {
 	return WeaponTypeDataTable->FindRow<FWeaponTypeData>(EnumToName(_type), TEXT("WeaponType Data Table Search"));
 }
 
-FMonsterData* UDataManager::GetMonsterData(FName _id)
+FMonsterData* UDataManager::GetMonsterData(const FName& _id) const
 {
 	return MonsterDataTable->FindRow<FMonsterData>(_id, TEXT("Monster Data Table Search"));
+}
+
+FStageData* UDataManager::GetStageData(const FName& _id) const
+{
+	return StageDataTable->FindRow<FStageData>(_id, TEXT("Stage Data Table Search"));
 }

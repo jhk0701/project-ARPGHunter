@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "StageSection.generated.h"
 
+enum class EMonsterType : uint8;
+struct FMonsterSpawn;
 
 UCLASS()
 class ARPG_HUNTER_API AStageSection : public AActor
@@ -13,22 +15,32 @@ class ARPG_HUNTER_API AStageSection : public AActor
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere, Category = "Setting")
-	uint8 Id{0};
+	enum EState : uint8
+	{
+		READY,
+		IN_PROGRESS,
+		CLEARED
+	};
 
 	UPROPERTY(EditAnywhere, Category = "Setting")
-	bool bIsCleared{false};
+	uint8 Index{0};
 
-	UPROPERTY(EditAnywhere, Category = "Setting")
+	EState State{ EState::READY };
+
+	UPROPERTY(VisibleAnywhere, Category = "Setting")
 	TObjectPtr<class UBoxComponent> BoxComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Setting|Monster")
+	TMap<EMonsterType, TSubclassOf<class AMonsterBase>> MonsterClass;
 
 public:	
 	// Sets default values for this actor's properties
 	AStageSection();
-	void Init();
+	void SpawnMonster(const FMonsterSpawn& _spawnData);
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
-	virtual void BeginPlay() override;
-	void SpawnMonster();
+	void PostInitializeComponents() override;
+	void BeginPlay() override;
 };

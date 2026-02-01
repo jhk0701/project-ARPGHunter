@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "DataManager.generated.h"
 
+class UDataTable;
 enum class EWeaponType :uint8;
 
 /**
@@ -18,13 +19,16 @@ class ARPG_HUNTER_API UDataManager : public UGameInstanceSubsystem
 
 private:
 	UPROPERTY()
-	TObjectPtr<class UDataTable> WeaponTypeDataTable;
+	TObjectPtr<UDataTable> WeaponTypeDataTable;
 	UPROPERTY()
-	TObjectPtr<class UDataTable> MonsterDataTable;
+	TObjectPtr<UDataTable> MonsterDataTable;
+	UPROPERTY()
+	TObjectPtr<UDataTable> StageDataTable;
 
 public:
 	UDataManager();
 	
-	struct FWeaponTypeData* GetWeaponTypeData(EWeaponType _type);
-	struct FMonsterData* GetMonsterData(FName _id);
+	struct FWeaponTypeData* GetWeaponTypeData(EWeaponType _type) const;
+	struct FMonsterData* GetMonsterData(const FName& _id) const;
+	struct FStageData* GetStageData(const FName& _id) const;
 };

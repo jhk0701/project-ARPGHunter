@@ -6,7 +6,8 @@
 #include "GameMode/ARPGGameMode.h"
 #include "CombatGameMode.generated.h"
 
-enum class EMonsterType : uint8;
+struct FStageData;
+struct FSection;
 
 /**
  * 
@@ -17,13 +18,15 @@ class ARPG_HUNTER_API ACombatGameMode : public AARPGGameMode
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere, Category = "StageSetting|Monster")
-	TMap<EMonsterType, TSubclassOf<class AMonsterBase>> MonsterClass;
+	FStageData* StageData;
+	TArray<bool> bSectionIsCleared;
 
 public:
 	ACombatGameMode();
+	const FSection& GetSection(uint8 _idx) const;
 
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 
 };
