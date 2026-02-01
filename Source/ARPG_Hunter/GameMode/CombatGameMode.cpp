@@ -11,3 +11,10 @@ ACombatGameMode::ACombatGameMode()
 	PlayerControllerClass = APlayerCombatController::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
 }
+
+void ACombatGameMode::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+
+}

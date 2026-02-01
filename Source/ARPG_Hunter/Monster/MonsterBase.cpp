@@ -36,11 +36,23 @@ AMonsterBase::AMonsterBase()
 	WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetComp->SetDrawSize(FVector2D(200,30));
 }
-// Called when the game starts or when spawned
-void AMonsterBase::BeginPlay()
+void AMonsterBase::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 
+#pragma region IsTest
+
+	if (bIsTest)
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance)
+			AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+
+		return;
+	}
+
+#pragma endregion
+	
 	FMonsterData* Data = GetData();
 
 	USkeletalMeshComponent* MeshComp = GetMesh();
@@ -51,6 +63,29 @@ void AMonsterBase::BeginPlay()
 	AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+}
+
+// Called when the game starts or when spawned
+void AMonsterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+#pragma region IsTest
+	if (bIsTest) 
+	{
+		TMap<ECharacterStatType, uint32> BaseStat;
+		for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
+		{
+			ECharacterStatType type = static_cast<ECharacterStatType>(i);
+			BaseStat.Add(type, 20);
+		}
+
+		StatComp->Init(BaseStat);
+		return;
+	}
+#pragma endregion
+
+	FMonsterData* Data = GetData();
 
 	// TODO : 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;

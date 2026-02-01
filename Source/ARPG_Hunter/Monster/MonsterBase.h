@@ -46,6 +46,7 @@ private:
 	int CurAttackMontageIdx{0};
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
 	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
