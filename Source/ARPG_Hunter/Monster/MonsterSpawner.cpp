@@ -8,8 +8,6 @@
 #include "Subsystem/DataManager/DataManager.h"
 #include "Data/MonsterData.h"
 
-#include "Define/Debug.h"
-
 // Sets default values
 AMonsterSpawner::AMonsterSpawner()
 {

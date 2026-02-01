@@ -20,6 +20,7 @@ private:
 
 public:
 	UPlayerManager();
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	const TMap<ECharacterStatType, uint32>& GetPlayerStat() const { return Stat; }
 };

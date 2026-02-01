@@ -13,3 +13,15 @@ UPlayerManager::UPlayerManager()
 			Stat.Add(type);
 	}
 }
+
+void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Stat[ECharacterStatType::HEALTH]					= 100;
+	Stat[ECharacterStatType::STAMINA]					= 100;
+	Stat[ECharacterStatType::ATTACK]					= 20;
+	Stat[ECharacterStatType::DEFENSE]					= 20;
+	Stat[ECharacterStatType::CRITICAL_PERCENT]			= 10;
+	Stat[ECharacterStatType::CRITICAL_DAMAGE_PERCENT]	= 100;
+
+	// TODO : 플레이어 저장 데이터 적용하기
+}

@@ -15,8 +15,6 @@
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
 
-#include "Define/Debug.h"
-
 AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
@@ -34,6 +32,9 @@ AMonsterBase::AMonsterBase()
 	static ConstructorHelpers::FClassFinder<UUserWidget> StatusUIFinder(TEXT("/Game/06-UI/WBP_MonsterStatusBar.WBP_MonsterStatusBar_C"));
 	if (StatusUIFinder.Succeeded() && Widget)
 		Widget->SetWidgetClass(StatusUIFinder.Class);
+
+	WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	WidgetComp->SetDrawSize(FVector2D(200,30));
 }
 // Called when the game starts or when spawned
 void AMonsterBase::BeginPlay()
