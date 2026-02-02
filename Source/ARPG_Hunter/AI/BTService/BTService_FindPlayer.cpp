@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTService/BTService_FindPlayer.h"
@@ -24,12 +24,13 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 		return;
 
 	FVector Loc = Monster->GetActorLocation();
+	float RecogRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("RecoginitionRange")));
 
 	FHitResult HitResult;
 	bool IsHit = UKismetSystemLibrary::SphereTraceSingle(
 		Monster, 
 		Loc, Loc,
-		Monster->GetRecognitionRange(),
+		RecogRange,
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3),
 		false,
 		{Monster},

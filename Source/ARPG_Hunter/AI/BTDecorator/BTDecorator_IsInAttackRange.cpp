@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTDecorator/BTDecorator_IsInAttackRange.h"
@@ -25,7 +25,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	if (Target == nullptr || Target->IsDead())
 		return false;
 
-	float Range = Owner->GetAttackRange();
+	float Range = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("AttackRange")));
 	float DistSqr = FVector::DistSquared(Owner->GetActorLocation(), Target->GetActorLocation());
 	
 	return DistSqr < FMath::Square(Range);

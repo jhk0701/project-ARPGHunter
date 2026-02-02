@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -6,6 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 #include "Subsystem/DataManager/DataManager.h"
 #include "Data/MonsterData.h"
@@ -21,7 +22,7 @@ AMonsterBase::AMonsterBase()
 
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
-	WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
+	// WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
 	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
 	WidgetComp->SetupAttachment(GetRootComponent());
 
@@ -36,6 +37,7 @@ AMonsterBase::AMonsterBase()
 	WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
 	WidgetComp->SetDrawSize(FVector2D(200,30));
 }
+
 void AMonsterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -73,17 +75,29 @@ void AMonsterBase::BeginPlay()
 		return;
 	}
 #pragma endregion
+}
+
+void AMonsterBase::Init(const FName& _id, const FVector& _loc, const FRotator& _rot)
+{
+	ID = _id;
 	FMonsterData* Data = GetData();
 
+	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();
 	MeshComp->SetSkeletalMesh(Data->BodyMesh);
-	WeaponComp->SetSkeletalMesh(Data->WeaponMesh);
-	MeshComp->SetAnimInstanceClass(Data->AnimBP);
 
-	AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance)
-		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+	if (Data->WeaponMesh)
+	{
+		WeaponComp->SetSkeletalMesh(Data->WeaponMesh);
+		WeaponComp->SetHiddenInGame(false);
 
+		FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+		WeaponComp->AttachToComponent(MeshComp, AttachRules, FName(TEXT("socket_weapon")));
+	}
+	else
+		WeaponComp->SetHiddenInGame(true);
+
+	// Stat 설정
 	// TODO : 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
@@ -93,8 +107,16 @@ void AMonsterBase::BeginPlay()
 	}
 
 	StatComp->Init(BaseStat);
+	
+	// 애니메이션 설정
+	MeshComp->SetAnimInstanceClass(Data->AnimBP);
 
-	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
+	AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+
+	// UI 설정
+	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
 	{
 		MonsterStatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
@@ -102,7 +124,23 @@ void AMonsterBase::BeginPlay()
 		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
 	}
+
+	// BT BlackBoard 설정
+	if (AMonsterAIController* MonsterAI = Cast<AMonsterAIController>(GetController()))
+	{
+		UBlackboardComponent* BBComp = MonsterAI->GetBlackboardComponent();
+		check(BBComp);
+		
+		BBComp->SetValueAsFloat(FName(TEXT("RecoginitionRange")), Data->RecoginitionRange);
+		BBComp->SetValueAsFloat(FName(TEXT("AttackRange")), Data->AttackRange);
+	}
+	
+	WidgetComp->SetVisibility(true);
+
+	SetActorLocation(_loc);
+	SetActorRotation(_rot);
 }
+
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
@@ -114,7 +152,7 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 
 void AMonsterBase::SetWalkable(bool _bIsWalkable)
 {
-	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? GetMoveSpeed() : 0.0f;
+	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? GetData()->MoveSpeed : 0.0f;
 }
 
 FMonsterData* AMonsterBase::GetData() const
@@ -165,12 +203,13 @@ void AMonsterBase::Attack()
 void AMonsterBase::HandleAttackNotify(uint8 _opt)
 {
 	// 히트 판정
-	FVector Loc = GetActorLocation();
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * GetData()->AttackRange;
 
 	TArray<FHitResult> HitResults;
 	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
 		this,
-		Loc, Loc + GetActorForwardVector() * GetAttackRange(),
+		Start, End,
 		FVector(50.0f, 50.0f, 50.0f), GetActorRotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3),
 		false,	{ this },
@@ -206,8 +245,8 @@ void AMonsterBase::OnDead()
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
 	AICon->StopBT();
 
-	// GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
+	WidgetComp->SetVisibility(false);
 
 	// TODO : 몬스터 오브젝트 풀로 복귀
 }
@@ -215,21 +254,6 @@ void AMonsterBase::OnDead()
 bool AMonsterBase::IsDead()
 {
 	return StatComp->IsDead();
-}
-
-float AMonsterBase::GetRecognitionRange() const
-{
-	return GetData()->RecoginitionRange;
-}
-
-float AMonsterBase::GetAttackRange() const
-{
-	return GetData()->AttackRange;
-}
-
-float AMonsterBase::GetMoveSpeed() const
-{
-	return GetData()->MoveSpeed;
 }
 
 TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const

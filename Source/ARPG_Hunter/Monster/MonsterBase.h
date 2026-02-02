@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -46,6 +46,7 @@ private:
 	int CurAttackMontageIdx{0};
 
 protected:
+	// 빠른 테스트를 위해서 남겨둠
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 
@@ -63,7 +64,7 @@ protected:
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
 
-	void SetID(const FName& _id) { ID = _id; }
+	virtual void Init(const FName& _id, const FVector& _loc, const FRotator& _rot);
 	virtual void Attack();
 	
 	// IAttackNotifyHandler을(를) 통해 상속됨
@@ -76,10 +77,6 @@ public:
 
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
-
-	float GetRecognitionRange() const;
-	float GetAttackRange() const;
-	float GetMoveSpeed() const;
 
 	TObjectPtr<UAnimMontage> GetHitMontage() const;
 	TObjectPtr<UAnimMontage> GetAttackMontage(int _idx = 0) const;

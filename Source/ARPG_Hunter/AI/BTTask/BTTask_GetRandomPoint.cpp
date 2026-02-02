@@ -26,7 +26,8 @@ EBTNodeResult::Type UBTTask_GetRandomPoint::ExecuteTask(UBehaviorTreeComponent& 
 		return EBTNodeResult::Failed;
 
 	FNavLocation RandomLoc;
-	if (NavSys->GetRandomPointInNavigableRadius(Owner->GetActorLocation(), Owner->GetRecognitionRange(), RandomLoc) == false)
+	float RecogRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("RecoginitionRange")));
+	if (NavSys->GetRandomPointInNavigableRadius(Owner->GetActorLocation(), RecogRange, RandomLoc) == false)
 		return EBTNodeResult::Failed;
 
 	UBlackboardComponent* BlackBoardComp = OwnerComp.GetBlackboardComponent();

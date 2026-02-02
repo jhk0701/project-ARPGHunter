@@ -38,4 +38,5 @@ protected:
 	virtual void BeginPlay() override;
 
 	void SpawnMonster(const FMonsterSpawn& _spawnData, const FVector& _point);
+
 };
