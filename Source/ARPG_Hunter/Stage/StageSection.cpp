@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Stage/StageSection.h"
@@ -39,10 +39,10 @@ void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	if (State > EState::READY)
 		return;
 
-	StartSection();
+	BeginSection();
 }
 
-void AStageSection::StartSection()
+void AStageSection::BeginSection()
 {
 	State = EState::IN_PROGRESS;
 
@@ -54,11 +54,27 @@ void AStageSection::StartSection()
 		return;
 	}
 
-	GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
-	EventHandle = GameMode->GetGameState<ACombatGameState>()->GetEvent(EStageEvent::HUNT).AddUObject(this, &AStageSection::OnMonsterDead);
+	SpawnedCount = GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
+	EventHandle = GameMode->GetGameState<ACombatGameState>()->StageEventBus[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
+}
+
+void AStageSection::EndSection()
+{
+	State = EState::CLEARED;
+
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	GameMode->GetGameState<ACombatGameState>()->StageEventBus[EStageEvent::HUNT].Remove(EventHandle);
 }
 
 void AStageSection::OnMonsterDead(const FStageEventContext& _context)
 {
+	if (_context.SectionIndex != Index)
+		return;
+	
+	ensure(SpawnedCount > 0);
 
+	SpawnedCount--;
+
+	if (SpawnedCount == 0)
+		EndSection();
 }

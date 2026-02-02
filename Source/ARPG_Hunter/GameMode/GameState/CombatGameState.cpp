@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameMode/GameState/CombatGameState.h"
@@ -6,15 +6,11 @@
 
 ACombatGameState::ACombatGameState()
 {
+	for (uint8 i = 0; i < static_cast<uint8>(EStageEvent::END); ++i)
+		StageEventBus.Add(static_cast<EStageEvent>(i));
 }
 
-void ACombatGameState::PublishStageEvent(EStageEvent _event, const FStageEventContext& _context)
+void ACombatGameState::Init(const TArray<struct FSection>& _section)
 {
-	if (nullptr == StageEventBus.Find(_event))
-	{
-		UE_LOG(LogARPG, Warning, TEXT("Don't publish invalid stage event."));
-		return;
-	}
-
-	StageEventBus[_event].Broadcast(_context);
+	bSectionCleared.SetNumZeroed(_section.Num());
 }

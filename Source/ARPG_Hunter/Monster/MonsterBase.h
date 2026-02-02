@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,6 +11,14 @@
 
 enum class EMonsterType : uint8;
 struct FMonsterData;
+
+struct FMonsterInitParam
+{
+	FName ID;
+	uint8 SectionIndex;
+	FVector Location;
+	FRotator Rotation;
+};
 
 DECLARE_DELEGATE(FOnAttackMontageEnded);
 DECLARE_DELEGATE_OneParam(FOnDead, TObjectPtr<class AMonsterBase>);
@@ -29,6 +37,8 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	FName ID;
+	UPROPERTY(VisibleAnywhere, Category = "Section")
+	uint8 SectionID{0};
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
@@ -67,7 +77,7 @@ public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
 	FOnDead OnMonsterDead;
 
-	virtual void Init(const FName& _id, const FVector& _loc, const FRotator& _rot);
+	virtual void Init(const FMonsterInitParam& _param);
 	virtual void Attack();
 	
 	// IAttackNotifyHandler을(를) 통해 상속됨

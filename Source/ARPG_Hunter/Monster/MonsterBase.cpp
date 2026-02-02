@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -15,6 +15,7 @@
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
+#include "GameMode/GameState/CombatGameState.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -81,9 +82,13 @@ void AMonsterBase::BeginPlay()
 #pragma endregion
 }
 
-void AMonsterBase::Init(const FName& _id, const FVector& _loc, const FRotator& _rot)
+void AMonsterBase::Init(const FMonsterInitParam& _param)
 {
-	ID = _id;
+	ID = _param.ID;
+	SectionID = _param.SectionIndex;
+	SetActorLocation(_param.Location);
+	SetActorRotation(_param.Rotation);
+
 	FMonsterData* Data = GetData();
 
 	// 메쉬 설정
@@ -140,9 +145,6 @@ void AMonsterBase::Init(const FName& _id, const FVector& _loc, const FRotator& _
 		// BT 재가동
 		MonsterAI->RestartBT();
 	}
-
-	SetActorLocation(_loc);
-	SetActorRotation(_rot);
 }
 
 
@@ -253,6 +255,10 @@ void AMonsterBase::OnDead()
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
 	
 	// 몬스터 사망 이벤트 호출
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	ACombatGameState* GameState = GameMode->GetGameState<ACombatGameState>();
+	GameState->StageEventBus[EStageEvent::HUNT].Broadcast({ SectionID, this });
+
 	// 일반적으로 ACombatGameMode에서 오브젝트 풀링 등록하며, 이벤트에 구독해뒀을 것
 	OnMonsterDead.ExecuteIfBound(this);
 }

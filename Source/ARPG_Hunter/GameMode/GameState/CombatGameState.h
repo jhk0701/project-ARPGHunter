@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,6 +17,7 @@ enum class EStageEvent : uint8
 
 struct FStageEventContext 
 {
+	uint8 SectionIndex;
 	TObjectPtr<UObject> Target;
 };
 
@@ -29,13 +30,30 @@ UCLASS()
 class ARPG_HUNTER_API ACombatGameState : public AGameStateBase
 {
 	GENERATED_BODY()
-	
+
 private:
-	TMap<EStageEvent, FStageEvent> StageEventBus;
+	TArray<bool> bSectionCleared;
 
 public:
 	ACombatGameState();
 
-	FStageEvent& GetEvent(EStageEvent _event) { return StageEventBus[_event]; }
-	void PublishStageEvent(EStageEvent _event, const FStageEventContext& _context);
+	TMap<EStageEvent, FStageEvent> StageEventBus;
+	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) 
+	{ 
+		StageEventBus[_event].Broadcast(_context); 
+	}
+	
+	void Init(const TArray<struct FSection>& _section);
+	void SetSectionClear(uint8 _id) { bSectionCleared[_id] = true; }
+
+	bool GameIsCleared() const
+	{
+		for (bool bCleared : bSectionCleared)
+		{
+			if (!bCleared)
+				return false;
+		}
+		return true;
+	}
+
 };

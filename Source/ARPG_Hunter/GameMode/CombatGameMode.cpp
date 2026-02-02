@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameMode/CombatGameMode.h"
@@ -17,7 +17,6 @@
 #include "Monster/MonsterBase.h"
 
 
-
 ACombatGameMode::ACombatGameMode()
 {
 	PlayerControllerClass = APlayerCombatController::StaticClass();
@@ -31,7 +30,7 @@ ACombatGameMode::ACombatGameMode()
 	if (nullptr == MonsterClass.Find(EMonsterType::BOSS))
 		MonsterClass.Add(EMonsterType::BOSS);
 
-	// TODO : 몬스터 다양화 때, 추가
+	// TODO : 몬스터 다양화 때, 임시 경로 변경
 	static ConstructorHelpers::FClassFinder<AMonsterBase> MeleeMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
 	if (MeleeMonFinder.Succeeded())
 		MonsterClass[EMonsterType::MELEE] = MeleeMonFinder.Class;
@@ -65,12 +64,16 @@ void ACombatGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 게임 진행 준비
-	bSectionIsCleared.SetNum(StageData->Sections.Num());
-	for (int i = 0; i < StageData->Sections.Num(); ++i)
-		bSectionIsCleared[i] = false;
+	// GameState 초기화
+	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>()) 
+		CombatGameState->Init(StageData->Sections);
 
 	// 몬스터 액터 풀링
+	SetObjectPool();
+}
+
+void ACombatGameMode::SetObjectPool()
+{
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	if (ObjectPool && DataManager)
@@ -82,7 +85,7 @@ void ACombatGameMode::BeginPlay()
 			for (const FMonsterSpawn& Spawn : Section.Spawn)
 			{
 				EMonsterType Type = DataManager->GetMonsterData(Spawn.MonsterID)->Type;
-				if(nullptr == MaxCountPerType.Find(Type))
+				if (nullptr == MaxCountPerType.Find(Type))
 					MaxCountPerType.Add(Type, 0);
 
 				MaxCountPerType[Type] = FMath::Max(Spawn.Count, MaxCountPerType[Type]);
@@ -95,22 +98,22 @@ void ACombatGameMode::BeginPlay()
 			EMonsterType Type = pair.Key;
 
 			ObjectPool->Register(
-				MonsterClass[pair.Key], 
+				MonsterClass[pair.Key],
 				[this, Type]()
 				{
 					// 몬스터 액터 생성 람다식
 					AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type]);
-					
-					// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 람다 바인딩
+
+					// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 바인딩
 					Inst->OnMonsterDead.BindLambda(
-						[this](TObjectPtr<AMonsterBase> _monster) 
+						[this](TObjectPtr<AMonsterBase> _monster)
 						{
 							GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_monster->GetType()], _monster);
 						}
 					);
 
 					return Inst;
-				}, 
+				},
 				pair.Value);
 		}
 	}
@@ -122,7 +125,7 @@ const FSection& ACombatGameMode::GetSection(uint8 _idx) const
 	return StageData->Sections[_idx];
 }
 
-void ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize)
+uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize)
 {
 	const FSection& SectionData = GetSection(_sectionID);
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
@@ -130,7 +133,9 @@ void ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _po
 	
 	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 	if (nullptr == NavSys)
-		return;
+		return 0;
+
+	uint8 SpawnedCount = 0;
 
 	for (const FMonsterSpawn& Spawn : SectionData.Spawn)
 	{
@@ -141,13 +146,23 @@ void ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _po
 			FNavLocation Loc;
 			FVector RandBoxPos = UKismetMathLibrary::RandomPointInBoundingBox(_point, _areaSize);
 			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 100.0f, Loc);
-
 			FRotator Rot(0, FMath::Rand() % 360, 0);
 
 			AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Type]);
-
 			AMonsterBase* Instance = Cast<AMonsterBase>(Inst);
-			Instance->Init(Spawn.MonsterID, Loc, Rot);
+
+			FMonsterInitParam InitParam
+			{
+				Spawn.MonsterID,
+				_sectionID,
+				Loc.Location,
+				Rot
+			};
+			Instance->Init(InitParam);
+
+			SpawnedCount++;
 		}
 	}
+
+	return SpawnedCount;
 }

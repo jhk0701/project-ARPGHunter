@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,14 +24,16 @@ private:
 		CLEARED
 	};
 
+	UPROPERTY(EditAnywhere, Category = "Setting")
+	TObjectPtr<class UBoxComponent> BoxComp;
+	UPROPERTY(EditAnywhere, Category = "Setting")
+	uint8 Index{ 0 };
+
 	EState State{ EState::READY };
 	FDelegateHandle EventHandle;
 
-	UPROPERTY(EditAnywhere, Category = "Setting")
-	uint8 Index{0};
-
-	UPROPERTY(EditAnywhere, Category = "Setting")
-	TObjectPtr<class UBoxComponent> BoxComp;
+	UPROPERTY(VisibleAnywhere, Category = "Section")
+	uint8 SpawnedCount{ 0 };
 
 public:	
 	// Sets default values for this actor's properties
@@ -46,6 +48,7 @@ protected:
 	void BeginPlay() override;
 
 private:
-	void StartSection();
+	void BeginSection();
+	void EndSection();
 
 };
