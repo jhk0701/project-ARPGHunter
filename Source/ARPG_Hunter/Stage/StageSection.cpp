@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 
 #include "GameMode/CombatGameMode.h"
-
+#include "GameMode/GameState/CombatGameState.h"
 
 // Sets default values
 AStageSection::AStageSection()
@@ -14,6 +14,8 @@ AStageSection::AStageSection()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("SectionArea"));
 	SetRootComponent(BoxComp);
+
+	BoxComp->SetCollisionProfileName(FName(TEXT("OverlapPlayer")));
 }
 
 void AStageSection::PostInitializeComponents()
@@ -37,10 +39,14 @@ void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	if (State > EState::READY)
 		return;
 
+	StartSection();
+}
+
+void AStageSection::StartSection()
+{
 	State = EState::IN_PROGRESS;
-	
-	// 할당된 인덱스에 대한 스테이지 정보 받아오기
-	// 클라이언트라면 null일 것
+
+	// 게임모드에게 몬스터 스폰 요청
 	ACombatGameMode* GameMode = Cast<ACombatGameMode>(GetWorld()->GetAuthGameMode());
 	if (nullptr == GameMode)
 	{
@@ -49,4 +55,10 @@ void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	}
 
 	GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
+	EventHandle = GameMode->GetGameState<ACombatGameState>()->GetEvent(EStageEvent::HUNT).AddUObject(this, &AStageSection::OnMonsterDead);
+}
+
+void AStageSection::OnMonsterDead(const FStageEventContext& _context)
+{
+
 }

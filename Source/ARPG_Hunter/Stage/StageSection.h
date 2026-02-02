@@ -8,6 +8,8 @@
 
 enum class EMonsterType : uint8;
 struct FMonsterSpawn;
+enum class EStageEvent : uint8;
+struct FStageEventContext;
 
 UCLASS()
 class ARPG_HUNTER_API AStageSection : public AActor
@@ -23,6 +25,7 @@ private:
 	};
 
 	EState State{ EState::READY };
+	FDelegateHandle EventHandle;
 
 	UPROPERTY(EditAnywhere, Category = "Setting")
 	uint8 Index{0};
@@ -36,8 +39,13 @@ public:
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnMonsterDead(const FStageEventContext& _context);
 
 protected:
 	void PostInitializeComponents() override;
 	void BeginPlay() override;
+
+private:
+	void StartSection();
+
 };

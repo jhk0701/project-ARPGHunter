@@ -36,7 +36,6 @@ private:
 public:
 	ACombatGameState();
 
-	FDelegateHandle SubscribeStageEvent(EStageEvent _event, TObjectPtr<UObject> _obj, const FName& _funcName);
-	void UnsubscribeStageEvent(EStageEvent _event, const FDelegateHandle& _handle);
+	FStageEvent& GetEvent(EStageEvent _event) { return StageEventBus[_event]; }
 	void PublishStageEvent(EStageEvent _event, const FStageEventContext& _context);
 };

@@ -74,7 +74,6 @@ void APlayerCharacter::BeginPlay()
 	// 플레이어 데이터 받아오기
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	StatComp->Init(PlayerManager->GetPlayerStat());
-	
 	EquipComp->Init();
 	ActionComp->Init(GetMesh()->GetAnimInstance());
 
