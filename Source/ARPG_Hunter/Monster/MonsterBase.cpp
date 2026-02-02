@@ -16,8 +16,6 @@
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
 
-#include "Define/Debug.h"
-
 AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
@@ -60,8 +58,7 @@ void AMonsterBase::PostInitializeComponents()
 void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	UE_LOG(LogARPG, Display, TEXT("Monster BeginPlay"));
+
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
 	{
 		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);

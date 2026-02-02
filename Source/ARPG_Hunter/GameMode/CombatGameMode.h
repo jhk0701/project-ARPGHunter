@@ -31,12 +31,10 @@ public:
 	ACombatGameMode();
 	const FSection& GetSection(uint8 _idx) const;
 
-	void SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point);
+	void SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
 
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
-
-	void SpawnMonster(const FMonsterSpawn& _spawnData, const FVector& _point);
 
 };

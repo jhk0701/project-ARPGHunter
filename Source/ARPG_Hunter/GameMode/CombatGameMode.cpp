@@ -3,6 +3,7 @@
 
 #include "GameMode/CombatGameMode.h"
 #include "NavigationSystem.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
@@ -119,32 +120,32 @@ const FSection& ACombatGameMode::GetSection(uint8 _idx) const
 	return StageData->Sections[_idx];
 }
 
-void ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point)
+void ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize)
 {
 	const FSection& SectionData = GetSection(_sectionID);
-	for (const FMonsterSpawn& Spawn : SectionData.Spawn)
-		SpawnMonster(Spawn, _point);
-}
-
-void ACombatGameMode::SpawnMonster(const FMonsterSpawn& _spawnData, const FVector& _point)
-{
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-	FMonsterData* MonsterData = DataManager->GetMonsterData(_spawnData.MonsterID);
 
-	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-	if (nullptr == NavSys)
-		return;
-
-	for (int i = 0; i < _spawnData.Count; ++i)
+	for (const FMonsterSpawn& Spawn : SectionData.Spawn)
 	{
-		FNavLocation Loc;
-		NavSys->GetRandomReachablePointInRadius(_point, 500.0f, Loc);
-		FRotator Rot(0, FMath::Rand() % 360, 0);
+		FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 
-		AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Type]);
+		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+		if (nullptr == NavSys)
+			return;
 
-		AMonsterBase* Instance = Cast<AMonsterBase>(Inst); 
-		Instance->Init(_spawnData.MonsterID, Loc, Rot);
+		for (int i = 0; i < Spawn.Count; ++i)
+		{
+			FNavLocation Loc;
+			FVector RandBoxPos = UKismetMathLibrary::RandomPointInBoundingBox(_point, _areaSize);
+			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 100.0f, Loc);
+
+			FRotator Rot(0, FMath::Rand() % 360, 0);
+
+			AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Type]);
+
+			AMonsterBase* Instance = Cast<AMonsterBase>(Inst);
+			Instance->Init(Spawn.MonsterID, Loc, Rot);
+		}
 	}
 }

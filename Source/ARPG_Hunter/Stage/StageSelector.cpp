@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Stage/StageSelector.h"
@@ -21,5 +21,6 @@ void AStageSelector::Interact()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Interact"));
 
-	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(FName(TEXT("Test")));
+	// TODO : 데이터 테이블 기반 UI 띄우기
+	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(FName(TEXT("Stage1")));
 }

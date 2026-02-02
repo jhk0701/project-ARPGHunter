@@ -45,5 +45,5 @@ void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	if (nullptr == GameMode)
 		return;
 
-	GameMode->SpawnMonsterOnSection(Index, GetActorLocation());
+	GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
 }
