@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,21 +22,18 @@ private:
 		CLEARED
 	};
 
+	EState State{ EState::READY };
+
 	UPROPERTY(EditAnywhere, Category = "Setting")
 	uint8 Index{0};
 
-	EState State{ EState::READY };
-
-	UPROPERTY(VisibleAnywhere, Category = "Setting")
+	UPROPERTY(EditAnywhere, Category = "Setting")
 	TObjectPtr<class UBoxComponent> BoxComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Setting|Monster")
-	TMap<EMonsterType, TSubclassOf<class AMonsterBase>> MonsterClass;
 
 public:	
 	// Sets default values for this actor's properties
 	AStageSection();
-	void SpawnMonster(const FMonsterSpawn& _spawnData);
+
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

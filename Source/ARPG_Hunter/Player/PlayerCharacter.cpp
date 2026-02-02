@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/PlayerCharacter.h"
@@ -71,11 +71,10 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	// 플레이어 데이터 받아오기
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-
 	StatComp->Init(PlayerManager->GetPlayerStat());
+	
 	EquipComp->Init();
 	ActionComp->Init(GetMesh()->GetAnimInstance());
 

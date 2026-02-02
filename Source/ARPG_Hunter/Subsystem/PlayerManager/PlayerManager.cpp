@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Subsystem/PlayerManager/PlayerManager.h"
@@ -16,7 +16,7 @@ UPlayerManager::UPlayerManager()
 
 void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 {
-	Stat[ECharacterStatType::HEALTH]					= 100;
+	Stat[ECharacterStatType::HEALTH]					= 500;
 	Stat[ECharacterStatType::STAMINA]					= 100;
 	Stat[ECharacterStatType::SKILL]						= 100;
 	Stat[ECharacterStatType::ATTACK]					= 20;

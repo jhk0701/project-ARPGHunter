@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,6 +21,8 @@ public:
 	uint32 MaxValue;
 	uint32 Value;
 	FOnValueChanged OnValueChanged;
+
+	FCharacterResource() : MaxValue(100), Value(100) {}
 
 	void Init(uint32 _max, bool _bFull = true);
 	void InvokeDelegate() 
@@ -62,7 +64,11 @@ private:
 	TMap<ECharacterStatType, uint32> EffectedStat;
 
 	void StartStaminaRecovery();
-	FCharacterResource& GetResource(ECharacterResourceType _type) { return Resource[_type]; }
+	FCharacterResource& GetResource(ECharacterResourceType _type) 
+	{ 
+		Resource[_type];
+		return Resource[_type]; 
+	}
 
 public:	
 	FOnHitEvent OnHitEvent; // 피격 이벤트
@@ -77,10 +83,16 @@ public:
 	bool TryUseResource(ECharacterResourceType _type, uint32 _amount);
 	void RecoverResource(ECharacterResourceType _type, uint32 _amount);
 
-	bool IsDead() { return GetStat(ECharacterStatType::HEALTH) == 0; }
+	bool IsDead() 
+	{ 
+		return GetResource(ECharacterResourceType::HEALTH).Value == 0;
+	}
 	bool TakeDamage(uint32 _damage);
 
-	bool IsStaggering() { return GetStat(ECharacterStatType::STAMINA) == 0; }
+	bool IsStaggering() 
+	{ 
+		return GetResource(ECharacterResourceType::STAMINA).Value == 0;
+	}
 	void TakeStaminaDamage(uint32 _damage);
 	bool TryUseStamina(uint32 _amount);
 	void PauseAndRestartStaminaRecovery(float _pauseSecond);
