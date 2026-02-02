@@ -22,12 +22,7 @@ public:
 	uint32 Value;
 	FOnValueChanged OnValueChanged;
 
-	void Init(uint32 _max, bool _bFull = true)
-	{
-		MaxValue = _max;
-		Value = _bFull ? MaxValue : 0;
-	}
-
+	void Init(uint32 _max, bool _bFull = true);
 	void InvokeDelegate() 
 	{
 		OnValueChanged.Broadcast(Value, MaxValue);
@@ -58,7 +53,6 @@ private:
 	float PenaltyTimeOnStaminaExhaustion{ 5.0f };
 
 	FTimerHandle StaminaRecoveryTimer;
-	void StartStaminaRecovery();
 
 	// 효과 관리용 컨테이너 : 이펙트 -> 타이머 핸들 찾기
 	UPROPERTY()
@@ -66,6 +60,9 @@ private:
 	// 효과로 얻은 스탯
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterStatType, uint32> EffectedStat;
+
+	void StartStaminaRecovery();
+	FCharacterResource& GetResource(ECharacterResourceType _type) { return Resource[_type]; }
 
 public:	
 	FOnHitEvent OnHitEvent; // 피격 이벤트

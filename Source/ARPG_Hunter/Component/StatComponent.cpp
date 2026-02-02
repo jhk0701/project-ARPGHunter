@@ -27,7 +27,7 @@ UStatComponent::UStatComponent()
 		ECharacterResourceType type = static_cast<ECharacterResourceType>(i);
 
 		if (!Resource.Find(type))
-			Resource.Add(type);
+			Resource.Add(type, FCharacterResource());
 	}
 }
 
@@ -35,9 +35,9 @@ void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)
 {
 	Stat = _initStat;
 
-	Resource[ECharacterResourceType::HEALTH].Init(Stat[ECharacterStatType::HEALTH]);
-	Resource[ECharacterResourceType::STAMINA].Init(Stat[ECharacterStatType::STAMINA]);
-	Resource[ECharacterResourceType::SKILL].Init(Stat[ECharacterStatType::SKILL], false);
+	GetResource(ECharacterResourceType::HEALTH).Init(Stat[ECharacterStatType::HEALTH]);
+	GetResource(ECharacterResourceType::STAMINA).Init(Stat[ECharacterStatType::STAMINA]);
+	GetResource(ECharacterResourceType::SKILL).Init(Stat[ECharacterStatType::SKILL], false);
 
 	StartStaminaRecovery();
 }
@@ -118,8 +118,9 @@ bool UStatComponent::TakeDamage(uint32 _damage)
 
 	if (TryUseResource(ECharacterResourceType::HEALTH, _damage) == false)
 	{
-		Resource[ECharacterResourceType::HEALTH].Value = 0;
-		Resource[ECharacterResourceType::HEALTH].InvokeDelegate();
+		FCharacterResource& RefResource = GetResource(ECharacterResourceType::HEALTH);
+		RefResource.Value = 0;
+		RefResource.InvokeDelegate();
 	}
 
 	return true;
@@ -132,8 +133,9 @@ void UStatComponent::TakeStaminaDamage(uint32 _damage)
 
 	if (TryUseResource(ECharacterResourceType::STAMINA, _damage) == false)
 	{
-		Resource[ECharacterResourceType::STAMINA].Value = 0;
-		Resource[ECharacterResourceType::STAMINA].InvokeDelegate();
+		FCharacterResource& RefResource = GetResource(ECharacterResourceType::STAMINA);
+		RefResource.Value = 0;
+		RefResource.InvokeDelegate();
 	}
 }
 
@@ -189,4 +191,10 @@ void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 
 	_effect->Deactivate();
 	MapEffect.Remove(_effect);
+}
+
+void FCharacterResource::Init(uint32 _max, bool _bFull)
+{
+	MaxValue = _max;
+	Value = _bFull ? MaxValue : 0;
 }
