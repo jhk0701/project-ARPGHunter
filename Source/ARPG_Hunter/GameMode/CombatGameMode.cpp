@@ -5,21 +5,23 @@
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#include "Controller/PlayerCombatController.h"
-#include "UI/PlayerHUD.h"
 #include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
+#include "GameMode/GameState/CombatGameState.h"
 #include "Subsystem/DataManager/DataManager.h"
-#include "Data/StageData.h"
-#include "Monster/MonsterBase.h"
-#include "Data/MonsterData.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
+#include "Controller/PlayerCombatController.h"
+#include "UI/PlayerHUD.h"
+#include "Data/StageData.h"
+#include "Data/MonsterData.h"
+#include "Monster/MonsterBase.h"
 
-#include "Define/Debug.h"
+
 
 ACombatGameMode::ACombatGameMode()
 {
 	PlayerControllerClass = APlayerCombatController::StaticClass();
+	GameStateClass = ACombatGameState::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
 
 	if (nullptr == MonsterClass.Find(EMonsterType::MELEE))
@@ -29,7 +31,7 @@ ACombatGameMode::ACombatGameMode()
 	if (nullptr == MonsterClass.Find(EMonsterType::BOSS))
 		MonsterClass.Add(EMonsterType::BOSS);
 
-
+	// TODO : 몬스터 다양화 때, 추가
 	static ConstructorHelpers::FClassFinder<AMonsterBase> MeleeMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
 	if (MeleeMonFinder.Succeeded())
 		MonsterClass[EMonsterType::MELEE] = MeleeMonFinder.Class;
@@ -125,14 +127,14 @@ void ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _po
 	const FSection& SectionData = GetSection(_sectionID);
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	if (nullptr == NavSys)
+		return;
 
 	for (const FMonsterSpawn& Spawn : SectionData.Spawn)
 	{
 		FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
-
-		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-		if (nullptr == NavSys)
-			return;
 
 		for (int i = 0; i < Spawn.Count; ++i)
 		{

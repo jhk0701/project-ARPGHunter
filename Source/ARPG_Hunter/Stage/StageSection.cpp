@@ -43,7 +43,10 @@ void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	// 클라이언트라면 null일 것
 	ACombatGameMode* GameMode = Cast<ACombatGameMode>(GetWorld()->GetAuthGameMode());
 	if (nullptr == GameMode)
+	{
+		State = EState::CLEARED;
 		return;
+	}
 
 	GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
 }
