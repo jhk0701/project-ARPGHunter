@@ -24,13 +24,17 @@ void AMonsterAIController::PlayBT(APawn* _inPawn)
 		return;
 
 	UBlackboardComponent* BlackboardComp = Blackboard.Get();
-
 	if (UseBlackboard(Monster->GetBlackboardData(), BlackboardComp))
-		ensure(RunBehaviorTree(Monster->GetBehaviorTree()));
+	{
+		RunBehaviorTree(Monster->GetBehaviorTree());
+		StopBT();
+	}
 }
 
 void AMonsterAIController::StopBT()
 {
+	GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
+
 	UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
 	BTComp->StopTree();
 }

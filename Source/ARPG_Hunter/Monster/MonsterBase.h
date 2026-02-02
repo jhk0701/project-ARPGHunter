@@ -13,6 +13,7 @@ enum class EMonsterType : uint8;
 struct FMonsterData;
 
 DECLARE_DELEGATE(FOnAttackMontageEnded);
+DECLARE_DELEGATE_OneParam(FOnDead, TObjectPtr<class AMonsterBase>);
 
 UCLASS()
 class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
@@ -60,9 +61,11 @@ protected:
 	void SetWalkable(bool _bIsWalkable);
 
 	struct FMonsterData* GetData() const;
+	virtual void OnDead();
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
+	FOnDead OnMonsterDead;
 
 	virtual void Init(const FName& _id, const FVector& _loc, const FRotator& _rot);
 	virtual void Attack();
@@ -73,11 +76,10 @@ public:
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool IsDead();
-	virtual void OnDead();
-
+	
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
-
+	EMonsterType GetType();
 	TObjectPtr<UAnimMontage> GetHitMontage() const;
 	TObjectPtr<UAnimMontage> GetAttackMontage(int _idx = 0) const;
 

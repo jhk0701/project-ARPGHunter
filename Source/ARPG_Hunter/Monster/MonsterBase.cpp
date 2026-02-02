@@ -16,6 +16,8 @@
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
 
+#include "Define/Debug.h"
+
 AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
@@ -41,7 +43,6 @@ AMonsterBase::AMonsterBase()
 void AMonsterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
 #pragma region IsTest
 
 	if (bIsTest)
@@ -52,7 +53,6 @@ void AMonsterBase::PostInitializeComponents()
 
 		return;
 	}
-
 #pragma endregion
 }
 
@@ -60,6 +60,13 @@ void AMonsterBase::PostInitializeComponents()
 void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	UE_LOG(LogARPG, Display, TEXT("Monster BeginPlay"));
+	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
+	{
+		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
+	}
 
 #pragma region IsTest
 	if (bIsTest) 
@@ -107,25 +114,24 @@ void AMonsterBase::Init(const FName& _id, const FVector& _loc, const FRotator& _
 	}
 
 	StatComp->Init(BaseStat);
+
+	// 충돌 설정
+	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Monster")));
 	
 	// 애니메이션 설정
 	MeshComp->SetAnimInstanceClass(Data->AnimBP);
-
-	AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance)
-		AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+	if (AnimInstance = GetMesh()->GetAnimInstance())
+		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
 
 	// UI 설정
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
 	{
+		// UI 초기화
 		MonsterStatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
-
-		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
-		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
 	}
 
-	// BT BlackBoard 설정
+	// AI BlackBoard 설정
 	if (AMonsterAIController* MonsterAI = Cast<AMonsterAIController>(GetController()))
 	{
 		UBlackboardComponent* BBComp = MonsterAI->GetBlackboardComponent();
@@ -133,9 +139,10 @@ void AMonsterBase::Init(const FName& _id, const FVector& _loc, const FRotator& _
 		
 		BBComp->SetValueAsFloat(FName(TEXT("RecoginitionRange")), Data->RecoginitionRange);
 		BBComp->SetValueAsFloat(FName(TEXT("AttackRange")), Data->AttackRange);
+
+		// BT 재가동
+		MonsterAI->RestartBT();
 	}
-	
-	WidgetComp->SetVisibility(true);
 
 	SetActorLocation(_loc);
 	SetActorRotation(_rot);
@@ -245,15 +252,22 @@ void AMonsterBase::OnDead()
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
 	AICon->StopBT();
 
+	// 충돌 무시 처리
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
-	WidgetComp->SetVisibility(false);
-
-	// TODO : 몬스터 오브젝트 풀로 복귀
+	
+	// 몬스터 사망 이벤트 호출
+	// 일반적으로 ACombatGameMode에서 오브젝트 풀링 등록하며, 이벤트에 구독해뒀을 것
+	OnMonsterDead.ExecuteIfBound(this);
 }
 
 bool AMonsterBase::IsDead()
 {
 	return StatComp->IsDead();
+}
+
+EMonsterType AMonsterBase::GetType()
+{
+	return GetData()->Type;
 }
 
 TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const

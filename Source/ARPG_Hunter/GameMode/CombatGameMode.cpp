@@ -95,7 +95,18 @@ void ACombatGameMode::BeginPlay()
 				MonsterClass[pair.Key], 
 				[this, Type]()
 				{
-					return GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type]);
+					// 몬스터 액터 생성 람다식
+					AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type]);
+					
+					// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 람다 바인딩
+					Inst->OnMonsterDead.BindLambda(
+						[this](TObjectPtr<AMonsterBase> _monster) 
+						{
+							GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_monster->GetType()], _monster);
+						}
+					);
+
+					return Inst;
 				}, 
 				pair.Value);
 		}
@@ -104,7 +115,7 @@ void ACombatGameMode::BeginPlay()
 
 const FSection& ACombatGameMode::GetSection(uint8 _idx) const
 {
-	check(StageData);
+	ensure(StageData && StageData->Sections.Num() > _idx);
 	return StageData->Sections[_idx];
 }
 
@@ -132,11 +143,6 @@ void ACombatGameMode::SpawnMonster(const FMonsterSpawn& _spawnData, const FVecto
 		FRotator Rot(0, FMath::Rand() % 360, 0);
 
 		AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Type]);
-
-		if (Inst == nullptr)
-		{
-			UE_LOG(LogARPG, Error, TEXT("Object Pool Failed"));
-		}
 
 		AMonsterBase* Instance = Cast<AMonsterBase>(Inst); 
 		Instance->Init(_spawnData.MonsterID, Loc, Rot);
