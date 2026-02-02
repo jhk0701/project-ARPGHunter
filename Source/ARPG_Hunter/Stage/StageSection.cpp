@@ -13,7 +13,6 @@
 #include "Data/MonsterData.h"
 
 #include "Define/Debug.h"
-#include "Player/PlayerCharacter.h"
 
 
 // Sets default values
@@ -61,13 +60,6 @@ void AStageSection::BeginPlay()
 
 void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor))
-	{
-		UE_LOG(LogARPG, Display, TEXT("Player Overlap"));
-	}
-	else
-		return;
-
 	if (State > EState::READY)
 		return;
 
