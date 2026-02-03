@@ -13,6 +13,7 @@
 #include "Component/ActionComponent.h"
 #include "Controller/PlayerCombatController.h"
 #include "Subsystem/PlayerManager/PlayerManager.h"
+#include "GameMode/GameState/CombatGameState.h"
 
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
@@ -194,8 +195,13 @@ bool APlayerCharacter::IsDead()
 
 void APlayerCharacter::OnDead()
 {
-	// TODO : 플레이어 사망 후 처리
-	// 던전 실패 UI 표시 등등
+	// 플레이어 사망 후 처리
+	// 플레이어 사망 이벤트 발행
+	ACombatGameState* GameState = GetWorld()->GetGameState<ACombatGameState>();
+
+	FStageEventContext Context;
+	Context.Target = this;
+	GameState->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
 }
 
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)

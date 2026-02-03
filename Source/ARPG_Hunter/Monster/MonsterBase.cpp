@@ -262,8 +262,7 @@ void AMonsterBase::OnDead()
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
 	
 	// 몬스터 사망 이벤트 호출
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	ACombatGameState* GameState = GameMode->GetGameState<ACombatGameState>();
+	ACombatGameState* GameState = GetWorld()->GetGameState<ACombatGameState>();
 	GameState->StageEventBus[EStageEvent::HUNT].Broadcast({ SectionID, this });
 
 	// 일반적으로 ACombatGameMode에서 오브젝트 풀링 등록하며, 이벤트에 구독해뒀을 것

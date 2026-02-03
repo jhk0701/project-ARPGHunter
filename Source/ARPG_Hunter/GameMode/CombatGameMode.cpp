@@ -5,18 +5,19 @@
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
+#include "Define/Enum.h"
 #include "GameMode/GameState/CombatGameState.h"
+#include "Subsystem/PlayerManager/PlayerManager.h"
 #include "Subsystem/DataManager/DataManager.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
-#include "Subsystem/PlayerManager/PlayerManager.h"
-#include "Controller/PlayerCombatController.h"
-#include "UI/PlayerHUD.h"
 #include "Data/StageData.h"
 #include "Data/MonsterData.h"
+#include "Controller/PlayerCombatController.h"
+#include "UI/PlayerHUD.h"
 #include "Monster/MonsterBase.h"
 
+#include "Define/Debug.h"
 
 ACombatGameMode::ACombatGameMode()
 {
@@ -66,11 +67,14 @@ void ACombatGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	// GameState 초기화
-	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>())
-	{
-		CombatGameState->Init(StageData->Sections);
-		CombatGameState->OnStageCleared.BindUObject(this, &ACombatGameMode::GameClear);
-	}
+	ACombatGameState* CombatGameState = GetGameState<ACombatGameState>();
+	if (nullptr == CombatGameState)
+		return;
+
+	// TODO: 멀티 플레이 시, 현재 플레이어들의 인원수 전달
+	CombatGameState->Init(1, StageData->Sections);
+	CombatGameState->OnStageCleared.BindUObject(this, &ACombatGameMode::GameClear);
+	CombatGameState->OnStageFailed.BindUObject(this, &ACombatGameMode::GameFail);
 
 	// 몬스터 액터 풀링
 	SetObjectPool();
@@ -176,6 +180,8 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 
 void ACombatGameMode::GameClear()
 {
+	UE_LOG(LogARPG, Log, TEXT("Stage Clear!"));
+
 	// 보상 지급
 	// 골드 재화 지급
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
@@ -192,8 +198,11 @@ void ACombatGameMode::GameClear()
 
 void ACombatGameMode::GameFail()
 {
+	UE_LOG(LogARPG, Log, TEXT("Stage Failed"));
+
 	// TODO : UI를 통한 마을 전환
 	BackToTown();
 
 	// TODO : 클리어 UI 출력
 }
+

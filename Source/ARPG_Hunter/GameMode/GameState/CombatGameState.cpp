@@ -2,7 +2,6 @@
 
 
 #include "GameMode/GameState/CombatGameState.h"
-#include "Define/Debug.h"
 
 ACombatGameState::ACombatGameState()
 {
@@ -10,9 +9,20 @@ ACombatGameState::ACombatGameState()
 		StageEventBus.Add(static_cast<EStageEvent>(i));
 }
 
-void ACombatGameState::Init(const TArray<struct FSection>& _section)
+void ACombatGameState::Init(uint8 _playerCnt, const TArray<struct FSection>& _section)
 {
+	PlayerCount = _playerCnt;
 	bSectionCleared.SetNumZeroed(_section.Num());
+
+	StageEventBus[EStageEvent::PLAYER_DEAD].AddLambda(
+		[this](const FStageEventContext& _context) 
+		{
+			PlayerCount--;
+
+			if(PlayerCount == 0)
+				OnStageFailed.ExecuteIfBound();
+		}
+	);
 }
 
 void ACombatGameState::SetSectionClear(uint8 _id)

@@ -39,5 +39,4 @@ protected:
 private:
 	void SetObjectPool();
 	void GameClear();
-
 };

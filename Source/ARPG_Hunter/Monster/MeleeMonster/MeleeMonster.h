@@ -18,4 +18,5 @@ public:
 	AMeleeMonster();
 
 	void HitBy(const FHitInfo& _hitInfo) override;
+
 };

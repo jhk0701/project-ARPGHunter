@@ -22,7 +22,7 @@ struct FStageEventContext
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FStageEvent, const FStageEventContext&);
-DECLARE_DELEGATE(FOnStageCleared);
+DECLARE_DELEGATE(FStageEndEvent);
 
 /**
  * 
@@ -33,20 +33,24 @@ class ARPG_HUNTER_API ACombatGameState : public AGameStateBase
 	GENERATED_BODY()
 
 private:
-	TArray<bool> bSectionCleared;;
+	UPROPERTY(VisibleAnywhere)
+	uint8 PlayerCount;
+	UPROPERTY(VisibleAnywhere)
+	TArray<bool> bSectionCleared;
 
 public:
 	ACombatGameState();
 	
 	TMap<EStageEvent, FStageEvent> StageEventBus;
-	FOnStageCleared OnStageCleared;
+	FStageEndEvent OnStageCleared;
+	FStageEndEvent OnStageFailed;
 	
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context)
 	{
 		StageEventBus[_event].Broadcast(_context);
 	}
 
-	void Init(const TArray<struct FSection>& _section);
+	void Init(uint8 _playerCnt, const TArray<struct FSection>& _section);
 	void SetSectionClear(uint8 _id);
 	bool GameIsCleared() const;
 };
