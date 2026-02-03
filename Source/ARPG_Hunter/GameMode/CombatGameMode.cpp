@@ -4,6 +4,7 @@
 #include "GameMode/CombatGameMode.h"
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
@@ -65,8 +66,11 @@ void ACombatGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	// GameState 초기화
-	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>()) 
+	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>())
+	{
 		CombatGameState->Init(StageData->Sections);
+		CombatGameState->OnStageCleared.BindUObject(this, &ACombatGameMode::GameClear);
+	}
 
 	// 몬스터 액터 풀링
 	SetObjectPool();
@@ -165,4 +169,13 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 	}
 
 	return SpawnedCount;
+}
+
+void ACombatGameMode::GameClear()
+{
+	// 마을로 전환
+	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("MainTown")));
+
+	// TODO : 보상 지급
+	// TODO : 클리어 UI 출력
 }

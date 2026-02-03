@@ -14,3 +14,21 @@ void ACombatGameState::Init(const TArray<struct FSection>& _section)
 {
 	bSectionCleared.SetNumZeroed(_section.Num());
 }
+
+void ACombatGameState::SetSectionClear(uint8 _id)
+{
+	bSectionCleared[_id] = true;
+
+	if (GameIsCleared())
+		OnStageCleared.ExecuteIfBound();
+}
+
+bool ACombatGameState::GameIsCleared() const
+{
+	for (bool bCleared : bSectionCleared)
+	{
+		if (!bCleared)
+			return false;
+	}
+	return true;
+}

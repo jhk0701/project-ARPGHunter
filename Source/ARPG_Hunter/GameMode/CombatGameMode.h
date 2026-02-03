@@ -27,8 +27,8 @@ private:
 
 public:
 	ACombatGameMode();
-	const FSection& GetSection(uint8 _idx) const;
 
+	const FSection& GetSection(uint8 _idx) const;
 	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
 
 protected:
@@ -37,5 +37,5 @@ protected:
 
 private:
 	void SetObjectPool();
-
+	void GameClear();
 };

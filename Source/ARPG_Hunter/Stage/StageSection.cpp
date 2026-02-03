@@ -63,7 +63,10 @@ void AStageSection::EndSection()
 	State = EState::CLEARED;
 
 	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	GameMode->GetGameState<ACombatGameState>()->StageEventBus[EStageEvent::HUNT].Remove(EventHandle);
+	ACombatGameState* GameState = GameMode->GetGameState<ACombatGameState>();
+	
+	GameState->StageEventBus[EStageEvent::HUNT].Remove(EventHandle);
+	GameState->SetSectionClear(Index);
 }
 
 void AStageSection::OnMonsterDead(const FStageEventContext& _context)

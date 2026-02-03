@@ -82,6 +82,13 @@ void AMonsterBase::BeginPlay()
 #pragma endregion
 }
 
+void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	StatComp->Clear();
+}
+
 void AMonsterBase::Init(const FMonsterInitParam& _param)
 {
 	ID = _param.ID;

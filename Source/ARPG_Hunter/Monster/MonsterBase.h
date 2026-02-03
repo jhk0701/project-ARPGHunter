@@ -60,6 +60,7 @@ protected:
 	// 빠른 테스트를 위해서 남겨둠
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
