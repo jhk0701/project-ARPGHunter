@@ -16,7 +16,7 @@ UPlayerManager::UPlayerManager()
 
 void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 {
-	Stat[ECharacterStatType::HEALTH]					= 10;
+	Stat[ECharacterStatType::HEALTH]					= 500;
 	Stat[ECharacterStatType::STAMINA]					= 100;
 	Stat[ECharacterStatType::SKILL]						= 100;
 	Stat[ECharacterStatType::ATTACK]					= 20;
