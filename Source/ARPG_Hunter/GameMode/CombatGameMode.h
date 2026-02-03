@@ -9,7 +9,6 @@
 struct FStageData;
 struct FSection;
 enum class EMonsterType : uint8;
-struct FMonsterSpawn;
 
 /**
  * 
@@ -31,6 +30,8 @@ public:
 	const FSection& GetSection(uint8 _idx) const;
 	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
 
+	void GameFail();
+
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -38,4 +39,5 @@ protected:
 private:
 	void SetObjectPool();
 	void GameClear();
+
 };

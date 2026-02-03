@@ -16,3 +16,8 @@ void AARPGGameMode::OpenLevel(FName _levelName)
 {
 	UGameplayStatics::OpenLevel(GetWorld(), _levelName);
 }
+
+void AARPGGameMode::BackToTown()
+{
+	OpenLevel(FName(TEXT("MainTown")));
+}

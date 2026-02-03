@@ -7,7 +7,7 @@
 #include "StageData.generated.h"
 
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FMonsterSpawn
 {
 	GENERATED_BODY()
@@ -18,13 +18,26 @@ public:
 	uint8 Count;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FSection
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
 	TArray<FMonsterSpawn> Spawn;
+};
+
+USTRUCT()
+struct FRewardItem
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	FName ID;
+	UPROPERTY(EditAnywhere)
+	uint8 Count; // 지급 갯수
+	UPROPERTY(EditAnywhere)
+	uint8 PercentWeight{ 1 }; // 확률 가중치
 };
 
 /**
@@ -36,10 +49,16 @@ struct ARPG_HUNTER_API FStageData : public FTableRowBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
+	FString StageName;
+	UPROPERTY(EditAnywhere)
+	FName LevelToLoad;
+
+	UPROPERTY(EditAnywhere)
 	TArray<FSection> Sections;
 
 	// 클리어 보상 지급
-	// 재화 골드
-	// 아이템
-	// 
+	UPROPERTY(EditAnywhere)
+	uint32 RewardGold;
+	UPROPERTY(EditAnywhere)
+	TArray<FRewardItem> RewardItems;
 };

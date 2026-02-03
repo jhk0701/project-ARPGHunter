@@ -4,13 +4,13 @@
 #include "GameMode/CombatGameMode.h"
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/GameplayStatics.h"
 
 #include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
 #include "GameMode/GameState/CombatGameState.h"
 #include "Subsystem/DataManager/DataManager.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
+#include "Subsystem/PlayerManager/PlayerManager.h"
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 #include "Data/StageData.h"
@@ -106,7 +106,10 @@ void ACombatGameMode::SetObjectPool()
 				[this, Type]()
 				{
 					// 몬스터 액터 생성 람다식
-					AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type]);
+					FActorSpawnParameters SpawnParam;
+					SpawnParam.Owner = this;
+
+					AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
 
 					// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 바인딩
 					Inst->OnMonsterDead.BindLambda(
@@ -173,9 +176,24 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 
 void ACombatGameMode::GameClear()
 {
-	// 마을로 전환
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("MainTown")));
+	// 보상 지급
+	// 골드 재화 지급
+	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	PlayerManager->AddGold(StageData->RewardGold);
 
-	// TODO : 보상 지급
+	// 아이템 지급
+	for (const FRewardItem& Item : StageData->RewardItems)
+		PlayerManager->AddItem(Item.ID, Item.Count);
+
+	// TODO : 클리어 UI 출력
+	// TODO : UI를 통한 마을 전환
+	BackToTown(); // 마을로 전환
+}
+
+void ACombatGameMode::GameFail()
+{
+	// TODO : UI를 통한 마을 전환
+	BackToTown();
+
 	// TODO : 클리어 UI 출력
 }

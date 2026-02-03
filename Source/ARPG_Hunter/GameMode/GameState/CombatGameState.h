@@ -9,10 +9,10 @@
 UENUM()
 enum class EStageEvent : uint8
 {
-	HUNT		UMETA(DisplayName = "Hunt"),
-	COLLECT		UMETA(DisplayName = "Collect"),
+	HUNT			UMETA(DisplayName = "Hunt"),
+	PLAYER_DEAD		UMETA(DisplayName = "PlayerDead"),
 
-	END			UMETA(Hidden)
+	END				UMETA(Hidden)
 };
 
 struct FStageEventContext 
@@ -49,5 +49,4 @@ public:
 	void Init(const TArray<struct FSection>& _section);
 	void SetSectionClear(uint8 _id);
 	bool GameIsCleared() const;
-
 };

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Subsystem/PlayerManager/PlayerManager.h"
@@ -25,4 +25,15 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Stat[ECharacterStatType::CRITICAL_DAMAGE_PERCENT]	= 100;
 
 	// TODO : 플레이어 저장 데이터 적용하기
+}
+
+void UPlayerManager::AddGold(uint32 _amount)
+{
+	Gold.Value += _amount;
+	Gold.OnValueChanged.Broadcast(Gold.Value);
+}
+
+void UPlayerManager::AddItem(const FName& _itemID, const uint8 _cnt)
+{
+	// TODO : 아이템 시스템 추가
 }

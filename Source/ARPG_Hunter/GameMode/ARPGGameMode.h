@@ -18,4 +18,5 @@ public:
 	AARPGGameMode();
 	
 	void OpenLevel(FName _levelName);
+	void BackToTown();
 };
