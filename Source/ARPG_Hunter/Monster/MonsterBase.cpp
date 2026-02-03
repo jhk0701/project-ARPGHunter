@@ -9,13 +9,13 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 #include "Subsystem/DataManager/DataManager.h"
+#include "Subsystem/ObjectPool/ObjectPoolManager.h"
+#include "GameMode/GameState/CombatGameState.h"
+#include "Controller/MonsterAIController.h"
 #include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
-#include "Controller/MonsterAIController.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
-#include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
-#include "GameMode/GameState/CombatGameState.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -182,7 +182,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	{
 		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
 		ADamage->SetActorLocation(WidgetComp->GetComponentLocation());
-		ADamage->UpdateUI(_hitInfo.Damage, false);
+		ADamage->UpdateUI(_hitInfo.Damage, _hitInfo.bIsCriticalHit);
 		ADamage->ShowUI();
 	}
 

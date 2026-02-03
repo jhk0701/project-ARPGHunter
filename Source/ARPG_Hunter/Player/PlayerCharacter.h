@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -41,10 +41,12 @@ private:
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class UCameraComponent> CameraComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TObjectPtr<class UWidgetComponent> InteractWidget;
 #pragma endregion
 
 #pragma region Attribute
-
 	FVector2D InputDirection{};
 	UPROPERTY(EditAnywhere, Category = "Attribute|Rotate")
 	float RotateSpeedToInputDir{ 10.0f };
@@ -64,6 +66,12 @@ private:
 	TSubclassOf<UCameraShakeBase> CameraShakeOnHit;
 #pragma endregion
 
+#pragma region Interaction
+
+	class IInteractable* CurInteractable;
+
+#pragma endregion
+
 public:
 	APlayerCharacter();
 
@@ -71,7 +79,9 @@ private:
 	void SmoothRotateToInputDir(float DeltaTime);
 	// 기본 데미지 계산
 	uint16 CalculateBaseDamage(); 
-	uint16 CalculateCritical(uint16 _damage);
+	bool CalculateCritical(uint16& _damage);
+	
+	void CheckInteractable();
 
 protected:
 	virtual void BeginPlay() override;

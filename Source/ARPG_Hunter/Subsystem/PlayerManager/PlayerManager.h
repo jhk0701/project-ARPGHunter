@@ -29,6 +29,7 @@ class ARPG_HUNTER_API UPlayerManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint32> Stat;
 
 	UPROPERTY(EditAnywhere)

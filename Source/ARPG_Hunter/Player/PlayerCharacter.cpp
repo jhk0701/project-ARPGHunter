@@ -1,12 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/WidgetComponent.h"
 
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
@@ -43,6 +43,9 @@ APlayerCharacter::APlayerCharacter()
 	SpringArmComp->SetupAttachment(GetRootComponent());
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	InteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractWidget"));
+	InteractWidget->SetupAttachment(GetRootComponent());
 #pragma endregion
 
 #pragma region Init Comp
@@ -64,8 +67,11 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FClassFinder<UCameraShakeBase> CamShakeOnHitFinder(TEXT("/Game/02-BP/CameraShake/BP_CameraShake_OnHit.BP_CameraShake_OnHit_C"));
 	if (CamShakeOnHitFinder.Succeeded())
 		CameraShakeOnHit = CamShakeOnHitFinder.Class;
-#pragma endregion
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> InteractWidgetFinder(TEXT("/Game/06-UI/WBP_InteractIndicator.WBP_InteractIndicator_C"));
+	if (InteractWidgetFinder.Succeeded())
+		InteractWidget->SetWidgetClass(InteractWidgetFinder.Class);
+#pragma endregion
 }
 
 // Called when the game starts or when spawned
@@ -98,6 +104,8 @@ void APlayerCharacter::BeginPlay()
 		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBar, &UUWPlayerStatusBar::SetSkillBarPercent);
 	}
+
+	InteractWidget->SetHiddenInGame(true);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -112,7 +120,9 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	SmoothRotateToInputDir(DeltaTime);
+	CheckInteractable();
 }
 
 void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
@@ -126,6 +136,8 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 
 	SetActorRotation(FQuat::Slerp(GetActorQuat(), TargetRot.Quaternion(), RotateSpeedToInputDir * DeltaTime));
 }
+
+
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)
 {
@@ -219,12 +231,14 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			if (Hitable == nullptr)
 				continue;
 
+			bool bIsCritical = CalculateCritical(Damage);
 			FHitInfo Hit
 			{
-				CalculateCritical(Damage),
+				Damage,
 				ActionComp->GetAttackActionStaggerDamage(),
 				this,
-				ActionComp->GetAttackActionKnockBack(_opt)
+				ActionComp->GetAttackActionKnockBack(_opt),
+				bIsCritical
 			};
 
 			Hitable->HitBy(Hit);
@@ -236,17 +250,18 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 
 uint16 APlayerCharacter::CalculateBaseDamage()
 {
-	return StatComp->GetStat(ECharacterStatType::ATTACK) * (1.0f + ActionComp->GetAttackActionDamagePer() * 0.01f);
+	return StatComp->GetStat(ECharacterStatType::ATTACK) * ActionComp->GetAttackActionDamagePer() * 0.01f;
 }
 
-uint16 APlayerCharacter::CalculateCritical(uint16 _damage)
+bool APlayerCharacter::CalculateCritical(uint16& _damage)
 {
 	uint32 critial = FMath::Rand() % 100;
 
-	if (critial <= StatComp->GetStat(ECharacterStatType::CRITICAL_PERCENT))
+	bool bIsCritical = critial <= StatComp->GetStat(ECharacterStatType::CRITICAL_PERCENT);
+	if (bIsCritical)
 		_damage *= (1.0f + StatComp->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT) * 0.01f);
 
-	return _damage;
+	return bIsCritical;
 }
 
 void APlayerCharacter::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
@@ -263,7 +278,9 @@ void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, fl
 	PlayerController->ClientStartCameraShake(_shakeClass, _scale);
 }
 
-void APlayerCharacter::Interact()
+#pragma region Interaction
+
+void APlayerCharacter::CheckInteractable()
 {
 	FHitResult HitResult;
 
@@ -271,21 +288,38 @@ void APlayerCharacter::Interact()
 	FVector End = Start + GetActorForwardVector() * 500.0f;
 
 	bool IsHit = UKismetSystemLibrary::BoxTraceSingle(
-		GetWorld(), 
+		GetWorld(),
 		Start, End,
 		FVector(20.0f, 20.0f, 20.0f),
 		GetActorForwardVector().Rotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel6),
 		false,
 		{ this },
-		EDrawDebugTrace::ForDuration, 
+		EDrawDebugTrace::None,
 		HitResult,
 		true
 	);
 
 	if (IsHit == false)
+	{
+		InteractWidget->SetHiddenInGame(true);
+		return;
+	}
+
+	if (IInteractable* Interactable = Cast<IInteractable>(HitResult.GetActor()))
+	{
+		CurInteractable = Interactable;
+		InteractWidget->SetHiddenInGame(false);
+		InteractWidget->SetWorldLocation(HitResult.GetActor()->GetActorLocation());
+	}
+}
+
+void APlayerCharacter::Interact()
+{
+	if (nullptr == CurInteractable)
 		return;
 
-	if (IInteractable* Interactable = Cast<IInteractable>(HitResult.GetActor())) 
-		Interactable->Interact();
+	CurInteractable->Interact();
 }
+
+#pragma endregion
