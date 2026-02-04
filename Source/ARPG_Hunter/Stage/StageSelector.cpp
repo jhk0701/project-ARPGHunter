@@ -4,8 +4,11 @@
 #include "Stage/StageSelector.h"
 #include "Components/BoxComponent.h"
 
+#include "Core/ARPGGameInstance.h"
 #include "GameMode/ARPGGameMode.h"
 #include "UI/UserWidget/UWStageSelect.h"
+#include "Subsystem/DataManager/DataManager.h"
+#include "Data/StageData.h"
 
 // Sets default values
 AStageSelector::AStageSelector()
@@ -35,11 +38,19 @@ void AStageSelector::BeginPlay()
 
 void AStageSelector::Interact()
 {
-	// TODO : 데이터 테이블 기반 UI 띄우기
+	// 데이터 테이블 기반 UI 띄우기
 	StageSelectUI->ShowUI();
 }
 
-void AStageSelector::StartGame(const FName& _levelName)
+void AStageSelector::StartGame(const FName& _selectedID)
 {
-	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(_levelName);
+	UARPGGameInstance* GI = Cast<UARPGGameInstance>(GetGameInstance());
+	UDataManager* DataManager = GI->GetSubsystem<UDataManager>();
+	FStageData* StageData = DataManager->GetStageData(_selectedID);
+
+	if (nullptr == StageData)
+		return;
+
+	GI->SetStageID(_selectedID);
+	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(StageData->LevelToLoad);
 }

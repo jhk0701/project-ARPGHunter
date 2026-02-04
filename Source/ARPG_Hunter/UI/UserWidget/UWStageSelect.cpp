@@ -37,6 +37,7 @@ void UUWStageSlot::ClickStageButton()
 	OnClickStageSlot.ExecuteIfBound(Index);
 }
 
+
 void UUWStageSelect::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -52,7 +53,6 @@ void UUWStageSelect::NativeOnInitialized()
 			StageSlotContainer[i] = CreateWidget<UUWStageSlot>(GetWorld(), StageSlotClass);
 			StageSlotContainer[i]->Init(i);
 			StageSlotContainer[i]->OnClickStageSlot.BindUObject(this, &UUWStageSelect::ClickStageSlot);
-
 			StageList->AddChild(StageSlotContainer[i]);
 		}
 	}
@@ -66,12 +66,16 @@ void UUWStageSelect::NativeOnInitialized()
 			RewardItemContainer->AddChild(ItemSlotContainer[i]);
 		}
 	}
+
+	Clear();
 }
 
 void UUWStageSelect::ShowUI()
 {
 	CurRegionID = FName(TEXT("1"));
-	Refresh();
+	CurStageID = NAME_None;
+
+	RefreshStageSlot();
 	AddToViewport();
 }
 
@@ -82,6 +86,9 @@ void UUWStageSelect::HideUI()
 
 void UUWStageSelect::ClickStartButton()
 {
+	if (CurStageID == NAME_None)
+		return;
+
 	OnClickStartButton.ExecuteIfBound(CurStageID);
 }
 
@@ -95,11 +102,6 @@ void UUWStageSelect::ClickStageSlot(uint8 _index)
 	RefreshStageInfo();
 }
 
-void UUWStageSelect::Refresh()
-{
-	RefreshStageSlot();
-	RefreshStageInfo();
-}
 
 void UUWStageSelect::RefreshStageSlot()
 {
@@ -125,9 +127,11 @@ void UUWStageSelect::RefreshStageSlot()
 		}
 	}
 
-	for (int i = 0; i < RegionData->StageIDs.Num(); ++i)
+	uint8 i = 0;
+	// 필요한 슬롯 출력 및 업데이트
+	for (; i < RegionData->StageIDs.Num(); ++i)
 	{
-		FName StageID = RegionData->StageIDs[i];
+		const FName& StageID = RegionData->StageIDs[i];
 		FStageData* StageData = DataManager->GetStageData(StageID);
 		if (i < StageSlotContainer.Num())
 		{
@@ -135,6 +139,10 @@ void UUWStageSelect::RefreshStageSlot()
 			StageSlotContainer[i]->Update(StageData);
 		}
 	}
+
+	// 쓰지 않는 슬롯 숨기기
+	for (; i < StageSlotContainer.Num(); ++i)
+		StageSlotContainer[i]->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWStageSelect::RefreshStageInfo()
@@ -160,12 +168,18 @@ void UUWStageSelect::RefreshStageInfo()
 			ItemSlotContainer.Add(CreateWidget<UUWItemSlot>(GetWorld(), ItemSlotClass));
 	}
 
-	for (uint8 i = 0; i < StageData->RewardItems.Num(); ++i)
+	// 필요한 슬롯 출력 및 업데이트
+	uint8 i = 0;
+	for (; i < StageData->RewardItems.Num(); ++i)
 	{
 		ItemSlotContainer[i]->SetVisibility(ESlateVisibility::Visible);
 		// TODO : 아이템 기능 만들고 나서 추가해줄 것
 		// ItemSlotContainer[i]->uyp
 	}
+
+	// 미사용 슬롯 숨기기
+	for (; i < ItemSlotContainer.Num(); ++i)
+		ItemSlotContainer[i]->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWStageSelect::Clear()

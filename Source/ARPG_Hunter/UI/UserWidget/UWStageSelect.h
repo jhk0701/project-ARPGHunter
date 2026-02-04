@@ -105,7 +105,6 @@ private:
 	UFUNCTION()
 	void ClickStageSlot(uint8 _index);
 
-	void Refresh();
 	void RefreshStageSlot();
 	void RefreshStageInfo();
 
