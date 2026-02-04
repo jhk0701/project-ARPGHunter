@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWStageSelect.h"
@@ -77,6 +77,7 @@ void UUWStageSelect::ShowUI()
 
 	RefreshStageSlot();
 	AddToViewport();
+	PlayOpenAnim();
 }
 
 void UUWStageSelect::HideUI()
@@ -193,4 +194,10 @@ void UUWStageSelect::Clear()
 
 	for (TObjectPtr<UUWItemSlot>& ItemSlot : ItemSlotContainer)
 		ItemSlot->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UUWStageSelect::PlayOpenAnim()
+{
+	if(OpenAnim)
+		PlayAnimation(OpenAnim);
 }

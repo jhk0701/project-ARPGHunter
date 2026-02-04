@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -78,6 +78,11 @@ private:
 	TSubclassOf<UUWStageSlot> StageSlotClass;
 	UPROPERTY(EditAnywhere, Category = "Slot|StageSlot")
 	uint8 InitStageSlotSize = 10;
+
+	// 직렬화하지 않고 휘발처리
+	// BindWidget과 달리 BindWidgetAnim라서 별도 처리
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> OpenAnim;
 #pragma endregion
 
 	FName CurRegionID;
@@ -107,6 +112,7 @@ private:
 
 	void RefreshStageSlot();
 	void RefreshStageInfo();
-
 	void Clear();
+
+	void PlayOpenAnim();
 };
