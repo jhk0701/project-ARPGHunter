@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameMode/ARPGGameMode.h"
@@ -12,7 +12,7 @@ AARPGGameMode::AARPGGameMode()
 		DefaultPawnClass = PlayerFinder.Class;
 }
 
-void AARPGGameMode::OpenLevel(FName _levelName)
+void AARPGGameMode::OpenLevel(const FName& _levelName)
 {
 	UGameplayStatics::OpenLevel(GetWorld(), _levelName);
 }

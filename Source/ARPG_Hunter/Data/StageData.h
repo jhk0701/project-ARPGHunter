@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -51,6 +51,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString StageName;
 	UPROPERTY(EditAnywhere)
+	FString StageDesc;
+	
+	UPROPERTY(EditAnywhere)
 	FName LevelToLoad;
 
 	UPROPERTY(EditAnywhere)
@@ -61,4 +64,15 @@ public:
 	uint32 RewardGold;
 	UPROPERTY(EditAnywhere)
 	TArray<FRewardItem> RewardItems;
+};
+
+USTRUCT(BlueprintType)
+struct ARPG_HUNTER_API FRegionData : public FTableRowBase 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	FString RegionName;
+	UPROPERTY(EditAnywhere)
+	TArray<FName> StageIDs;
 };

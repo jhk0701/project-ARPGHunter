@@ -19,11 +19,9 @@ private:
 	TObjectPtr<class UBoxComponent> ColliderComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> MeshComp;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<UUWStageSelect> StageSelectUIClass;
-	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<UUWStageSelect> StageSelectUI;
 
 public:	
@@ -33,5 +31,8 @@ public:
 
 protected:
 	void BeginPlay() override;
+
+private:
+	void StartGame(const FName& _selectedID);
 
 };

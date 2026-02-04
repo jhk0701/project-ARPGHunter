@@ -19,6 +19,5 @@ private:
 	TObjectPtr<class UImage> Thumbnail;
 
 public:
-
-
+	// void Update(struct FItemData* ItemData);
 };

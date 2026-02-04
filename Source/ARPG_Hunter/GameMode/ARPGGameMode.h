@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,6 +17,6 @@ class ARPG_HUNTER_API AARPGGameMode : public AGameModeBase
 public:
 	AARPGGameMode();
 	
-	void OpenLevel(FName _levelName);
+	void OpenLevel(const FName& _levelName);
 	void BackToTown();
 };

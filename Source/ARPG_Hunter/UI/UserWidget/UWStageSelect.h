@@ -13,17 +13,35 @@ class UUWItemSlot;
 class UScrollBox;
 class UUWStageSlot;
 
+DECLARE_DELEGATE_OneParam(FOnClickStartButton, const FName&);
+DECLARE_DELEGATE_OneParam(FOnClickStageSlot, uint8);
+
+
 UCLASS()
 class ARPG_HUNTER_API UUWStageSlot : public UUserWidget
 {
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	uint8 Index{0};
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> SelectButton;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> StageNameLabel;
+
+	UFUNCTION()
+	void ClickStageButton();
+
+protected:
+	virtual void NativeOnInitialized() override;
+
+public:
+	FOnClickStageSlot OnClickStageSlot;
+	void Init(uint8 _index);
+	void Update(struct FStageData* _data);
 };
 
 /**
@@ -35,6 +53,7 @@ class ARPG_HUNTER_API UUWStageSelect : public UUserWidget
 	GENERATED_BODY()
 
 private:
+#pragma region Widget
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> CloseButton;
 	UPROPERTY(meta = (BindWidget))
@@ -48,12 +67,47 @@ private:
 	TObjectPtr<UTextBlock> GoldRewardLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UWrapBox> RewardItemContainer;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWItemSlot> RewardItemSlot;
+	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
+	TSubclassOf<UUWItemSlot> ItemSlotClass;
+	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
+	uint8 InitRewardItemSlotSize = 24;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> StageList;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWStageSlot> StageSlot;
+	UPROPERTY(EditAnywhere, Category = "Slot|StageSlot")
+	TSubclassOf<UUWStageSlot> StageSlotClass;
+	UPROPERTY(EditAnywhere, Category = "Slot|StageSlot")
+	uint8 InitStageSlotSize = 10;
+#pragma endregion
 
+	FName CurRegionID;
+	FName CurStageID;
+
+	// 슬롯
+	UPROPERTY()
+	TArray<TObjectPtr<UUWItemSlot>> ItemSlotContainer;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWStageSlot>> StageSlotContainer;
+
+public:
+	FOnClickStartButton OnClickStartButton;
+
+	void ShowUI();
+	UFUNCTION()
+	void HideUI();
+
+protected:
+	virtual void NativeOnInitialized() override;
+
+private:
+	UFUNCTION()
+	void ClickStartButton();
+	UFUNCTION()
+	void ClickStageSlot(uint8 _index);
+
+	void Refresh();
+	void RefreshStageSlot();
+	void RefreshStageInfo();
+
+	void Clear();
 };
