@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameMode/CombatGameMode.h"
@@ -77,10 +77,10 @@ void ACombatGameMode::BeginPlay()
 	CombatGameState->OnStageFailed.BindUObject(this, &ACombatGameMode::GameFail);
 
 	// 몬스터 액터 풀링
-	SetObjectPool();
+	SetMonsterPool();
 }
 
-void ACombatGameMode::SetObjectPool()
+void ACombatGameMode::SetMonsterPool()
 {
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
@@ -112,16 +112,10 @@ void ACombatGameMode::SetObjectPool()
 					// 몬스터 액터 생성 람다식
 					FActorSpawnParameters SpawnParam;
 					SpawnParam.Owner = this;
-
 					AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
 
 					// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 바인딩
-					Inst->OnMonsterDead.BindLambda(
-						[this](TObjectPtr<AMonsterBase> _monster)
-						{
-							GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_monster->GetType()], _monster);
-						}
-					);
+					Inst->OnMonsterDead.BindUObject(this, &ACombatGameMode::ReleaseMonster);
 
 					return Inst;
 				},
@@ -206,3 +200,9 @@ void ACombatGameMode::GameFail()
 	// TODO : 클리어 UI 출력
 }
 
+
+
+void ACombatGameMode::ReleaseMonster(TObjectPtr<class AMonsterBase> _target)
+{
+	GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_target->GetType()], _target);
+}

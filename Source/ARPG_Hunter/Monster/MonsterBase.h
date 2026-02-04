@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -55,6 +55,10 @@ private:
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
 	int CurAttackMontageIdx{0};
+
+	FTimerHandle OnDeadTimer;
+	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
+	float DeadDelay{ 3.0f };
 
 protected:
 	// 빠른 테스트를 위해서 남겨둠

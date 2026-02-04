@@ -4,7 +4,7 @@
 #include "Stage/StageSelector.h"
 #include "Components/BoxComponent.h"
 
-#include "GameMode/ARPGGameMode.h"
+#include "UI/UserWidget/UWStageSelect.h"
 
 // Sets default values
 AStageSelector::AStageSelector()
@@ -15,10 +15,25 @@ AStageSelector::AStageSelector()
 	SetRootComponent(ColliderComp);
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(ColliderComp);
+
+	static ConstructorHelpers::FClassFinder<UUWStageSelect> StageSelectUIFinder(TEXT(""));
+	if (StageSelectUIFinder.Succeeded())
+		StageSelectUIClass = StageSelectUIFinder.Class;
+}
+
+void AStageSelector::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (nullptr == StageSelectUIClass)
+		return;
+
+	// StageSelectUIClass
+	
 }
 
 void AStageSelector::Interact()
 {
 	// TODO : 데이터 테이블 기반 UI 띄우기
-	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(FName(TEXT("Stage1")));
+	// GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(FName(TEXT("Stage1")));
 }

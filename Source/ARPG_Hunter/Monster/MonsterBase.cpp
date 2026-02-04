@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -87,6 +87,10 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	StatComp->Clear();
+
+	FTimerManager& Timer = GetWorld()->GetTimerManager();
+	if(Timer.IsTimerActive(OnDeadTimer))
+		Timer.ClearTimer(OnDeadTimer);
 }
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
@@ -254,7 +258,7 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 
 void AMonsterBase::OnDead()
 {
-	// 사망 시, 오브젝트 풀로 복귀
+	// 사망 시 처리
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
 	AICon->StopBT();
 
@@ -265,8 +269,19 @@ void AMonsterBase::OnDead()
 	ACombatGameState* GameState = GetWorld()->GetGameState<ACombatGameState>();
 	GameState->StageEventBus[EStageEvent::HUNT].Broadcast({ SectionID, this });
 
-	// 일반적으로 ACombatGameMode에서 오브젝트 풀링 등록하며, 이벤트에 구독해뒀을 것
-	OnMonsterDead.ExecuteIfBound(this);
+	FTimerManager& Timer = GetWorld()->GetTimerManager();
+	if (Timer.IsTimerActive(OnDeadTimer))
+		Timer.ClearTimer(OnDeadTimer);
+
+	Timer.SetTimer(OnDeadTimer, 
+		[this]() 
+		{
+			// 일반적으로 ACombatGameMode에서 오브젝트 풀링 등록하며, 이벤트에 구독해뒀을 것
+			OnMonsterDead.ExecuteIfBound(this);
+
+		}, 
+		DeadDelay, false
+	);
 }
 
 bool AMonsterBase::IsDead()
