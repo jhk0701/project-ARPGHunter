@@ -31,13 +31,16 @@ FDelegateHandle UOnHitEffect::Subscribe()
 }
 
 
-void UInvincibleEffect::OnHitEvent(bool& _outbCancleHit)
+void UInvincibleEffect::OnHitEvent(EHitOption& _hitOption, uint32& _damage)
 {
+	if (!IsValid())
+		return;
+
 	// 무적 버프 중, 피격 발생
-	_outbCancleHit = true; // 피격 무효 처리
+	_hitOption = EHitOption::IMMUNE_HIT;
 }
 
-void UJustDodgeEffect::OnHitEvent(bool& _outbCancleHit)
+void UJustDodgeEffect::OnHitEvent(EHitOption& _hitOption, uint32& _damage)
 {
 	// 버프를 가진 상태에서 피격을 당함
 	if (!IsValid())
@@ -49,7 +52,14 @@ void UJustDodgeEffect::OnHitEvent(bool& _outbCancleHit)
 	GetTarget()->RemoveEffect(this);
 }
 
-void USuperArmorEffect::OnHitEvent(bool& _outbCancleHit)
+void USuperArmorEffect::OnHitEvent(EHitOption& _hitOption, uint32& _damage)
 {
-	// 슈퍼 아머
+	if (!IsValid())
+		return;
+
+	// 슈퍼 아머 적용
+	if (_hitOption < EHitOption::IMMUNE_STIFFEN)
+		_hitOption = EHitOption::IMMUNE_STIFFEN; // 경직 면역
+	// 데미지 경감
+	_damage = static_cast<uint32>(_damage * 0.2f);
 }

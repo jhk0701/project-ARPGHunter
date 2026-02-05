@@ -189,12 +189,16 @@ void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 
 void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 {
-	if (StatComp->IsDead() ||
-		StatComp->TakeDamage(_hitInfo.Damage) == false)
+	if (StatComp->IsDead())
 		return;
 
-	ActionComp->PlayHitAction(StatComp->IsDead());
-	ShakeCamera(CameraShakeOnHit);
+	StatComp->TakeDamage(_hitInfo.Damage, 
+		[this]() 
+		{
+			ActionComp->PlayHitAction(StatComp->IsDead());
+			ShakeCamera(CameraShakeOnHit); 
+		}
+	);
 
 	if (StatComp->IsDead())
 		OnDead();

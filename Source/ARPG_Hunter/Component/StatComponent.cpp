@@ -104,17 +104,20 @@ bool UStatComponent::TryUseStamina(uint32 _amount)
 	return bIsUsed;
 }
 
-bool UStatComponent::TakeDamage(uint32 _damage)
+bool UStatComponent::TakeDamage(uint32 _damage, TFunction<void()> _stiffAction)
 {
 	if (IsDead())
 		return false;
 	
 	// 피격 발생
-	bool bHitCanceled = false;
-	OnHitEvent.Broadcast(bHitCanceled); // 피격 시 이벤트 델리게이트 호출
-	
-	if (bHitCanceled)
-		return false;
+	EHitOption HitOption = EHitOption::NONE;
+	OnHitEvent.Broadcast(HitOption, _damage); // 피격 시 이벤트 델리게이트 호출
+
+	if (HitOption == EHitOption::IMMUNE_HIT)
+		return false;	// 피격 무효 처리
+	else if (HitOption < EHitOption::IMMUNE_STIFFEN && 
+		nullptr !=_stiffAction)
+		_stiffAction();  // 경직 동작 수행
 
 	if (TryUseResource(ECharacterResourceType::HEALTH, _damage) == false)
 	{

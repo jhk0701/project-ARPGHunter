@@ -9,10 +9,14 @@
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
 
-/*
-* 
-*/
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
+enum class EHitOption : uint8
+{
+	NONE,			// 옵션 없음
+	IMMUNE_STIFFEN,	// 경직 면역 : 피격 모션만 무효
+	IMMUNE_HIT		// 피격 면역 : 피격 모션 + 데미지 무효
+};
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHitEvent, EHitOption&, uint32&)
 
 class UEffect;
 struct FEffectParam;
@@ -90,7 +94,7 @@ public:
 	{ 
 		return GetResource(ECharacterResourceType::HEALTH).Value == 0;
 	}
-	bool TakeDamage(uint32 _damage);
+	bool TakeDamage(uint32 _damage, TFunction<void()> _stiffAction = nullptr);
 
 	bool IsStaggering() 
 	{ 
