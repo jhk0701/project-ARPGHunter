@@ -49,7 +49,6 @@ public:
 	TMap<EStageEvent, FStageEvent> StageEvent;
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
 
-	const FSection& GetSection(uint8 _idx) const;
 	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
 
 	void GameFail();

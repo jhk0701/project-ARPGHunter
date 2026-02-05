@@ -138,7 +138,6 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 }
 
 
-
 void APlayerCharacter::SetIsSprint(bool _isSprint)
 {
 	IsSprint = _isSprint;
@@ -209,10 +208,10 @@ void APlayerCharacter::OnDead()
 {
 	// 플레이어 사망 후 처리
 	// 플레이어 사망 이벤트 발행
-	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-
 	FStageEventContext Context;
 	Context.Target = this;
+
+	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
 }
 

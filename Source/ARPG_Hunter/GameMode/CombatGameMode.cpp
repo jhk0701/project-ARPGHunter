@@ -5,14 +5,14 @@
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#include "Core/ARPGGameInstance.h"
 #include "Define/Enum.h"
-#include "GameMode/GameState/CombatGameState.h"
+#include "Core/ARPGGameInstance.h"
 #include "Subsystem/PlayerManager/PlayerManager.h"
 #include "Subsystem/DataManager/DataManager.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
 #include "Data/StageData.h"
 #include "Data/MonsterData.h"
+#include "GameMode/GameState/CombatGameState.h"
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 #include "Monster/MonsterBase.h"
@@ -139,15 +139,12 @@ void ACombatGameMode::SetMonsterPool()
 	}
 }
 
-const FSection& ACombatGameMode::GetSection(uint8 _idx) const
-{
-	ensure(StageData && StageData->Sections.Num() > _idx);
-	return StageData->Sections[_idx];
-}
-
 uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize)
 {
-	const FSection& SectionData = GetSection(_sectionID);
+	if (StageData->Sections.Num() <= _sectionID)
+		return 0;
+
+	const FSection& SectionData = StageData->Sections[_sectionID];
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	
