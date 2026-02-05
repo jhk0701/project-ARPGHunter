@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,6 +8,10 @@
 #include "StatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
+
+/*
+* 
+*/
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHitEvent, bool&)
 
 class UEffect;
@@ -63,7 +67,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterStatType, uint32> EffectedStat;
 
-	void StartStaminaRecovery();
 	FCharacterResource& GetResource(ECharacterResourceType _type) 
 	{ 
 		Resource[_type];
@@ -95,6 +98,7 @@ public:
 	}
 	void TakeStaminaDamage(uint32 _damage);
 	bool TryUseStamina(uint32 _amount);
+	void StartStaminaRecovery();
 	void PauseAndRestartStaminaRecovery(float _pauseSecond);
 
 	void ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam);

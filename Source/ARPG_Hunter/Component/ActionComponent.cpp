@@ -31,10 +31,15 @@ void UActionComponent::Clear()
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	if (TimerManager.IsTimerActive(ActionResetTimer))
 		TimerManager.ClearTimer(ActionResetTimer);
+	if (TimerManager.IsTimerActive(ActionProgressTimer))
+		TimerManager.ClearTimer(ActionProgressTimer);
 }
 
 void UActionComponent::ResetAction()
 {
+	if (CurActionInput == EActionInput::HOLD)
+		ClearActionProgressTimer();
+
 	CurAttackActionID = 0;
 	CurActionProcess = EActionProcess::NONE;
 	CurActionInput = EActionInput::NORMAL;
@@ -48,6 +53,15 @@ void UActionComponent::SetActionProcess(EActionProcess _eProcess)
 
 	if (CurActionProcess == EActionProcess::COMPLETE)
 		SetActionResetTimer(ActionResetSecond);
+	else if (CurActionProcess == EActionProcess::IN_PROGRESS && 
+		CurActionInput == EActionInput::HOLD)
+	{
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+		if (TimerManager.IsTimerActive(ActionProgressTimer))
+			TimerManager.ClearTimer(ActionProgressTimer);
+
+		TimerManager.SetTimer(ActionProgressTimer, this, &UActionComponent::ProcessAttackProgress, ActionProgressRate, true);
+	}
 }
 
 void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
@@ -98,7 +112,8 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	
 	UAction* Action = CurWeaponType->AttackCombo->AttackAcionArray[id];
 
-	if (_predicate && _predicate(Action->StaminaUsage) == false)
+	if (_predicate && 
+		_predicate(Action->StaminaUsage) == false)
 		return;
 
 	CurAttackActionID = id;
@@ -107,13 +122,52 @@ void UActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)
 	CurActionMontage = Action->Montage;
 	bIsInAttackCombo = true;
 
+	if (CurActionInput == EActionInput::HOLD)
+		CurActionPredicate = _predicate;
+
 	OwnerAnimInstance->Montage_Play(Action->Montage);
 
 	// 액션 시작 시, 효과 발동
 	ActivateActionEffect(Action->EffectOnStart, GetOwner());
+}
 
-	/*if (CurActionInput < EActionInput::HOLD)
-		SetActionResetTimer(ActionResetSecond);*/
+void UActionComponent::ProcessAttackProgress()
+{
+	UAction* Action = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID];
+
+	// 공격 액션 지속 중, 스태미너 소모
+	// 스태미너 부족 시, 바로 End 시퀀스로 이행
+	if (CurActionPredicate(Action->StaminaUsage) == false)
+	{
+		ProcessAttackEnd();
+		return;
+	}
+
+	ActivateActionEffect(Action->EffectOnProgress, GetOwner());
+}
+
+void UActionComponent::ProcessAttackEnd()
+{
+	if (CurActionInput < EActionInput::HOLD || 
+		CurActionMontage == nullptr)
+		return;
+
+	if (CurActionProcess < EActionProcess::IN_PROGRESS)
+	{
+		OwnerAnimInstance->Montage_Stop(0.1f, CurActionMontage);
+		ResetAction();
+		return;
+	}
+	else if (CurActionProcess == EActionProcess::COMPLETE)
+		return;
+	
+	CurActionProcess = EActionProcess::COMPLETE; // 종료 상태로 변경
+
+	// 누르는 입력이 종료됨
+	// 현재 재생중인 몽타주를 강제로 Complete 섹션으로 전환
+	OwnerAnimInstance->Montage_JumpToSection(EnumToName(EActionProcess::COMPLETE), CurActionMontage);
+
+	ClearActionProgressTimer();
 }
 
 // 현재 받은 공격 입력이 유효한 입력인지 확인
@@ -132,24 +186,6 @@ bool UActionComponent::IsValidAttackInput(EAttackType _type)
 	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
 }
 
-void UActionComponent::ProcessAttackEnd()
-{
-	if (CurActionInput < EActionInput::HOLD || CurActionMontage == nullptr)
-		return;
-
-	if (CurActionProcess < EActionProcess::IN_PROGRESS)
-	{
-		OwnerAnimInstance->Montage_Stop(0.25f, CurActionMontage);
-		ResetAction();
-
-		return;
-	}
-
-	// 누르는 입력이 종료됨
-	// 현재 재생중인 몽타주를 강제로 Complete 섹션으로 전환
-	OwnerAnimInstance->Montage_JumpToSection(EnumToName(EActionProcess::COMPLETE), CurActionMontage);
-}
-
 void UActionComponent::SetActionResetTimer(float _second)
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -164,12 +200,10 @@ uint16 UActionComponent::GetAttackActionDamagePer()
 {
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->AttackDamagePer;
 }
-
 uint16 UActionComponent::GetAttackActionStaggerDamage()
 {
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->StaggerDamage;
 }
-
 float UActionComponent::GetAttackActionKnockBack(uint8 _opt)
 {
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->ArrOption[_opt].KnockBackStr;
@@ -188,7 +222,6 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 	FVector ActorLoc = GetOwner()->GetActorLocation();
 	FVector ActorFwd = GetOwner()->GetActorForwardVector();
 
-	// TODO : 리팩토링 필요
 	switch (Option.Direction)
 	{
 	case EAttackDirection::FRONT:
@@ -240,7 +273,6 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 	return IsHit;
 }
 
-
 void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
 {
 	IEffectable* Effectable = Cast<IEffectable>(_target);
@@ -250,4 +282,11 @@ void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffec
 
 	for (const TObjectPtr<class UEffectData>& effectData : _effectArray)
 		Effectable->ApplyEffect(effectData->Effect, &effectData->Param);
+}
+
+void UActionComponent::ClearActionProgressTimer()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	if (TimerManager.IsTimerActive(ActionProgressTimer))
+		TimerManager.ClearTimer(ActionProgressTimer);
 }

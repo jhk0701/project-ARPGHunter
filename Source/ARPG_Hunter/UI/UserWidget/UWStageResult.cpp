@@ -15,7 +15,6 @@ void UUWStageResult::NativeOnInitialized()
 	ReturnButton->OnClicked.AddDynamic(this, &UUWStageResult::ClickReturnButton);
 }
 
-
 void UUWStageResult::ShowUI()
 {
 	AddToViewport();

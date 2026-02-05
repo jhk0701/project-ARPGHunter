@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Effect/EventEffect/EventEffect.h"
@@ -47,4 +47,9 @@ void UJustDodgeEffect::OnHitEvent(bool& _outbCancleHit)
 		GetTarget()->ApplyEffect(subEffect->Effect, &subEffect->Param);
 
 	GetTarget()->RemoveEffect(this);
+}
+
+void USuperArmorEffect::OnHitEvent(bool& _outbCancleHit)
+{
+	// 슈퍼 아머
 }

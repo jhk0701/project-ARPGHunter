@@ -40,8 +40,6 @@ void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)
 	GetResource(ECharacterResourceType::HEALTH).Init(Stat[ECharacterStatType::HEALTH]);
 	GetResource(ECharacterResourceType::STAMINA).Init(Stat[ECharacterStatType::STAMINA]);
 	GetResource(ECharacterResourceType::SKILL).Init(Stat[ECharacterStatType::SKILL], false);
-
-	StartStaminaRecovery();
 }
 
 void UStatComponent::Clear()

@@ -78,9 +78,12 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	// 플레이어 데이터 받아오기
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	StatComp->Init(PlayerManager->GetPlayerStat());
+	StatComp->StartStaminaRecovery();
+
 	EquipComp->Init();
 	ActionComp->Init(GetMesh()->GetAnimInstance());
 
@@ -186,10 +189,8 @@ void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 
 void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 {
-	if (StatComp->IsDead())
-		return;
-
-	if (StatComp->TakeDamage(_hitInfo.Damage) == false)
+	if (StatComp->IsDead() ||
+		StatComp->TakeDamage(_hitInfo.Damage) == false)
 		return;
 
 	ActionComp->PlayHitAction(StatComp->IsDead());

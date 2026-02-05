@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,13 +17,15 @@ class ARPG_HUNTER_API UUWDamageFont : public UUserWidget
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> DamageLabel;
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> MoveAnim;
 
 	UPROPERTY(EditAnywhere, Category = "Color")
 	FColor ColorOnNormal;
-
 	UPROPERTY(EditAnywhere, Category = "Color")
 	FColor ColorOnCritical;
 	
 public:
 	void SetDamage(uint32 _amount, bool _bIsCritical);
+	void PlayAnim();
 };

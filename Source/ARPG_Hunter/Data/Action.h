@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -49,6 +49,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnStart;
+	UPROPERTY(EditAnywhere, Category = "ActionEffect")
+	TArray<TObjectPtr<UEffectData>> EffectOnProgress;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnHit;
 };

@@ -27,6 +27,9 @@ void ADamageFont::ShowUI(float _duration)
 		Timer.ClearTimer(ShowTimer);
 
 	Timer.SetTimer(ShowTimer, this, &ADamageFont::HideUI, _duration);
+
+	if (UUWDamageFont* UI = Cast<UUWDamageFont>(WidgetComp->GetWidget()))
+		UI->PlayAnim();
 }
 
 void ADamageFont::HideUI()

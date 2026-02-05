@@ -23,17 +23,22 @@ private:
 	uint8 CurAttackActionID{ 0 };
 	EActionProcess CurActionProcess{ EActionProcess::NONE };
 	EActionInput CurActionInput{EActionInput::NORMAL};
-	TObjectPtr<UAnimMontage> CurActionMontage{nullptr};
+	TObjectPtr<UAnimMontage> CurActionMontage{ nullptr };
+	TFunction<bool(float)> CurActionPredicate{ nullptr };
+	
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float ActionProgressRate{ 0.1f };
+	FTimerHandle ActionProgressTimer;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float ActionResetSecond{ 1.0f };
-	
+	float ActionResetSecond{ 1.5f };
 	FTimerHandle ActionResetTimer;
 
 	void SetActionResetTimer(float _second);
 	bool IsValidAttackInput(EAttackType _type);
 
 	void ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target);
+	void ClearActionProgressTimer();
 
 public:	
 	UActionComponent();
@@ -51,6 +56,7 @@ public:
 	void PlayHitAction(bool _isDead);
 
 	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
+	void ProcessAttackProgress();
 	void ProcessAttackEnd();
 
 	uint16 GetAttackActionDamagePer();
@@ -58,5 +64,4 @@ public:
 	float GetAttackActionKnockBack(uint8 _opt);
 	
 	bool TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult);
-	
 };
