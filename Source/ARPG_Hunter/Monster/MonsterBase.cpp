@@ -304,9 +304,9 @@ TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 	return GetData()->AttackMontages[_idx];
 }
 
-void AMonsterBase::ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam)
+void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
-	StatComp->ApplyEffect(_effectClass, _effectParam);
+	StatComp->ApplyEffect(_effectData);
 }
 
 void AMonsterBase::KnockBack(const FHitInfo& _hitInfo)

@@ -5,9 +5,9 @@
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
-void UEventEffect::Activate(UStatComponent* _target, FEffectParam* _param)
+void UEventEffect::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param); // 상위 TermEffect에서 타이머를 설정완료
+	Super::Activate(_target, _context); // 상위 TermEffect에서 타이머를 설정완료
 
 	if (!IsValid())
 		return;
@@ -47,7 +47,7 @@ void UJustDodgeEffect::OnHitEvent(EHitOption& _hitOption, uint32& _damage)
 		return;
 
 	for (TObjectPtr<UEffectData>& subEffect : GetParam()->EffectsOnEvent)
-		GetTarget()->ApplyEffect(subEffect->Effect, &subEffect->Param);
+		GetTarget()->ApplyEffect(subEffect);
 
 	GetTarget()->RemoveEffect(this);
 }

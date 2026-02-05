@@ -18,6 +18,7 @@ enum class EHitOption : uint8
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHitEvent, EHitOption&, uint32&)
 
+class UEffectData;
 class UEffect;
 struct FEffectParam;
 
@@ -37,6 +38,19 @@ public:
 	{
 		OnValueChanged.Broadcast(Value, MaxValue);
 	}
+};
+
+USTRUCT()
+struct FAppliedEffect 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	TObjectPtr<UEffect> Effect;
+	FTimerHandle Timer;
+
+	FAppliedEffect() : Effect(nullptr){}
+	FAppliedEffect(TObjectPtr<UEffect> _newEffect) : Effect(_newEffect) {}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -66,7 +80,8 @@ private:
 
 	// 효과 관리용 컨테이너 : 이펙트 -> 타이머 핸들 찾기
 	UPROPERTY()
-	TMap<TObjectPtr<UEffect>, FTimerHandle> MapEffect;
+	TMap<UObject*, FAppliedEffect> MapEffect;
+
 	// 효과로 얻은 스탯
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterStatType, uint32> EffectedStat;
@@ -105,7 +120,7 @@ public:
 	void StartStaminaRecovery();
 	void PauseAndRestartStaminaRecovery(float _pauseSecond);
 
-	void ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam);
+	void ApplyEffect(TObjectPtr<UEffectData> _effectData);
 	void RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 

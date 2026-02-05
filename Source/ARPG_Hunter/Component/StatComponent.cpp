@@ -2,6 +2,7 @@
 
 
 #include "Component/StatComponent.h"
+#include "Data/EffectData.h"
 #include "Effect/Effect.h"
 
 #include "Define/Debug.h"
@@ -49,10 +50,10 @@ void UStatComponent::Clear()
 	if (TimerManager.IsTimerActive(StaminaRecoveryTimer))
 		TimerManager.ClearTimer(StaminaRecoveryTimer);
 
-	for (TPair<TObjectPtr<UEffect>, FTimerHandle>& pair : MapEffect)
+	for (TPair<UObject*, FAppliedEffect>& pair : MapEffect)
 	{
-		if (TimerManager.IsTimerActive(pair.Value))
-			TimerManager.ClearTimer(pair.Value);
+		if (TimerManager.IsTimerActive(pair.Value.Timer))
+			TimerManager.ClearTimer(pair.Value.Timer);
 	}
 }
 
@@ -166,18 +167,46 @@ void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond)
 	);
 }
 
-void UStatComponent::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
+void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
-	TObjectPtr<UEffect> EffectInst = NewObject<UEffect>(this, _effectClass);
-	EffectInst->Activate(this, _effectParam);
+	TObjectPtr<UEffect> EffectInst = NewObject<UEffect>(this, _effectData->Effect);
+
+	FEffectContext Context
+	{
+		_effectData,
+		&_effectData->Param,
+		0.0f
+	};
+	EffectInst->Activate(this, &Context);
 }
 
 void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 {
 	// 이펙트 등록
-	FTimerHandle& EffectTimer = MapEffect.Add(_effect);
+	// 동일 종류 중복 확인
+	if (FAppliedEffect* Applied = MapEffect.Find(_effect->GetID())) 
+	{
+		// 스택 쌓기 불가능한 경우 중복 효과 획득 불가
+		if (Applied->Effect->GetMaxStack() <= 1 || Applied->Effect->IsStackFull())
+			return;
+		
+		Applied->Effect->AddStack(); // 스택 쌓기
+		// 지속 시간 갱신
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+		TimerManager.ClearTimer(Applied->Timer);
+		TimerManager.SetTimer(Applied->Timer, 
+			[this, _effect]() { RemoveEffect(_effect); },
+			_effect->GetDuration(),
+			false);
+
+		return;
+	}
+
+	// 신규 효과 추가
+	FAppliedEffect& AppliedEffect = MapEffect.Add(_effect->GetID(), FAppliedEffect(_effect));
+
 	GetWorld()->GetTimerManager().SetTimer(
-		EffectTimer,
+		AppliedEffect.Timer,
 		[this, _effect]() { RemoveEffect(_effect); },
 		_effect->GetDuration(),
 		false);
@@ -185,15 +214,17 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 
 void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 {
-	if (MapEffect.Find(_effect) == nullptr)
+	FAppliedEffect* Applied = MapEffect.Find(_effect->GetID());
+
+	if (nullptr == Applied)
 		return;
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-	if (TimerManager.IsTimerActive(MapEffect[_effect]))
-		TimerManager.ClearTimer(MapEffect[_effect]);
+	if (TimerManager.IsTimerActive(Applied->Timer))
+		TimerManager.ClearTimer(Applied->Timer);
 
 	_effect->Deactivate();
-	MapEffect.Remove(_effect);
+	MapEffect.Remove(_effect->GetID());
 }
 
 void FCharacterResource::Init(uint32 _max, bool _bFull)

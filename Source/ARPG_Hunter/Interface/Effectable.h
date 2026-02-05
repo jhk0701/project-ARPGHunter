@@ -22,5 +22,5 @@ class ARPG_HUNTER_API IEffectable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	 virtual void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam) = 0;
+	 virtual void ApplyEffect(TObjectPtr<class UEffectData> _effectData) = 0;
 };

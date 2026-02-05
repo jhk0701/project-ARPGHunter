@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,12 +16,13 @@ public:
 	uint32 Value{ 0 };
 	UPROPERTY(EditAnywhere, Category = "Common")
 	float Duration{ 0.0f };
+	UPROPERTY(EditAnywhere, Category = "Common")
+	uint8 MaxStack{ 1 };
 	UPROPERTY(EditAnywhere, Category = "Repeated")
 	float RepeatInterval{ 1.0f };
 	UPROPERTY(EditAnywhere, Category = "Event")
 	TArray<TObjectPtr<class UEffectData>> EffectsOnEvent;
 };
-
 
 UCLASS()
 class ARPG_HUNTER_API UEffectData : public UDataAsset

@@ -4,11 +4,11 @@
 #include "Effect/TermEffect/TermEffect.h"
 #include "Data/EffectData.h"
 
-void UTermEffect::Activate(UStatComponent* _target, FEffectParam* _param)
+void UTermEffect::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 
-	if (_target == nullptr || _param == nullptr)
+	if (_target == nullptr || _context == nullptr)
 		return;
 
 	// 효과의 유효기간 타이머 설정
@@ -20,12 +20,12 @@ void UTermEffect::Deactivate()
 {
 }
 
-void UAddAttack::Activate(UStatComponent* _target, FEffectParam* _param)
+void UAddAttack::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	_target->AddStat(ECharacterStatType::ATTACK, _param->Value);
+	_target->AddStat(ECharacterStatType::ATTACK, _context->Param->Value);
 }
 
 void UAddAttack::Deactivate()
@@ -35,12 +35,12 @@ void UAddAttack::Deactivate()
 	GetTarget()->SubStat(ECharacterStatType::ATTACK, GetParam()->Value);
 }
 
-void UAddDefense::Activate(UStatComponent* _target, FEffectParam* _param)
+void UAddDefense::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	GetTarget()->AddStat(ECharacterStatType::DEFENSE, _param->Value);
+	GetTarget()->AddStat(ECharacterStatType::DEFENSE, _context->Param->Value);
 }
 
 void UAddDefense::Deactivate()
@@ -50,12 +50,12 @@ void UAddDefense::Deactivate()
 	GetTarget()->SubStat(ECharacterStatType::DEFENSE, GetParam()->Value);
 }
 
-void UAddCriticalPercent::Activate(UStatComponent* _target, FEffectParam* _param)
+void UAddCriticalPercent::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, _param->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, _context->Param->Value);
 }
 
 void UAddCriticalPercent::Deactivate()
@@ -65,12 +65,12 @@ void UAddCriticalPercent::Deactivate()
 	GetTarget()->SubStat(ECharacterStatType::CRITICAL_PERCENT, GetParam()->Value);
 }
 
-void UAddCriticalDamagePercent::Activate(UStatComponent* _target, FEffectParam* _param)
+void UAddCriticalDamagePercent::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, _param->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, _context->Param->Value);
 }
 
 void UAddCriticalDamagePercent::Deactivate()

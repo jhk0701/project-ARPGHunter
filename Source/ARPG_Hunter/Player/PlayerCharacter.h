@@ -113,7 +113,7 @@ public:
 	void OnDead();
 
 	// IEffectable을(를) 통해 상속됨
-	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, struct FEffectParam* _effectParam) override;
+	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
 
 	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
 	void Interact();

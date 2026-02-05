@@ -268,9 +268,9 @@ bool APlayerCharacter::CalculateCritical(uint16& _damage)
 	return bIsCritical;
 }
 
-void APlayerCharacter::ApplyEffect(TSubclassOf<UEffect> _effectClass, FEffectParam* _effectParam)
+void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
-	StatComp->ApplyEffect(_effectClass, _effectParam);
+	StatComp->ApplyEffect(_effectData);
 }
 
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)

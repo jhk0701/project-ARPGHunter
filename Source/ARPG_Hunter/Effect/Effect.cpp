@@ -5,45 +5,60 @@
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
-float UEffect::GetDuration() 
+float UEffect::GetDuration()
 { 
-	return Param->Duration; 
+	return BaseParam->Duration; 
 }
 
-void URecoverHealth::Activate(UStatComponent* _target, FEffectParam* _param)
+uint8 UEffect::GetMaxStack()
 {
-	Super::Activate(_target, _param);
+	return BaseParam->MaxStack;
+}
+
+bool UEffect::IsStackFull()
+{
+	return Stack == BaseParam->MaxStack;
+}
+
+void UEffect::AddStack()
+{
+	Stack = FMath::Min<uint8>(Stack + 1, BaseParam->MaxStack);
+}
+
+void URecoverHealth::Activate(UStatComponent* _target, FEffectContext* _context)
+{
+	Super::Activate(_target, _context);
 
 	if (IsValid())
-		_target->RecoverResource(ECharacterResourceType::HEALTH, _param->Value);
+		_target->RecoverResource(ECharacterResourceType::HEALTH, _context->Param->Value);
 }
 
-void URecoverSkill::Activate(UStatComponent* _target, FEffectParam* _param)
+void URecoverSkill::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 	
 	if (IsValid())
-		_target->RecoverResource(ECharacterResourceType::SKILL, _param->Value);
+		_target->RecoverResource(ECharacterResourceType::SKILL, _context->Param->Value);
 }
 
-void URecoverStamina::Activate(UStatComponent* _target, FEffectParam* _param)
+void URecoverStamina::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 	
 	if (IsValid())
-		_target->RecoverResource(ECharacterResourceType::STAMINA, _param->Value);
+		_target->RecoverResource(ECharacterResourceType::STAMINA, _context->Param->Value);
 }
 
-void UAddEffectUsingSkill::Activate(UStatComponent* _target, FEffectParam* _param)
+void UAddEffectUsingSkill::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 
 	if (!IsValid()) 
 		return;
 	// 입력한 Value만큼 Skill 수치 소모
-	if (_target->TryUseResource(ECharacterResourceType::SKILL, _param->Value) == false)
+	if (_target->TryUseResource(ECharacterResourceType::SKILL, _context->Param->Value) == false)
 		return;
 
-	for (TObjectPtr<UEffectData> data : _param->EffectsOnEvent)
-		_target->ApplyEffect(data->Effect, &data->Param);
+	for (TObjectPtr<UEffectData> data : _context->Param->EffectsOnEvent)
+		_target->ApplyEffect(data);
 }

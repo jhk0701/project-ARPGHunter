@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -99,6 +99,6 @@ public:
 	TObjectPtr<UAnimMontage> GetAttackMontage(int _idx = 0) const;
 
 	// IEffectable을(를) 통해 상속됨
-	void ApplyEffect(TSubclassOf<class UEffect> _effectClass, FEffectParam* _effectParam) override;
+	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
 	void KnockBack(const FHitInfo& _hitInfo);
 };

@@ -5,11 +5,11 @@
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
-void UPeriodicalEffect::Activate(UStatComponent* _target, FEffectParam* _param)
+void UPeriodicalEffect::Activate(UStatComponent* _target, FEffectContext* _context)
 {
-	Super::Activate(_target, _param);
+	Super::Activate(_target, _context);
 
-	if (_target == nullptr || _param == nullptr)
+	if (_target == nullptr || _context == nullptr)
 		return;
 
 	// 내부적 호출 사이클용 타이머 설정
@@ -17,7 +17,7 @@ void UPeriodicalEffect::Activate(UStatComponent* _target, FEffectParam* _param)
 		RepeatTimer,
 		this,
 		&UPeriodicalEffect::RepeatedActivate,
-		_param->RepeatInterval,
+		_context->Param->RepeatInterval,
 		true
 	);
 }

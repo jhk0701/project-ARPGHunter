@@ -136,7 +136,7 @@ void UActionComponent::ProcessAttackProgress()
 	UAction* Action = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID];
 
 	// 공격 액션 지속 중, 스태미너 소모
-	// 스태미너 부족 시, 바로 End 시퀀스로 이행
+	// 스태미너 부족 시, 바로 Complete로 진행
 	if (CurActionPredicate(Action->StaminaUsage) == false)
 	{
 		ProcessAttackEnd();
@@ -281,7 +281,7 @@ void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffec
 		return;
 
 	for (const TObjectPtr<class UEffectData>& effectData : _effectArray)
-		Effectable->ApplyEffect(effectData->Effect, &effectData->Param);
+		Effectable->ApplyEffect(effectData);
 }
 
 void UActionComponent::ClearActionProgressTimer()

@@ -20,7 +20,7 @@ private:
 protected:
 	virtual FDelegateHandle Subscribe() { return FDelegateHandle(); } // 하위 클래스에서 재정의해줄 것
 public:
-	void Activate(UStatComponent* _target, FEffectParam* _param) override;
+	void Activate(UStatComponent* _target, FEffectContext* _context) override;
 	void Deactivate() override;
 };
 
