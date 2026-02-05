@@ -54,11 +54,11 @@ void APlayerHUD::BeginPlay()
 	}
 }
 
-void APlayerHUD::ShowResultUI(bool _bOnCleared)
+void APlayerHUD::ShowResultUI(bool _bOnCleared, const FStageData* _stageData)
 {
 	UUWStageResult* ResultUI = Cast<UUWStageResult>(StageResultUI);
 
-	ResultUI->Update(_bOnCleared);
+	ResultUI->Update(_bOnCleared, _stageData);
 	ResultUI->OnClickReturnButton.BindLambda(
 		[this]() 
 		{

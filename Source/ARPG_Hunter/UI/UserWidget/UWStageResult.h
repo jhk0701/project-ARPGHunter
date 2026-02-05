@@ -36,7 +36,7 @@ public:
 	void ShowUI();
 	void HideUI();
 
-	void Update(bool _bIsClear);
+	void Update(bool _bIsClear, const struct FStageData* _stageData);
 
 	UFUNCTION()
 	void ClickReturnButton();

@@ -5,6 +5,8 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
+#include "Data/StageData.h"
+
 
 void UUWStageResult::NativeOnInitialized()
 {
@@ -27,9 +29,18 @@ void UUWStageResult::HideUI()
 	RemoveFromParent();
 }
 
-void UUWStageResult::Update(bool _bIsClear)
+void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 {
-	ResultLabel->SetText(_bIsClear ? FText::FromString(TEXT("Stage Clear")) : FText::FromString(TEXT("Stage Fail")));
+	if (_bIsClear)
+	{
+		ResultLabel->SetText(FText::FromString(TEXT("Stage Clear")));
+		RewardGoldLabel->SetText(FText::FromString(FString::Printf(TEXT("%d G"), _stageData->RewardGold)));
+	}
+	else
+	{
+		ResultLabel->SetText(FText::FromString(TEXT("Stage Fail")));
+		RewardGoldLabel->SetText(FText::FromString(TEXT("- G")));
+	}
 }
 
 void UUWStageResult::ClickReturnButton()

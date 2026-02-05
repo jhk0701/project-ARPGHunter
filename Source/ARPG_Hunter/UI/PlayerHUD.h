@@ -30,7 +30,7 @@ private:
 public:
 	APlayerHUD();
 	TObjectPtr<UUserWidget> GetPlayerUI() { return PlayerUI; }
-	void ShowResultUI(bool _bOnCleared);
+	void ShowResultUI(bool _bOnCleared, const struct FStageData* _stageData);
 
 protected:
 	void BeginPlay() override;

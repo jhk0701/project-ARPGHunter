@@ -26,7 +26,7 @@ struct FStageEventContext
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FStageEvent, const FStageEventContext&);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameEnd, bool);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnGameEnd, bool, const FStageData*);
 
 /**
  * 
@@ -47,11 +47,10 @@ public:
 
 	FOnGameEnd OnGameEnd;
 	TMap<EStageEvent, FStageEvent> StageEvent;
+
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
 
 	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
-
-	void GameFail();
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -60,6 +59,7 @@ protected:
 private:
 	void SetMonsterPool();
 	void ReleaseMonster(TObjectPtr<class AMonsterBase> _target);
-	void GameClear();
 
+	void GameClear();
+	void GameFail();
 };

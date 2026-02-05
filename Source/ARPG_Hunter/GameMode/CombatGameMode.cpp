@@ -75,18 +75,19 @@ void ACombatGameMode::BeginPlay()
 	{
 		// TODO: 멀티 플레이 시, 현재 플레이어들의 인원수 전달
 		CombatGameState->Init(1, StageData->Sections);
+
+		CombatGameState->OnSectionCleared.BindLambda(
+			[this](bool _bIsCleared)
+			{
+				if (_bIsCleared)
+					GameClear();
+			}
+		);
 		CombatGameState->OnPlayerDead.BindLambda(
 			[this](uint8 _cnt) 
 			{
 				if (_cnt == 0)
 					GameFail();
-			}
-		);
-		CombatGameState->OnSectionCleared.BindLambda(
-			[this](bool _bIsCleared) 
-			{
-				if (_bIsCleared)
-					GameClear();
 			}
 		);
 	}
@@ -184,6 +185,11 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 	return SpawnedCount;
 }
 
+void ACombatGameMode::ReleaseMonster(TObjectPtr<class AMonsterBase> _target)
+{
+	GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_target->GetType()], _target);
+}
+
 void ACombatGameMode::GameClear()
 {
 	UE_LOG(LogARPG, Log, TEXT("Stage Clear!"));
@@ -197,17 +203,12 @@ void ACombatGameMode::GameClear()
 	for (const FRewardItem& Item : StageData->RewardItems)
 		PlayerManager->AddItem(Item.ID, Item.Count);
 
-	OnGameEnd.Broadcast(true);
+	OnGameEnd.Broadcast(true, StageData);
 }
 
 void ACombatGameMode::GameFail()
 {
 	UE_LOG(LogARPG, Log, TEXT("Stage Failed"));
 
-	OnGameEnd.Broadcast(false);
-}
-
-void ACombatGameMode::ReleaseMonster(TObjectPtr<class AMonsterBase> _target)
-{
-	GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_target->GetType()], _target);
+	OnGameEnd.Broadcast(false, nullptr);
 }
