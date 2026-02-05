@@ -13,7 +13,7 @@
 #include "Component/ActionComponent.h"
 #include "Controller/PlayerCombatController.h"
 #include "Subsystem/PlayerManager/PlayerManager.h"
-#include "GameMode/GameState/CombatGameState.h"
+#include "GameMode/CombatGameMode.h"
 
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
@@ -209,11 +209,11 @@ void APlayerCharacter::OnDead()
 {
 	// 플레이어 사망 후 처리
 	// 플레이어 사망 이벤트 발행
-	ACombatGameState* GameState = GetWorld()->GetGameState<ACombatGameState>();
+	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 
 	FStageEventContext Context;
 	Context.Target = this;
-	GameState->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
+	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
 }
 
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)

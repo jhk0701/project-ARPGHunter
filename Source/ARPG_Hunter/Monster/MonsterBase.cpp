@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -10,7 +10,7 @@
 
 #include "Subsystem/DataManager/DataManager.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
-#include "GameMode/GameState/CombatGameState.h"
+#include "GameMode/CombatGameMode.h"
 #include "Controller/MonsterAIController.h"
 #include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
@@ -266,8 +266,8 @@ void AMonsterBase::OnDead()
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
 	
 	// 몬스터 사망 이벤트 호출
-	ACombatGameState* GameState = GetWorld()->GetGameState<ACombatGameState>();
-	GameState->StageEventBus[EStageEvent::HUNT].Broadcast({ SectionID, this });
+	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+	GameMode->StageEvent[EStageEvent::HUNT].Broadcast({ SectionID, this });
 
 	FTimerManager& Timer = GetWorld()->GetTimerManager();
 	if (Timer.IsTimerActive(OnDeadTimer))

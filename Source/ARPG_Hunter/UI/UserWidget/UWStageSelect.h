@@ -113,6 +113,4 @@ private:
 	void RefreshStageSlot();
 	void RefreshStageInfo();
 	void Clear();
-
-	void PlayOpenAnim();
 };

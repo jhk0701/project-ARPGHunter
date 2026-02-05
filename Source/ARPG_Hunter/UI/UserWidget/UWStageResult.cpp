@@ -16,7 +16,7 @@ void UUWStageResult::NativeOnInitialized()
 
 void UUWStageResult::ShowUI()
 {
-	SetVisibility(ESlateVisibility::Visible);
+	AddToViewport();
 
 	if (OpenAnim)
 		PlayAnimation(OpenAnim);
@@ -24,7 +24,7 @@ void UUWStageResult::ShowUI()
 
 void UUWStageResult::HideUI()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	RemoveFromParent();
 }
 
 void UUWStageResult::Update(bool _bIsClear)

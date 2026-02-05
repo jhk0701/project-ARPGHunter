@@ -3,9 +3,7 @@
 
 #include "Stage/StageSection.h"
 #include "Components/BoxComponent.h"
-
 #include "GameMode/CombatGameMode.h"
-#include "GameMode/GameState/CombatGameState.h"
 
 // Sets default values
 AStageSection::AStageSection()
@@ -55,18 +53,19 @@ void AStageSection::BeginSection()
 	}
 
 	SpawnedCount = GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
-	EventHandle = GameMode->GetGameState<ACombatGameState>()->StageEventBus[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
+	EventHandle = GameMode->StageEvent[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
 }
 
 void AStageSection::EndSection()
 {
 	State = EState::CLEARED;
 
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	ACombatGameState* GameState = GameMode->GetGameState<ACombatGameState>();
-	
-	GameState->StageEventBus[EStageEvent::HUNT].Remove(EventHandle);
-	GameState->SetSectionClear(Index);
+	ACombatGameMode* GameMode = Cast<ACombatGameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->StageEvent[EStageEvent::HUNT].Remove(EventHandle);
+
+	FStageEventContext Context;
+	Context.SectionIndex = Index;
+	GameMode->PublishEvent(EStageEvent::SECTION_CLEAR, Context);
 }
 
 void AStageSection::OnMonsterDead(const FStageEventContext& _context)

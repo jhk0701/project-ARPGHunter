@@ -77,12 +77,14 @@ void UUWStageSelect::ShowUI()
 
 	RefreshStageSlot();
 	AddToViewport();
-	PlayOpenAnim();
+
+	if (OpenAnim)
+		PlayAnimation(OpenAnim);
 }
 
 void UUWStageSelect::HideUI()
 {
-	RemoveFromViewport();
+	RemoveFromParent();
 }
 
 void UUWStageSelect::ClickStartButton()
@@ -194,10 +196,4 @@ void UUWStageSelect::Clear()
 
 	for (TObjectPtr<UUWItemSlot>& ItemSlot : ItemSlotContainer)
 		ItemSlot->SetVisibility(ESlateVisibility::Hidden);
-}
-
-void UUWStageSelect::PlayOpenAnim()
-{
-	if(OpenAnim)
-		PlayAnimation(OpenAnim);
 }

@@ -15,16 +15,22 @@ class ARPG_HUNTER_API APlayerHUD : public AHUD
 	GENERATED_BODY()
 
 private:
-	TSubclassOf<UUserWidget> PlayerUIWidget;
+	UPROPERTY()
+	TSubclassOf<UUserWidget> PlayerUIClass;
 	UPROPERTY()
 	TObjectPtr<UUserWidget> PlayerUI;
+	UPROPERTY()
+	TSubclassOf<UUserWidget> StageResultUIClass;
+	UPROPERTY()
+	TObjectPtr<UUserWidget> StageResultUI;
 
+	UPROPERTY()
 	TSubclassOf<class ADamageFont> DamageUIClass;
 
 public:
 	APlayerHUD();
-
 	TObjectPtr<UUserWidget> GetPlayerUI() { return PlayerUI; }
+	void ShowResultUI(bool _bOnCleared);
 
 protected:
 	void BeginPlay() override;

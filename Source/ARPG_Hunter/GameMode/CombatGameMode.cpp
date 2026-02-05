@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GameMode/CombatGameMode.h"
@@ -42,6 +42,10 @@ ACombatGameMode::ACombatGameMode()
 	static ConstructorHelpers::FClassFinder<AMonsterBase> BossMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
 	if (BossMonFinder.Succeeded())
 		MonsterClass[EMonsterType::BOSS] = BossMonFinder.Class;
+
+	// 스테이지 이벤트 버스 초기화
+	for (uint8 i = 0; i < static_cast<uint8>(EStageEvent::END); ++i)
+		StageEvent.Add(static_cast<EStageEvent>(i));
 }
 
 
@@ -67,14 +71,25 @@ void ACombatGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	// GameState 초기화
-	ACombatGameState* CombatGameState = GetGameState<ACombatGameState>();
-	if (nullptr == CombatGameState)
-		return;
-
-	// TODO: 멀티 플레이 시, 현재 플레이어들의 인원수 전달
-	CombatGameState->Init(1, StageData->Sections);
-	CombatGameState->OnStageCleared.BindUObject(this, &ACombatGameMode::GameClear);
-	CombatGameState->OnStageFailed.BindUObject(this, &ACombatGameMode::GameFail);
+	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>()) 
+	{
+		// TODO: 멀티 플레이 시, 현재 플레이어들의 인원수 전달
+		CombatGameState->Init(1, StageData->Sections);
+		CombatGameState->OnPlayerDead.BindLambda(
+			[this](uint8 _cnt) 
+			{
+				if (_cnt == 0)
+					GameFail();
+			}
+		);
+		CombatGameState->OnSectionCleared.BindLambda(
+			[this](bool _bIsCleared) 
+			{
+				if (_bIsCleared)
+					GameClear();
+			}
+		);
+	}
 
 	// 몬스터 액터 풀링
 	SetMonsterPool();
@@ -185,22 +200,15 @@ void ACombatGameMode::GameClear()
 	for (const FRewardItem& Item : StageData->RewardItems)
 		PlayerManager->AddItem(Item.ID, Item.Count);
 
-	// TODO : 클리어 UI 출력
-	// TODO : UI를 통한 마을 전환
-	BackToTown(); // 마을로 전환
+	OnGameEnd.Broadcast(true);
 }
 
 void ACombatGameMode::GameFail()
 {
 	UE_LOG(LogARPG, Log, TEXT("Stage Failed"));
 
-	// TODO : UI를 통한 마을 전환
-	BackToTown();
-
-	// TODO : 클리어 UI 출력
+	OnGameEnd.Broadcast(false);
 }
-
-
 
 void ACombatGameMode::ReleaseMonster(TObjectPtr<class AMonsterBase> _target)
 {
