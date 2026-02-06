@@ -30,6 +30,16 @@ public:
 };
 
 UCLASS()
+class ARPG_HUNTER_API UAddAttackPercent : public UTermEffect
+{
+	GENERATED_BODY()
+
+public:
+	void Activate(UStatComponent* _target, FEffectContext* _context) override;
+	void Deactivate() override;
+};
+
+UCLASS()
 class ARPG_HUNTER_API UAddDefense : public UTermEffect
 {
 	GENERATED_BODY()

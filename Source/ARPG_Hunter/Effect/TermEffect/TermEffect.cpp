@@ -25,7 +25,7 @@ void UAddAttack::Activate(UStatComponent* _target, FEffectContext* _context)
 	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	_target->AddStat(ECharacterStatType::ATTACK, _context->Param->Value);
+	_target->AddStat(ECharacterStatType::ATTACK, GetParam()->Value);
 }
 
 void UAddAttack::Deactivate()
@@ -40,7 +40,7 @@ void UAddDefense::Activate(UStatComponent* _target, FEffectContext* _context)
 	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	GetTarget()->AddStat(ECharacterStatType::DEFENSE, _context->Param->Value);
+	GetTarget()->AddStat(ECharacterStatType::DEFENSE, GetParam()->Value);
 }
 
 void UAddDefense::Deactivate()
@@ -55,7 +55,7 @@ void UAddCriticalPercent::Activate(UStatComponent* _target, FEffectContext* _con
 	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, _context->Param->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, GetParam()->Value);
 }
 
 void UAddCriticalPercent::Deactivate()
@@ -70,7 +70,7 @@ void UAddCriticalDamagePercent::Activate(UStatComponent* _target, FEffectContext
 	Super::Activate(_target, _context);
 	if (!IsValid()) return;
 
-	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, _context->Param->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetParam()->Value);
 }
 
 void UAddCriticalDamagePercent::Deactivate()
@@ -78,4 +78,23 @@ void UAddCriticalDamagePercent::Deactivate()
 	if (!IsValid()) return;
 
 	GetTarget()->SubStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetParam()->Value * GetStack());
+}
+
+void UAddAttackPercent::Activate(UStatComponent* _target, FEffectContext* _context)
+{
+	Super::Activate(_target, _context);
+	if (!IsValid()) return;
+	
+	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
+	Attack = static_cast<uint32>(Attack * (1.0f + GetParam()->Value * 0.01f));
+	GetTarget()->AddStat(ECharacterStatType::ATTACK, Attack);
+}
+
+void UAddAttackPercent::Deactivate()
+{
+	if (!IsValid()) return;
+
+	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
+	Attack = static_cast<uint32>(Attack * (1.0f + GetParam()->Value * GetStack() * 0.01f));
+	GetTarget()->SubStat(ECharacterStatType::ATTACK, Attack);
 }
