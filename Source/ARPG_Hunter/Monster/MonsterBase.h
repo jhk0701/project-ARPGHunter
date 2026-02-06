@@ -30,13 +30,11 @@ class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public 
 
 public:
 	AMonsterBase();
-
 private:
-	UPROPERTY(EditAnywhere, Category = "Debug|Test")
-	bool bIsTest{ false };
-	
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	FName ID;
+	FMonsterData* Data;
+
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SectionID{0};
 
@@ -56,13 +54,14 @@ private:
 
 	int CurAttackMontageIdx{0};
 
-	FTimerHandle OnDeadTimer;
 	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
 	float DeadDelay{ 3.0f };
+	FTimerHandle OnDeadTimer;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bIsMovable{ true };
 
 protected:
-	// 빠른 테스트를 위해서 남겨둠
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
@@ -72,11 +71,10 @@ protected:
 
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
-
-	void SetWalkable(bool _bIsWalkable);
-
-	struct FMonsterData* GetData() const;
 	virtual void OnDead();
+
+	FMonsterData* GetData() const { return Data; }
+	void SetMovable(bool _bIsMovable);
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
@@ -84,7 +82,8 @@ public:
 
 	virtual void Init(const FMonsterInitParam& _param);
 	virtual void Attack();
-	
+	void LookAtTarget(const FVector& _targeLocation);
+
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨
@@ -94,7 +93,7 @@ public:
 	
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
-	EMonsterType GetType();
+	EMonsterType GetType() const;
 	TObjectPtr<UAnimMontage> GetHitMontage() const;
 	TObjectPtr<UAnimMontage> GetAttackMontage(int _idx = 0) const;
 

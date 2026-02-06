@@ -39,22 +39,6 @@ AMonsterBase::AMonsterBase()
 	WidgetComp->SetDrawSize(FVector2D(200,30));
 }
 
-void AMonsterBase::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-#pragma region IsTest
-
-	if (bIsTest)
-	{
-		AnimInstance = GetMesh()->GetAnimInstance();
-		if (AnimInstance)
-			AnimInstance->OnMontageEnded.AddDynamic(this, &AMonsterBase::OnAnimMontageEnd);
-
-		return;
-	}
-#pragma endregion
-}
-
 // Called when the game starts or when spawned
 void AMonsterBase::BeginPlay()
 {
@@ -65,21 +49,6 @@ void AMonsterBase::BeginPlay()
 		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
 	}
-
-#pragma region IsTest
-	if (bIsTest) 
-	{
-		TMap<ECharacterStatType, uint32> BaseStat;
-		for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
-		{
-			ECharacterStatType type = static_cast<ECharacterStatType>(i);
-			BaseStat.Add(type, 20);
-		}
-
-		StatComp->Init(BaseStat);
-		return;
-	}
-#pragma endregion
 }
 
 void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -100,7 +69,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	SetActorLocation(_param.Location);
 	SetActorRotation(_param.Rotation);
 
-	FMonsterData* Data = GetData();
+	Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
 
 	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();
@@ -158,23 +127,20 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	}
 }
 
-
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == GetAttackMontage(CurAttackMontageIdx) || _montage == GetHitMontage())
+	if (_montage == GetAttackMontage(CurAttackMontageIdx) || 
+		_montage == GetHitMontage())
+	{
 		OnAttackMontageEnded.ExecuteIfBound();
-
-	SetWalkable(true);
+		SetMovable(true);
+	}
 }
 
-void AMonsterBase::SetWalkable(bool _bIsWalkable)
+void AMonsterBase::SetMovable(bool _bIsMovable)
 {
-	GetCharacterMovement()->MaxWalkSpeed = _bIsWalkable ? GetData()->MoveSpeed : 0.0f;
-}
-
-FMonsterData* AMonsterBase::GetData() const
-{
-	return GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
+	bIsMovable = _bIsMovable;
+	GetCharacterMovement()->MaxWalkSpeed = _bIsMovable ? GetData()->MoveSpeed : 0.0f;
 }
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
@@ -203,18 +169,30 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	}
 
 	AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
-	SetWalkable(false);
+	SetMovable(false);
 }
 
 void AMonsterBase::Attack()
 {
 	TObjectPtr<UAnimMontage> AttackMontage = GetAttackMontage(CurAttackMontageIdx);
 
-	if (AttackMontage == nullptr || AnimInstance->Montage_IsPlaying(AttackMontage))
+	if (AttackMontage == nullptr || 
+		AnimInstance->Montage_IsPlaying(AttackMontage) || 
+		AnimInstance->Montage_IsPlaying(GetHitMontage()))
 		return;
 
 	AnimInstance->Montage_Play(AttackMontage);
-	SetWalkable(false);
+	SetMovable(false);
+}
+
+void AMonsterBase::LookAtTarget(const FVector& _targeLocation)
+{
+	FVector Dir = _targeLocation - GetActorLocation();
+	Dir.Z = 0;
+	Dir.Normalize();
+
+	FRotator Rot(0, FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X)), 0);
+	SetActorRotation(Rot);
 }
 
 void AMonsterBase::HandleAttackNotify(uint8 _opt)
@@ -289,21 +267,18 @@ bool AMonsterBase::IsDead()
 	return StatComp->IsDead();
 }
 
-EMonsterType AMonsterBase::GetType()
+EMonsterType AMonsterBase::GetType() const
 {
 	return GetData()->Type;
 }
-
 TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 {
 	return GetData()->HitMontage;
 }
-
 TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 {
 	return GetData()->AttackMontages[_idx];
 }
-
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);

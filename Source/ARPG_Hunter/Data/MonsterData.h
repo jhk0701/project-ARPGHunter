@@ -15,31 +15,31 @@ struct ARPG_HUNTER_API FMonsterData : public FTableRowBase
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	EMonsterType Type{ EMonsterType::MELEE };
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	FName Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> BodyMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> WeaponMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAnimInstance> AnimBP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> HitMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<UAnimMontage>> AttackMontages;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<ECharacterStatType, uint8> BaseStat;
+	UPROPERTY(EditAnywhere)
+	TMap<ECharacterStatType, uint32> BaseStat;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	float RecoginitionRange{ 1000.0f };
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	float AttackRange{ 200.0f };
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere)
 	float MoveSpeed{ 200.0f };
 };
