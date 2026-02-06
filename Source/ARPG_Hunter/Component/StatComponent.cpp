@@ -175,7 +175,7 @@ void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 	{
 		_effectData,
 		&_effectData->Param,
-		0.0f
+		0.0f // TODO : 스킬 성장에 따른 효과 증가량 추가할 것
 	};
 	EffectInst->Activate(this, &Context);
 }

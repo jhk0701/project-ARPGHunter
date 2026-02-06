@@ -124,6 +124,13 @@ public:
 	void RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 
-	void AddStat(ECharacterStatType _type, uint32 _amount) { EffectedStat[_type] += _amount; }
-	void SubStat(ECharacterStatType _type, uint32 _amount) { EffectedStat[_type] -= _amount; }
+	void AddStat(ECharacterStatType _type, uint32 _amount) 
+	{ 
+		EffectedStat[_type] += _amount; 
+	}
+	void SubStat(ECharacterStatType _type, uint32 _amount) 
+	{
+		check(EffectedStat[_type] >= _amount);
+		EffectedStat[_type] -= _amount;
+	}
 };

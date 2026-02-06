@@ -7,9 +7,10 @@
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
-
 #include "Interface/Effectable.h"
 #include "Data/EffectData.h"
+
+#include "Define/Debug.h"
 
 UActionComponent::UActionComponent()
 {
@@ -267,8 +268,15 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 	}
 
 	// 공격 히트 시, 효과 발동
-	// 자기 버프
-	ActivateActionEffect(CurAction->EffectOnHit, GetOwner());
+	if (IsHit)
+	{
+		// 자기 버프
+		ActivateActionEffect(CurAction->EffectOnHit, GetOwner());
+
+		// 적에게 디버프
+		for (const FHitResult& HitResult : _outHitResult)
+			ActivateActionEffect(CurAction->EffectOnEnemyHit, HitResult.GetActor());
+	}
 
 	return IsHit;
 }
@@ -276,7 +284,6 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
 {
 	IEffectable* Effectable = Cast<IEffectable>(_target);
-
 	if (Effectable == nullptr)
 		return;
 

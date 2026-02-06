@@ -53,4 +53,6 @@ public:
 	TArray<TObjectPtr<UEffectData>> EffectOnProgress;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnHit;
+	UPROPERTY(EditAnywhere, Category = "ActionEffect")
+	TArray<TObjectPtr<UEffectData>> EffectOnEnemyHit;
 };
