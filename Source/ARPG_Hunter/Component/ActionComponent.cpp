@@ -9,6 +9,7 @@
 #include "Data/ActionComboData.h"
 #include "Interface/Effectable.h"
 #include "Data/EffectData.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "Define/Debug.h"
 
@@ -275,7 +276,23 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 
 		// 적에게 디버프
 		for (const FHitResult& HitResult : _outHitResult)
+		{
 			ActivateActionEffect(CurAction->EffectOnEnemyHit, HitResult.GetActor());
+
+			if (CurAction->VFX) 
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+					GetWorld(),
+					CurAction->VFX,
+					HitResult.ImpactPoint,
+					HitResult.ImpactNormal.Rotation(),
+					FVector::OneVector,
+					true,
+					true,
+					ENCPoolMethod::AutoRelease
+				);
+			}
+		}
 	}
 
 	return IsHit;

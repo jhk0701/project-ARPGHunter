@@ -55,4 +55,8 @@ public:
 	TArray<TObjectPtr<UEffectData>> EffectOnHit;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnEnemyHit;
+
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	TObjectPtr<class UNiagaraSystem> VFX;
+
 };
