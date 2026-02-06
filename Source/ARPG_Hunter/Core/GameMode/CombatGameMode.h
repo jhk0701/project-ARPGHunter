@@ -13,6 +13,7 @@ enum class EMonsterType : uint8;
 enum class EStageEvent : uint8
 {
 	HUNT,
+	HUNT_BOSS,
 	SECTION_CLEAR,
 	PLAYER_DEAD,
 

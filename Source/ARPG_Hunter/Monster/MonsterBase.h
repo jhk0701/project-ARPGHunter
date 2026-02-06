@@ -42,8 +42,6 @@ private:
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UWidgetComponent> WidgetComp;
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
 
@@ -62,19 +60,19 @@ private:
 	bool bIsMovable{ true };
 
 protected:
-	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
-	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
-	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
-
+	 
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
 	virtual void OnDead();
 
-	FMonsterData* GetData() const { return Data; }
+	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
+	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 	void SetMovable(bool _bIsMovable);
+
+	FMonsterData* GetData() const { return Data; }
+	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
+	uint8 GetSectionID() const { return SectionID; }
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
@@ -85,7 +83,7 @@ public:
 	void LookAtTarget(const FVector& _targeLocation);
 
 	// IAttackNotifyHandler을(를) 통해 상속됨
-	virtual void HandleAttackNotify(uint8 _opt) override;
+	virtual void HandleAttackNotify(uint8 _opt) override {};
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
@@ -99,5 +97,4 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
-	void KnockBack(const FHitInfo& _hitInfo);
 };

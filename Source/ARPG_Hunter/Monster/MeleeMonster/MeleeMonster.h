@@ -3,20 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Monster/MonsterBase.h"
+#include "Monster/RegularMonster.h"
 #include "MeleeMonster.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API AMeleeMonster : public AMonsterBase
+class ARPG_HUNTER_API AMeleeMonster : public ARegularMonster
 {
 	GENERATED_BODY()
 
 public:
 	AMeleeMonster();
 
+	void HandleAttackNotify(uint8 _opt) override;
 	void HitBy(const FHitInfo& _hitInfo) override;
-
 };

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Monster/MonsterBase.h"
+#include "Monster/RegularMonster.h"
 #include "RangedMonster.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API ARangedMonster : public AMonsterBase
+class ARPG_HUNTER_API ARangedMonster : public ARegularMonster
 {
 	GENERATED_BODY()
 

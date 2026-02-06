@@ -3,20 +3,14 @@
 
 #include "Monster/MonsterBase.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/WidgetComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NiagaraFunctionLibrary.h"
 
 #include "Core/Subsystem/DataManager.h"
-#include "Core/WorldSubsystem/ObjectPoolManager.h"
-#include "Core/GameMode/CombatGameMode.h"
 #include "Controller/MonsterAIController.h"
-#include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
-#include "UI/UserWidget/UWMonsterStatusBar.h"
-#include "UI/Actor/DamageFont.h"
+#include "Data/MonsterData.h"
 
 #include "Define/Debug.h"
 
@@ -27,31 +21,9 @@ AMonsterBase::AMonsterBase()
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
 	// WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
-	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
-	WidgetComp->SetupAttachment(GetRootComponent());
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-
-	UWidgetComponent* Widget = GetWidgetComp();
-	static ConstructorHelpers::FClassFinder<UUserWidget> StatusUIFinder(TEXT("/Game/06-UI/WBP_MonsterStatusBar.WBP_MonsterStatusBar_C"));
-	if (StatusUIFinder.Succeeded() && Widget)
-		Widget->SetWidgetClass(StatusUIFinder.Class);
-
-	WidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
-	WidgetComp->SetDrawSize(FVector2D(200,30));
-}
-
-// Called when the game starts or when spawned
-void AMonsterBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
-	{
-		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
-		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
-	}
 }
 
 void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -108,13 +80,6 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	if (AnimInstance = GetMesh()->GetAnimInstance())
 		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
 
-	// UI 설정
-	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
-	{
-		// UI 초기화
-		MonsterStatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-		MonsterStatusBar->SetStaggerBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
-	}
 
 	// AI BlackBoard 설정
 	if (AMonsterAIController* MonsterAI = Cast<AMonsterAIController>(GetController()))
@@ -152,15 +117,6 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
 
-	// 데미지 폰트 UI 출력
-	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>()) 
-	{
-		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
-		ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0,0,FMath::RandRange(-20.0f, 50.f)));
-		ADamage->UpdateUI(_hitInfo.Damage, _hitInfo.bIsCriticalHit);
-		ADamage->ShowUI();
-	}
-
 	// 피격 시, 이펙트 출력
 	if (Data->VFXOnHit)
 	{
@@ -175,19 +131,20 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	}
 
 	// 모션 재생
-	if (GetHitMontage() == nullptr)
-		return;
-
-	AnimInstance->Montage_Play(GetHitMontage());
-
-	if (StatComp->IsDead())
+	if (GetHitMontage())
 	{
-		AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), GetHitMontage());
-		OnDead();
-		return;
+		AnimInstance->Montage_Play(GetHitMontage());
+
+		if (StatComp->IsDead())
+		{
+			AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), GetHitMontage());
+			OnDead();
+			return;
+		}
+
+		AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
 	}
 
-	AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
 	SetMovable(false);
 }
 
@@ -214,43 +171,6 @@ void AMonsterBase::LookAtTarget(const FVector& _targeLocation)
 	SetActorRotation(Rot);
 }
 
-void AMonsterBase::HandleAttackNotify(uint8 _opt)
-{
-	// 히트 판정
-	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * GetData()->AttackRange;
-
-	TArray<FHitResult> HitResults;
-	bool IsHit = UKismetSystemLibrary::BoxTraceMulti(
-		this,
-		Start, End,
-		FVector(50.0f, 50.0f, 50.0f), GetActorRotation(),
-		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3),
-		false,	{ this },
-		EDrawDebugTrace::None,
-		HitResults,
-		true
-	);
-
-	if (IsHit == false)
-		return;
-
-	for (FHitResult& Hit : HitResults)
-	{
-		IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
-
-		if (Hitable)
-		{
-			FHitInfo HitInfo;
-			HitInfo.Damage = StatComp->GetStat(ECharacterStatType::ATTACK);
-			HitInfo.Attacker = this;
-			HitInfo.HitResult = &Hit;
-
-			Hitable->HitBy(HitInfo);
-		}
-	}
-}
-
 void AMonsterBase::OnDead()
 {
 	// 사망 시 처리
@@ -260,10 +180,6 @@ void AMonsterBase::OnDead()
 	// 충돌 무시 처리
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
 	
-	// 몬스터 사망 이벤트 호출
-	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-	GameMode->StageEvent[EStageEvent::HUNT].Broadcast({ SectionID, this });
-
 	FTimerManager& Timer = GetWorld()->GetTimerManager();
 	if (Timer.IsTimerActive(OnDeadTimer))
 		Timer.ClearTimer(OnDeadTimer);
@@ -278,7 +194,6 @@ void AMonsterBase::OnDead()
 		DeadDelay, false
 	);
 }
-
 bool AMonsterBase::IsDead()
 {
 	return StatComp->IsDead();
@@ -299,12 +214,4 @@ TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
-}
-
-void AMonsterBase::KnockBack(const FHitInfo& _hitInfo)
-{
-	FVector Dir = GetActorLocation() - _hitInfo.Attacker->GetActorLocation();
-	Dir.Z = 0.0f;
-	Dir.Normalize();
-	LaunchCharacter(Dir * _hitInfo.KnockBackStrength, true, true);
 }
