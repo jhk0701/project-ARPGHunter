@@ -1,6 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Monster/RegularMonster/RegularMonster.h"
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Components/WidgetComponent.h"
 
 #include "Core/GameMode/CombatGameMode.h"
@@ -12,6 +14,13 @@
 
 ARegularMonster::ARegularMonster()
 {
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_RegularMonster.BT_RegularMonster'"));
+	if (BTFinder.Succeeded())
+		SetBehaviorTree(BTFinder.Object);
+	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBFinder(TEXT("/Script/AIModule.BlackboardData'/Game/02-BP/Monster/AI/BB_RegularMonster.BB_RegularMonster'"));
+	if (BBFinder.Succeeded())
+		SetBlackboardData(BBFinder.Object);
+
 	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
 	WidgetComp->SetupAttachment(GetRootComponent());
 
@@ -64,10 +73,12 @@ void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>())
 	{
 		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
-		ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0, 0, FMath::RandRange(-20.0f, 50.f)));
+		ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0, 0, FMath::RandRange(DamageFontYRange.X, DamageFontYRange.Y)));
 		ADamage->UpdateUI(_hitInfo.Damage, _hitInfo.bIsCriticalHit);
 		ADamage->ShowUI();
 	}
+
+	KnockBack(_hitInfo);
 }
 
 void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)

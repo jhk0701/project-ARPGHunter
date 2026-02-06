@@ -80,7 +80,6 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	if (AnimInstance = GetMesh()->GetAnimInstance())
 		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
 
-
 	// AI BlackBoard 설정
 	if (AMonsterAIController* MonsterAI = Cast<AMonsterAIController>(GetController()))
 	{
@@ -89,6 +88,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		
 		BBComp->SetValueAsFloat(FName(TEXT("RecoginitionRange")), Data->RecoginitionRange);
 		BBComp->SetValueAsFloat(FName(TEXT("AttackRange")), Data->AttackRange);
+		BBComp->SetValueAsFloat(FName(TEXT("MoveRangeOnAttack")), Data->MoveRangeOnAttack);
 
 		// BT 재가동
 		MonsterAI->RestartBT();
@@ -158,6 +158,7 @@ void AMonsterBase::Attack()
 		return;
 
 	AnimInstance->Montage_Play(AttackMontage);
+
 	SetMovable(false);
 }
 

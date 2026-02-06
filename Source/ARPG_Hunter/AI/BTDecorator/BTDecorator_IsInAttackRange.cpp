@@ -28,5 +28,5 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	float Range = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("AttackRange")));
 	float DistSqr = FVector::DistSquared(Owner->GetActorLocation(), Target->GetActorLocation());
 	
-	return DistSqr < FMath::Square(Range);
+	return DistSqr <= FMath::Square(Range);
 }

@@ -2,23 +2,15 @@
 
 
 #include "Monster/RegularMonster/MeleeMonster.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardData.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 #include "Component/StatComponent.h"
 #include "Data/MonsterData.h"
 
+
 AMeleeMonster::AMeleeMonster()
 {
-	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_MeleeMonster.BT_MeleeMonster'"));
-	if (BTFinder.Succeeded())
-		SetBehaviorTree(BTFinder.Object);
-
-	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBFinder(TEXT("/Script/AIModule.BlackboardData'/Game/02-BP/Monster/AI/BB_MeleeMonster.BB_MeleeMonster'"));
-	if (BBFinder.Succeeded())
-		SetBlackboardData(BBFinder.Object);
 }
 
 void AMeleeMonster::HandleAttackNotify(uint8 _opt)
@@ -58,10 +50,4 @@ void AMeleeMonster::HandleAttackNotify(uint8 _opt)
 			Hitable->HitBy(HitInfo);
 		}
 	}
-}
-
-void AMeleeMonster::HitBy(const FHitInfo& _hitInfo)
-{
-	Super::HitBy(_hitInfo);
-	KnockBack(_hitInfo);
 }

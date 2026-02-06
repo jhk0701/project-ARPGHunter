@@ -16,5 +16,6 @@ class ARPG_HUNTER_API ARangedMonster : public ARegularMonster
 
 public:
 	ARangedMonster();
-	
+
+	void HandleAttackNotify(uint8 _opt) override;
 };

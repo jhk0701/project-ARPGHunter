@@ -39,9 +39,11 @@ public:
 	TMap<ECharacterStatType, uint32> BaseStat;
 
 	UPROPERTY(EditAnywhere)
-	float RecoginitionRange{ 1000.0f };
+	float RecoginitionRange{ 1000.0f }; // 인지 범위
 	UPROPERTY(EditAnywhere)
-	float AttackRange{ 200.0f };
+	float AttackRange{ 200.0f }; // 공격 사거리
 	UPROPERTY(EditAnywhere)
-	float MoveSpeed{ 200.0f };
+	float MoveRangeOnAttack{ 100.0f }; // 공격을 위한 이동 시, 적과의 거리
+	UPROPERTY(EditAnywhere)
+	float MoveSpeed{ 200.0f }; 
 };

@@ -18,5 +18,4 @@ public:
 	AMeleeMonster();
 
 	void HandleAttackNotify(uint8 _opt) override;
-	void HitBy(const FHitInfo& _hitInfo) override;
 };
