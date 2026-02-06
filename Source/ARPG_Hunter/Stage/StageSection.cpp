@@ -3,7 +3,7 @@
 
 #include "Stage/StageSection.h"
 #include "Components/BoxComponent.h"
-#include "GameMode/CombatGameMode.h"
+#include "Core/GameMode/CombatGameMode.h"
 
 // Sets default values
 AStageSection::AStageSection()

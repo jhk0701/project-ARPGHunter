@@ -3,7 +3,7 @@
 #include "Component/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#include "Subsystem/DataManager/DataManager.h"
+#include "Core/Subsystem/DataManager.h"
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"

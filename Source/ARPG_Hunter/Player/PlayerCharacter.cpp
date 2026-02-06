@@ -12,8 +12,8 @@
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent.h"
 #include "Controller/PlayerCombatController.h"
-#include "Subsystem/PlayerManager/PlayerManager.h"
-#include "GameMode/CombatGameMode.h"
+#include "Core/Subsystem/PlayerManager.h"
+#include "Core/GameMode/CombatGameMode.h"
 
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"

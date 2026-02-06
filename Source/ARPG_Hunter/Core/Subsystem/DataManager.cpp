@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Subsystem/DataManager/DataManager.h"
+#include "Core/Subsystem/DataManager.h"
 #include "Engine/DataTable.h"
 #include "Define/Enum.h"
 #include "Data/WeaponTypeData.h"

@@ -9,9 +9,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NiagaraFunctionLibrary.h"
 
-#include "Subsystem/DataManager/DataManager.h"
-#include "Subsystem/ObjectPool/ObjectPoolManager.h"
-#include "GameMode/CombatGameMode.h"
+#include "Core/Subsystem/DataManager.h"
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
+#include "Core/GameMode/CombatGameMode.h"
 #include "Controller/MonsterAIController.h"
 #include "Data/MonsterData.h"
 #include "Component/StatComponent.h"

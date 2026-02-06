@@ -1,18 +1,18 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameMode/CombatGameMode.h"
+#include "Core/GameMode/CombatGameMode.h"
 #include "NavigationSystem.h"
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
-#include "Subsystem/PlayerManager/PlayerManager.h"
-#include "Subsystem/DataManager/DataManager.h"
-#include "Subsystem/ObjectPool/ObjectPoolManager.h"
+#include "Core/Subsystem/PlayerManager.h"
+#include "Core/Subsystem/DataManager.h"
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Data/StageData.h"
 #include "Data/MonsterData.h"
-#include "GameMode/GameState/CombatGameState.h"
+#include "Core/GameState/CombatGameState.h"
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 #include "Monster/MonsterBase.h"

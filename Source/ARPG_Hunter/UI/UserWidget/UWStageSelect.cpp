@@ -7,9 +7,9 @@
 #include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
 
-#include "UI/UserWidget/UWItemSlot.h"
-#include "Subsystem/DataManager/DataManager.h"
+#include "Core/Subsystem/DataManager.h"
 #include "Data/StageData.h"
+#include "UI/UserWidget/UWItemSlot.h"
 
 
 void UUWStageSlot::NativeOnInitialized()

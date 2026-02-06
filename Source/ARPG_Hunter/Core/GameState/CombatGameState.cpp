@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameMode/GameState/CombatGameState.h"
-#include "GameMode/CombatGameMode.h"
+#include "Core/GameState/CombatGameState.h"
+#include "Core/GameMode/CombatGameMode.h"
 
 void ACombatGameState::Init(uint8 _playerCnt, const TArray<struct FSection>& _section)
 {

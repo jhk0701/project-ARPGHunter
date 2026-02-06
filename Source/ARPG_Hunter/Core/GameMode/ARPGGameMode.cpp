@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameMode/ARPGGameMode.h"
+#include "Core/GameMode/ARPGGameMode.h"
 #include "Player/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 

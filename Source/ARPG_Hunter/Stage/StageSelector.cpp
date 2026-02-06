@@ -1,14 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Stage/StageSelector.h"
 #include "Components/BoxComponent.h"
 
 #include "Core/ARPGGameInstance.h"
-#include "GameMode/ARPGGameMode.h"
-#include "UI/UserWidget/UWStageSelect.h"
-#include "Subsystem/DataManager/DataManager.h"
+#include "Core/GameMode/ARPGGameMode.h"
+#include "Core/Subsystem/DataManager.h"
 #include "Data/StageData.h"
+#include "UI/UserWidget/UWStageSelect.h"
 
 // Sets default values
 AStageSelector::AStageSelector()

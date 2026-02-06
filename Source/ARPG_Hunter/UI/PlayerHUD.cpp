@@ -4,10 +4,10 @@
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 
-#include "Subsystem/ObjectPool/ObjectPoolManager.h"
+#include "Core/GameMode/CombatGameMode.h"
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
 #include "UI/UserWidget/UWStageResult.h"
-#include "GameMode/CombatGameMode.h"
 
 APlayerHUD::APlayerHUD()
 {
