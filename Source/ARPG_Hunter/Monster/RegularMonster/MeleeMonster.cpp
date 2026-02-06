@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Monster/MeleeMonster/MeleeMonster.h"
+#include "Monster/RegularMonster/MeleeMonster.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "Components/WidgetComponent.h"

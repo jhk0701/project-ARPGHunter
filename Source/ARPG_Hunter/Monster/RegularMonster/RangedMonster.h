@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Monster/RegularMonster.h"
+#include "Monster/RegularMonster/RegularMonster.h"
 #include "RangedMonster.generated.h"
 
 /**

@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Monster/RegularMonster.h"
+#include "Monster/RegularMonster/RegularMonster.h"
 #include "Components/WidgetComponent.h"
 
 #include "Core/GameMode/CombatGameMode.h"
