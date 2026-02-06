@@ -18,6 +18,8 @@
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 #include "UI/Actor/DamageFont.h"
 
+#include "Define/Debug.h"
+
 AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
@@ -130,12 +132,12 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == GetAttackMontage(CurAttackMontageIdx) || 
+	if (_montage == GetAttackMontage(CurAttackMontageIdx) ||
 		_montage == GetHitMontage())
-	{
 		OnAttackMontageEnded.ExecuteIfBound();
+
+	if (_bInterrupted == false)
 		SetMovable(true);
-	}
 }
 
 void AMonsterBase::SetMovable(bool _bIsMovable)
@@ -154,7 +156,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>()) 
 	{
 		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
-		ADamage->SetActorLocation(WidgetComp->GetComponentLocation());
+		ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0,0,FMath::RandRange(-20.0f, 50.f)));
 		ADamage->UpdateUI(_hitInfo.Damage, _hitInfo.bIsCriticalHit);
 		ADamage->ShowUI();
 	}
