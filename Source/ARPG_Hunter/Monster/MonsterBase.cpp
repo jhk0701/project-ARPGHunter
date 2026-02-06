@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "Subsystem/DataManager/DataManager.h"
 #include "Subsystem/ObjectPool/ObjectPoolManager.h"
@@ -145,9 +146,11 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
+	// 피격 발생
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
 
+	// 데미지 폰트 UI 출력
 	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>()) 
 	{
 		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
@@ -156,6 +159,20 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 		ADamage->ShowUI();
 	}
 
+	// 피격 시, 이펙트 출력
+	if (Data->VFXOnHit)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
+			Data->VFXOnHit,
+			_hitInfo.HitResult->ImpactPoint,
+			_hitInfo.HitResult->ImpactNormal.Rotation(),
+			FVector::OneVector,
+			true, true,
+			ENCPoolMethod::AutoRelease
+		);
+	}
+
+	// 모션 재생
 	if (GetHitMontage() == nullptr)
 		return;
 
@@ -216,19 +233,17 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 	if (IsHit == false)
 		return;
 
-	for (const FHitResult& hit : HitResults)
+	for (FHitResult& Hit : HitResults)
 	{
-		IHitable* Hitable = Cast<IHitable>(hit.GetActor());
+		IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
 
 		if (Hitable)
 		{
-			FHitInfo HitInfo
-			{
-				StatComp->GetStat(ECharacterStatType::ATTACK),
-				0,
-				this,
-				0
-			};
+			FHitInfo HitInfo;
+			HitInfo.Damage = StatComp->GetStat(ECharacterStatType::ATTACK);
+			HitInfo.Attacker = this;
+			HitInfo.HitResult = &Hit;
+
 			Hitable->HitBy(HitInfo);
 		}
 	}

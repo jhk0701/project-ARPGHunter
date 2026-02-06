@@ -24,6 +24,8 @@ public:
 	TObjectPtr<USkeletalMesh> BodyMesh;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> WeaponMesh;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UNiagaraSystem> VFXOnHit;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAnimInstance> AnimBP;

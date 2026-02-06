@@ -10,10 +10,11 @@ struct FHitInfo
 {
 	uint16 Damage;
 	uint16 StaggerDamage;
-
-	TWeakObjectPtr<AActor> Attacker; // 공격자 약참조로 전달
 	float KnockBackStrength;
 	bool bIsCriticalHit{ false };
+
+	TWeakObjectPtr<AActor> Attacker; // 공격자 약참조로 전달
+	FHitResult* HitResult;
 };
 
 // This class does not need to be modified.

@@ -229,23 +229,22 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	{
 		uint16 Damage = CalculateBaseDamage();
 		
-		for (const FHitResult& hit : HitResults)
+		for (FHitResult& Hit : HitResults)
 		{
-			IHitable* Hitable = Cast<IHitable>(hit.GetActor());
+			IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
 			if (Hitable == nullptr)
 				continue;
 
 			bool bIsCritical = CalculateCritical(Damage);
-			FHitInfo Hit
-			{
-				Damage,
-				ActionComp->GetAttackActionStaggerDamage(),
-				this,
-				ActionComp->GetAttackActionKnockBack(_opt),
-				bIsCritical
-			};
 
-			Hitable->HitBy(Hit);
+			FHitInfo HitInfo;
+			HitInfo.Damage = Damage;
+			HitInfo.StaggerDamage = ActionComp->GetAttackActionStaggerDamage();
+			HitInfo.KnockBackStrength = ActionComp->GetAttackActionKnockBack(_opt);
+			HitInfo.Attacker = this;
+			HitInfo.HitResult = &Hit;
+
+			Hitable->HitBy(HitInfo);
 		}
 
 		ShakeCamera(CameraShakeOnAttack, Damage * 0.01f);
