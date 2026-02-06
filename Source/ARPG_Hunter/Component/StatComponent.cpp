@@ -187,16 +187,19 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 	if (FAppliedEffect* Applied = MapEffect.Find(_effect->GetID())) 
 	{
 		// 스택 쌓기 불가능한 경우 중복 효과 획득 불가
-		if (Applied->Effect->GetMaxStack() <= 1 || Applied->Effect->IsStackFull())
+		if (Applied->Effect->GetMaxStack() <= 1 || 
+			Applied->Effect->IsStackFull())
 			return;
 		
-		Applied->Effect->AddStack(); // 스택 쌓기
+		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
+		AppliedEffect->AddStack(); // 스택 쌓기
+
 		// 지속 시간 갱신
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 		TimerManager.ClearTimer(Applied->Timer);
 		TimerManager.SetTimer(Applied->Timer, 
-			[this, _effect]() { RemoveEffect(_effect); },
-			_effect->GetDuration(),
+			[this, AppliedEffect]() { RemoveEffect(AppliedEffect); },
+			AppliedEffect->GetDuration(),
 			false);
 
 		return;

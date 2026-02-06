@@ -86,7 +86,7 @@ void UAddAttackPercent::Activate(UStatComponent* _target, FEffectContext* _conte
 	if (!IsValid()) return;
 	
 	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
-	Attack = static_cast<uint32>(Attack * (1.0f + GetParam()->Value * 0.01f));
+	Attack = static_cast<uint32>(Attack * GetParam()->Value * 0.01f);
 	GetTarget()->AddStat(ECharacterStatType::ATTACK, Attack);
 }
 
@@ -95,6 +95,6 @@ void UAddAttackPercent::Deactivate()
 	if (!IsValid()) return;
 
 	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
-	Attack = static_cast<uint32>(Attack * (1.0f + GetParam()->Value * GetStack() * 0.01f));
+	Attack = static_cast<uint32>(Attack * (GetParam()->Value * GetStack() * 0.01f));
 	GetTarget()->SubStat(ECharacterStatType::ATTACK, Attack);
 }
