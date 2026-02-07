@@ -19,18 +19,26 @@ private:
 	UPROPERTY(EditDefaultsOnly);
 	TObjectPtr<class UStaticMeshComponent> MeshComp;
 
-	UPROPERTY(EditDefaultsOnly)
-	float Speed{100.0f};
-
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
+	TWeakObjectPtr<AActor> Attacker;
+	UPROPERTY(VisibleAnywhere)
 	TWeakObjectPtr<AActor> Target;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	FVector Direction;
+	FHitResult HitResult;
+
+	UPROPERTY(VisibleAnywhere)
+	float LifeTime{ 3.0f };
+	UPROPERTY(VisibleAnywhere)
+	float ElapsedTime{ 0.0f };
+	UPROPERTY(EditDefaultsOnly)
+	float Speed{ 100.0f };
+	UPROPERTY(EditDefaultsOnly)
+	float Damage{ 20.0f };
 
 public:	
 	AProjectile();
-
 	FOnProjectileDisable OnDisable;
 
 protected:
@@ -39,7 +47,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	void Init();
-	void Fire(TWeakObjectPtr<AActor> _target);
+	void Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target);
 
 	UFUNCTION()
 	void OnBeginOverlap(
@@ -49,5 +57,6 @@ public:
 		int32 OtherBodyIndex, bool bFromSweep, 
 		const FHitResult& SweepResult);
 
-	void Hit();
+	void Hit(TObjectPtr<AActor> _target);
+	void Disable();
 };

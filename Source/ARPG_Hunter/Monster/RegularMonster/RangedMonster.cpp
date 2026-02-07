@@ -40,5 +40,5 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 	TObjectPtr<AProjectile> Projectile = Cast<AProjectile>(ObjectPool->Get(ProjectileClass));
 	Projectile->Init(); // TODO : 투사체 데이터 삽입
 	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
-	Projectile->Fire(TargetActor);
+	Projectile->Fire(this, TargetActor);
 }
