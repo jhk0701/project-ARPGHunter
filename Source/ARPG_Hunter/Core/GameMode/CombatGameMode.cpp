@@ -36,7 +36,7 @@ ACombatGameMode::ACombatGameMode()
 	static ConstructorHelpers::FClassFinder<AMonsterBase> MeleeMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
 	if (MeleeMonFinder.Succeeded())
 		MonsterClass[EMonsterType::MELEE] = MeleeMonFinder.Class;
-	static ConstructorHelpers::FClassFinder<AMonsterBase> RangedMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
+	static ConstructorHelpers::FClassFinder<AMonsterBase> RangedMonFinder(TEXT("/Game/02-BP/Monster/BP_RangedMonster.BP_RangedMonster_C"));
 	if (RangedMonFinder.Succeeded())
 		MonsterClass[EMonsterType::RANGED] = RangedMonFinder.Class;
 	static ConstructorHelpers::FClassFinder<AMonsterBase> BossMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));

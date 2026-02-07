@@ -7,6 +7,17 @@
 #include "Define/Enum.h"
 #include "MonsterData.generated.h"
 
+USTRUCT()
+struct FAttackData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAnimMontage> Montage;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UObject> SubObjectClass;
+};
+
 /**
  * 
  */
@@ -33,7 +44,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere)
-	TArray<TObjectPtr<UAnimMontage>> AttackMontages;
+	TArray<FAttackData> AttackDatas;
 
 	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint32> BaseStat;

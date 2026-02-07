@@ -22,7 +22,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FVector TargetLocation;
 
-
 public:	
 	AProjectile();
 

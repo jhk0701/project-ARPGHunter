@@ -210,7 +210,7 @@ TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 }
 TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 {
-	return GetData()->AttackMontages[_idx];
+	return GetData()->AttackDatas[_idx].Montage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
