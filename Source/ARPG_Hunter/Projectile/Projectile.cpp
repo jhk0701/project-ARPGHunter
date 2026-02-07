@@ -30,12 +30,21 @@ void AProjectile::BeginPlay()
 void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	AddActorWorldOffset(Speed * DeltaTime * Direction);
 }
 
-void AProjectile::Init(TObjectPtr<class UStaticMesh> _mesh)
+void AProjectile::Init()
 {
-	MeshComp->SetStaticMesh(_mesh);
+	// MeshComp->SetStaticMesh(_mesh);
+}
+
+void AProjectile::Fire(TWeakObjectPtr<AActor> _target)
+{
+	Target = _target;
+	Direction = Target.Get()->GetActorLocation() - GetActorLocation();
+	Direction.Normalize();
+
+	SetActorRotation(Direction.ToOrientationRotator());
 }
 
 void AProjectile::OnBeginOverlap(
@@ -44,6 +53,10 @@ void AProjectile::OnBeginOverlap(
 	UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, 
 	bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void AProjectile::Hit()
 {
 }
 

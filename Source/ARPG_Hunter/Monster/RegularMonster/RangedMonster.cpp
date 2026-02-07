@@ -1,7 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Monster/RegularMonster/RangedMonster.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
+#include "Controller/MonsterAIController.h"
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
+#include "Projectile/Projectile.h"
+#include "Data/MonsterData.h"
 
 #include "Define/Debug.h"
 
@@ -13,6 +18,27 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 {
 	Super::HandleAttackNotify(_opt);
 
+	// 공격 목표 찾기
+	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
+	if (nullptr == AICon)
+		return;
+
+	UBlackboardComponent* BBComp = AICon->GetBlackboardComponent();
+	UObject* Target = BBComp->GetValueAsObject(FName(TEXT("Target")));
+	if (nullptr == Target)
+		return;
+
+	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
+
+	FMonsterData* MonsterData = GetData();
+	UClass* ProjectileClass = MonsterData->AttackDatas[GetCurAttackIdx()].SubObjectClass;
+	if (nullptr == ProjectileClass)
+		return;
+
 	// 투사체 발사
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Ranged Monster Attack"));
+	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+	TObjectPtr<AProjectile> Projectile = Cast<AProjectile>(ObjectPool->Get(ProjectileClass));
+	Projectile->Init(); // TODO : 투사체 데이터 삽입
+	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
+	Projectile->Fire(TargetActor);
 }

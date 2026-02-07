@@ -58,8 +58,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void SetMonsterPool();
+	void RegisterObjectPool();
 	void ReleaseMonster(TObjectPtr<class AMonsterBase> _target);
+	void ReleaseSubObject(TObjectPtr<AActor> _target);
 
 	void GameClear();
 	void GameFail();

@@ -70,9 +70,12 @@ protected:
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 	void SetMovable(bool _bIsMovable);
 
+	uint8 GetSectionID() const { return SectionID; }
+	uint8 GetCurAttackIdx() const { return CurAttackMontageIdx; }
 	FMonsterData* GetData() const { return Data; }
 	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
-	uint8 GetSectionID() const { return SectionID; }
+	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
+	
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;

@@ -16,6 +16,7 @@
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 #include "Monster/MonsterBase.h"
+#include "Projectile/Projectile.h"
 
 #include "Define/Debug.h"
 
@@ -32,14 +33,13 @@ ACombatGameMode::ACombatGameMode()
 	if (nullptr == MonsterClass.Find(EMonsterType::BOSS))
 		MonsterClass.Add(EMonsterType::BOSS);
 
-	// TODO : 몬스터 다양화 때, 임시 경로 변경
 	static ConstructorHelpers::FClassFinder<AMonsterBase> MeleeMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
 	if (MeleeMonFinder.Succeeded())
 		MonsterClass[EMonsterType::MELEE] = MeleeMonFinder.Class;
 	static ConstructorHelpers::FClassFinder<AMonsterBase> RangedMonFinder(TEXT("/Game/02-BP/Monster/BP_RangedMonster.BP_RangedMonster_C"));
 	if (RangedMonFinder.Succeeded())
 		MonsterClass[EMonsterType::RANGED] = RangedMonFinder.Class;
-	static ConstructorHelpers::FClassFinder<AMonsterBase> BossMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
+	static ConstructorHelpers::FClassFinder<AMonsterBase> BossMonFinder(TEXT("/Game/02-BP/Monster/BP_BossMonster.BP_BossMonster_C"));
 	if (BossMonFinder.Succeeded())
 		MonsterClass[EMonsterType::BOSS] = BossMonFinder.Class;
 
@@ -92,51 +92,87 @@ void ACombatGameMode::BeginPlay()
 		);
 	}
 
-	// 몬스터 액터 풀링
-	SetMonsterPool();
+	// 오브젝트 풀링
+	RegisterObjectPool();
 }
 
-void ACombatGameMode::SetMonsterPool()
+void ACombatGameMode::RegisterObjectPool()
 {
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-	if (ObjectPool && DataManager)
-	{
-		// 특정 구역에서 요구하는 최대 개수 구하기
-		TMap<EMonsterType, uint8> MaxCountPerType;
-		for (const FSection& Section : StageData->Sections)
-		{
-			for (const FMonsterSpawn& Spawn : Section.Spawn)
-			{
-				EMonsterType Type = DataManager->GetMonsterData(Spawn.MonsterID)->Type;
-				if (nullptr == MaxCountPerType.Find(Type))
-					MaxCountPerType.Add(Type, 0);
 
-				MaxCountPerType[Type] = FMath::Max(Spawn.Count, MaxCountPerType[Type]);
+	// 특정 구역에서 요구하는 최대 개수 구하기
+	TMap<EMonsterType, uint8> MaxCountPerType;
+	TMap<UClass*, uint8> MaxCountSubObject;
+
+	for (const FSection& Section : StageData->Sections)
+	{
+		for (const FMonsterSpawn& Spawn : Section.Spawn)
+		{
+			EMonsterType Type = DataManager->GetMonsterData(Spawn.MonsterID)->Type;
+			if (nullptr == MaxCountPerType.Find(Type))
+				MaxCountPerType.Add(Type, 0);
+
+			MaxCountPerType[Type] = FMath::Max(Spawn.Count, MaxCountPerType[Type]);
+			
+			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
+			
+			for (const FAttackData& AttackData : MonsterData->AttackDatas)
+			{
+				if (nullptr == AttackData.SubObjectClass)
+					continue; 
+				uint8* cnt = MaxCountSubObject.Find(AttackData.SubObjectClass);
+				if (nullptr != cnt)
+				{
+					*cnt += 2;
+					continue;
+				}
+
+				MaxCountSubObject.Add(AttackData.SubObjectClass, 2);
 			}
 		}
+	}
 
-		// 오브젝트 풀링 등록
-		for (const TPair<EMonsterType, uint8>& pair : MaxCountPerType)
-		{
-			EMonsterType Type = pair.Key;
+	// 오브젝트 풀링 등록
+	for (const TPair<EMonsterType, uint8>& pair : MaxCountPerType)
+	{
+		EMonsterType Type = pair.Key;
+		ObjectPool->Register(
+			MonsterClass[pair.Key],
+			[this, Type]()
+			{
+				// 몬스터 액터 생성 람다식
+				FActorSpawnParameters SpawnParam;
+				SpawnParam.Owner = this;
+				AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
 
-			ObjectPool->Register(
-				MonsterClass[pair.Key],
-				[this, Type]()
-				{
-					// 몬스터 액터 생성 람다식
-					FActorSpawnParameters SpawnParam;
-					SpawnParam.Owner = this;
-					AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
+				// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 바인딩
+				Inst->OnMonsterDead.BindUObject(this, &ACombatGameMode::ReleaseMonster);
 
-					// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 바인딩
-					Inst->OnMonsterDead.BindUObject(this, &ACombatGameMode::ReleaseMonster);
+				return Inst;
+			},
+			pair.Value);
+	}
 
-					return Inst;
-				},
-				pair.Value);
-		}
+	for (const TPair<UClass*, uint8>& pair : MaxCountSubObject)
+	{
+		UClass* ClassToSpawn = pair.Key;
+
+		ObjectPool->Register(
+			pair.Key,
+			[this, ClassToSpawn]()
+			{
+				FActorSpawnParameters SpawnParam;
+				SpawnParam.Owner = this;
+
+				AProjectile* Inst = GetWorld()->SpawnActor<AProjectile>(ClassToSpawn, SpawnParam);
+
+				Inst->OnDisable.BindUObject(this, &ACombatGameMode::ReleaseSubObject);
+
+				return Inst;
+			},
+			pair.Value
+		);
 	}
 }
 
@@ -188,6 +224,11 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 void ACombatGameMode::ReleaseMonster(TObjectPtr<class AMonsterBase> _target)
 {
 	GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(MonsterClass[_target->GetType()], _target);
+}
+
+void ACombatGameMode::ReleaseSubObject(TObjectPtr<AActor> _target)
+{
+	GetWorld()->GetSubsystem<UObjectPoolManager>()->Release(_target.GetClass(), _target);
 }
 
 void ACombatGameMode::GameClear()
