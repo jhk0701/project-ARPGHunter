@@ -228,6 +228,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	if (IsHit)
 	{
 		uint16 Damage = CalculateBaseDamage();
+		bool bIsCritical;
 		
 		for (FHitResult& Hit : HitResults)
 		{
@@ -235,7 +236,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			if (Hitable == nullptr)
 				continue;
 
-			bool bIsCritical = CalculateCritical(Damage);
+			bIsCritical |= CalculateCritical(Damage);
 
 			FHitInfo HitInfo;
 			HitInfo.Damage = Damage;
@@ -247,7 +248,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			Hitable->HitBy(HitInfo);
 		}
 
-		ShakeCamera(CameraShakeOnAttack, Damage * 0.01f);
+		ShakeCamera(CameraShakeOnAttack, bIsCritical ? 1.0f : 0.1f);
 	}
 }
 
