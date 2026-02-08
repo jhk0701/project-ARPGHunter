@@ -17,7 +17,7 @@
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
 #include "Monster/MonsterBase.h"
-#include "Projectile/Projectile.h"
+#include "SubObject/SubObject.h"
 
 #include "Define/Debug.h"
 
@@ -166,7 +166,7 @@ void ACombatGameMode::RegisterObjectPool()
 				FActorSpawnParameters SpawnParam;
 				SpawnParam.Owner = this;
 
-				AProjectile* Inst = GetWorld()->SpawnActor<AProjectile>(ClassToSpawn, SpawnParam);
+				ASubObject* Inst = GetWorld()->SpawnActor<ASubObject>(ClassToSpawn, SpawnParam);
 
 				Inst->OnDisable.BindUObject(this, &ACombatGameMode::ReleaseSubObject);
 

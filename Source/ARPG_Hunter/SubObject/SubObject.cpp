@@ -1,0 +1,69 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "SubObject/SubObject.h"
+#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Interface/Hitable.h"
+
+ASubObject::ASubObject()
+{
+	PrimaryActorTick.bCanEverTick = false; // 기본적으로는 false로 둘 것이나, 필요하면 자식 클래스에서 true로 바꿔쓸 것
+
+	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	SetRootComponent(BoxComp);
+
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComp->SetupAttachment(BoxComp);
+
+	BoxComp->SetCollisionProfileName(FName(TEXT("OverlapPlayer")));
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+// Called when the game starts or when spawned
+void ASubObject::BeginPlay()
+{
+	Super::BeginPlay();
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ASubObject::OnBeginOverlap);
+}
+
+void ASubObject::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (nullptr == OtherActor)
+		return;
+
+	Hit(OtherActor);
+}
+
+void ASubObject::Init()
+{
+	ElapsedTime = 0.f;
+	// MeshComp->SetStaticMesh(_mesh);
+}
+
+void ASubObject::Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target)
+{
+	Attacker = _attacker;
+	Target = _target;
+	SetActorTickEnabled(true); // 틱 시작
+}
+
+void ASubObject::Disable()
+{
+	OnDisable.ExecuteIfBound(this);
+	SetActorTickEnabled(false); // 틱 비활성화
+}
+
+void ASubObject::Hit(TObjectPtr<AActor> _target)
+{
+	if (IHitable* Hitable = Cast<IHitable>(_target))
+	{
+		FHitInfo HitInfo;
+		HitInfo.Damage = Damage;
+		HitInfo.Attacker = Attacker;
+		HitInfo.HitResult = &HitResult;
+		Hitable->HitBy(HitInfo);
+	}
+
+	Disable();
+}

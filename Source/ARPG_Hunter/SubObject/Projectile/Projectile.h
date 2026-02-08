@@ -1,0 +1,26 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "SubObject/SubObject.h"
+#include "Projectile.generated.h"
+
+UCLASS()
+class ARPG_HUNTER_API AProjectile : public ASubObject
+{
+	GENERATED_BODY()
+
+public:
+	AProjectile();
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	FVector Direction;
+	UPROPERTY(EditDefaultsOnly)
+	float Speed{ 100.0f };
+
+public:
+	virtual void Tick(float DeltaTime) override;
+	virtual void Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target) override;
+};

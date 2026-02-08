@@ -5,7 +5,7 @@
 
 #include "Controller/MonsterAIController.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
-#include "Projectile/Projectile.h"
+#include "SubObject/SubObject.h"
 #include "Data/MonsterData.h"
 #include "Data/Action.h"
 
@@ -38,7 +38,7 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 
 	// 투사체 발사
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-	TObjectPtr<AProjectile> Projectile = Cast<AProjectile>(ObjectPool->Get(ProjectileClass));
+	TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
 	Projectile->Init(); // TODO : 투사체 데이터 삽입
 	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
 	Projectile->Fire(this, TargetActor);
