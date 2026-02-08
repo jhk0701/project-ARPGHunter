@@ -26,20 +26,31 @@ public:
 	TObjectPtr<USkeletalMesh> BodyMesh;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> WeaponMesh;
+
+	// Capsule
+	UPROPERTY(EditAnywhere)
+	float HalfHeight{ 88.0f };
+	UPROPERTY(EditAnywhere)
+	float Radius{ 34.0f };
+	UPROPERTY(EditAnywhere)
+	float MeshScale{ 1.0f };
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> VFXOnHit;
 
+	// Action
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAnimInstance> AnimBP;
-
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<UAction>> AttackActions;
 
+	// Stat
 	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint32> BaseStat;
 
+	// AI
 	UPROPERTY(EditAnywhere)
 	float RecoginitionRange{ 1000.0f }; // 인지 범위
 	UPROPERTY(EditAnywhere)

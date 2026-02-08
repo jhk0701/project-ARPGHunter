@@ -50,6 +50,12 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();
 	MeshComp->SetSkeletalMesh(Data->BodyMesh);
+	MeshComp->SetRelativeLocation(FVector(0.0f, 0.0f, -Data->HalfHeight * Data->MeshScale));
+	MeshComp->SetRelativeScale3D(FVector(Data->MeshScale));
+
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	Capsule->SetCapsuleHalfHeight(Data->HalfHeight * Data->MeshScale);
+	Capsule->SetCapsuleRadius(Data->Radius * Data->MeshScale);
 
 	if (Data->WeaponMesh)
 	{

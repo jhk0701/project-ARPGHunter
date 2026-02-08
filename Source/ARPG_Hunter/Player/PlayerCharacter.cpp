@@ -236,14 +236,15 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			if (Hitable == nullptr)
 				continue;
 
-			bIsCritical |= CalculateCritical(Damage);
-
 			FHitInfo HitInfo;
+			HitInfo.bIsCriticalHit = CalculateCritical(Damage);
 			HitInfo.Damage = Damage;
 			HitInfo.StaggerDamage = ActionComp->GetAttackActionStaggerDamage();
 			HitInfo.KnockBackStrength = ActionComp->GetAttackActionKnockBack(_opt);
 			HitInfo.Attacker = this;
 			HitInfo.HitResult = &Hit;
+
+			bIsCritical |= HitInfo.bIsCriticalHit;
 
 			Hitable->HitBy(HitInfo);
 		}
