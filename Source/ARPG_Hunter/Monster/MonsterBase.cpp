@@ -11,6 +11,7 @@
 #include "Controller/MonsterAIController.h"
 #include "Component/StatComponent.h"
 #include "Data/MonsterData.h"
+#include "Data/Action.h"
 
 #include "Define/Debug.h"
 
@@ -210,7 +211,7 @@ TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 }
 TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 {
-	return GetData()->AttackDatas[_idx].Montage;
+	return GetData()->AttackActions[_idx]->Montage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {

@@ -279,11 +279,11 @@ bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult
 		{
 			ActivateActionEffect(CurAction->EffectOnEnemyHit, HitResult.GetActor());
 
-			if (CurAction->VFX) 
+			if (CurAction->VFXOnHit)
 			{
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 					GetWorld(),
-					CurAction->VFX,
+					CurAction->VFXOnHit,
 					HitResult.ImpactPoint,
 					HitResult.ImpactNormal.Rotation(),
 					FVector::OneVector,

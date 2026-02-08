@@ -24,7 +24,6 @@ public:
 	float KnockBackStr{100.0f};
 };
 
-
 /**
  * 
  */
@@ -55,8 +54,9 @@ public:
 	TArray<TObjectPtr<UEffectData>> EffectOnHit;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnEnemyHit;
+	UPROPERTY(EditAnywhere, Category = "Appearance|Effect")
+	TObjectPtr<class UNiagaraSystem> VFXOnHit;
 
-	UPROPERTY(EditAnywhere, Category = "VFX")
-	TObjectPtr<class UNiagaraSystem> VFX;
-
+	UPROPERTY(EditAnywhere, Category = "Appearance")
+	TSubclassOf<AActor> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
 };

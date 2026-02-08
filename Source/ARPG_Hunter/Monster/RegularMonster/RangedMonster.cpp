@@ -7,6 +7,7 @@
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Projectile/Projectile.h"
 #include "Data/MonsterData.h"
+#include "Data/Action.h"
 
 #include "Define/Debug.h"
 
@@ -31,7 +32,7 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
 
 	FMonsterData* MonsterData = GetData();
-	UClass* ProjectileClass = MonsterData->AttackDatas[GetCurAttackIdx()].SubObjectClass;
+	UClass* ProjectileClass = MonsterData->AttackActions[GetCurAttackIdx()]->SubObjectClass;
 	if (nullptr == ProjectileClass)
 		return;
 

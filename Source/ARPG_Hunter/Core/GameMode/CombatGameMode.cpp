@@ -12,6 +12,7 @@
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Data/StageData.h"
 #include "Data/MonsterData.h"
+#include "Data/Action.h"
 #include "Core/GameState/CombatGameState.h"
 #include "Controller/PlayerCombatController.h"
 #include "UI/PlayerHUD.h"
@@ -117,18 +118,18 @@ void ACombatGameMode::RegisterObjectPool()
 			
 			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 			
-			for (const FAttackData& AttackData : MonsterData->AttackDatas)
+			for (const TObjectPtr<UAction>& AttackData : MonsterData->AttackActions)
 			{
-				if (nullptr == AttackData.SubObjectClass)
+				if (nullptr == AttackData->SubObjectClass)
 					continue; 
-				uint8* cnt = MaxCountSubObject.Find(AttackData.SubObjectClass);
-				if (nullptr != cnt)
+				uint8* Cnt = MaxCountSubObject.Find(AttackData->SubObjectClass);
+				if (nullptr != Cnt)
 				{
-					*cnt += 2;
+					*Cnt += 2;
 					continue;
 				}
 
-				MaxCountSubObject.Add(AttackData.SubObjectClass, 2);
+				MaxCountSubObject.Add(AttackData->SubObjectClass, 2);
 			}
 		}
 	}
