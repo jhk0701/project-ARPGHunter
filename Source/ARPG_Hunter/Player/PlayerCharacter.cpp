@@ -228,7 +228,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	if (IsHit)
 	{
 		uint16 Damage = CalculateBaseDamage();
-		bool bIsCritical;
+		bool bIsCritical = false;
 		
 		for (FHitResult& Hit : HitResults)
 		{
