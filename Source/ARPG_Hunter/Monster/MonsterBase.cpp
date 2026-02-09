@@ -43,11 +43,9 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
 {
+	CurAttackIdx = 0;
 	ID = _param.ID;
 	SectionID = _param.SectionIndex;
-	SetActorLocation(_param.Location);
-	SetActorRotation(_param.Rotation);
-
 	Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
 
 	// 메쉬 설정
@@ -59,6 +57,9 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
 	Capsule->SetCapsuleHalfHeight(Data->HalfHeight * Data->MeshScale);
 	Capsule->SetCapsuleRadius(Data->Radius * Data->MeshScale);
+
+	SetActorLocation(_param.Location);
+	SetActorRotation(_param.Rotation);
 
 	if (Data->WeaponMesh)
 	{
@@ -108,10 +109,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
 	if (_montage == CurAttackMontage || _montage == GetHitMontage())
-	{
-		GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Blue, FString::Printf(TEXT("OnAttackMontageEnded :: %d"), _montage == CurAttackMontage));
 		OnAttackMontageEnded.ExecuteIfBound();
-	}
 
 	if (_bInterrupted == false)
 		SetMovable(true);
@@ -164,8 +162,6 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 
 void AMonsterBase::Attack(FMonsterAttackParam* _param)
 {
-	GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, FString::Printf(TEXT("Monster Attack : %d"), CurAttackIdx));
-
 	const FMonsterAction& CurAction = Data->AttackActions[CurAttackIdx];
 	TObjectPtr<UAnimMontage> AttackMontage = CurAction.Action->Montage;
 
@@ -179,7 +175,6 @@ void AMonsterBase::Attack(FMonsterAttackParam* _param)
 
 	bIsAttackable = false;
 	GetWorld()->GetTimerManager().SetTimer(AttackIntervalTimer, this, &AMonsterBase::SetAttackable, CurAction.Interval);
-	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Blue, FString::Printf(TEXT("Set Timer : %f"), CurAction.Interval));
 
 	SetMovable(false);
 }
@@ -233,5 +228,4 @@ void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 void AMonsterBase::SetAttackable()
 {
 	bIsAttackable = true;
-	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Blue, TEXT("Can Attack"));
 }
