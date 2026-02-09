@@ -111,5 +111,5 @@ public:
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
 
 	bool IsAttackable() const { return bIsAttackable; }
-	void SetAttackable() { bIsAttackable = true; }
+	void SetAttackable();
 };

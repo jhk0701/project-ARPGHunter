@@ -108,7 +108,10 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
 	if (_montage == CurAttackMontage || _montage == GetHitMontage())
+	{
+		GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Blue, FString::Printf(TEXT("OnAttackMontageEnded :: %d"), _montage == CurAttackMontage));
 		OnAttackMontageEnded.ExecuteIfBound();
+	}
 
 	if (_bInterrupted == false)
 		SetMovable(true);
@@ -161,13 +164,18 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 
 void AMonsterBase::Attack(FMonsterAttackParam* _param)
 {
-	const FMonsterAction& CurAction = GetData()->AttackActions[CurAttackIdx];
+	GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, FString::Printf(TEXT("Monster Attack : %d"), CurAttackIdx));
+
+	const FMonsterAction& CurAction = Data->AttackActions[CurAttackIdx];
 	TObjectPtr<UAnimMontage> AttackMontage = CurAction.Action->Montage;
 
-	if (AttackMontage == nullptr || 
-		AnimInstance->Montage_IsPlaying(GetHitMontage()) || 
+	if (AttackMontage == nullptr ||
+		AnimInstance->Montage_IsPlaying(GetHitMontage()) ||
 		AnimInstance->Montage_IsPlaying(CurAttackMontage))
+	{
+		GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, TEXT("Returned Try Attack : Complex"));
 		return;
+	}
 
 	AnimInstance->Montage_Play(AttackMontage);
 	CurAttackMontage = AttackMontage;
@@ -213,13 +221,18 @@ bool AMonsterBase::IsDead()
 
 EMonsterType AMonsterBase::GetType() const
 {
-	return GetData()->Type;
+	return Data->Type;
 }
 TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 {
-	return GetData()->HitMontage;
+	return Data->HitMontage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
+}
+
+void AMonsterBase::SetAttackable()
+{
+	bIsAttackable = true;
 }

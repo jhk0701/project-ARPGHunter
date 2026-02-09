@@ -33,15 +33,21 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 
 void ABossMonster::Attack(FMonsterAttackParam* _param)
 {
-	if (nullptr == _param)
-		return;
+	GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, TEXT("Boss Try Attack"));
 
-	// 패턴 : 일반 3
-	// 특수 : 카운터, 일반 무력화
+	if (nullptr == _param)
+	{
+		GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, TEXT("Returned Try Attack : _param is null"));
+		return;
+	}
+
 	// 가중치에 따른 선별
 	FMonsterData* MonsterData = GetData();
 	if (nullptr == MonsterData)
+	{
+		GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, TEXT("Returned Try Attack : Data is null"));
 		return;
+	}
 	
 	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_param->Type)]);
 	float Sum = 0.0f;
