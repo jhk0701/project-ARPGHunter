@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTDecorator.h"
-#include "BTDecorator_CanDoRangedAttack.generated.h"
+#include "BTDecorator_CanAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UBTDecorator_CanDoRangedAttack : public UBTDecorator
+class ARPG_HUNTER_API UBTDecorator_CanAttack : public UBTDecorator
 {
 	GENERATED_BODY()
 	
 public:
-	UBTDecorator_CanDoRangedAttack();
+	UBTDecorator_CanAttack();
 
 protected:
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;

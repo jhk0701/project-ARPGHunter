@@ -18,7 +18,10 @@ public:
 	EMonsterAttackType Type;
 	// 액션 가중치 : 같은 종류의 액션이 여럿일때, 확률적으로 선택하기 위한 가중치
 	UPROPERTY(EditAnywhere)
-	float Weight{ 1.0f };  
+	float Weight{ 1.0f };
+	// 공격 간 대기 간격
+	UPROPERTY(EditAnywhere)
+	float Interval{ 2.0f };
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAction> Action;
 };
@@ -71,9 +74,6 @@ public:
 	// 공격 사거리
 	UPROPERTY(EditAnywhere)
 	float AttackRange{ 200.0f };
-	// 공격 간 대기 간격
-	UPROPERTY(EditAnywhere) 
-	float AttackInterval{ 2.0f };
 	// 공격을 위한 이동 시, 적과의 거리
 	UPROPERTY(EditAnywhere)
 	float MoveRangeOnAttack{ 100.0f }; 

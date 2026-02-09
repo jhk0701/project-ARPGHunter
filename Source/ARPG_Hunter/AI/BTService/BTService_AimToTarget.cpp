@@ -31,10 +31,13 @@ void UBTService_AimToTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	
 	// 1. 시야 범위를 벗어났는지 체크
 	double dot = FVector::DotProduct(DirToTarget, OwnerFwd);
-	if (dot > 0 && FMath::RadiansToDegrees(FMath::Acos(dot)) < AimRange * 0.5f)
+	if (dot > 0 && 
+		FMath::RadiansToDegrees(FMath::Acos(dot)) < AimRange * 0.5f)
 		return; // 시야 범위 내
 
 	// 2. 돌리기
-	FRotator Rot(0.0f, FMath::RadiansToDegrees(FMath::Atan2(DirToTarget.Y, DirToTarget.X)) * RotateSpeed *  DeltaSeconds, 0.0f);
-	OwnerActor->SetActorRotation(Rot.Quaternion());
+	FRotator TargetRot = OwnerActor->GetActorRotation();
+	TargetRot.Yaw = FMath::RadiansToDegrees(FMath::Atan2(DirToTarget.Y, DirToTarget.X));
+	FQuat TargetQuat = FQuat::Slerp(OwnerActor->GetActorQuat(), TargetRot.Quaternion(), RotateSpeed * DeltaSeconds);
+	OwnerActor->SetActorRotation(TargetQuat);
 }

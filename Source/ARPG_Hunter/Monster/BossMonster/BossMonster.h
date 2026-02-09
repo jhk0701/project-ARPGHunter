@@ -6,6 +6,8 @@
 #include "Monster/MonsterBase.h"
 #include "BossMonster.generated.h"
 
+enum class EMonsterAttackType : uint8;
+
 /**
  * 
  */
@@ -17,11 +19,11 @@ class ARPG_HUNTER_API ABossMonster : public AMonsterBase
 private:
 	// Player HUD에 보스 체력바 출력
 	// 데미지 폰트 위치 범위
-
-	float TotalWeight{0.0f};
+	TArray<float> ActionTotalWeights;
 
 public:
 	ABossMonster();
+
 	void Init(const FMonsterInitParam& _param) override;
 	void Attack(FMonsterAttackParam* _param) override;
 

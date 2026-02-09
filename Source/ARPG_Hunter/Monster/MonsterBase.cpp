@@ -37,6 +37,8 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	FTimerManager& Timer = GetWorld()->GetTimerManager();
 	if(Timer.IsTimerActive(OnDeadTimer))
 		Timer.ClearTimer(OnDeadTimer);
+	if (Timer.IsTimerActive(AttackIntervalTimer))
+		Timer.ClearTimer(AttackIntervalTimer);
 }
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
@@ -97,7 +99,6 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		BBComp->SetValueAsFloat(FName(TEXT("RecoginitionRange")), Data->RecoginitionRange);
 		BBComp->SetValueAsFloat(FName(TEXT("AttackRange")), Data->AttackRange);
 		BBComp->SetValueAsFloat(FName(TEXT("MoveRangeOnAttack")), Data->MoveRangeOnAttack);
-		BBComp->SetValueAsFloat(FName(TEXT("AttackInterval")), Data->AttackInterval);
 
 		// BT 재가동
 		MonsterAI->RestartBT();
@@ -106,8 +107,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == GetAttackMontage(CurAttackMontageIdx) ||
-		_montage == GetHitMontage())
+	if (_montage == CurAttackMontage || _montage == GetHitMontage())
 		OnAttackMontageEnded.ExecuteIfBound();
 
 	if (_bInterrupted == false)
@@ -161,7 +161,8 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 
 void AMonsterBase::Attack(FMonsterAttackParam* _param)
 {
-	TObjectPtr<UAnimMontage> AttackMontage = GetAttackMontage(CurAttackMontageIdx);
+	const FMonsterAction& CurAction = GetData()->AttackActions[CurAttackIdx];
+	TObjectPtr<UAnimMontage> AttackMontage = CurAction.Action->Montage;
 
 	if (AttackMontage == nullptr || 
 		AnimInstance->Montage_IsPlaying(GetHitMontage()) || 
@@ -170,6 +171,9 @@ void AMonsterBase::Attack(FMonsterAttackParam* _param)
 
 	AnimInstance->Montage_Play(AttackMontage);
 	CurAttackMontage = AttackMontage;
+
+	bIsAttackable = false;
+	GetWorld()->GetTimerManager().SetTimer(AttackIntervalTimer, this, &AMonsterBase::SetAttackable, CurAction.Interval);
 
 	SetMovable(false);
 }
@@ -214,10 +218,6 @@ EMonsterType AMonsterBase::GetType() const
 TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 {
 	return GetData()->HitMontage;
-}
-TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
-{
-	return GetData()->AttackActions[_idx].Action->Montage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {

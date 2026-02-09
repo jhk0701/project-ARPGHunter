@@ -56,8 +56,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
-	int CurAttackMontageIdx{0};
+	int CurAttackIdx{0};
 	TObjectPtr<UAnimMontage> CurAttackMontage;
+
+	bool bIsAttackable{ true };
+	FTimerHandle AttackIntervalTimer;
 
 	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
 	float DeadDelay{ 3.0f };
@@ -77,14 +80,13 @@ protected:
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 	void SetMovable(bool _bIsMovable);
-	void SetCurAttackIdx(uint8 _idx) { CurAttackMontageIdx = _idx; }
+	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
 
 	uint8 GetSectionID() const { return SectionID; }
-	uint8 GetCurAttackIdx() const { return CurAttackMontageIdx; }
+	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
 	FMonsterData* GetData() const { return Data; }
 	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
-	
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
@@ -104,8 +106,10 @@ public:
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	EMonsterType GetType() const;
 	TObjectPtr<UAnimMontage> GetHitMontage() const;
-	TObjectPtr<UAnimMontage> GetAttackMontage(int _idx = 0) const;
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
+
+	bool IsAttackable() const { return bIsAttackable; }
+	void SetAttackable() { bIsAttackable = true; }
 };
