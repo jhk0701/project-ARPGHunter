@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -117,7 +117,7 @@ bool UStatComponent::TakeDamage(uint32 _damage, TFunction<void()> _stiffAction)
 	if (HitOption == EHitOption::IMMUNE_HIT)
 		return false;	// 피격 무효 처리
 	else if (HitOption < EHitOption::IMMUNE_STIFFEN && 
-		nullptr !=_stiffAction)
+		_stiffAction != nullptr)
 		_stiffAction();  // 경직 동작 수행
 
 	if (TryUseResource(ECharacterResourceType::HEALTH, _damage) == false)
