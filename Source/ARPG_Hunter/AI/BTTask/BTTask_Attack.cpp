@@ -40,7 +40,6 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		);
 	}
 
-	Owner->LookAtTarget(Target->GetActorLocation());
 	Owner->Attack();
 
 	return EBTNodeResult::InProgress;
