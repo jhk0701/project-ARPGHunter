@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
 
 UENUM(BlueprintType)
@@ -91,3 +91,14 @@ enum class EMonsterType : uint8
 };
 
 FString EnumToString(EMonsterType _type);
+
+UENUM(BlueprintType)
+enum class EMonsterAttackType : uint8 
+{
+	MELEE		UMETA(DisplayName = "Melee"),
+	RANGED		UMETA(DisplayName = "Ranged"),
+	SKILL		UMETA(DisplayName = "Skill"),
+	GIMIC		UMETA(DisplayName = "Gimic"),
+
+	END
+};

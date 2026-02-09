@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,7 +15,10 @@ struct FMonsterAction
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	float Weight{ 1.0f };
+	EMonsterAttackType Type;
+	// 액션 가중치 : 같은 종류의 액션이 여럿일때, 확률적으로 선택하기 위한 가중치
+	UPROPERTY(EditAnywhere)
+	float Weight{ 1.0f };  
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAction> Action;
 };
@@ -62,14 +65,18 @@ public:
 	TMap<ECharacterStatType, uint32> BaseStat;
 
 	// AI
+	// 인지 범위
 	UPROPERTY(EditAnywhere)
-	float RecoginitionRange{ 1000.0f }; // 인지 범위
+	float RecoginitionRange{ 1000.0f }; 
+	// 공격 사거리
 	UPROPERTY(EditAnywhere)
-	float AttackRange{ 200.0f }; // 공격 사거리
-	UPROPERTY(EditAnywhere) // 공격 간 대기 간격
+	float AttackRange{ 200.0f };
+	// 공격 간 대기 간격
+	UPROPERTY(EditAnywhere) 
 	float AttackInterval{ 2.0f };
+	// 공격을 위한 이동 시, 적과의 거리
 	UPROPERTY(EditAnywhere)
-	float MoveRangeOnAttack{ 100.0f }; // 공격을 위한 이동 시, 적과의 거리
+	float MoveRangeOnAttack{ 100.0f }; 
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed{ 200.0f }; 
 };

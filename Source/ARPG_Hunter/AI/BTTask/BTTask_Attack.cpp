@@ -1,10 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTTask/BTTask_Attack.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 
+#include "Define/Enum.h"
 #include "Monster/MonsterBase.h"
 #include "Player/PlayerCharacter.h"
 
@@ -39,8 +40,11 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 			}
 		);
 	}
-	
-	Owner->Attack();
+
+	FMonsterAttackParam Param;
+	Param.Type = AttackType;
+
+	Owner->Attack(&Param);
 
 	return EBTNodeResult::InProgress;
 }

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTService/BTService_AimToTarget.h"
@@ -31,7 +31,7 @@ void UBTService_AimToTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	
 	// 1. 시야 범위를 벗어났는지 체크
 	double dot = FVector::DotProduct(DirToTarget, OwnerFwd);
-	if (dot > 0 && FMath::RadiansToDegrees(FMath::Acos(dot)) < AimRange)
+	if (dot > 0 && FMath::RadiansToDegrees(FMath::Acos(dot)) < AimRange * 0.5f)
 		return; // 시야 범위 내
 
 	// 2. 돌리기

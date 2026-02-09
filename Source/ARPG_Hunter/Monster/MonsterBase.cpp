@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -159,13 +159,13 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	SetMovable(false);
 }
 
-void AMonsterBase::Attack()
+void AMonsterBase::Attack(FMonsterAttackParam* _param)
 {
 	TObjectPtr<UAnimMontage> AttackMontage = GetAttackMontage(CurAttackMontageIdx);
 
 	if (AttackMontage == nullptr || 
-		AnimInstance->Montage_IsPlaying(CurAttackMontage) ||
-		AnimInstance->Montage_IsPlaying(GetHitMontage()))
+		AnimInstance->Montage_IsPlaying(GetHitMontage()) || 
+		AnimInstance->Montage_IsPlaying(CurAttackMontage))
 		return;
 
 	AnimInstance->Montage_Play(AttackMontage);

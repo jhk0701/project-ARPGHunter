@@ -1,10 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/BossMonster/BossMonster.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 
+#include "Data/MonsterData.h"
 
 
 ABossMonster::ABossMonster()
@@ -22,16 +23,34 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 {
 	Super::Init(_param);
 
-
+	FMonsterData* MonsterData = GetData();
+	for (const FMonsterAction& Action : MonsterData->AttackActions)
+		TotalWeight += Action.Weight;
 }
 
-void ABossMonster::Attack()
+void ABossMonster::Attack(FMonsterAttackParam* _param)
 {
 	// 패턴 : 일반 3
 	// 특수 : 카운터, 일반 무력화
-	// 가중치에 따른 선별 필요
+	// 가중치에 따른 선별
+	FMonsterData* MonsterData = GetData();
+	if (nullptr == MonsterData)
+		return;
+	
+	float RandomValue = FMath::FRandRange(0.0f, TotalWeight);
+	float Sum = 0.0f;
 
-	// 가중치 선별
+	for (uint8 i = 0; i < MonsterData->AttackActions.Num(); ++i)
+	{
+		Sum += MonsterData->AttackActions[i].Weight;
+		if (Sum >= RandomValue)
+		{
+			SetCurAttackIdx(i);
+			break;
+		}
+	}
+
+	Super::Attack();
 }
 
 void ABossMonster::HandleAttackNotify(uint8 _opt)

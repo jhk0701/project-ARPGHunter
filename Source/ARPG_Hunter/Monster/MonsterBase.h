@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,6 +10,7 @@
 #include "MonsterBase.generated.h"
 
 enum class EMonsterType : uint8;
+enum class EMonsterAttackType : uint8;
 struct FMonsterData;
 
 struct FMonsterInitParam
@@ -18,6 +19,11 @@ struct FMonsterInitParam
 	uint8 SectionIndex;
 	FVector Location;
 	FRotator Rotation;
+};
+
+struct FMonsterAttackParam 
+{
+	EMonsterAttackType Type;
 };
 
 DECLARE_DELEGATE(FOnAttackMontageEnded);
@@ -71,6 +77,7 @@ protected:
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 	void SetMovable(bool _bIsMovable);
+	void SetCurAttackIdx(uint8 _idx) { CurAttackMontageIdx = _idx; }
 
 	uint8 GetSectionID() const { return SectionID; }
 	uint8 GetCurAttackIdx() const { return CurAttackMontageIdx; }
@@ -84,7 +91,7 @@ public:
 	FOnDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
-	virtual void Attack();
+	virtual void Attack(FMonsterAttackParam* _param = nullptr);
 
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override {};

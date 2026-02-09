@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,7 +23,7 @@ private:
 public:
 	ABossMonster();
 	void Init(const FMonsterInitParam& _param) override;
-	
-	void Attack() override;
+	void Attack(FMonsterAttackParam* _param) override;
+
 	void HandleAttackNotify(uint8 _opt) override;
 };
