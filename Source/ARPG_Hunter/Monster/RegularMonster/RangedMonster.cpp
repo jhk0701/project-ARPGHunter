@@ -32,7 +32,7 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
 
 	FMonsterData* MonsterData = GetData();
-	UClass* ProjectileClass = MonsterData->AttackActions[GetCurAttackIdx()]->SubObjectClass;
+	UClass* ProjectileClass = MonsterData->AttackActions[GetCurAttackIdx()].Action->SubObjectClass;
 	if (nullptr == ProjectileClass)
 		return;
 

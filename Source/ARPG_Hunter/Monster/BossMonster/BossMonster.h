@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,5 +13,17 @@ UCLASS()
 class ARPG_HUNTER_API ABossMonster : public AMonsterBase
 {
 	GENERATED_BODY()
+
+private:
+	// Player HUD에 보스 체력바 출력
+	// 데미지 폰트 위치 범위
+
+	float TotalWeight{0.0f};
+
+public:
+	ABossMonster();
+	void Init(const FMonsterInitParam& _param) override;
 	
+	void Attack() override;
+	void HandleAttackNotify(uint8 _opt) override;
 };

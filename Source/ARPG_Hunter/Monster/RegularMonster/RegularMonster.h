@@ -26,7 +26,8 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void OnDead() override;
+	virtual void ShowDamageUI(bool _bIsCritical, uint32 _damage) override;
+
 	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
 
 public:

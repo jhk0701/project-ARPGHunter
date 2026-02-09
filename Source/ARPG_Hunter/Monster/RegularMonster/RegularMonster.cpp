@@ -5,7 +5,6 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "Components/WidgetComponent.h"
 
-#include "Core/GameMode/CombatGameMode.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Component/StatComponent.h"
 #include "Data/MonsterData.h"
@@ -43,13 +42,17 @@ void ARegularMonster::BeginPlay()
 	}
 }
 
-void ARegularMonster::OnDead()
+void ARegularMonster::ShowDamageUI(bool _bIsCritical, uint32 _damage)
 {
-	Super::OnDead();
+	Super::ShowDamageUI(_bIsCritical, _damage);
 
-	// 몬스터 사망 이벤트 호출
-	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-	GameMode->StageEvent[EStageEvent::HUNT].Broadcast({ GetSectionID(), this});
+	// 데미지 폰트 UI 출력
+	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+
+	ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
+	ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0, 0, FMath::RandRange(DamageFontYRange.X, DamageFontYRange.Y)));
+	ADamage->UpdateUI(_damage, _bIsCritical);
+	ADamage->ShowUI();
 }
 
 void ARegularMonster::Init(const FMonsterInitParam& _param)
@@ -68,15 +71,6 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	Super::HitBy(_hitInfo);
-
-	// 데미지 폰트 UI 출력
-	if (UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>())
-	{
-		ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
-		ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0, 0, FMath::RandRange(DamageFontYRange.X, DamageFontYRange.Y)));
-		ADamage->UpdateUI(_hitInfo.Damage, _hitInfo.bIsCriticalHit);
-		ADamage->ShowUI();
-	}
 
 	KnockBack(_hitInfo);
 }

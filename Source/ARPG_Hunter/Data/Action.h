@@ -34,17 +34,19 @@ class ARPG_HUNTER_API UAction : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Setting")
+	bool bDelegateToSubObject{ false };
+	UPROPERTY(EditAnywhere, Category = "Setting")
 	EActionInput InputType;
 	UPROPERTY(EditAnywhere)
 	uint16 StaminaUsage{ 0 };
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAnimMontage> Montage;
-	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
 	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
+	TObjectPtr<UAnimMontage> Montage;
+	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
 	TArray<FActionOption> ArrOption;
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")

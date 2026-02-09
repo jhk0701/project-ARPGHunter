@@ -51,6 +51,7 @@ private:
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
 	int CurAttackMontageIdx{0};
+	TObjectPtr<UAnimMontage> CurAttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
 	float DeadDelay{ 3.0f };
@@ -65,6 +66,7 @@ protected:
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
 	virtual void OnDead();
+	virtual void ShowDamageUI(bool _bIsCritical, uint32 _damage) {};
 
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
@@ -83,7 +85,6 @@ public:
 
 	virtual void Init(const FMonsterInitParam& _param);
 	virtual void Attack();
-	void LookAtTarget(const FVector& _targeLocation);
 
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override {};

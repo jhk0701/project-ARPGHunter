@@ -118,18 +118,18 @@ void ACombatGameMode::RegisterObjectPool()
 			
 			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 			
-			for (const TObjectPtr<UAction>& AttackData : MonsterData->AttackActions)
+			for (const FMonsterAction& AttackData : MonsterData->AttackActions)
 			{
-				if (nullptr == AttackData->SubObjectClass)
+				if (nullptr == AttackData.Action->SubObjectClass)
 					continue; 
-				uint8* Cnt = MaxCountSubObject.Find(AttackData->SubObjectClass);
+				uint8* Cnt = MaxCountSubObject.Find(AttackData.Action->SubObjectClass);
 				if (nullptr != Cnt)
 				{
-					*Cnt += 2;
+					*Cnt++;
 					continue;
 				}
 
-				MaxCountSubObject.Add(AttackData->SubObjectClass, 2);
+				MaxCountSubObject.Add(AttackData.Action->SubObjectClass, 5);
 			}
 		}
 	}

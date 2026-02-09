@@ -39,7 +39,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 			}
 		);
 	}
-
+	
 	Owner->Attack();
 
 	return EBTNodeResult::InProgress;

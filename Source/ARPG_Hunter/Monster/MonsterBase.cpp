@@ -8,6 +8,7 @@
 #include "NiagaraFunctionLibrary.h"
 
 #include "Core/Subsystem/DataManager.h"
+#include "Core/GameMode/CombatGameMode.h"
 #include "Controller/MonsterAIController.h"
 #include "Component/StatComponent.h"
 #include "Data/MonsterData.h"
@@ -96,6 +97,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		BBComp->SetValueAsFloat(FName(TEXT("RecoginitionRange")), Data->RecoginitionRange);
 		BBComp->SetValueAsFloat(FName(TEXT("AttackRange")), Data->AttackRange);
 		BBComp->SetValueAsFloat(FName(TEXT("MoveRangeOnAttack")), Data->MoveRangeOnAttack);
+		BBComp->SetValueAsFloat(FName(TEXT("AttackInterval")), Data->AttackInterval);
 
 		// BT 재가동
 		MonsterAI->RestartBT();
@@ -123,6 +125,8 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	// 피격 발생
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
+
+	ShowDamageUI(_hitInfo.bIsCriticalHit, _hitInfo.Damage);
 
 	// 피격 시, 이펙트 출력
 	if (Data->VFXOnHit)
@@ -160,23 +164,14 @@ void AMonsterBase::Attack()
 	TObjectPtr<UAnimMontage> AttackMontage = GetAttackMontage(CurAttackMontageIdx);
 
 	if (AttackMontage == nullptr || 
-		AnimInstance->Montage_IsPlaying(AttackMontage) || 
+		AnimInstance->Montage_IsPlaying(CurAttackMontage) ||
 		AnimInstance->Montage_IsPlaying(GetHitMontage()))
 		return;
 
 	AnimInstance->Montage_Play(AttackMontage);
+	CurAttackMontage = AttackMontage;
 
 	SetMovable(false);
-}
-
-void AMonsterBase::LookAtTarget(const FVector& _targeLocation)
-{
-	FVector Dir = _targeLocation - GetActorLocation();
-	Dir.Z = 0;
-	Dir.Normalize();
-
-	FRotator Rot(0, FMath::RadiansToDegrees(FMath::Atan2(Dir.Y, Dir.X)), 0);
-	SetActorRotation(Rot);
 }
 
 void AMonsterBase::OnDead()
@@ -184,6 +179,10 @@ void AMonsterBase::OnDead()
 	// 사망 시 처리
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
 	AICon->StopBT();
+
+	// 몬스터 사망 이벤트 호출
+	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+	GameMode->StageEvent[EStageEvent::HUNT].Broadcast({ GetSectionID(), this });
 
 	// 충돌 무시 처리
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Corpse")));
@@ -202,6 +201,7 @@ void AMonsterBase::OnDead()
 		DeadDelay, false
 	);
 }
+
 bool AMonsterBase::IsDead()
 {
 	return StatComp->IsDead();
@@ -217,7 +217,7 @@ TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 }
 TObjectPtr<UAnimMontage> AMonsterBase::GetAttackMontage(int _idx) const
 {
-	return GetData()->AttackActions[_idx]->Montage;
+	return GetData()->AttackActions[_idx].Action->Montage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {

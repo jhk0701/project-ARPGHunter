@@ -8,8 +8,8 @@
 
 struct FHitInfo
 {
-	uint16 Damage;
-	uint16 StaggerDamage;
+	uint32 Damage;
+	uint32 StaggerDamage;
 	float KnockBackStrength;
 	bool bIsCriticalHit{ false };
 
