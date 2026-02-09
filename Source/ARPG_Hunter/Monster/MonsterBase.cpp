@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -172,16 +172,14 @@ void AMonsterBase::Attack(FMonsterAttackParam* _param)
 	if (AttackMontage == nullptr ||
 		AnimInstance->Montage_IsPlaying(GetHitMontage()) ||
 		AnimInstance->Montage_IsPlaying(CurAttackMontage))
-	{
-		GEngine->AddOnScreenDebugMessage(3, 3.0f, FColor::Blue, TEXT("Returned Try Attack : Complex"));
 		return;
-	}
 
 	AnimInstance->Montage_Play(AttackMontage);
 	CurAttackMontage = AttackMontage;
 
 	bIsAttackable = false;
 	GetWorld()->GetTimerManager().SetTimer(AttackIntervalTimer, this, &AMonsterBase::SetAttackable, CurAction.Interval);
+	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Blue, FString::Printf(TEXT("Set Timer : %f"), CurAction.Interval));
 
 	SetMovable(false);
 }
@@ -235,4 +233,5 @@ void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 void AMonsterBase::SetAttackable()
 {
 	bIsAttackable = true;
+	GEngine->AddOnScreenDebugMessage(1, 3.0f, FColor::Blue, TEXT("Can Attack"));
 }
