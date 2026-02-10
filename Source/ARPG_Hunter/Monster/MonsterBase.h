@@ -86,9 +86,10 @@ protected:
 	FMonsterData* GetData() const { return Data; }
 	FMonsterAction* GetCurAction() { return ActionData; }
 	FMonsterAction* GetAction(const FName& _id);
-
+	
 	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
+	TObjectPtr<UAnimInstance> GetAnimInst() { return AnimInstance; }
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
@@ -96,7 +97,6 @@ public:
 
 	virtual void Init(const FMonsterInitParam& _param);
 	virtual float Attack(FMonsterAttackParam* _param = nullptr);
-
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override {};
 	// IHitable을(를) 통해 상속됨

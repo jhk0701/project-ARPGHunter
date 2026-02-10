@@ -6,8 +6,11 @@
 #include "UObject/Interface.h"
 #include "Hitable.generated.h"
 
+enum class EAttackType : uint8;
+
 struct FHitInfo
 {
+	EAttackType AttackType;
 	uint32 Damage;
 	uint32 StaggerDamage;
 	float KnockBackStrength;

@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Define/Enum.h"
 #include "ActionComponent.generated.h"
 
 struct FWeaponTypeData;
+enum class EActionProcess : uint8;
+enum class EActionInput : uint8;
+enum class EAttackType : uint8;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
@@ -21,8 +23,8 @@ private:
 	bool bIsInAttackCombo{ false };
 
 	uint8 CurAttackActionID{ 0 };
-	EActionProcess CurActionProcess{ EActionProcess::NONE };
-	EActionInput CurActionInput{EActionInput::NORMAL};
+	EActionProcess CurActionProcess;
+	EActionInput CurActionInput;
 	TObjectPtr<UAnimMontage> CurActionMontage{ nullptr };
 	TFunction<bool(float)> CurActionPredicate{ nullptr };
 	
@@ -49,8 +51,8 @@ public:
 	void ResetAction();
 	void SetActionProcess(EActionProcess _eProcess);
 
-	bool IsValid() { return CurWeaponType != nullptr; }
-	bool IsInProgress() { return CurActionProcess == EActionProcess::IN_PROGRESS; }
+	bool IsValid() const { return CurWeaponType != nullptr; }
+	bool IsInProgress() const;
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
 	void PlayHitAction(bool _isDead);
@@ -62,6 +64,7 @@ public:
 	uint16 GetAttackActionDamagePer();
 	uint16 GetAttackActionStaggerDamage();
 	float GetAttackActionKnockBack(uint8 _opt);
+	EAttackType GetAttackActionType();
 	
 	bool TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult);
 };

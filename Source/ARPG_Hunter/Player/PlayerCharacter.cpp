@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -241,6 +241,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			HitInfo.Damage = Damage;
 			HitInfo.StaggerDamage = ActionComp->GetAttackActionStaggerDamage();
 			HitInfo.KnockBackStrength = ActionComp->GetAttackActionKnockBack(_opt);
+			HitInfo.AttackType = ActionComp->GetAttackActionType();
 			HitInfo.Attacker = this;
 			HitInfo.HitResult = &Hit;
 

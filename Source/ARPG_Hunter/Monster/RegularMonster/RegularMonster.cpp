@@ -72,6 +72,21 @@ void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	Super::HitBy(_hitInfo);
 
+	// 모션 재생
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInst();
+	if (GetHitMontage())
+	{
+		AnimInst->Montage_Play(GetHitMontage());
+
+		if (IsDead())
+		{
+			AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), GetHitMontage());
+			return;
+		}
+		
+		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
+	}
+
 	KnockBack(_hitInfo);
 }
 

@@ -3,6 +3,7 @@
 #include "Component/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Define/Enum.h"
 #include "Core/Subsystem/DataManager.h"
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
@@ -65,6 +66,7 @@ void UActionComponent::SetActionProcess(EActionProcess _eProcess)
 		TimerManager.SetTimer(ActionProgressTimer, this, &UActionComponent::ProcessAttackProgress, ActionProgressRate, true);
 	}
 }
+
 
 void UActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
@@ -211,6 +213,11 @@ float UActionComponent::GetAttackActionKnockBack(uint8 _opt)
 	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->ArrOption[_opt].KnockBackStr;
 }
 
+EAttackType UActionComponent::GetAttackActionType()
+{
+	return CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID]->Type;
+}
+
 bool UActionComponent::TraceAttack(uint8 _opt, TArray<FHitResult>& _outHitResult)
 {
 	UAction* CurAction = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID];
@@ -313,4 +320,9 @@ void UActionComponent::ClearActionProgressTimer()
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	if (TimerManager.IsTimerActive(ActionProgressTimer))
 		TimerManager.ClearTimer(ActionProgressTimer);
+}
+
+bool UActionComponent::IsInProgress() const
+{
+	return CurActionProcess == EActionProcess::IN_PROGRESS;
 }

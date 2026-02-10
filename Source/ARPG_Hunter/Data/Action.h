@@ -9,6 +9,7 @@
 class UEffectData;
 enum class EActionInput : uint8;
 enum class EAttackDirection : uint8;
+enum class EAttackType : uint8;
 
 USTRUCT()
 struct FActionOption
@@ -33,8 +34,8 @@ class ARPG_HUNTER_API UAction : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Setting")
-	bool bDelegateToSubObject{ false };
+	UPROPERTY(EditAnywhere)
+	EAttackType Type;
 
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };

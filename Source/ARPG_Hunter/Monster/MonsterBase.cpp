@@ -12,7 +12,7 @@
 #include "Controller/MonsterAIController.h"
 #include "Component/StatComponent.h"
 #include "Data/MonsterData.h"
-#include "Data/Action.h"
+#include "Data/EffectData.h"
 
 #include "Define/Debug.h"
 
@@ -102,6 +102,8 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		// BT 재가동
 		MonsterAI->RestartBT();
 	}
+
+	SetMovable(true);
 }
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
@@ -141,20 +143,8 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 		);
 	}
 
-	// 모션 재생
-	if (GetHitMontage())
-	{
-		AnimInstance->Montage_Play(GetHitMontage());
-
-		if (StatComp->IsDead())
-		{
-			AnimInstance->Montage_JumpToSection(FName(TEXT("Dead")), GetHitMontage());
-			OnDead();
-			return;
-		}
-
-		AnimInstance->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
-	}
+	if (StatComp->IsDead())
+		OnDead();
 
 	SetMovable(false);
 }
@@ -175,6 +165,10 @@ float AMonsterBase::Attack(FMonsterAttackParam* _param)
 	CurAttackMontage = AttackMontage;
 
 	SetMovable(false);
+
+	// 공격 시 자기 버프 획득
+	for (const TObjectPtr<UEffectData>& Effect : ActionData->EffectOnStart)
+		StatComp->ApplyEffect(Effect);
 
 	return ActionData->Interval;
 }

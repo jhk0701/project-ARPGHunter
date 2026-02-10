@@ -31,6 +31,8 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 {
 	Super::Init(_param);
 
+	CurState = EState::NORMAL;
+
 	FMonsterData* MonsterData = GetData();
 	for (const FName& ActionID : MonsterData->AttackActions)
 	{
@@ -76,6 +78,25 @@ void ABossMonster::HandleAttackNotify(uint8 _opt)
 		MeleeAttack(Detail);
 	else
 		RangedAttack(Detail);
+}
+
+void ABossMonster::HitBy(const FHitInfo& _hitInfo)
+{
+	Super::HitBy(_hitInfo);
+
+	UAnimMontage* HitMontage = GetHitMontage();
+	if (HitMontage && IsDead())
+	{
+		TObjectPtr<UAnimInstance> AnimInst = GetAnimInst();
+		AnimInst->Montage_Play(HitMontage);
+		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
+	}
+
+	// 기믹 처리
+	if(CurState == EState::IN_GIMIC)
+	{
+		
+	}
 }
 
 void ABossMonster::MeleeAttack(const FAttackDetail& _detail)
@@ -130,4 +151,23 @@ void ABossMonster::RangedAttack(const FAttackDetail& _detail)
 	Projectile->Init(); // TODO : 투사체 데이터 삽입
 	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
 	Projectile->Fire(this, TargetActor);
+}
+
+void ABossMonster::StartGimic(EGimicType _type)
+{
+	// 기믹 시작
+}
+
+void ABossMonster::ProceedGimic()
+{
+}
+
+void ABossMonster::CompleteGimic()
+{
+	// 기믹이 성공적으로 발동
+}
+
+void ABossMonster::StopGimic()
+{
+	// 플레이어가 저지한 경우
 }

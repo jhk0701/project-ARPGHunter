@@ -43,6 +43,10 @@ public:
 	TObjectPtr<UAnimMontage> Montage;
 	UPROPERTY(EditAnywhere)
 	TArray<FAttackDetail> AttackDetails;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<TObjectPtr<class UEffectData>> EffectOnStart;
+
 };
 
 /**
