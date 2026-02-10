@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTTask/BTTask_Attack.h"
@@ -26,24 +26,22 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (Target == nullptr)
 		return EBTNodeResult::Failed;
 	
-	if (Owner->OnAttackMontageEnded.IsBound() == false) 
-	{
-		Owner->OnAttackMontageEnded.BindLambda(
-			[&]()
-			{
-				APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
+	Owner->OnAttackMontageEnded.BindLambda(
+		[&]()
+		{
+			APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
 
-				if (Target == nullptr || Target->IsDead())
-					OwnerComp.GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
+			if (Target == nullptr || Target->IsDead())
+				OwnerComp.GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
 
-				FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-			}
-		);
-	}
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+
+			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Red, TEXT("Attack Montage is Ended And Attack Task Succeeded"));
+		}
+	);
 
 	FMonsterAttackParam Param;
 	Param.Type = AttackType;
-
 	Owner->Attack(&Param);
 
 	return EBTNodeResult::InProgress;

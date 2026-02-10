@@ -8,7 +8,6 @@
 #include "Define/Enum.h"
 #include "Data/MonsterData.h"
 
-
 ABossMonster::ABossMonster()
 {
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_BossMonster.BT_BossMonster'"));
@@ -35,6 +34,8 @@ void ABossMonster::Attack(FMonsterAttackParam* _param)
 {
 	if (nullptr == _param)
 		return;
+
+	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Blue, TEXT("Boss Attack"));
 
 	// 가중치에 따른 선별
 	FMonsterData* MonsterData = GetData();

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,7 +18,11 @@ class ARPG_HUNTER_API ABossMonster : public AMonsterBase
 
 private:
 	// Player HUD에 보스 체력바 출력
+	// 
 	// 데미지 폰트 위치 범위
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FVector2D DamageFontYRange;
+
 	TArray<float> ActionTotalWeights;
 
 public:

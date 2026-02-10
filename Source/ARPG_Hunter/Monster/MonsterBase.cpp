@@ -224,8 +224,3 @@ void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
 }
-
-void AMonsterBase::SetAttackable()
-{
-	bIsAttackable = true;
-}
