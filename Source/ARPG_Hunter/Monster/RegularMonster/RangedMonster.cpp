@@ -32,14 +32,14 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
 
 	FMonsterData* MonsterData = GetData();
-	UClass* ProjectileClass = MonsterData->AttackActions[GetCurAttackIdx()].Action->SubObjectClass;
-	if (nullptr == ProjectileClass)
-		return;
+	//UClass* ProjectileClass = MonsterData->AttackActions[GetCurAttackIdx()].Action->SubObjectClass;
+	//if (nullptr == ProjectileClass)
+	//	return;
 
-	// 투사체 발사
-	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-	TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
-	Projectile->Init(); // TODO : 투사체 데이터 삽입
-	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
-	Projectile->Fire(this, TargetActor);
+	//// 투사체 발사
+	//UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+	//TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
+	//Projectile->Init(); // TODO : 투사체 데이터 삽입
+	//Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
+	//Projectile->Fire(this, TargetActor);
 }

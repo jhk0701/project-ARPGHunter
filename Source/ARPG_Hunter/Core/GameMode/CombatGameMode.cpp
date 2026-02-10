@@ -116,7 +116,7 @@ void ACombatGameMode::RegisterObjectPool()
 
 			MaxCountPerType[Type] = FMath::Max(Spawn.Count, MaxCountPerType[Type]);
 			
-			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
+			/*FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 			
 			for (const FMonsterAction& AttackData : MonsterData->AttackActions)
 			{
@@ -130,7 +130,7 @@ void ACombatGameMode::RegisterObjectPool()
 				}
 
 				MaxCountSubObject.Add(AttackData.Action->SubObjectClass, 5);
-			}
+			}*/
 		}
 	}
 

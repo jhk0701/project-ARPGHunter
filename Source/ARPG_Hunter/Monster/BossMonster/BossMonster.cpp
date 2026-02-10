@@ -26,8 +26,11 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	Super::Init(_param);
 
 	FMonsterData* MonsterData = GetData();
-	for (const FMonsterAction& Action : MonsterData->AttackActions)
-		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
+	for (const FName& ActionID : MonsterData->AttackActions)
+	{
+		FMonsterAction* Action = GetAction(ActionID);
+		ActionTotalWeights[static_cast<uint8>(Action->Type)] += Action->Weight;
+	}
 }
 
 float ABossMonster::Attack(FMonsterAttackParam* _param)
@@ -42,10 +45,12 @@ float ABossMonster::Attack(FMonsterAttackParam* _param)
 
 	for (uint8 i = 0; i < MonsterData->AttackActions.Num(); ++i)
 	{
-		if (MonsterData->AttackActions[i].Type != _param->Type)
+		FMonsterAction* Action = GetAction(MonsterData->AttackActions[i]);
+
+		if (Action->Type != _param->Type)
 			continue;
 
-		Sum += MonsterData->AttackActions[i].Weight;
+		Sum += Action->Weight;
 		if (RandomValue < Sum)
 		{
 			SetCurAttackIdx(i);
@@ -58,5 +63,7 @@ float ABossMonster::Attack(FMonsterAttackParam* _param)
 
 void ABossMonster::HandleAttackNotify(uint8 _opt)
 {
+	FMonsterAction* Action = GetCurAction();
+	const FAttackDetail& Detail = Action->AttackDetails[_opt];
 
 }

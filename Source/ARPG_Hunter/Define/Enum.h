@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
 
 UENUM(BlueprintType)
@@ -34,7 +34,6 @@ enum class EAttackDirection : uint8
 	FRONT_WIDE	UMETA(DisplayName = "Front Wide"),
 	AROUND		UMETA(DisplayName = "Around"),
 };
-
 
 UENUM(BlueprintType)
 enum class EActionProcess : uint8
@@ -87,7 +86,7 @@ enum class EMonsterType : uint8
 	RANGED		UMETA(DisplayName = "Ranged"),
 	BOSS		UMETA(DisplayName = "Boss"),
 
-	END			UMETA(DisplayName = "End")
+	END			UMETA(Hidden)
 };
 
 FString EnumToString(EMonsterType _type);

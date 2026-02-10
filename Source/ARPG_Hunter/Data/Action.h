@@ -36,10 +36,7 @@ class ARPG_HUNTER_API UAction : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere, Category = "Setting")
 	bool bDelegateToSubObject{ false };
-	UPROPERTY(EditAnywhere, Category = "Setting")
-	EActionInput InputType;
-	UPROPERTY(EditAnywhere)
-	uint16 StaminaUsage{ 0 };
+
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
 	UPROPERTY(EditAnywhere)
@@ -48,6 +45,16 @@ public:
 	TObjectPtr<UAnimMontage> Montage;
 	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
 	TArray<FActionOption> ArrOption;
+	UPROPERTY(EditAnywhere, Category = "Appearance|Effect")
+	TObjectPtr<class UNiagaraSystem> VFXOnHit;
+
+	UPROPERTY(EditAnywhere, Category = "Appearance")
+	TSubclassOf<ASubObject> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
+
+	UPROPERTY(EditAnywhere, Category = "Setting")
+	EActionInput InputType;
+	UPROPERTY(EditAnywhere)
+	uint8 StaminaUsage{ 0 };
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnStart;
@@ -57,9 +64,4 @@ public:
 	TArray<TObjectPtr<UEffectData>> EffectOnHit;
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnEnemyHit;
-	UPROPERTY(EditAnywhere, Category = "Appearance|Effect")
-	TObjectPtr<class UNiagaraSystem> VFXOnHit;
-
-	UPROPERTY(EditAnywhere, Category = "Appearance")
-	TSubclassOf<ASubObject> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
 };

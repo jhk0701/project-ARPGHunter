@@ -18,6 +18,10 @@ UDataManager::UDataManager()
 	if (MonsterDataTableFinder.Succeeded())
 		MonsterDataTable = MonsterDataTableFinder.Object;
 
+	static ConstructorHelpers::FObjectFinder<UDataTable> MonsterActionDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_MonsterActionData.DT_MonsterActionData'"));
+	if (MonsterActionDataTableFinder.Succeeded())
+		MonsterActionDataTable = MonsterActionDataTableFinder.Object;
+
 	static ConstructorHelpers::FObjectFinder<UDataTable> RegionDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_RegionData.DT_RegionData'"));
 	if(RegionDataTableFinder.Succeeded())
 		RegionDataTable = RegionDataTableFinder.Object;
@@ -35,6 +39,11 @@ FWeaponTypeData* UDataManager::GetWeaponTypeData(EWeaponType _type) const
 FMonsterData* UDataManager::GetMonsterData(const FName& _id) const
 {
 	return MonsterDataTable->FindRow<FMonsterData>(_id, TEXT("Monster Data Table Search"));
+}
+
+FMonsterAction* UDataManager::GetMonsterActionData(const FName& _id) const
+{
+	return MonsterActionDataTable->FindRow<FMonsterAction>(_id, TEXT("Monster Data Table Search"));
 }
 
 FRegionData* UDataManager::GetRegionData(const FName& _id) const

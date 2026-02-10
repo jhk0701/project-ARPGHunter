@@ -12,6 +12,7 @@
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
 struct FMonsterData;
+struct FMonsterAction;
 
 struct FMonsterInitParam
 {
@@ -40,6 +41,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	FName ID;
 	FMonsterData* Data;
+	FMonsterAction* ActionData;
 
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SectionID{0};
@@ -82,6 +84,9 @@ protected:
 	uint8 GetSectionID() const { return SectionID; }
 	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
 	FMonsterData* GetData() const { return Data; }
+	FMonsterAction* GetCurAction() { return ActionData; }
+	FMonsterAction* GetAction(const FName& _id);
+
 	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
 

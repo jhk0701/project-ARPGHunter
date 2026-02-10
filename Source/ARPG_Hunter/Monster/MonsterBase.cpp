@@ -119,6 +119,7 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 	GetCharacterMovement()->MaxWalkSpeed = _bIsMovable ? GetData()->MoveSpeed : 0.0f;
 }
 
+
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	// 피격 발생
@@ -162,8 +163,8 @@ float AMonsterBase::Attack(FMonsterAttackParam* _param)
 {
 	// 공격 행위에 필요한 기본 동작
 	// 하위에서 _param을 이용한 세분화 (보스 패턴)에 사용될 것
-	const FMonsterAction& CurAction = Data->AttackActions[CurAttackIdx];
-	TObjectPtr<UAnimMontage> AttackMontage = CurAction.Action->Montage;
+	ActionData = GetAction(Data->AttackActions[CurAttackIdx]);
+	TObjectPtr<UAnimMontage> AttackMontage = ActionData->Montage;
 
 	if (AttackMontage == nullptr ||
 		AnimInstance->Montage_IsPlaying(GetHitMontage()) ||
@@ -175,7 +176,7 @@ float AMonsterBase::Attack(FMonsterAttackParam* _param)
 
 	SetMovable(false);
 
-	return CurAction.Interval;
+	return ActionData->Interval;
 }
 
 void AMonsterBase::OnDead()
@@ -222,4 +223,9 @@ TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
+}
+
+FMonsterAction* AMonsterBase::GetAction(const FName& _id)
+{
+	return GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterActionData(_id);
 }

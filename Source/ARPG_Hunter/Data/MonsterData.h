@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,10 +7,22 @@
 #include "Define/Enum.h"
 #include "MonsterData.generated.h"
 
-class UAction;
 
 USTRUCT()
-struct FMonsterAction
+struct FAttackDetail 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float Size;
+	UPROPERTY(EditAnywhere)
+	float Range;
+	UPROPERTY(EditAnywhere)
+	EAttackDirection Config;
+};
+
+USTRUCT()
+struct FMonsterAction : public FTableRowBase
 {
 	GENERATED_BODY()
 public:
@@ -19,11 +31,13 @@ public:
 	// 액션 가중치 : 같은 종류의 액션이 여럿일때, 확률적으로 선택하기 위한 가중치
 	UPROPERTY(EditAnywhere)
 	float Weight{ 1.0f };
-	// 공격 간 대기 간격
+	// 공격 간 대기 간격 : 쿨타임
 	UPROPERTY(EditAnywhere)
 	float Interval{ 2.0f };
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAction> Action;
+	TObjectPtr<UAnimMontage> Montage;
+	UPROPERTY(EditAnywhere)
+	TArray<FAttackDetail> AttackDetails;
 };
 
 /**
@@ -61,7 +75,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere)
-	TArray<FMonsterAction> AttackActions;
+	TArray<FName> AttackActions;
 
 	// Stat
 	UPROPERTY(EditAnywhere)
