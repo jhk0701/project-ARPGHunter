@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "Define/Enum.h"
 #include "MonsterData.generated.h"
 
+enum class EMonsterType : uint8;
+enum class EMonsterAttackType : uint8;
+enum class EAttackDetailType : uint8;
+enum class ECharacterStatType : uint8;
 
 USTRUCT()
 struct FAttackDetail 
@@ -18,7 +21,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Range;
 	UPROPERTY(EditAnywhere)
-	EAttackDirection Config;
+	EAttackDetailType Type;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ASubObject> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
 };
 
 USTRUCT()
@@ -49,7 +54,7 @@ struct ARPG_HUNTER_API FMonsterData : public FTableRowBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	EMonsterType Type{ EMonsterType::MELEE };
+	EMonsterType Type;
 	UPROPERTY(EditAnywhere)
 	FName Name;
 

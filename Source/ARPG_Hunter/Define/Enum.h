@@ -36,6 +36,16 @@ enum class EAttackDirection : uint8
 };
 
 UENUM(BlueprintType)
+enum class EAttackDetailType : uint8
+{
+	MELEE_FRONT				UMETA(DisplayName = "Melee Front"),
+	MELEE_FRONT_WIDE		UMETA(DisplayName = "Melee Front Wide"),
+	MELEE_AROUND			UMETA(DisplayName = "Melee Around"),
+
+	RANGED_DIRECTIONAL		UMETA(DisplayName = "Ranged Directional"),
+};
+
+UENUM(BlueprintType)
 enum class EActionProcess : uint8
 {
 	START			UMETA(DisplayName = "Start"),

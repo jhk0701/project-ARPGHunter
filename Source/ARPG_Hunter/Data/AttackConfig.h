@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "AttackConfig.generated.h"
 
-enum class EAttackDirection : uint8;
+enum class EAttackDetailType : uint8;
 
 struct FAttackParam
 {
 	TWeakObjectPtr<AActor> Subject;
-	EAttackDirection Direction;
+	EAttackDetailType DetailType;
 	ECollisionChannel Channel;
 	float Size;
 	float Range;

@@ -10,13 +10,15 @@ void UAttackConfig::Act(const FAttackParam& _inParam)
 	if (_inParam.Subject.IsValid() == false || _inParam.OnHitAction == nullptr)
 		return;
 
-	switch (_inParam.Direction)
+	switch (_inParam.DetailType)
 	{
-	case EAttackDirection::FRONT:		MeleeFront(_inParam); 
+	case EAttackDetailType::MELEE_FRONT:		MeleeFront(_inParam); 
 		break;
-	case EAttackDirection::FRONT_WIDE:	MeleeFrontWide(_inParam); 
+	case EAttackDetailType::MELEE_FRONT_WIDE:	MeleeFrontWide(_inParam);
 		break;
-	case EAttackDirection::AROUND:		MeleeAround(_inParam);
+	case EAttackDetailType::MELEE_AROUND:		MeleeAround(_inParam);
+		break;
+	case EAttackDetailType::RANGED_DIRECTIONAL:	RangedDirectional(_inParam);
 		break;
 	}
 

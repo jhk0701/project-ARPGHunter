@@ -7,7 +7,6 @@
 #include "Action.generated.h"
 
 class UEffectData;
-class ASubObject;
 enum class EActionInput : uint8;
 enum class EAttackDirection : uint8;
 
@@ -47,9 +46,6 @@ public:
 	TArray<FActionOption> ArrOption;
 	UPROPERTY(EditAnywhere, Category = "Appearance|Effect")
 	TObjectPtr<class UNiagaraSystem> VFXOnHit;
-
-	UPROPERTY(EditAnywhere, Category = "Appearance")
-	TSubclassOf<ASubObject> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
 
 	UPROPERTY(EditAnywhere, Category = "Setting")
 	EActionInput InputType;
