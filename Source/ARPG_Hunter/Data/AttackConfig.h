@@ -10,6 +10,7 @@ enum class EAttackDetailType : uint8;
 struct FAttackParam
 {
 	TWeakObjectPtr<AActor> Subject;
+	TWeakObjectPtr<AActor> Target;
 	EAttackDetailType DetailType;
 	ECollisionChannel Channel;
 	float Size;
