@@ -43,7 +43,7 @@ FMonsterData* UDataManager::GetMonsterData(const FName& _id) const
 
 FMonsterAction* UDataManager::GetMonsterActionData(const FName& _id) const
 {
-	return MonsterActionDataTable->FindRow<FMonsterAction>(_id, TEXT("Monster Data Table Search"));
+	return MonsterActionDataTable->FindRow<FMonsterAction>(_id, TEXT("Monster Action Data Table Search"));
 }
 
 FRegionData* UDataManager::GetRegionData(const FName& _id) const

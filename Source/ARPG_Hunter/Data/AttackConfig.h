@@ -14,7 +14,7 @@ struct FAttackParam
 	ECollisionChannel Channel;
 	float Size;
 	float Range;
-	TFunction<void(const FHitResult&)> OnHitAction;
+	TFunction<void(FHitResult&)> OnHitAction;
 };
 
 UCLASS()

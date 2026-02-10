@@ -47,7 +47,7 @@ void UAttackConfig::MeleeFront(const FAttackParam& _inParam)
 	if (bIsHit == false)
 		return;
 
-	for (const FHitResult& Hit : HitResults)
+	for (FHitResult& Hit : HitResults)
 		_inParam.OnHitAction(Hit);
 }
 
@@ -73,7 +73,7 @@ void UAttackConfig::MeleeFrontWide(const FAttackParam& _inParam)
 	if (bIsHit == false)
 		return;
 
-	for (const FHitResult& Hit : HitResults)
+	for (FHitResult& Hit : HitResults)
 		_inParam.OnHitAction(Hit);
 }
 
@@ -97,12 +97,13 @@ void UAttackConfig::MeleeAround(const FAttackParam& _inParam)
 	if (bIsHit == false)
 		return;
 
-	for (const FHitResult& Hit : HitResults)
+	for (FHitResult& Hit : HitResults)
 		_inParam.OnHitAction(Hit);
 
 }
 
 void UAttackConfig::RangedDirectional(const FAttackParam& _inParam)
 {
+	
 }
 

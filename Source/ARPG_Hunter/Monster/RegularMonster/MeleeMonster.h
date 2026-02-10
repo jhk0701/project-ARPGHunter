@@ -15,7 +15,5 @@ class ARPG_HUNTER_API AMeleeMonster : public ARegularMonster
 	GENERATED_BODY()
 
 public:
-	AMeleeMonster();
-
 	void HandleAttackNotify(uint8 _opt) override;
 };
