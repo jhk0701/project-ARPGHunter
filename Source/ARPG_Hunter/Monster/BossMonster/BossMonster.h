@@ -29,7 +29,7 @@ public:
 	ABossMonster();
 
 	void Init(const FMonsterInitParam& _param) override;
-	void Attack(FMonsterAttackParam* _param) override;
+	float Attack(FMonsterAttackParam* _param) override;
 
 	void HandleAttackNotify(uint8 _opt) override;
 };

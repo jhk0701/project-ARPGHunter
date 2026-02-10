@@ -59,9 +59,6 @@ private:
 	int CurAttackIdx{0};
 	TObjectPtr<UAnimMontage> CurAttackMontage;
 
-	bool bIsAttackable{ true };
-	FTimerHandle AttackIntervalTimer;
-
 	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
 	float DeadDelay{ 3.0f };
 	FTimerHandle OnDeadTimer;
@@ -93,7 +90,7 @@ public:
 	FOnDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
-	virtual void Attack(FMonsterAttackParam* _param = nullptr);
+	virtual float Attack(FMonsterAttackParam* _param = nullptr);
 
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override {};
@@ -109,7 +106,4 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
-
-	bool IsAttackable() const { return bIsAttackable; }
-	void SetAttackable() { bIsAttackable = true; }
 };

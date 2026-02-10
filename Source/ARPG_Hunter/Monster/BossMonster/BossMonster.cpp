@@ -30,12 +30,10 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 }
 
-void ABossMonster::Attack(FMonsterAttackParam* _param)
+float ABossMonster::Attack(FMonsterAttackParam* _param)
 {
 	if (nullptr == _param)
-		return;
-
-	GEngine->AddOnScreenDebugMessage(2, 5.0f, FColor::Blue, TEXT("Boss Attack"));
+		return -1.0f;
 
 	// 가중치에 따른 선별
 	FMonsterData* MonsterData = GetData();
@@ -55,7 +53,7 @@ void ABossMonster::Attack(FMonsterAttackParam* _param)
 		}
 	}
 
-	Super::Attack();
+	return Super::Attack(_param);
 }
 
 void ABossMonster::HandleAttackNotify(uint8 _opt)

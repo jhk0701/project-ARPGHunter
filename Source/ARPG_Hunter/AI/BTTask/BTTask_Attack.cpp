@@ -35,14 +35,17 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 				OwnerComp.GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
 
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-
-			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Red, TEXT("Attack Montage is Ended And Attack Task Succeeded"));
 		}
 	);
 
 	FMonsterAttackParam Param;
 	Param.Type = AttackType;
-	Owner->Attack(&Param);
+	
+	float Interval = Owner->Attack(&Param);
+	if (Interval < 0.0f)
+		return EBTNodeResult::Failed; // 공격 동작이 유효하지 않은 상황 실패처리
+
+	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(FName(TEXT("AttackInterval")), Interval); // 공격 후 대기시간
 
 	return EBTNodeResult::InProgress;
 }

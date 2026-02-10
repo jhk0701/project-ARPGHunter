@@ -37,8 +37,6 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	FTimerManager& Timer = GetWorld()->GetTimerManager();
 	if(Timer.IsTimerActive(OnDeadTimer))
 		Timer.ClearTimer(OnDeadTimer);
-	if (Timer.IsTimerActive(AttackIntervalTimer))
-		Timer.ClearTimer(AttackIntervalTimer);
 }
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
@@ -160,23 +158,24 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	SetMovable(false);
 }
 
-void AMonsterBase::Attack(FMonsterAttackParam* _param)
+float AMonsterBase::Attack(FMonsterAttackParam* _param)
 {
+	// 공격 행위에 필요한 기본 동작
+	// 하위에서 _param을 이용한 세분화 (보스 패턴)에 사용될 것
 	const FMonsterAction& CurAction = Data->AttackActions[CurAttackIdx];
 	TObjectPtr<UAnimMontage> AttackMontage = CurAction.Action->Montage;
 
 	if (AttackMontage == nullptr ||
 		AnimInstance->Montage_IsPlaying(GetHitMontage()) ||
 		AnimInstance->Montage_IsPlaying(CurAttackMontage))
-		return;
+		return -1.0f;
 
 	AnimInstance->Montage_Play(AttackMontage);
 	CurAttackMontage = AttackMontage;
 
-	bIsAttackable = false;
-	GetWorld()->GetTimerManager().SetTimer(AttackIntervalTimer, this, &AMonsterBase::SetAttackable, CurAction.Interval);
-
 	SetMovable(false);
+
+	return CurAction.Interval;
 }
 
 void AMonsterBase::OnDead()
