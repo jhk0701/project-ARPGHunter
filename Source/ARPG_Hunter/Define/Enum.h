@@ -42,7 +42,7 @@ enum class EAttackDetailType : uint8
 	MELEE_FRONT_WIDE		UMETA(DisplayName = "Melee Front Wide"),
 	MELEE_AROUND			UMETA(DisplayName = "Melee Around"),
 
-	RANGED_DIRECTIONAL		UMETA(DisplayName = "Ranged Directional"),
+	RANGED					UMETA(DisplayName = "Ranged"),
 };
 
 UENUM(BlueprintType)

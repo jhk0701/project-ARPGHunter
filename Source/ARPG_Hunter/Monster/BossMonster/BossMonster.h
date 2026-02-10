@@ -7,6 +7,7 @@
 #include "BossMonster.generated.h"
 
 enum class EMonsterAttackType : uint8;
+struct FAttackDetail;
 
 /**
  * 
@@ -24,6 +25,9 @@ private:
 	FVector2D DamageFontYRange;
 
 	TArray<float> ActionTotalWeights;
+
+	void MeleeAttack(const FAttackDetail& _detail);
+	void RangedAttack(const FAttackDetail& _detail);
 
 public:
 	ABossMonster();

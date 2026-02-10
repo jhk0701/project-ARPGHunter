@@ -4,9 +4,15 @@
 #include "Monster/BossMonster/BossMonster.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 #include "Define/Enum.h"
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
+#include "Controller/MonsterAIController.h"
 #include "Data/MonsterData.h"
+#include "Data/AttackConfig.h"
+#include "Component/StatComponent.h"
+#include "SubObject/SubObject.h"
 
 ABossMonster::ABossMonster()
 {
@@ -66,4 +72,62 @@ void ABossMonster::HandleAttackNotify(uint8 _opt)
 	FMonsterAction* Action = GetCurAction();
 	const FAttackDetail& Detail = Action->AttackDetails[_opt];
 
+	if (Detail.Type < EAttackDetailType::RANGED)
+		MeleeAttack(Detail);
+	else
+		RangedAttack(Detail);
+}
+
+void ABossMonster::MeleeAttack(const FAttackDetail& _detail)
+{
+	FAttackParam Param;
+	Param.Subject = this;
+	Param.Channel = ECC_GameTraceChannel3;
+
+	Param.Size = _detail.Size;
+	Param.Range = _detail.Range;
+	Param.DetailType = _detail.Type;
+	Param.OnHitAction =
+		[this](FHitResult& _hitResult)
+		{
+			IHitable* Hitable = Cast<IHitable>(_hitResult.GetActor());
+
+			if (Hitable)
+			{
+				FHitInfo HitInfo;
+				HitInfo.Damage = GetStatComp()->GetStat(ECharacterStatType::ATTACK);
+				HitInfo.Attacker = this;
+				HitInfo.HitResult = &_hitResult;
+
+				Hitable->HitBy(HitInfo);
+			}
+		};
+
+	UAttackConfig::Act(Param);
+}
+
+void ABossMonster::RangedAttack(const FAttackDetail& _detail)
+{
+	// 공격 목표 찾기
+	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
+	if (nullptr == AICon)
+		return;
+
+	UBlackboardComponent* BBComp = AICon->GetBlackboardComponent();
+	UObject* Target = BBComp->GetValueAsObject(FName(TEXT("Target")));
+	if (nullptr == Target)
+		return;
+
+	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
+
+	UClass* ProjectileClass = _detail.SubObjectClass;
+	if (nullptr == ProjectileClass)
+		return;
+
+	// 투사체 발사
+	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+	TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
+	Projectile->Init(); // TODO : 투사체 데이터 삽입
+	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
+	Projectile->Fire(this, TargetActor);
 }
