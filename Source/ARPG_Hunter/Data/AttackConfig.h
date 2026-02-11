@@ -28,5 +28,5 @@ private:
 	static void MeleeFront(const FAttackParam& _inParam);
 	static void MeleeFrontWide(const FAttackParam& _inParam);
 	static void MeleeAround(const FAttackParam& _inParam);
-	static void RangedDirectional(const FAttackParam& _inParam);
+	static void Ranged(const FAttackParam& _inParam);
 };

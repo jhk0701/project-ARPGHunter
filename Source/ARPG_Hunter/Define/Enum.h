@@ -121,3 +121,5 @@ enum class EGimicType : uint8
 
 	END			UMETA(Hidden)
 };
+
+FName EnumToName(EGimicType _type);

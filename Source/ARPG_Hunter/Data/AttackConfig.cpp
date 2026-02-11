@@ -18,7 +18,7 @@ void UAttackConfig::Act(const FAttackParam& _inParam)
 		break;
 	case EAttackDetailType::MELEE_AROUND:		MeleeAround(_inParam);
 		break;
-	case EAttackDetailType::RANGED:	RangedDirectional(_inParam);
+	case EAttackDetailType::RANGED:				Ranged(_inParam);
 		break;
 	}
 
@@ -102,8 +102,7 @@ void UAttackConfig::MeleeAround(const FAttackParam& _inParam)
 
 }
 
-void UAttackConfig::RangedDirectional(const FAttackParam& _inParam)
+void UAttackConfig::Ranged(const FAttackParam& _inParam)
 {
-	
 }
 

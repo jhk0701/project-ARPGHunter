@@ -2,13 +2,13 @@
 
 
 #include "Animation/AnimNotifyState/GimicNotifyState.h"
-#include "Monster/BossMonster/BossMonster.h"
+#include "Interface/GimicHandler.h"  
 
 void UGimicNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	TObjectPtr<ABossMonster> GimicSubject = Cast<ABossMonster>(MeshComp->GetOwner());
+	IGimicHandler* GimicSubject = Cast<IGimicHandler>(MeshComp->GetOwner());
 	if (nullptr == GimicSubject)
 		return;
 
@@ -19,20 +19,9 @@ void UGimicNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequen
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
 
-	TObjectPtr<ABossMonster> GimicSubject = Cast<ABossMonster>(MeshComp->GetOwner());
+	IGimicHandler* GimicSubject = Cast<IGimicHandler>(MeshComp->GetOwner());
 	if (nullptr == GimicSubject)
 		return;
 
-	GimicSubject->ProceedGimic();
-}
-
-void UGimicNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
-{
-	Super::NotifyEnd(MeshComp, Animation, EventReference);
-
-	TObjectPtr<ABossMonster> GimicSubject = Cast<ABossMonster>(MeshComp->GetOwner());
-	if (nullptr == GimicSubject)
-		return;
-
-	GimicSubject->CompleteGimic();
+	GimicSubject->ProceedGimic(FrameDeltaTime);
 }

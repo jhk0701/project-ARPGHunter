@@ -46,3 +46,16 @@ FString EnumToString(EMonsterType _type)
 		return FString();
 	}
 }
+
+FName EnumToName(EGimicType _type)
+{
+	switch (_type)
+	{
+	case EGimicType::COUNTER:
+		return FName(TEXT("Counter"));
+	case EGimicType::STAGGER:
+		return FName(TEXT("Stagger"));
+	default:
+		return NAME_None;
+	}
+}

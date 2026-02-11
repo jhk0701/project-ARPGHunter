@@ -13,6 +13,7 @@
 #include "Data/AttackConfig.h"
 #include "Component/StatComponent.h"
 #include "SubObject/SubObject.h"
+#include "Gimic/GimicAction.h"
 
 ABossMonster::ABossMonster()
 {
@@ -30,8 +31,6 @@ ABossMonster::ABossMonster()
 void ABossMonster::Init(const FMonsterInitParam& _param)
 {
 	Super::Init(_param);
-
-	CurState = EState::NORMAL;
 
 	FMonsterData* MonsterData = GetData();
 	for (const FName& ActionID : MonsterData->AttackActions)
@@ -93,10 +92,8 @@ void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 	}
 
 	// 기믹 처리
-	if(CurState == EState::IN_GIMIC)
-	{
-		
-	}
+	if (CurGimic)
+		CurGimic->Interrupt(_hitInfo);
 }
 
 void ABossMonster::MeleeAttack(const FAttackDetail& _detail)
@@ -153,21 +150,36 @@ void ABossMonster::RangedAttack(const FAttackDetail& _detail)
 	Projectile->Fire(this, TargetActor);
 }
 
+void ABossMonster::OnDead()
+{
+	Super::OnDead();
+
+	if (CurGimic)
+		CurGimic = nullptr;
+}
+
 void ABossMonster::StartGimic(EGimicType _type)
 {
 	// 기믹 시작
+	CurGimic = UGimicActionFactory::CreateGimic(this, _type);
+	CurGimic->Start();
 }
 
-void ABossMonster::ProceedGimic()
+void ABossMonster::ProceedGimic(float _deltaSecond)
 {
+	CurGimic->Proceed(_deltaSecond);
 }
 
 void ABossMonster::CompleteGimic()
-{
+{ 
 	// 기믹이 성공적으로 발동
+	GetAnimInst()->Montage_JumpToSection(FName(TEXT("Complete")), GetCurrentMontage());
+	CurGimic = nullptr;
 }
 
-void ABossMonster::StopGimic()
+void ABossMonster::StopGimic(EGimicType _type)
 {
 	// 플레이어가 저지한 경우
+	GetAnimInst()->Montage_JumpToSection(EnumToName(_type), GetCurrentMontage());
+	CurGimic = nullptr;
 }
