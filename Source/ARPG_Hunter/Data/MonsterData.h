@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -36,8 +36,6 @@ public:
 	// 액션 가중치 : 같은 종류의 액션이 여럿일때, 확률적으로 선택하기 위한 가중치
 	UPROPERTY(EditAnywhere)
 	float Weight{ 1.0f };
-	UPROPERTY(EditAnywhere)
-	uint8 SkillCost;
 	// 공격 간 대기 간격 : 쿨타임 용도
 	UPROPERTY(EditAnywhere)
 	float Interval{ 2.0f };

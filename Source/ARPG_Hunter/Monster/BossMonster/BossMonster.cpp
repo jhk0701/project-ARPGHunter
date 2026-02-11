@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/BossMonster/BossMonster.h"
@@ -167,7 +167,8 @@ void ABossMonster::StartGimic(EGimicType _type)
 
 void ABossMonster::ProceedGimic(float _deltaSecond)
 {
-	CurGimic->Proceed(_deltaSecond);
+	if (CurGimic)
+		CurGimic->Proceed(_deltaSecond);
 }
 
 void ABossMonster::CompleteGimic()
@@ -182,4 +183,11 @@ void ABossMonster::StopGimic(EGimicType _type)
 	// 플레이어가 저지한 경우
 	GetAnimInst()->Montage_JumpToSection(EnumToName(_type), GetCurrentMontage());
 	CurGimic = nullptr;
+}
+
+bool ABossMonster::CanUseSkill()
+{
+	bool bCanUseSkill = GetStatComp()->GetResourceValue(ECharacterResourceType::SKILL) == GetStatComp()->GetResourceMaxValue(ECharacterResourceType::SKILL);;
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Check Can Use Skill : %d"), bCanUseSkill));
+	return bCanUseSkill;
 }

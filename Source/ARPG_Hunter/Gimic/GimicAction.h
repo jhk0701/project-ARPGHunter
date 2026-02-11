@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,6 +25,7 @@ private:
 
 protected:
 	void SetType(EGimicType _type) { Type = _type; }
+	void SetLifeTime(float _time) { LifeTime = _time; }
 
 	TWeakObjectPtr<AActor> GetSubject() { return Subject; }
 	EGimicType GetType() { return Type; }

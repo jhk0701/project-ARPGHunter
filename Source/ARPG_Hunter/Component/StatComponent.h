@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -27,7 +27,9 @@ struct FCharacterResource
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(VisibleAnywhere)
 	uint32 MaxValue;
+	UPROPERTY(VisibleAnywhere)
 	uint32 Value;
 	FOnValueChanged OnValueChanged;
 

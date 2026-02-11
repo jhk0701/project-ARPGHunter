@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,6 +20,8 @@ class ARPG_HUNTER_API ABossMonster : public AMonsterBase, public IGimicHandler
 	GENERATED_BODY()
 private:
 	TArray<float> ActionTotalWeights;
+
+	UPROPERTY()
 	TObjectPtr<UGimicAction> CurGimic;
 
 	// Player HUD에 보스 체력바 출력
@@ -42,4 +44,6 @@ public:
 	void ProceedGimic(float _deltaSecond) override;
 	void CompleteGimic() override;
 	void StopGimic(EGimicType _type) override;
+
+	bool CanUseSkill();
 };

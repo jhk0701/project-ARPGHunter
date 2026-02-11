@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Gimic/GimicAction.h"
@@ -25,6 +25,7 @@ UCounterGimic::UCounterGimic()
 {
 	SetType(EGimicType::COUNTER);
 	EndureCount = 1;
+	SetLifeTime(2.0f);
 }
 
 void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
@@ -32,8 +33,11 @@ void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
 	// 맞은 범위가 정면이며, 스매시 이상 공격이었을 경우, 방해처리
 	Super::Interrupt(_hitInfo);
 
+	if (_hitInfo.AttackType < EAttackType::SMASH)
+		return;
+
 	TWeakObjectPtr<AActor> GimicSubject = GetSubject();
-	if (_hitInfo.Attacker.IsValid() == false || 
+	if (_hitInfo.Attacker.IsValid() == false ||
 		GimicSubject.IsValid() == false)
 		return;
 
@@ -41,8 +45,9 @@ void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
 	FVector SubjectFwd = GimicSubject->GetActorForwardVector();
 
 	double Dot = FVector::DotProduct(AttackFwd, SubjectFwd);
-	// 정면 45도 기준
-	if (Dot < 0 && FMath::RadiansToDegrees(FMath::Acos(Dot)) < 90.0f * 0.5f)
+	
+	// 정면 45도 기준 : 180.0f - 45.0f
+	if (Dot < 0 && FMath::RadiansToDegrees(FMath::Acos(Dot)) > 135.0f) 
 		EndureCount--;
 
 	if (EndureCount > 0)
@@ -63,15 +68,13 @@ TObjectPtr<UGimicAction> UGimicActionFactory::CreateGimic(UObject* _worldContext
 	if (nullptr == _worldContext)
 		return nullptr;
 
-	TObjectPtr<UGimicAction> Instance = nullptr;
-
 	switch (_type)
 	{
 	case EGimicType::COUNTER:
-		Instance = NewObject<UCounterGimic>(_worldContext);
+		return NewObject<UCounterGimic>(_worldContext);
 	case EGimicType::STAGGER:
-		Instance = NewObject<UStaggerGimic>(_worldContext);
+		return NewObject<UStaggerGimic>(_worldContext);
+	default:
+		return nullptr;
 	}
-
-	return Instance;
 }
