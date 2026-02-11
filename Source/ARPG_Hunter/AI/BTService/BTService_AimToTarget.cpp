@@ -1,9 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTService/BTService_AimToTarget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
+#include "Monster/MonsterBase.h"
 
 
 UBTService_AimToTarget::UBTService_AimToTarget()
@@ -22,7 +23,9 @@ void UBTService_AimToTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		return;
 
 	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
-	TObjectPtr<AActor> OwnerActor = OwnerComp.GetAIOwner()->GetPawn();
+	TObjectPtr<AMonsterBase> OwnerActor = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	if (nullptr == OwnerActor || !OwnerActor->IsMovable())
+		return;
 
 	FVector OwnerFwd = OwnerActor->GetActorForwardVector();
 	FVector DirToTarget = TargetActor->GetActorLocation() - OwnerActor->GetActorLocation();
@@ -31,8 +34,7 @@ void UBTService_AimToTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 	
 	// 1. 시야 범위를 벗어났는지 체크
 	double dot = FVector::DotProduct(DirToTarget, OwnerFwd);
-	if (dot > 0 && 
-		FMath::RadiansToDegrees(FMath::Acos(dot)) < AimRange * 0.5f)
+	if (dot > 0 && FMath::RadiansToDegrees(FMath::Acos(dot)) < AimRange * 0.5f)
 		return; // 시야 범위 내
 
 	// 2. 돌리기

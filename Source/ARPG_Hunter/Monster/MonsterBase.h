@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -102,8 +102,9 @@ public:
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
-	bool IsDead();
-	
+	bool IsDead() const;
+	bool IsMovable() const { return bIsMovable; }
+
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	EMonsterType GetType() const;

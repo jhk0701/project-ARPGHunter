@@ -13,6 +13,8 @@ UCLASS()
 class ARPG_HUNTER_API UBTTask_LookAt : public UBTTaskNode
 {
 	GENERATED_BODY()
+private:
+
 public:
 
 	UBTTask_LookAt();

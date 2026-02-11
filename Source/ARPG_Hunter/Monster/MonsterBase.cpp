@@ -201,7 +201,7 @@ void AMonsterBase::OnDead()
 	);
 }
 
-bool AMonsterBase::IsDead()
+bool AMonsterBase::IsDead() const
 {
 	return StatComp->IsDead();
 }
