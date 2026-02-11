@@ -33,7 +33,7 @@ protected:
 public:
 	virtual void SetSubject(TWeakObjectPtr<AActor> _subject) { Subject = _subject; };
 	virtual void Start() {};
-	virtual void Proceed(float _deltaTime) { ElapsedTime += _deltaTime; }
+	virtual void Proceed(float _deltaTime);
 	virtual void Interrupt(const FHitInfo& _hitInfo) {}
 };
 
@@ -47,7 +47,6 @@ private:
 
 public:
 	UCounterGimic();
-	void Proceed(float _deltaTime) override;
 	void Interrupt(const FHitInfo& _hitInfo) override;
 };
 

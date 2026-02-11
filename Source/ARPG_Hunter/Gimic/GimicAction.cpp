@@ -6,15 +6,23 @@
 #include "Interface/GimicHandler.h"
 #include "Interface/Hitable.h"
 
+
+void UGimicAction::Proceed(float _deltaTime)
+{
+	ElapsedTime += _deltaTime;
+
+	if (IsTimeOut() == false || Subject.IsValid() == false)
+		return;
+
+	if (IGimicHandler* GimicHandler = Cast<IGimicHandler>(Subject.Get()))
+		GimicHandler->StopGimic(Type);
+}
+
+
 UCounterGimic::UCounterGimic()
 {
 	SetType(EGimicType::COUNTER);
 	EndureCount = 1;
-}
-
-void UCounterGimic::Proceed(float _deltaTime)
-{
-	Super::Proceed(_deltaTime);
 }
 
 void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
@@ -38,7 +46,7 @@ void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
 	if (EndureCount > 0)
 		return;
 	
-	if (IGimicHandler* GimicHandler = Cast<IGimicHandler>(GimicSubject))
+	if (IGimicHandler* GimicHandler = Cast<IGimicHandler>(GimicSubject.Get()))
 		GimicHandler->StopGimic(GetType());
 }
 
