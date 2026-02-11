@@ -24,8 +24,8 @@ void UGimicAction::Proceed(float _deltaTime)
 UCounterGimic::UCounterGimic()
 {
 	SetType(EGimicType::COUNTER);
-	EndureCount = 1;
 	SetLifeTime(2.0f);
+	EndureCount = 1;
 }
 
 void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
@@ -61,6 +61,30 @@ void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
 UStaggerGimic::UStaggerGimic()
 {
 	SetType(EGimicType::STAGGER);
+	SetLifeTime(10.0f);
+	StaggerValue = 200;
+}
+
+void UStaggerGimic::Interrupt(const FHitInfo& _hitInfo)
+{
+	Super::Interrupt(_hitInfo);
+
+	TWeakObjectPtr<AActor> GimicSubject = GetSubject();
+	if (_hitInfo.Attacker.IsValid() == false ||
+		GimicSubject.IsValid() == false)
+		return;
+
+	if (StaggerValue <= _hitInfo.StaggerDamage)
+	{
+		// 무력화 완료
+		StaggerValue = 0;
+
+		if (IGimicHandler* GimicHandler = Cast<IGimicHandler>(GimicSubject.Get()))
+			GimicHandler->StopGimic(GetType()); // 저지
+	}
+	else
+		StaggerValue -= _hitInfo.StaggerDamage; // 무력화 진행
+
 }
 
 TObjectPtr<UGimicAction> UGimicActionFactory::CreateGimic(UObject* _worldContext, EGimicType _type)

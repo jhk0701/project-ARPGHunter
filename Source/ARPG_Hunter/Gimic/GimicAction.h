@@ -56,10 +56,11 @@ class ARPG_HUNTER_API UStaggerGimic : public UGimicAction
 	GENERATED_BODY()
 
 private:
-	float Progress;
+	uint16 StaggerValue;
 
 public:
 	UStaggerGimic();
+	void Interrupt(const FHitInfo& _hitInfo) override;
 };
 
 

@@ -188,6 +188,5 @@ void ABossMonster::StopGimic(EGimicType _type)
 bool ABossMonster::CanUseSkill()
 {
 	bool bCanUseSkill = GetStatComp()->GetResourceValue(ECharacterResourceType::SKILL) == GetStatComp()->GetResourceMaxValue(ECharacterResourceType::SKILL);;
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Check Can Use Skill : %d"), bCanUseSkill));
 	return bCanUseSkill;
 }
