@@ -9,15 +9,17 @@
 
 void UGimicAction::Proceed(float _deltaTime)
 {
-	ElapsedTime += _deltaTime;
-
-	if (IsTimeOut() == false || Subject.IsValid() == false)
+	if (IsTimeOut() || Subject.IsValid() == false)
 		return;
 
-	if (IGimicHandler* GimicHandler = Cast<IGimicHandler>(Subject.Get()))
-		GimicHandler->StopGimic(Type);
-}
+	ElapsedTime += _deltaTime;
 
+	if (IsTimeOut())
+	{
+		if (IGimicHandler* GimicHandler = Cast<IGimicHandler>(Subject.Get()))
+			GimicHandler->CompleteGimic();
+	}
+}
 
 UCounterGimic::UCounterGimic()
 {
@@ -40,7 +42,7 @@ void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
 
 	double Dot = FVector::DotProduct(AttackFwd, SubjectFwd);
 	// 정면 45도 기준
-	if (Dot < 0 && FMath::RadiansToDegrees(FMath::Acos(Dot)) < 45.0f * 0.5f)
+	if (Dot < 0 && FMath::RadiansToDegrees(FMath::Acos(Dot)) < 90.0f * 0.5f)
 		EndureCount--;
 
 	if (EndureCount > 0)
@@ -56,24 +58,20 @@ UStaggerGimic::UStaggerGimic()
 	SetType(EGimicType::STAGGER);
 }
 
-
-TObjectPtr<UGimicAction> UGimicActionFactory::CreateGimic(TWeakObjectPtr<AActor> _subject, EGimicType _type)
+TObjectPtr<UGimicAction> UGimicActionFactory::CreateGimic(UObject* _worldContext, EGimicType _type)
 {
-	if (_subject.IsValid() == false)
+	if (nullptr == _worldContext)
 		return nullptr;
 
-	TObjectPtr<UGimicAction> Instance;
+	TObjectPtr<UGimicAction> Instance = nullptr;
 
 	switch (_type)
 	{
 	case EGimicType::COUNTER:
-		Instance = NewObject<UCounterGimic>(_subject.Get()->GetWorld());
+		Instance = NewObject<UCounterGimic>(_worldContext);
 	case EGimicType::STAGGER:
-		Instance = NewObject<UStaggerGimic>(_subject.Get()->GetWorld());
-	default:
-		return nullptr;
+		Instance = NewObject<UStaggerGimic>(_worldContext);
 	}
 
-	Instance->SetSubject(_subject.Get());
 	return Instance;
 }

@@ -17,11 +17,11 @@ struct FAttackDetail
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
+	EAttackDetailType Type;
+	UPROPERTY(EditAnywhere)
 	float Size;
 	UPROPERTY(EditAnywhere)
 	float Range;
-	UPROPERTY(EditAnywhere)
-	EAttackDetailType Type;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ASubObject> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
 };
@@ -36,7 +36,9 @@ public:
 	// 액션 가중치 : 같은 종류의 액션이 여럿일때, 확률적으로 선택하기 위한 가중치
 	UPROPERTY(EditAnywhere)
 	float Weight{ 1.0f };
-	// 공격 간 대기 간격 : 쿨타임
+	UPROPERTY(EditAnywhere)
+	uint8 SkillCost;
+	// 공격 간 대기 간격 : 쿨타임 용도
 	UPROPERTY(EditAnywhere)
 	float Interval{ 2.0f };
 	UPROPERTY(EditAnywhere)

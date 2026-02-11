@@ -161,8 +161,8 @@ void ABossMonster::OnDead()
 void ABossMonster::StartGimic(EGimicType _type)
 {
 	// 기믹 시작
-	CurGimic = UGimicActionFactory::CreateGimic(this, _type);
-	CurGimic->Start();
+	CurGimic = UGimicActionFactory::CreateGimic(GetWorld(), _type);
+	CurGimic->Start(this);
 }
 
 void ABossMonster::ProceedGimic(float _deltaSecond)

@@ -108,7 +108,7 @@ enum class EMonsterAttackType : uint8
 {
 	MELEE		UMETA(DisplayName = "Melee"),
 	RANGED		UMETA(DisplayName = "Ranged"),
-	GIMIC		UMETA(DisplayName = "GIMIC"),
+	GIMIC		UMETA(DisplayName = "Gimic"),
 
 	END
 };

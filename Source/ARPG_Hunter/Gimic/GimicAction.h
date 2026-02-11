@@ -31,8 +31,7 @@ protected:
 	bool IsTimeOut() { return ElapsedTime > LifeTime; }
 
 public:
-	virtual void SetSubject(TWeakObjectPtr<AActor> _subject) { Subject = _subject; };
-	virtual void Start() {};
+	virtual void Start(TWeakObjectPtr<AActor> _subject) { Subject = _subject; };
 	virtual void Proceed(float _deltaTime);
 	virtual void Interrupt(const FHitInfo& _hitInfo) {}
 };
@@ -68,5 +67,5 @@ class ARPG_HUNTER_API UGimicActionFactory : public UObject
 {
 	GENERATED_BODY()
 public:
-	static TObjectPtr<UGimicAction> CreateGimic(TWeakObjectPtr<AActor> _subject, EGimicType _type);
+	static TObjectPtr<UGimicAction> CreateGimic(UObject* _worldContext, EGimicType _type);
 };
