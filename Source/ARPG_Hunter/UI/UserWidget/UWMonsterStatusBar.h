@@ -22,10 +22,28 @@ private:
 	TObjectPtr<UProgressBar> HealthBar;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> HealthLabel;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UProgressBar> StaggerBar;
 
 public:
 	void SetHealthBarPercent(uint16 _remain, uint16 _max);
+};
+
+UCLASS()
+class ARPG_HUNTER_API UUWBossMonsterStatusBar : public UUWMonsterStatusBar
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> StaggerBar;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> GimicStaggerBar;
+
+public:
 	void SetStaggerBarPercent(uint16 _remain, uint16 _max);
+	void SetGimicStaggerBarPercent(uint16 _remain, uint16 _max);
+	void ShowUI();
+	void HideUI();
+
+	void ShowGimicStagger();
+	void HideGimicStagger();
 };

@@ -18,9 +18,10 @@ class ARPG_HUNTER_API UGimicAction : public UObject
 {
 	GENERATED_BODY()
 	
+	// 기믹의 동작도 사실 몽타주로 가능할 것 -> 즉, 얘는 굳이 사용할 필요가 없을 것임
 private:
 	EGimicType Type;
-	TWeakObjectPtr<AActor> Subject; // 기믹 행둥 주체 약참조
+	TWeakObjectPtr<AActor> Subject; // 기믹 행동 주체 약참조
 
 	float ElapsedTime{ 0.0f };
 	float LifeTime{ 5.0f };

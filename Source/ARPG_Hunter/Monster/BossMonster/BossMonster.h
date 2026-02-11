@@ -25,11 +25,16 @@ private:
 	TObjectPtr<UGimicAction> CurGimic;
 
 	// Player HUD에 보스 체력바 출력
-	// 데미지 폰트 위치 범위
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> StatusBarClass;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UUserWidget> StatusBar;
+
 	void MeleeAttack(const FAttackDetail& _detail);
 	void RangedAttack(const FAttackDetail& _detail);
 
 protected:
+	void BeginPlay() override;
 	void OnDead() override;
 
 public:

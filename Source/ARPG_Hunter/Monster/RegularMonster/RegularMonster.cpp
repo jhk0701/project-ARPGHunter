@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Monster/RegularMonster/RegularMonster.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -38,7 +38,6 @@ void ARegularMonster::BeginPlay()
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
 	{
 		GetStatComp()->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
-		GetStatComp()->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetStaggerBarPercent);
 	}
 }
 
@@ -64,7 +63,6 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 	{
 		// UI 초기화
 		MonsterStatusBar->SetHealthBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::HEALTH), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-		MonsterStatusBar->SetStaggerBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::STAMINA), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::STAMINA));
 	}
 }
 

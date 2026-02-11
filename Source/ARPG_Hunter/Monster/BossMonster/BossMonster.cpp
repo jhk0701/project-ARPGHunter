@@ -14,6 +14,7 @@
 #include "Component/StatComponent.h"
 #include "SubObject/SubObject.h"
 #include "Gimic/GimicAction.h"
+#include "UI/UserWidget/UWMonsterStatusBar.h"
 
 ABossMonster::ABossMonster()
 {
@@ -28,6 +29,21 @@ ABossMonster::ABossMonster()
 	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
 }
 
+void ABossMonster::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// UI 생성
+	if (StatusBarClass)
+	{
+		StatusBar = CreateWidget<UUWMonsterStatusBar>(GetWorld(), StatusBarClass);
+
+		UUWBossMonsterStatusBar* BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+		GetStatComp()->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(BossUI, &UUWBossMonsterStatusBar::SetHealthBarPercent);
+		GetStatComp()->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(BossUI, &UUWBossMonsterStatusBar::SetStaggerBarPercent);
+	}
+}
+
 void ABossMonster::Init(const FMonsterInitParam& _param)
 {
 	Super::Init(_param);
@@ -37,6 +53,18 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	{
 		FMonsterAction* Action = GetAction(ActionID);
 		ActionTotalWeights[static_cast<uint8>(Action->Type)] += Action->Weight;
+	}
+
+	// UI 초기화
+	if (StatusBar)
+	{
+		UStatComponent* Stat = GetStatComp();
+
+		UUWBossMonsterStatusBar* BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+		BossUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+		BossUI->SetStaggerBarPercent(Stat->GetResourceValue(ECharacterResourceType::STAMINA), Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
+
+		BossUI->ShowUI();
 	}
 }
 
@@ -156,6 +184,12 @@ void ABossMonster::OnDead()
 
 	if (CurGimic)
 		CurGimic = nullptr;
+
+	if (StatusBar)
+	{
+		UUWBossMonsterStatusBar* BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+		BossUI->HideUI();
+	}
 }
 
 void ABossMonster::StartGimic(EGimicType _type)
