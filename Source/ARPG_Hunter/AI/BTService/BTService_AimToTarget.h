@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,6 +22,8 @@ private:
 	float AimRange{ 60.0f };
 	UPROPERTY(EditAnywhere)
 	float RotateSpeed{ 10.0 };
+	UPROPERTY(EditAnywhere)
+	bool bCheckMovable{ true };
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

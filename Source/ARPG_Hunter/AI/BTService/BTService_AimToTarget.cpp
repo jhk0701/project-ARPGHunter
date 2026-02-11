@@ -24,7 +24,9 @@ void UBTService_AimToTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
 	TObjectPtr<AMonsterBase> OwnerActor = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
-	if (nullptr == OwnerActor || !OwnerActor->IsMovable())
+	if (nullptr == OwnerActor)
+		return;
+	if (bCheckMovable && OwnerActor->IsMovable() == false)
 		return;
 
 	FVector OwnerFwd = OwnerActor->GetActorForwardVector();
