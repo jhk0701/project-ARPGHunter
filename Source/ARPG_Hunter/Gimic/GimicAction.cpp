@@ -5,7 +5,13 @@
 #include "Define/Enum.h"
 #include "Interface/GimicHandler.h"
 #include "Interface/Hitable.h"
+#include "Data/MonsterData.h"
 
+void UGimicAction::Start(TWeakObjectPtr<AActor> _subject, const FGimicParam& _param)
+{
+	Subject = _subject;
+	LifeTime = _param.LifeTime;
+};
 
 void UGimicAction::Proceed(float _deltaTime)
 {
@@ -24,8 +30,13 @@ void UGimicAction::Proceed(float _deltaTime)
 UCounterGimic::UCounterGimic()
 {
 	SetType(EGimicType::COUNTER);
-	SetLifeTime(2.0f);
 	EndureCount = 1;
+}
+
+void UCounterGimic::Start(TWeakObjectPtr<AActor> _subject, const FGimicParam& _param)
+{
+	Super::Start(_subject, _param);
+	EndureCount = _param.OptionValue;
 }
 
 void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
@@ -61,8 +72,12 @@ void UCounterGimic::Interrupt(const FHitInfo& _hitInfo)
 UStaggerGimic::UStaggerGimic()
 {
 	SetType(EGimicType::STAGGER);
-	SetLifeTime(10.0f);
-	StaggerValue = 200;
+}
+
+void UStaggerGimic::Start(TWeakObjectPtr<AActor> _subject, const FGimicParam& _param)
+{
+	Super::Start(_subject, _param);
+	StaggerValue = _param.OptionValue;
 }
 
 void UStaggerGimic::Interrupt(const FHitInfo& _hitInfo)

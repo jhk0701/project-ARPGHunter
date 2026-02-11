@@ -8,6 +8,8 @@
 
 enum class EGimicType : uint8;
 struct FHitInfo;
+struct FGimicParam;
+
 /**
  * 
  */
@@ -32,7 +34,7 @@ protected:
 	bool IsTimeOut() { return ElapsedTime > LifeTime; }
 
 public:
-	virtual void Start(TWeakObjectPtr<AActor> _subject) { Subject = _subject; };
+	virtual void Start(TWeakObjectPtr<AActor> _subject, const FGimicParam& _param);
 	virtual void Proceed(float _deltaTime);
 	virtual void Interrupt(const FHitInfo& _hitInfo) {}
 };
@@ -47,6 +49,7 @@ private:
 
 public:
 	UCounterGimic();
+	void Start(TWeakObjectPtr<AActor> _subject, const FGimicParam& _param) override;
 	void Interrupt(const FHitInfo& _hitInfo) override;
 };
 
@@ -60,9 +63,9 @@ private:
 
 public:
 	UStaggerGimic();
+	void Start(TWeakObjectPtr<AActor> _subject, const FGimicParam& _param) override;
 	void Interrupt(const FHitInfo& _hitInfo) override;
 };
-
 
 UCLASS()
 class ARPG_HUNTER_API UGimicActionFactory : public UObject 

@@ -165,7 +165,7 @@ void ABossMonster::StartGimic(EGimicType _type)
 	Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
 
 	CurGimic = UGimicActionFactory::CreateGimic(GetWorld(), _type);
-	CurGimic->Start(this);
+	CurGimic->Start(this, GetCurAction()->GimicParam);
 }
 
 void ABossMonster::ProceedGimic(float _deltaSecond)
