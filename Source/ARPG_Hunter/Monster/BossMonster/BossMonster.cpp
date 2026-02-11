@@ -161,6 +161,9 @@ void ABossMonster::OnDead()
 void ABossMonster::StartGimic(EGimicType _type)
 {
 	// 기믹 시작
+	UStatComponent* Stat = GetStatComp();
+	Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
+
 	CurGimic = UGimicActionFactory::CreateGimic(GetWorld(), _type);
 	CurGimic->Start(this);
 }
@@ -187,6 +190,7 @@ void ABossMonster::StopGimic(EGimicType _type)
 
 bool ABossMonster::CanUseSkill()
 {
-	bool bCanUseSkill = GetStatComp()->GetResourceValue(ECharacterResourceType::SKILL) == GetStatComp()->GetResourceMaxValue(ECharacterResourceType::SKILL);;
-	return bCanUseSkill;
+	UStatComponent* Stat = GetStatComp();
+	return Stat->GetResourceValue(ECharacterResourceType::SKILL) ==
+		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);;
 }
