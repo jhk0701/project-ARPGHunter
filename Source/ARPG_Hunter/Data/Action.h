@@ -17,7 +17,7 @@ struct FActionOption
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	FVector Size;
+	FVector Size{32.0f, 32.0f, 32.0f};
 	UPROPERTY(EditAnywhere)
 	float Range;
 	UPROPERTY(EditAnywhere)

@@ -94,7 +94,7 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 	bool bIsHit = false;
 
 	FVector Fwd = GetOwner()->GetActorForwardVector();
-	FVector Start = GetOwner()->GetActorLocation() + Fwd * 100.0f;
+	FVector Start = GetOwner()->GetActorLocation() + Fwd * 50.0f;
 	FVector End = Start + Fwd * Option.Range;
 
 	switch (Option.Detail)

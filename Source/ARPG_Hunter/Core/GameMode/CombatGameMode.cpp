@@ -51,7 +51,8 @@ void ACombatGameMode::PostInitializeComponents()
 
 	// 게임 인스턴스에 저장된 스테이지 ID 데이터 읽어오기
 	UARPGGameInstance* GI = Cast<UARPGGameInstance>(GetGameInstance());
-	check(nullptr != GI);
+	if (nullptr == GI)
+		return;
 
 	if (GI->GetStageID().IsNone())
 	{
