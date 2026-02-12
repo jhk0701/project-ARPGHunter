@@ -7,6 +7,7 @@
 #include "BossMonster.generated.h"
 
 enum class EMonsterAttackType : uint8;
+enum class EGimicType : uint8;
 
 /**
  * 
@@ -36,4 +37,5 @@ public:
 	void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool CanUseSkill();
+	void StartGimic(EGimicType _type, uint16 _gimicValue);
 };

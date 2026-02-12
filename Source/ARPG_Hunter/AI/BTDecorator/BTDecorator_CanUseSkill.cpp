@@ -1,11 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTDecorator/BTDecorator_CanUseSkill.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Controller/MonsterAIController.h"
 
-#include "Monster/BossMonster/BossMonster.h"
+#include "Monster/BossMonster.h"
 
 
 UBTDecorator_CanUseSkill::UBTDecorator_CanUseSkill()

@@ -25,7 +25,7 @@ struct FMonsterInitParam
 DECLARE_DELEGATE(FOnAttackMontageEnded);
 DECLARE_DELEGATE_OneParam(FOnDead, TObjectPtr<class AMonsterBase>);
 
-UCLASS()
+UCLASS(Abstract)
 class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
 {
 	GENERATED_BODY()
@@ -43,8 +43,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UMonsterActionComponent> ActionComp;
-	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
@@ -60,8 +58,11 @@ private:
 	bool bIsMovable{ true };
 
 protected:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMonsterActionComponent> ActionComp;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	 
+	
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
 	virtual void OnDead();
@@ -75,7 +76,6 @@ protected:
 	FMonsterData* GetData() const { return Data; }
 	
 	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
-	TObjectPtr<UMonsterActionComponent> GetActionComp() { return ActionComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
 
 public:

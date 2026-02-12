@@ -89,7 +89,6 @@ enum class EMonsterType : uint8
 
 	END			UMETA(Hidden)
 };
-FString EnumToString(EMonsterType _type);
 
 UENUM(BlueprintType)
 enum class EMonsterAttackType : uint8 

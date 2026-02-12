@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Monster/BossMonster/BossMonster.h"
+#include "Monster/BossMonster.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -12,11 +12,12 @@
 #include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/MonsterActionComponent.h"
-#include "SubObject/SubObject.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 
 ABossMonster::ABossMonster()
 {
+	ActionComp = CreateDefaultSubobject<UBossActionComponent>(TEXT("BossActionComp"));
+
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_BossMonster.BT_BossMonster'"));
 	if (BTFinder.Succeeded())
 		SetBehaviorTree(BTFinder.Object);
@@ -24,7 +25,7 @@ ABossMonster::ABossMonster()
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBFinder(TEXT("/Script/AIModule.BlackboardData'/Game/02-BP/Monster/AI/BB_BossMonster.BB_BossMonster'"));
 	if (BBFinder.Succeeded())
 		SetBlackboardData(BBFinder.Object);
-	
+
 	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
 }
 
@@ -83,7 +84,7 @@ float ABossMonster::Attack(EMonsterAttackType _type)
 		Sum += Action.Weight;
 		if (RandomValue < Sum)
 		{
-			GetActionComp()->SetCurAttackIdx(i);
+			ActionComp->SetCurAttackIdx(i);
 			break;
 		}
 	}
@@ -95,17 +96,18 @@ void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	Super::HitBy(_hitInfo);
 
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 	UAnimMontage* HitMontage = GetData()->HitMontage;
 	if (HitMontage && IsDead())
 	{
-		TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 		AnimInst->Montage_Play(HitMontage);
 		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
 	}
 
 	// 기믹 처리
-	/*if (CurGimic)
-		CurGimic->Interrupt(_hitInfo);*/
+	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
+	if (BossAction->IsInGimic())
+		BossAction->InterruptGimic(_hitInfo);
 }
 
 void ABossMonster::OnDead()
@@ -154,4 +156,10 @@ bool ABossMonster::CanUseSkill()
 	UStatComponent* Stat = GetStatComp();
 	return Stat->GetResourceValue(ECharacterResourceType::SKILL) ==
 		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);
+}
+
+void ABossMonster::StartGimic(EGimicType _type, uint16 _gimicValue)
+{
+	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
+	BossAction->StartGimic(_type, _gimicValue);
 }

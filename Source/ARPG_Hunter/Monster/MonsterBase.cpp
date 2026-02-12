@@ -23,7 +23,9 @@ AMonsterBase::AMonsterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
-	ActionComp = CreateDefaultSubobject<UMonsterActionComponent>(TEXT("ActionComp"));
+	// 하위에서 필요한 컴포넌트를 넣을 것
+	// ActionComp = CreateDefaultSubobject<UMonsterActionComponent>(TEXT("ActionComp")); 
+
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
 	// WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
 

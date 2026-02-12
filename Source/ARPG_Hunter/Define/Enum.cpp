@@ -31,20 +31,6 @@ FName EnumToName(EActionProcess _value)
 	}
 }
 
-FString EnumToString(EMonsterType _type)
-{
-	switch (_type)
-	{
-	case EMonsterType::REGULAR:
-		return FString(TEXT("Regular"));
-	case EMonsterType::BOSS:
-		return FString(TEXT("Boss"));
-
-	default:
-		return FString();
-	}
-}
-
 FName EnumToName(EGimicType _type)
 {
 	switch (_type)
@@ -53,6 +39,9 @@ FName EnumToName(EGimicType _type)
 		return FName(TEXT("Counter"));
 	case EGimicType::STAGGER:
 		return FName(TEXT("Stagger"));
+
+	case EGimicType::END:
+		return FName(TEXT("End"));
 	default:
 		return NAME_None;
 	}

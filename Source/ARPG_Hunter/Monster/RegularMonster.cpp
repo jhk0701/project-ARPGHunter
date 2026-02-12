@@ -1,18 +1,21 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Monster/RegularMonster/RegularMonster.h"
+#include "Monster/RegularMonster.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Components/WidgetComponent.h"
 
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Component/StatComponent.h"
+#include "Component/ActionComponent/MonsterActionComponent.h"
 #include "Data/MonsterData.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 #include "UI/Actor/DamageFont.h"
 
 ARegularMonster::ARegularMonster()
 {
+	ActionComp = CreateDefaultSubobject<UMonsterActionComponent>(TEXT("RegularActionComp"));
+
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTFinder(TEXT("/Script/AIModule.BehaviorTree'/Game/02-BP/Monster/AI/BT_RegularMonster.BT_RegularMonster'"));
 	if (BTFinder.Succeeded())
 		SetBehaviorTree(BTFinder.Object);
@@ -60,10 +63,7 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 
 	// UI 설정
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
-	{
-		// UI 초기화
 		MonsterStatusBar->SetHealthBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::HEALTH), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-	}
 }
 
 void ARegularMonster::HitBy(const FHitInfo& _hitInfo)

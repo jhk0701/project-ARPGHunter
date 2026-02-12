@@ -3,8 +3,11 @@
 
 #include "Component/ActionComponent/MonsterActionComponent.h"
 
+#include "Define/Enum.h"
 #include "Data/Action.h"
 #include "Data/MonsterData.h"
+#include "Interface/Hitable.h"
+#include "Monster/BossMonster.h"
 
 void UMonsterActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
@@ -29,4 +32,83 @@ float UMonsterActionComponent::PlayAttackAction()
 	CurAttackMontage = AttackMontage;
 
 	return MonsterAction.Interval;
+}
+
+
+void UBossActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
+{
+	Super::Init(_data, _ownerAnimInstance, _firePointComp);
+	CurState = NORMAL;
+}
+
+bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)
+{
+	if (CurState != NORMAL)
+		return false;
+
+	CurGimicType = _type;
+	CurState = GIMIC;
+	GimicValue = _gimicValue;
+
+	return true;
+}
+
+void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
+{
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TObjectPtr<UAnimMontage> Montage = GetCurrentMontage();
+
+	if (nullptr == AnimInst || nullptr == Montage)
+		return;
+
+	bool bInterrupted = false;
+	switch (CurGimicType)
+	{
+	case EGimicType::COUNTER:
+		bInterrupted = InterruptCounter(_hitInfo);
+		break;
+	case EGimicType::STAGGER:
+		bInterrupted = InterruptStagger(_hitInfo);
+		break;
+	}
+
+	if (bInterrupted)
+		GetAnimInstance()->Montage_JumpToSection(EnumToName(EGimicType::END), GetCurrentMontage());
+
+	return;
+}
+
+bool UBossActionComponent::InterruptCounter(const FHitInfo& _hitInfo)
+{
+	// 맞은 범위가 정면이며, 스매시 이상 공격이었을 경우, 방해처리
+	if (_hitInfo.AttackType < EAttackType::SMASH || _hitInfo.Attacker.IsValid() == false)
+		return false;
+
+	FVector AttackFwd = _hitInfo.Attacker->GetActorForwardVector();
+	FVector SubjectFwd = GetOwner()->GetActorForwardVector();
+
+	double Dot = FVector::DotProduct(AttackFwd, SubjectFwd);
+
+	// 정면 45도 기준 : 180.0f - 45.0f
+	if (Dot < 0 && FMath::RadiansToDegrees(FMath::Acos(Dot)) > 135.0f)
+		GimicValue--;
+
+	return GimicValue == 0;
+}
+
+bool UBossActionComponent::InterruptStagger(const FHitInfo& _hitInfo)
+{
+	if (_hitInfo.AttackType < EAttackType::SMASH || _hitInfo.Attacker.IsValid() == false)
+		return false;
+
+	if (GimicValue <= _hitInfo.StaggerDamage)
+	{
+		// 무력화 완료
+		GimicValue = 0;
+		return true;
+	}
+	else
+		GimicValue -= _hitInfo.StaggerDamage; // 무력화 진행
+
+	return false;
 }

@@ -43,4 +43,5 @@ public:
 	void ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction);
 
 	TObjectPtr<UAction> GetCurrentAction() { return CurrentAction; }
+	
 };
