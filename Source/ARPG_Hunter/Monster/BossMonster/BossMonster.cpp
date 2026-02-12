@@ -12,6 +12,7 @@
 #include "Data/MonsterData.h"
 #include "Data/AttackConfig.h"
 #include "Component/StatComponent.h"
+#include "Component/ActionComponent/MonsterActionComponent.h"
 #include "SubObject/SubObject.h"
 #include "Gimic/GimicAction.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
@@ -49,10 +50,9 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	Super::Init(_param);
 
 	FMonsterData* MonsterData = GetData();
-	for (const FName& ActionID : MonsterData->AttackActions)
+	for (const FMonsterAction& Action : MonsterData->AttackActions)
 	{
-		FMonsterAction* Action = GetAction(ActionID);
-		ActionTotalWeights[static_cast<uint8>(Action->Type)] += Action->Weight;
+		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 	}
 
 	// UI 초기화
@@ -68,122 +68,51 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	}
 }
 
-float ABossMonster::Attack(FMonsterAttackParam* _param)
+float ABossMonster::Attack(EMonsterAttackType _type)
 {
-	if (nullptr == _param)
-		return -1.0f;
-
 	// 가중치에 따른 선별
 	FMonsterData* MonsterData = GetData();
-	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_param->Type)]);
+	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_type)]);
 	float Sum = 0.0f;
 
 	for (uint8 i = 0; i < MonsterData->AttackActions.Num(); ++i)
 	{
-		FMonsterAction* Action = GetAction(MonsterData->AttackActions[i]);
+		const FMonsterAction& Action = MonsterData->AttackActions[i];
 
-		if (Action->Type != _param->Type)
+		if (Action.Type != _type)
 			continue;
 
-		Sum += Action->Weight;
+		Sum += Action.Weight;
 		if (RandomValue < Sum)
 		{
-			SetCurAttackIdx(i);
+			GetActionComp()->SetCurAttackIdx(i);
 			break;
 		}
 	}
 
-	return Super::Attack(_param);
-}
-
-void ABossMonster::HandleAttackNotify(uint8 _opt)
-{
-	FMonsterAction* Action = GetCurAction();
-	const FAttackDetail& Detail = Action->AttackDetails[_opt];
-
-	if (Detail.Type <= EAttackDetailType::MELEE_END)
-		MeleeAttack(Detail);
-	else
-		RangedAttack(Detail);
+	return Super::Attack(_type);
 }
 
 void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	Super::HitBy(_hitInfo);
 
-	UAnimMontage* HitMontage = GetHitMontage();
+	UAnimMontage* HitMontage = GetData()->HitMontage;
 	if (HitMontage && IsDead())
 	{
-		TObjectPtr<UAnimInstance> AnimInst = GetAnimInst();
+		TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 		AnimInst->Montage_Play(HitMontage);
 		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
 	}
 
 	// 기믹 처리
-	if (CurGimic)
-		CurGimic->Interrupt(_hitInfo);
-}
-
-void ABossMonster::MeleeAttack(const FAttackDetail& _detail)
-{
-	FAttackParam Param;
-	Param.Subject = this;
-	Param.Channel = ECC_GameTraceChannel3;
-
-	Param.Size = _detail.Size;
-	Param.Range = _detail.Range;
-	Param.DetailType = _detail.Type;
-	Param.OnHitAction =
-		[this](FHitResult& _hitResult)
-		{
-			IHitable* Hitable = Cast<IHitable>(_hitResult.GetActor());
-
-			if (Hitable)
-			{
-				FHitInfo HitInfo;
-				HitInfo.Damage = GetStatComp()->GetStat(ECharacterStatType::ATTACK);
-				HitInfo.Attacker = this;
-				HitInfo.HitResult = &_hitResult;
-
-				Hitable->HitBy(HitInfo);
-			}
-		};
-
-	UAttackConfig::Act(Param);
-}
-
-void ABossMonster::RangedAttack(const FAttackDetail& _detail)
-{
-	// 공격 목표 찾기
-	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
-	if (nullptr == AICon)
-		return;
-
-	UBlackboardComponent* BBComp = AICon->GetBlackboardComponent();
-	UObject* Target = BBComp->GetValueAsObject(FName(TEXT("Target")));
-	if (nullptr == Target)
-		return;
-
-	TObjectPtr<AActor> TargetActor = Cast<AActor>(Target);
-
-	UClass* ProjectileClass = _detail.SubObjectClass;
-	if (nullptr == ProjectileClass)
-		return;
-
-	// 투사체 발사
-	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-	TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
-	Projectile->Init(nullptr); // TODO : 투사체 데이터 삽입
-	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
-	Projectile->Fire(this, GetActorForwardVector());
+	/*if (CurGimic)
+		CurGimic->Interrupt(_hitInfo);*/
 }
 
 void ABossMonster::OnDead()
 {
 	Super::OnDead();
-
-	if (CurGimic)
-		CurGimic = nullptr;
 
 	if (StatusBar)
 	{
@@ -192,39 +121,39 @@ void ABossMonster::OnDead()
 	}
 }
 
-void ABossMonster::StartGimic(EGimicType _type)
-{
-	// 기믹 시작
-	UStatComponent* Stat = GetStatComp();
-	Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
-
-	CurGimic = UGimicActionFactory::CreateGimic(GetWorld(), _type);
-	CurGimic->Start(this, GetCurAction()->GimicParam);
-}
-
-void ABossMonster::ProceedGimic(float _deltaSecond)
-{
-	if (CurGimic)
-		CurGimic->Proceed(_deltaSecond);
-}
-
-void ABossMonster::CompleteGimic()
-{ 
-	// 기믹이 성공적으로 발동
-	GetAnimInst()->Montage_JumpToSection(FName(TEXT("Complete")), GetCurrentMontage());
-	CurGimic = nullptr;
-}
-
-void ABossMonster::StopGimic(EGimicType _type)
-{
-	// 플레이어가 저지한 경우
-	GetAnimInst()->Montage_JumpToSection(EnumToName(_type), GetCurrentMontage());
-	CurGimic = nullptr;
-}
-
+//void ABossMonster::StartGimic(EGimicType _type)
+//{
+//	// 기믹 시작
+//	UStatComponent* Stat = GetStatComp();
+//	Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
+//
+//	CurGimic = UGimicActionFactory::CreateGimic(GetWorld(), _type);
+//	CurGimic->Start(this, GetCurAction()->GimicParam);
+//}
+//
+//void ABossMonster::ProceedGimic(float _deltaSecond)
+//{
+//	if (CurGimic)
+//		CurGimic->Proceed(_deltaSecond);
+//}
+//
+//void ABossMonster::CompleteGimic()
+//{ 
+//	// 기믹이 성공적으로 발동
+//	GetAnimInst()->Montage_JumpToSection(FName(TEXT("Complete")), GetCurrentMontage());
+//	CurGimic = nullptr;
+//}
+//
+//void ABossMonster::StopGimic(EGimicType _type)
+//{
+//	// 플레이어가 저지한 경우
+//	GetAnimInst()->Montage_JumpToSection(EnumToName(_type), GetCurrentMontage());
+//	CurGimic = nullptr;
+//}
+//
 bool ABossMonster::CanUseSkill()
 {
 	UStatComponent* Stat = GetStatComp();
 	return Stat->GetResourceValue(ECharacterResourceType::SKILL) ==
-		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);;
+		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);
 }

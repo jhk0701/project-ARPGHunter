@@ -43,7 +43,7 @@ private:
 	void ClearActionProgressTimer();
 
 public:
-	void Init(UAnimInstance* _ownerAnimInstance) override;
+	void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
 	void Clear() override;
 
 	void ResetAction();

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Monster/RegularMonster/RegularMonster.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -71,7 +71,7 @@ void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 	Super::HitBy(_hitInfo);
 
 	// 모션 재생
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInst();
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 	if (GetHitMontage())
 	{
 		AnimInst->Montage_Play(GetHitMontage());

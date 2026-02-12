@@ -8,12 +8,14 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/WidgetComponent.h"
 
+#include "Core/Subsystem/PlayerManager.h"
+#include "Core/Subsystem/DataManager.h"
+#include "Core/GameMode/CombatGameMode.h"
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Controller/PlayerCombatController.h"
-#include "Core/Subsystem/PlayerManager.h"
-#include "Core/GameMode/CombatGameMode.h"
+#include "Data/WeaponTypeData.h"
 
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
@@ -81,11 +83,14 @@ void APlayerCharacter::BeginPlay()
 
 	// 플레이어 데이터 받아오기
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+
 	StatComp->Init(PlayerManager->GetPlayerStat());
 	StatComp->StartStaminaRecovery();
-
 	EquipComp->Init();
-	ActionComp->Init(GetMesh()->GetAnimInstance());
+
+	// TODO : 플레이어 저장 데이터 기반으로 변경
+	ActionComp->Init(DataManager->GetWeaponTypeData(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), WeaponMeshComp);
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;

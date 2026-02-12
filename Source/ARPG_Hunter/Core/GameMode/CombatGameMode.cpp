@@ -27,19 +27,14 @@ ACombatGameMode::ACombatGameMode()
 	GameStateClass = ACombatGameState::StaticClass();
 	HUDClass = APlayerHUD::StaticClass();
 
-	if (nullptr == MonsterClass.Find(EMonsterType::MELEE))
-		MonsterClass.Add(EMonsterType::MELEE);
-	if (nullptr == MonsterClass.Find(EMonsterType::RANGED))
-		MonsterClass.Add(EMonsterType::RANGED);
+	if (nullptr == MonsterClass.Find(EMonsterType::REGULAR))
+		MonsterClass.Add(EMonsterType::REGULAR);
 	if (nullptr == MonsterClass.Find(EMonsterType::BOSS))
 		MonsterClass.Add(EMonsterType::BOSS);
 
-	static ConstructorHelpers::FClassFinder<AMonsterBase> MeleeMonFinder(TEXT("/Game/02-BP/Monster/BP_MeleeMonster.BP_MeleeMonster_C"));
-	if (MeleeMonFinder.Succeeded())
-		MonsterClass[EMonsterType::MELEE] = MeleeMonFinder.Class;
-	static ConstructorHelpers::FClassFinder<AMonsterBase> RangedMonFinder(TEXT("/Game/02-BP/Monster/BP_RangedMonster.BP_RangedMonster_C"));
-	if (RangedMonFinder.Succeeded())
-		MonsterClass[EMonsterType::RANGED] = RangedMonFinder.Class;
+	static ConstructorHelpers::FClassFinder<AMonsterBase> RegularMonFinder(TEXT("/Game/02-BP/Monster/BP_RegularMonster.BP_RegularMonster_C"));
+	if (RegularMonFinder.Succeeded())
+		MonsterClass[EMonsterType::REGULAR] = RegularMonFinder.Class;
 	static ConstructorHelpers::FClassFinder<AMonsterBase> BossMonFinder(TEXT("/Game/02-BP/Monster/BP_BossMonster.BP_BossMonster_C"));
 	if (BossMonFinder.Succeeded())
 		MonsterClass[EMonsterType::BOSS] = BossMonFinder.Class;
@@ -118,24 +113,19 @@ void ACombatGameMode::RegisterObjectPool()
 			
 			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 			
-			for (const FName& ID : MonsterData->AttackActions)
+			for (const FMonsterAction& ActionData : MonsterData->AttackActions)
 			{
-				FMonsterAction* Action = DataManager->GetMonsterActionData(ID);
-
-				for (const FAttackDetail& Detail : Action->AttackDetails)
+				if (nullptr == ActionData.Action->SubObjectClass)
+					continue; 
+				
+				uint8* Cnt = MaxCountSubObject.Find(ActionData.Action->SubObjectClass);
+				if (nullptr != Cnt)
 				{
-					if (nullptr == Detail.SubObjectClass)
-						continue;
-
-					uint8* Cnt = MaxCountSubObject.Find(Detail.SubObjectClass);
-					if (nullptr != Cnt)
-					{
-						*Cnt++;
-						continue;
-					}
-
-					MaxCountSubObject.Add(Detail.SubObjectClass, 5);
+					*Cnt += 5;
+					continue;
 				}
+
+				MaxCountSubObject.Add(ActionData.Action->SubObjectClass, 5);
 			}
 		}
 	}

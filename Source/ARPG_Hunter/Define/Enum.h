@@ -84,14 +84,11 @@ enum class ECharacterResourceType : uint8
 UENUM(BlueprintType)
 enum class EMonsterType : uint8
 {
-	MELEE		UMETA(DisplayName = "Melee"),
-	RANGED		UMETA(DisplayName = "Ranged"),
-
+	REGULAR		UMETA(DisplayName = "Regular"),
 	BOSS		UMETA(DisplayName = "Boss"),
 
 	END			UMETA(Hidden)
 };
-
 FString EnumToString(EMonsterType _type);
 
 UENUM(BlueprintType)
@@ -112,5 +109,4 @@ enum class EGimicType : uint8
 
 	END			UMETA(Hidden)
 };
-
 FName EnumToName(EGimicType _type);

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "MonsterData.generated.h"
 
+class UAction;
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
 enum class EAttackDetailType : uint8;
@@ -13,37 +14,7 @@ enum class ECharacterStatType : uint8;
 enum class EGimicType : uint8;
 
 USTRUCT()
-struct FAttackDetail 
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	EAttackDetailType Type;
-	UPROPERTY(EditAnywhere)
-	uint16 DamagePercent;
-
-	UPROPERTY(EditAnywhere)
-	float Size;
-	UPROPERTY(EditAnywhere)
-	float Range;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ASubObject> SubObjectClass; // 투사체, 장판 등 외형적으로 사용할 용도의 액터
-};
-
-USTRUCT()
-struct FGimicParam 
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	float LifeTime;
-
-	UPROPERTY(EditAnywhere)
-	uint16 OptionValue;
-};
-
-USTRUCT()
-struct FMonsterAction : public FTableRowBase
+struct FMonsterAction
 {
 	GENERATED_BODY()
 public:
@@ -52,20 +23,11 @@ public:
 	// 액션 가중치 : 같은 종류의 액션이 여럿일때, 확률적으로 선택하기 위한 가중치
 	UPROPERTY(EditAnywhere)
 	float Weight{ 1.0f };
-	
-	UPROPERTY(EditAnywhere)
-	FGimicParam GimicParam;
-
 	// 공격 간 대기 간격 : 쿨타임 용도
 	UPROPERTY(EditAnywhere)
 	float Interval{ 2.0f };
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UAnimMontage> Montage;
-	UPROPERTY(EditAnywhere)
-	TArray<FAttackDetail> AttackDetails;
-	
-	UPROPERTY(EditAnywhere)
-	TArray<TObjectPtr<class UEffectData>> EffectOnStart;
+	TObjectPtr<class UAction> Action;
 };
 
 /**
@@ -103,7 +65,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere)
-	TArray<FName> AttackActions;
+	TArray<FMonsterAction> AttackActions;
 
 	// Stat
 	UPROPERTY(EditAnywhere)

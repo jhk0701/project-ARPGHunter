@@ -19,7 +19,6 @@ void UAttackConfig::Act(const FAttackParam& _inParam)
 	case EAttackDetailType::RANGED_DIRECTIONAL:				Ranged(_inParam);
 		break;
 	}
-
 }
 
 void UAttackConfig::MeleeFront(const FAttackParam& _inParam)

@@ -17,9 +17,11 @@ UActionComponent::UActionComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UActionComponent::Init(UAnimInstance* _ownerAnimInstance)
+void UActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
 	OwnerAnimInstance = _ownerAnimInstance;
+	FirePointComp = _firePointComp;
+	CurrentAction = nullptr;
 }
 
 void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction)
@@ -137,7 +139,7 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 	// 투사체 발사
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	TObjectPtr<ASubObject> SubObj = Cast<ASubObject>(ObjectPool->Get(SubObjectClass));
-	SubObj->Init(nullptr); // TODO : 투사체 데이터 삽입
+	SubObj->Init(CurrentAction->SubObjectConfig);
 	
 	FVector FireVector;
 	switch (CurrentAction->ArrOption[_opt].Detail)
@@ -146,7 +148,11 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 		FireVector = GetOwner()->GetActorForwardVector();
 		break;
 	}
+	
+	if (FirePointComp)
+		SubObj->SetActorLocation(FirePointComp->GetSocketLocation(FirePointSocketName));
+	else
+		SubObj->SetActorLocation(GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 100.f);
 
-	// SubObj->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))))
 	SubObj->Fire(GetOwner(), FireVector);
 }

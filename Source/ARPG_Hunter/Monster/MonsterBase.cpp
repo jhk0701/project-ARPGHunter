@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -11,6 +11,8 @@
 #include "Core/GameMode/CombatGameMode.h"
 #include "Controller/MonsterAIController.h"
 #include "Component/StatComponent.h"
+#include "Component/ActionComponent/MonsterActionComponent.h"
+#include "Data/Action.h"
 #include "Data/MonsterData.h"
 #include "Data/EffectData.h"
 
@@ -21,6 +23,7 @@ AMonsterBase::AMonsterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
+	ActionComp = CreateDefaultSubobject<UMonsterActionComponent>(TEXT("ActionComp"));
 	WeaponComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponComp"));
 	// WeaponComp->SetupAttachment(GetMesh(), FName(TEXT("socket_weapon")));
 
@@ -41,7 +44,6 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
 {
-	CurAttackIdx = 0;
 	ID = _param.ID;
 	SectionID = _param.SectionIndex;
 	Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
@@ -86,8 +88,10 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	
 	// 애니메이션 설정
 	MeshComp->SetAnimInstanceClass(Data->AnimBP);
-	if (AnimInstance = GetMesh()->GetAnimInstance())
-		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
+	if (AnimInst)
+		AnimInst->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+	ActionComp->Init(Data, AnimInst, WeaponComp);
 
 	// AI BlackBoard 설정
 	if (AMonsterAIController* MonsterAI = Cast<AMonsterAIController>(GetController()))
@@ -108,7 +112,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == CurAttackMontage || _montage == GetHitMontage())
+	if (_montage == ActionComp->GetCurrentMontage() || _montage == Data->HitMontage)
 		OnAttackMontageEnded.ExecuteIfBound();
 
 	if (_bInterrupted == false)
@@ -120,7 +124,6 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 	bIsMovable = _bIsMovable;
 	GetCharacterMovement()->MaxWalkSpeed = _bIsMovable ? GetData()->MoveSpeed : 0.0f;
 }
-
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
@@ -149,28 +152,60 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	SetMovable(false);
 }
 
-float AMonsterBase::Attack(FMonsterAttackParam* _param)
+float AMonsterBase::Attack(EMonsterAttackType _type)
 {
-	// 공격 행위에 필요한 기본 동작
-	// 하위에서 _param을 이용한 세분화 (보스 패턴)에 사용될 것
-	ActionData = GetAction(Data->AttackActions[CurAttackIdx]);
-	TObjectPtr<UAnimMontage> AttackMontage = ActionData->Montage;
-
-	if (AttackMontage == nullptr ||
-		AnimInstance->Montage_IsPlaying(GetHitMontage()) ||
-		AnimInstance->Montage_IsPlaying(CurAttackMontage))
+	if (IsDead())
 		return -1.0f;
 
-	AnimInstance->Montage_Play(AttackMontage);
-	CurAttackMontage = AttackMontage;
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
+	if (AnimInst->Montage_IsPlaying(Data->HitMontage))
+		return -1.0f;
 
-	SetMovable(false);
+	// 공격
+	float Interval = ActionComp->PlayAttackAction();
+	if (Interval > 0)
+	{
+		SetMovable(false);
 
-	// 공격 시 자기 버프 획득
-	for (const TObjectPtr<UEffectData>& Effect : ActionData->EffectOnStart)
-		StatComp->ApplyEffect(Effect);
+		// 공격 시 자기 버프 획득
+		for (const TObjectPtr<UEffectData>& Effect : ActionComp->GetCurrentAction()->EffectOnStart)
+			StatComp->ApplyEffect(Effect);
+	}
 
-	return ActionData->Interval;
+	return Interval;
+}
+
+void AMonsterBase::HandleAttackNotify(uint8 _opt)
+{
+	if (IsDead())
+		return;
+
+	TWeakObjectPtr<AMonsterBase> WeakThis(this);
+	TWeakObjectPtr<UAction> WeakAction(ActionComp->GetCurrentAction());
+
+	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel3,
+		[WeakThis, WeakAction](TArray<FHitResult>& _hitResult)
+		{
+			if (WeakThis.IsValid() == false || WeakAction.IsValid() == false)
+				return;
+
+			uint16 Damage =	WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK) * WeakAction->AttackDamagePer * 0.01f;
+			for (FHitResult& hitResult : _hitResult)
+			{
+				IHitable* Hitable = Cast<IHitable>(hitResult.GetActor());
+
+				if (Hitable)
+				{
+					FHitInfo HitInfo;
+					HitInfo.Damage = Damage;
+					HitInfo.Attacker = WeakThis;
+					HitInfo.HitResult = &hitResult;
+
+					Hitable->HitBy(HitInfo);
+				}
+			}
+		}
+	);
 }
 
 void AMonsterBase::OnDead()
@@ -195,7 +230,6 @@ void AMonsterBase::OnDead()
 		{
 			// 일반적으로 ACombatGameMode에서 오브젝트 풀링 등록하며, 이벤트에 구독해뒀을 것
 			OnMonsterDead.ExecuteIfBound(this);
-
 		}, 
 		DeadDelay, false
 	);
@@ -205,21 +239,15 @@ bool AMonsterBase::IsDead() const
 {
 	return StatComp->IsDead();
 }
-
 EMonsterType AMonsterBase::GetType() const
 {
 	return Data->Type;
 }
-TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage() const
+TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage()
 {
 	return Data->HitMontage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
-}
-
-FMonsterAction* AMonsterBase::GetAction(const FName& _id)
-{
-	return GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterActionData(_id);
 }

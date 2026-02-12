@@ -4,18 +4,16 @@
 #include "Component/ActionComponent/PlayerActionComponent.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/DataManager.h"
 #include "Data/WeaponTypeData.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
 
-void UPlayerActionComponent::Init(UAnimInstance* _ownerAnimInstance)
+void UPlayerActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
-	Super::Init(_ownerAnimInstance);
+	Super::Init(_data, _ownerAnimInstance, _firePointComp);
 
-	// TODO: 플레이어 데이터를 기반으로 장비 모션을 적용
-	UDataManager* DataManager = GetOwner()->GetGameInstance()->GetSubsystem<UDataManager>();
-	CurWeaponType = DataManager->GetWeaponTypeData(EWeaponType::SWORD);
+	// 플레이어 데이터를 기반으로 장비 모션을 적용
+	CurWeaponType = Cast<FWeaponTypeData>(_data);
 	ResetAction();
 }
 
@@ -184,6 +182,7 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 	// 마지막 콤보였는지 확인
 	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
 }
+
 
 void UPlayerActionComponent::SetActionResetTimer(float _second)
 {

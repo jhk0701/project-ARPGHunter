@@ -22,11 +22,6 @@ struct FMonsterInitParam
 	FRotator Rotation;
 };
 
-struct FMonsterAttackParam 
-{
-	EMonsterAttackType Type;
-};
-
 DECLARE_DELEGATE(FOnAttackMontageEnded);
 DECLARE_DELEGATE_OneParam(FOnDead, TObjectPtr<class AMonsterBase>);
 
@@ -41,7 +36,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	FName ID;
 	FMonsterData* Data;
-	FMonsterAction* ActionData;
 
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SectionID{0};
@@ -49,12 +43,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UMonsterActionComponent> ActionComp;
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
-
-	UPROPERTY()
-	TObjectPtr<UAnimInstance> AnimInstance;
-	int CurAttackIdx{ 0 };
-	TObjectPtr<UAnimMontage> CurAttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;
@@ -79,26 +70,22 @@ protected:
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 	void SetMovable(bool _bIsMovable);
-	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
 
 	uint8 GetSectionID() const { return SectionID; }
-	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
 	FMonsterData* GetData() const { return Data; }
-	FMonsterAction* GetCurAction() { return ActionData; }
-	FMonsterAction* GetAction(const FName& _id);
 	
 	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
+	TObjectPtr<UMonsterActionComponent> GetActionComp() { return ActionComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
-	TObjectPtr<UAnimInstance> GetAnimInst() { return AnimInstance; }
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
 	FOnDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
-	virtual float Attack(FMonsterAttackParam* _param = nullptr);
+	virtual float Attack(EMonsterAttackType _type);
 	// IAttackNotifyHandler을(를) 통해 상속됨
-	virtual void HandleAttackNotify(uint8 _opt) override {};
+	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 
@@ -108,7 +95,7 @@ public:
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	EMonsterType GetType() const;
-	TObjectPtr<UAnimMontage> GetHitMontage() const;
+	TObjectPtr<UAnimMontage> GetHitMontage();
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
