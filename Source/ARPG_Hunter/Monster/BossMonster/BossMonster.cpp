@@ -10,11 +10,9 @@
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Controller/MonsterAIController.h"
 #include "Data/MonsterData.h"
-#include "Data/AttackConfig.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/MonsterActionComponent.h"
 #include "SubObject/SubObject.h"
-#include "Gimic/GimicAction.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 
 ABossMonster::ABossMonster()

@@ -13,7 +13,7 @@ void UPlayerActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance
 	Super::Init(_data, _ownerAnimInstance, _firePointComp);
 
 	// 플레이어 데이터를 기반으로 장비 모션을 적용
-	CurWeaponType = Cast<FWeaponTypeData>(_data);
+	CurWeaponType = static_cast<FWeaponTypeData*>(_data);
 	ResetAction();
 }
 

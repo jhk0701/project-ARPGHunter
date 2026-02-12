@@ -6,6 +6,8 @@
 #include "Component/ActionComponent/ActionComponent.h"
 #include "MonsterActionComponent.generated.h"
 
+struct FMonsterData;
+
 /**
  * 
  */
@@ -15,10 +17,13 @@ class ARPG_HUNTER_API UMonsterActionComponent : public UActionComponent
 	GENERATED_BODY()
 
 private:
+	FMonsterData* Data;
+
 	uint8 CurAttackIdx{ 0 };
-	TObjectPtr<UAnimMontage> CurAttackMontage;
+	TObjectPtr<UAnimMontage> CurAttackMontage{ nullptr };
 
 public:
+	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
 	float PlayAttackAction();
 
 	TObjectPtr<UAnimMontage> GetCurrentMontage() { return CurAttackMontage; }

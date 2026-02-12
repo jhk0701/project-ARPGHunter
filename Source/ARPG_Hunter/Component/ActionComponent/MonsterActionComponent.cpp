@@ -4,11 +4,21 @@
 #include "Component/ActionComponent/MonsterActionComponent.h"
 
 #include "Data/Action.h"
+#include "Data/MonsterData.h"
+
+void UMonsterActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
+{
+	Super::Init(_data, _ownerAnimInstance, _firePointComp);
+
+	Data = static_cast<FMonsterData*>(_data);
+}
 
 float UMonsterActionComponent::PlayAttackAction()
 {
-	UAction* Action = GetCurrentAction();
-	TObjectPtr<UAnimMontage> AttackMontage = Action->Montage;
+	const FMonsterAction& MonsterAction = Data->AttackActions[GetCurAttackIdx()];
+	SetCurrentAction(MonsterAction.Action);
+
+	TObjectPtr<UAnimMontage> AttackMontage = MonsterAction.Action->Montage;
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	if (AttackMontage == nullptr ||
@@ -17,4 +27,6 @@ float UMonsterActionComponent::PlayAttackAction()
 
 	AnimInst->Montage_Play(AttackMontage);
 	CurAttackMontage = AttackMontage;
+
+	return MonsterAction.Interval;
 }
