@@ -8,8 +8,8 @@
 
 class UEffectData;
 enum class EActionInput : uint8;
-enum class EAttackDirection : uint8;
 enum class EAttackType : uint8;
+enum class EAttackDetailType : uint8;
 
 USTRUCT()
 struct FActionOption
@@ -17,9 +17,11 @@ struct FActionOption
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
+	FVector Size;
+	UPROPERTY(EditAnywhere)
 	float Range;
 	UPROPERTY(EditAnywhere)
-	EAttackDirection Direction;
+	EAttackDetailType Detail;
 
 	UPROPERTY(EditAnywhere)
 	float KnockBackStr{100.0f};
@@ -32,15 +34,19 @@ UCLASS()
 class ARPG_HUNTER_API UAction : public UDataAsset
 {
 	GENERATED_BODY()
-
 public:
 	UPROPERTY(EditAnywhere)
 	EAttackType Type;
-
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
 	UPROPERTY(EditAnywhere)
 	uint16 StaggerDamage{ 10 };
+	UPROPERTY(EditAnywhere)
+	uint8 StaminaUsage{ 0 };
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	EActionInput InputType;
+
 	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
 	TObjectPtr<UAnimMontage> Montage;
 	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
@@ -48,10 +54,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Appearance|Effect")
 	TObjectPtr<class UNiagaraSystem> VFXOnHit;
 
-	UPROPERTY(EditAnywhere, Category = "Setting")
-	EActionInput InputType;
-	UPROPERTY(EditAnywhere)
-	uint8 StaminaUsage{ 0 };
+	UPROPERTY(EditAnywhere, Category = "Appearance|SubObject")
+	TSubclassOf<class ASubObject> SubObjectClass;
+	UPROPERTY(EditAnywhere, Category = "Appearance|SubObject")
+	TObjectPtr<class USubObjectConfig> SubObjectConfig;
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
 	TArray<TObjectPtr<UEffectData>> EffectOnStart;

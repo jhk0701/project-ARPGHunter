@@ -10,7 +10,7 @@
 
 #include "Component/StatComponent.h"
 #include "Component/EquipmentComponent.h"
-#include "Component/ActionComponent.h"
+#include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Controller/PlayerCombatController.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/GameMode/CombatGameMode.h"
@@ -28,7 +28,7 @@ APlayerCharacter::APlayerCharacter()
 #pragma region Create Comp
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
-	ActionComp = CreateDefaultSubobject<UActionComponent>(TEXT("ActionComp"));
+	ActionComp = CreateDefaultSubobject<UPlayerActionComponent>(TEXT("ActionComp"));
 
 	TopMeshComp = GetMesh();
 	HeadMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadMesh"));
@@ -200,8 +200,16 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 		}
 	);
 
-	if (StatComp->IsDead())
-		OnDead();
+	if (StatComp->IsDead()) 
+	{
+		// 플레이어 사망 후 처리
+		// 플레이어 사망 이벤트 발행
+		FStageEventContext Context;
+		Context.Target = this;
+
+		ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+		GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
+	}
 }
 
 bool APlayerCharacter::IsDead()
@@ -209,49 +217,43 @@ bool APlayerCharacter::IsDead()
 	return StatComp->IsDead();
 }
 
-void APlayerCharacter::OnDead()
-{
-	// 플레이어 사망 후 처리
-	// 플레이어 사망 이벤트 발행
-	FStageEventContext Context;
-	Context.Target = this;
-
-	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
-}
-
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
-	TArray<FHitResult> HitResults;
-	bool IsHit = ActionComp->TraceAttack(_opt, HitResults);
-	
-	if (IsHit)
-	{
-		uint16 Damage = CalculateBaseDamage();
-		bool bIsCritical = false;
-		
-		for (FHitResult& Hit : HitResults)
+	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
+	TWeakObjectPtr<UPlayerActionComponent> WeakActionComp(ActionComp);
+
+	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel4,
+		[WeakThis, WeakActionComp, _opt](TArray<FHitResult>& _hitResults)
 		{
-			IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
-			if (Hitable == nullptr)
-				continue;
+			if (WeakThis.IsValid() == false || WeakActionComp.IsValid() == false)
+				return;
 
-			FHitInfo HitInfo;
-			HitInfo.bIsCriticalHit = CalculateCritical(Damage);
-			HitInfo.Damage = Damage;
-			HitInfo.StaggerDamage = ActionComp->GetAttackActionStaggerDamage();
-			HitInfo.KnockBackStrength = ActionComp->GetAttackActionKnockBack(_opt);
-			HitInfo.AttackType = ActionComp->GetAttackActionType();
-			HitInfo.Attacker = this;
-			HitInfo.HitResult = &Hit;
+			uint16 Damage = WeakThis->CalculateBaseDamage();
+			bool bIsCritical = false;
 
-			bIsCritical |= HitInfo.bIsCriticalHit;
+			for (FHitResult& Hit : _hitResults)
+			{
+				IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
+				if (Hitable == nullptr)
+					continue;
 
-			Hitable->HitBy(HitInfo);
+				FHitInfo HitInfo;
+				HitInfo.bIsCriticalHit = WeakThis->CalculateCritical(Damage);
+				HitInfo.Damage = Damage;
+				HitInfo.StaggerDamage = WeakActionComp->GetAttackActionStaggerDamage();
+				HitInfo.KnockBackStrength = WeakActionComp->GetAttackActionKnockBack(_opt);
+				HitInfo.AttackType = WeakActionComp->GetAttackActionType();
+				HitInfo.Attacker = WeakThis;
+				HitInfo.HitResult = &Hit;
+
+				bIsCritical |= HitInfo.bIsCriticalHit;
+
+				Hitable->HitBy(HitInfo);
+			}
+
+			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.1f);
 		}
-
-		ShakeCamera(CameraShakeOnAttack, bIsCritical ? 1.0f : 0.1f);
-	}
+	);
 }
 
 uint16 APlayerCharacter::CalculateBaseDamage()
@@ -273,6 +275,11 @@ bool APlayerCharacter::CalculateCritical(uint16& _damage)
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
+}
+
+void APlayerCharacter::ShakeCameraOnAttack(float _scale)
+{
+	ShakeCamera(CameraShakeOnAttack, _scale);
 }
 
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)

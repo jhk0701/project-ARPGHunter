@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Monster/RegularMonster/RangedMonster.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -39,7 +39,7 @@ void ARangedMonster::HandleAttackNotify(uint8 _opt)
 	// 투사체 발사
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
-	Projectile->Init(); // TODO : 투사체 데이터 삽입
+	Projectile->Init(nullptr); // TODO : 투사체 데이터 삽입
 	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
-	Projectile->Fire(this, TargetActor);
+	Projectile->Fire(this, GetActorForwardVector());
 }

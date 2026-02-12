@@ -21,15 +21,11 @@ void AProjectile::Tick(float DeltaTime)
 		return;
 	}
 	
-	AddActorWorldOffset(Speed * DeltaTime * Direction, true, GetHitResult());
+	AddActorWorldOffset(Speed * DeltaTime * GetFireVector(), true, GetHitResult());
 }
 
-void AProjectile::Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target)
+void AProjectile::Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector)
 {
-	Super::Fire(_attacker, _target);
-
-	Direction = _target.Get()->GetActorLocation() - GetActorLocation();
-	Direction.Normalize();
-	
-	SetActorRotation(Direction.ToOrientationRotator());
+	Super::Fire(_attacker, _vector);
+	SetActorRotation(GetFireVector().ToOrientationRotator());
 }

@@ -15,12 +15,10 @@ public:
 	AProjectile();
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	FVector Direction;
 	UPROPERTY(EditDefaultsOnly)
 	float Speed{ 100.0f };
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	virtual void Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target) override;
+	virtual void Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector) override;
 };

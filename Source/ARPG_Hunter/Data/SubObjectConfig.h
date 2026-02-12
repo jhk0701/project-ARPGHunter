@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -14,4 +14,8 @@ class ARPG_HUNTER_API USubObjectConfig : public UDataAsset
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMesh> Mesh;
+
 };

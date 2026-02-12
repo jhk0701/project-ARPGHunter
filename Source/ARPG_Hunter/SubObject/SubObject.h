@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "SubObject.generated.h"
 
+class USubObjectConfig;
+
 DECLARE_DELEGATE_OneParam(FOnDisable, TObjectPtr<AActor>);
 
 UCLASS(Abstract)
@@ -25,10 +27,12 @@ private:
 	UPROPERTY(EditDefaultsOnly);
 	TObjectPtr<class UStaticMeshComponent> MeshComp;
 
+	UPROPERTY(VisibleAnywhere);
+	TObjectPtr<USubObjectConfig> Config;
 	UPROPERTY(VisibleAnywhere)
 	TWeakObjectPtr<AActor> Attacker;
 	UPROPERTY(VisibleAnywhere)
-	TWeakObjectPtr<AActor> Target;
+	FVector FireVector; // 투사체의 방향 혹은 떨어져야하는 위치 등 용도
 
 	UPROPERTY(VisibleAnywhere)
 	float LifeTime{ 3.0f };
@@ -38,8 +42,8 @@ private:
 	float Damage{ 20.0f };
 
 public:
-	virtual void Init();
-	virtual void Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target);
+	virtual void Init(TObjectPtr<USubObjectConfig> _config);
+	virtual void Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector);
 	virtual void Disable();
 
 	UFUNCTION()
@@ -60,5 +64,7 @@ protected:
 	float GetElapsedTime() const { return ElapsedTime; }
 	float GetLifeTime() const { return LifeTime; }
 	FHitResult* GetHitResult() { return &HitResult; }
+
+	const FVector& GetFireVector() { return FireVector; }
 
 };

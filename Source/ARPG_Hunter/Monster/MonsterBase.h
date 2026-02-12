@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -50,16 +50,16 @@ private:
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
+
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> AnimInstance;
+	int CurAttackIdx{ 0 };
+	TObjectPtr<UAnimMontage> CurAttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBehaviorTree> MonsterBT;
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
-
-	int CurAttackIdx{0};
-	TObjectPtr<UAnimMontage> CurAttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
 	float DeadDelay{ 3.0f };

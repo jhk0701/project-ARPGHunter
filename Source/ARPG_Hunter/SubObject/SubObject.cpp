@@ -4,7 +4,9 @@
 #include "SubObject/SubObject.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+
 #include "Interface/Hitable.h"
+#include "Data/SubObjectConfig.h"
 
 ASubObject::ASubObject()
 {
@@ -35,16 +37,18 @@ void ASubObject::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	Hit(OtherActor);
 }
 
-void ASubObject::Init()
+void ASubObject::Init(TObjectPtr<USubObjectConfig> _config)
 {
+	Config = _config;
 	ElapsedTime = 0.f;
-	// MeshComp->SetStaticMesh(_mesh);
+	MeshComp->SetStaticMesh(Config->Mesh);
+	BoxComp->SetBoxExtent(Config->Mesh->GetBoundingBox().GetExtent());
 }
 
-void ASubObject::Fire(TWeakObjectPtr<AActor> _attacker, TWeakObjectPtr<AActor> _target)
+void ASubObject::Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector)
 {
 	Attacker = _attacker;
-	Target = _target;
+	FireVector = _vector;
 	SetActorTickEnabled(true); // 틱 시작
 }
 

@@ -13,7 +13,6 @@ class UCameraShakeBase;
 enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
 
-
 UCLASS()
 class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler, public IEffectable
 {
@@ -26,7 +25,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UEquipmentComponent> EquipComp;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UActionComponent> ActionComp;
+	TObjectPtr<class UPlayerActionComponent> ActionComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
@@ -110,11 +109,11 @@ public:
 	void HandleAttackNotify(uint8 _opt) override;
 	
 	bool IsDead();
-	void OnDead();
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
 
+	void ShakeCameraOnAttack(float _scale = 1.0f);
 	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
 	void Interact();
 };

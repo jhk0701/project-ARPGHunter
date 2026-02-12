@@ -27,23 +27,14 @@ enum class EAttackType : uint8
 	END			UMETA(Hidden)
 };
 
-// TODO : 정리할 것, 플레이어에서 사용 중인데, EAttackDetailType 로 통합할 것
-UENUM(BlueprintType)
-enum class EAttackDirection : uint8
-{
-	FRONT		UMETA(DisplayName = "Front"),
-	FRONT_WIDE	UMETA(DisplayName = "Front Wide"),
-	AROUND		UMETA(DisplayName = "Around"),
-};
-
 UENUM(BlueprintType)
 enum class EAttackDetailType : uint8
 {
-	MELEE_FRONT				UMETA(DisplayName = "Melee Front"),
-	MELEE_FRONT_WIDE		UMETA(DisplayName = "Melee Front Wide"), // 굳이 필요한가
-	MELEE_AROUND			UMETA(DisplayName = "Melee Around"),
+	MELEE_FRONT					UMETA(DisplayName = "Melee Front"),
+	MELEE_AROUND				UMETA(DisplayName = "Melee Around"),
+	MELEE_END = MELEE_AROUND	UMETA(Hidden),
 
-	RANGED					UMETA(DisplayName = "Ranged"),
+	RANGED_DIRECTIONAL			UMETA(DisplayName = "Ranged Directional"),
 };
 
 UENUM(BlueprintType)

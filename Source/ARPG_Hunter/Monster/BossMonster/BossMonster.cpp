@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/BossMonster/BossMonster.h"
@@ -101,7 +101,7 @@ void ABossMonster::HandleAttackNotify(uint8 _opt)
 	FMonsterAction* Action = GetCurAction();
 	const FAttackDetail& Detail = Action->AttackDetails[_opt];
 
-	if (Detail.Type < EAttackDetailType::RANGED)
+	if (Detail.Type <= EAttackDetailType::MELEE_END)
 		MeleeAttack(Detail);
 	else
 		RangedAttack(Detail);
@@ -173,9 +173,9 @@ void ABossMonster::RangedAttack(const FAttackDetail& _detail)
 	// 투사체 발사
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	TObjectPtr<ASubObject> Projectile = Cast<ASubObject>(ObjectPool->Get(ProjectileClass));
-	Projectile->Init(); // TODO : 투사체 데이터 삽입
+	Projectile->Init(nullptr); // TODO : 투사체 데이터 삽입
 	Projectile->SetActorLocation(GetWeaponComp()->GetSocketLocation(FName(TEXT("socket_firePoint"))));
-	Projectile->Fire(this, TargetActor);
+	Projectile->Fire(this, GetActorForwardVector());
 }
 
 void ABossMonster::OnDead()
