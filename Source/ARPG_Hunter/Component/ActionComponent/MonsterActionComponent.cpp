@@ -34,19 +34,45 @@ float UMonsterActionComponent::PlayAttackAction()
 	return MonsterAction.Interval;
 }
 
+void UMonsterActionComponent::PlayHitAction(EMonsterState _state)
+{
+	if (nullptr == Data->HitMontage)
+		return;
+
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	
+	AnimInst->Montage_Play(Data->HitMontage);
+	if (_state == EMonsterState::DEAD)
+		AnimInst->Montage_JumpToSection(EnumToName(_state), Data->HitMontage);
+	else
+		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), Data->HitMontage);
+}
+
 
 void UBossActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
 	Super::Init(_data, _ownerAnimInstance, _firePointComp);
-	CurState = NORMAL;
+	SetState(EMonsterState::NORMAL);
+}
+
+void UBossActionComponent::PlayHitAction(EMonsterState _state)
+{
+	if (nullptr == GetData()->HitMontage)
+		return;
+
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+
+	AnimInst->Montage_Play(GetData()->HitMontage);
+	if (_state == EMonsterState::DEAD || _state == EMonsterState::GROGGY)
+		AnimInst->Montage_JumpToSection(EnumToName(_state), GetData()->HitMontage);
 }
 
 bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)
 {
-	if (CurState != NORMAL)
+	if (GetState() != EMonsterState::NORMAL)
 		return false;
 
-	CurState = GIMIC;
+	SetState(EMonsterState::GIMIC);
 	CurGimicType = _type;
 	GimicMaxValue = _gimicValue;
 	GimicValue = GimicMaxValue;
@@ -85,14 +111,19 @@ void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
 
 void UBossActionComponent::EndGimic()
 {
-	if (CurState != GIMIC)
+	if (IsInGimic() == false)
 		return;
 
 	OnGimicEnd.ExecuteIfBound(CurGimicType);
 
-	CurState = NORMAL;
+	SetState(EMonsterState::NORMAL);
 	CurGimicType = EGimicType::END;
 	GimicValue = 0;
+}
+
+bool UBossActionComponent::IsInGimic() const
+{
+	return GetState() == EMonsterState::GIMIC;
 }
 
 bool UBossActionComponent::InterruptCounter(const FHitInfo& _hitInfo)

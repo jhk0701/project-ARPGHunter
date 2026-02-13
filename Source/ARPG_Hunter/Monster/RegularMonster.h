@@ -25,8 +25,8 @@ private:
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void ShowDamageUI(bool _bIsCritical, uint32 _damage) override;
+	void BeginPlay() override;
+	void ShowDamageUI(bool _bIsCritical, uint32 _damage) override;
 
 	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
 

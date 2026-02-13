@@ -109,3 +109,14 @@ enum class EGimicType : uint8
 	END			UMETA(DisplayName = "End")
 };
 FName EnumToName(EGimicType _type);
+
+UENUM(BlueprintType)
+enum class EMonsterState : uint8
+{
+	NORMAL,
+	DEAD,
+
+	GIMIC,
+	GROGGY,
+};
+FName EnumToName(EMonsterState _type);

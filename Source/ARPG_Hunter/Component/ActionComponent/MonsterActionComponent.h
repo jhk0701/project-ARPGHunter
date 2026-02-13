@@ -10,6 +10,8 @@ struct FMonsterData;
 struct FHitInfo;
 
 enum class EGimicType : uint8;
+enum class EMonsterState : uint8;
+
 DECLARE_DELEGATE_OneParam(FGimicEvent, EGimicType);
 DECLARE_DELEGATE_TwoParams(FOnGimicValueChanged, uint16, uint16);
 
@@ -23,17 +25,21 @@ class ARPG_HUNTER_API UMonsterActionComponent : public UActionComponent
 
 private:
 	FMonsterData* Data;
+	EMonsterState CurState;
 
 	uint8 CurAttackIdx{ 0 };
 	TObjectPtr<UAnimMontage> CurAttackMontage{ nullptr };
 
 protected:
-	FMonsterData* GetData() { return Data; }
+	FMonsterData* GetData() const { return Data; }
+	EMonsterState GetState() const { return CurState; }
+	void SetState(EMonsterState _state) { CurState = _state; }
 
 public:
 	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
 	
 	float PlayAttackAction();
+	virtual void PlayHitAction(EMonsterState _state);
 
 	TObjectPtr<UAnimMontage> GetCurrentMontage() { return CurAttackMontage; }
 
@@ -48,14 +54,6 @@ class ARPG_HUNTER_API UBossActionComponent : public UMonsterActionComponent
 	GENERATED_BODY()
 
 private:
-	enum EState : uint8
-	{
-		NORMAL,
-		GIMIC,
-		GROGGY,
-	};
-
-	EState CurState;
 	EGimicType CurGimicType;
 	uint16 GimicMaxValue;
 	uint16 GimicValue;
@@ -70,11 +68,15 @@ public:
 
 	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
 
+	virtual void PlayHitAction(EMonsterState _state) override;
+
 	bool StartGimic(EGimicType _type, uint16 _gimicValue);
 	void InterruptGimic(const FHitInfo& _hitInfo);
 	void EndGimic();
 
-	bool IsInGimic() const { return CurState == GIMIC; }
+	bool IsInGimic() const;
 	uint16 GetGimicMaxValue() const { return GimicMaxValue; }
 	uint16 GetGimicValue() const { return GimicValue; }
+
+	// void PlayGroggyAction();
 };

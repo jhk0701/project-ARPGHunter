@@ -125,16 +125,23 @@ void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	Super::HitBy(_hitInfo);
 
-	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
-	UAnimMontage* HitMontage = GetData()->HitMontage;
-	if (HitMontage && IsDead())
+	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
+	// 피격 처리
+	if (IsDead())
 	{
-		AnimInst->Montage_Play(HitMontage);
-		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), HitMontage);
+		BossAction->PlayHitAction(EMonsterState::DEAD);
+		return;
+	}
+	else if (GetStatComp()->GetResourceValue(ECharacterResourceType::STAMINA) == 0)
+	{
+		// 강제 종료
+		BossAction->PlayHitAction(EMonsterState::GROGGY);
+		if (BossAction->IsInGimic()) 
+			BossAction->EndGimic(); 
+		return;
 	}
 
 	// 기믹 처리
-	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
 	if (BossAction->IsInGimic())
 		BossAction->InterruptGimic(_hitInfo);
 }

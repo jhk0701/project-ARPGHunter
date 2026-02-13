@@ -132,7 +132,6 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	// 피격 발생
 	StatComp->TakeDamage(_hitInfo.Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
-
 	ShowDamageUI(_hitInfo.bIsCriticalHit, _hitInfo.Damage);
 
 	// 피격 시, 이펙트 출력
@@ -244,10 +243,6 @@ bool AMonsterBase::IsDead() const
 EMonsterType AMonsterBase::GetType() const
 {
 	return Data->Type;
-}
-TObjectPtr<UAnimMontage> AMonsterBase::GetHitMontage()
-{
-	return Data->HitMontage;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {

@@ -39,9 +39,7 @@ void ARegularMonster::BeginPlay()
 	Super::BeginPlay();
 
 	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
-	{
 		GetStatComp()->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(MonsterStatusBar, &UUWMonsterStatusBar::SetHealthBarPercent);
-	}
 }
 
 void ARegularMonster::ShowDamageUI(bool _bIsCritical, uint32 _damage)
@@ -71,19 +69,7 @@ void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 	Super::HitBy(_hitInfo);
 
 	// 모션 재생
-	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
-	if (GetHitMontage())
-	{
-		AnimInst->Montage_Play(GetHitMontage());
-
-		if (IsDead())
-		{
-			AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), GetHitMontage());
-			return;
-		}
-		
-		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), GetHitMontage());
-	}
+	ActionComp->PlayHitAction(IsDead() ? EMonsterState::DEAD : EMonsterState::NORMAL);
 
 	KnockBack(_hitInfo);
 }

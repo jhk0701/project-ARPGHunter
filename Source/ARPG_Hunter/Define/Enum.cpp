@@ -46,3 +46,20 @@ FName EnumToName(EGimicType _type)
 		return NAME_None;
 	}
 }
+
+FName EnumToName(EMonsterState _type)
+{
+	switch (_type)
+	{
+	case EMonsterState::NORMAL:
+		return FName(TEXT("Normal"));
+	case EMonsterState::DEAD:
+		return FName(TEXT("Dead"));
+	case EMonsterState::GIMIC:
+		return FName(TEXT("Gimic"));
+	case EMonsterState::GROGGY:
+		return FName(TEXT("Groggy"));
+	default:
+		return NAME_None;
+	}
+}

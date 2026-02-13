@@ -66,6 +66,8 @@ protected:
 	UFUNCTION()
 	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
 	virtual void OnDead();
+
+	// 구체적인 동작은 하위에서 구현할 것
 	virtual void ShowDamageUI(bool _bIsCritical, uint32 _damage) {};
 
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
@@ -95,7 +97,6 @@ public:
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	EMonsterType GetType() const;
-	TObjectPtr<UAnimMontage> GetHitMontage();
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
