@@ -64,6 +64,7 @@ public:
 
 	bool StartGimic(EGimicType _type, uint16 _gimicValue);
 	void InterruptGimic(const FHitInfo& _hitInfo);
+	void EndGimic();
 
 	bool IsInGimic() const { return CurState == GIMIC; }
 };

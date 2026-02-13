@@ -121,36 +121,6 @@ void ABossMonster::OnDead()
 	}
 }
 
-//void ABossMonster::StartGimic(EGimicType _type)
-//{
-//	// 기믹 시작
-//	UStatComponent* Stat = GetStatComp();
-//	Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
-//
-//	CurGimic = UGimicActionFactory::CreateGimic(GetWorld(), _type);
-//	CurGimic->Start(this, GetCurAction()->GimicParam);
-//}
-//
-//void ABossMonster::ProceedGimic(float _deltaSecond)
-//{
-//	if (CurGimic)
-//		CurGimic->Proceed(_deltaSecond);
-//}
-//
-//void ABossMonster::CompleteGimic()
-//{ 
-//	// 기믹이 성공적으로 발동
-//	GetAnimInst()->Montage_JumpToSection(FName(TEXT("Complete")), GetCurrentMontage());
-//	CurGimic = nullptr;
-//}
-//
-//void ABossMonster::StopGimic(EGimicType _type)
-//{
-//	// 플레이어가 저지한 경우
-//	GetAnimInst()->Montage_JumpToSection(EnumToName(_type), GetCurrentMontage());
-//	CurGimic = nullptr;
-//}
-//
 bool ABossMonster::CanUseSkill()
 {
 	UStatComponent* Stat = GetStatComp();
@@ -158,8 +128,16 @@ bool ABossMonster::CanUseSkill()
 		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);
 }
 
-void ABossMonster::StartGimic(EGimicType _type, uint16 _gimicValue)
+void ABossMonster::ReceiveGimic(EGimicType _type, uint16 _gimicValue)
 {
 	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
-	BossAction->StartGimic(_type, _gimicValue);
+	if (_type < EGimicType::END)
+	{
+		BossAction->StartGimic(_type, _gimicValue);
+		
+		UStatComponent* Stat = GetStatComp();
+		Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
+	}
+	else
+		BossAction->EndGimic();
 }

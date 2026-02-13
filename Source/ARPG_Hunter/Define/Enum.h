@@ -106,6 +106,6 @@ enum class EGimicType : uint8
 	COUNTER		UMETA(DisplayName = "Counter"),
 	STAGGER		UMETA(DisplayName = "Stagger"),
 
-	END			UMETA(Hidden)
+	END			UMETA(DisplayName = "End")
 };
 FName EnumToName(EGimicType _type);

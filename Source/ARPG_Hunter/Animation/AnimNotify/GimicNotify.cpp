@@ -11,5 +11,5 @@ void UGimicNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* A
 	Super::Notify(MeshComp, Animation, EventReference);
 
 	if (TObjectPtr<ABossMonster> Boss = Cast<ABossMonster>(MeshComp->GetOwner()))
-		Boss->StartGimic(Type, Value);
+		Boss->ReceiveGimic(Type, Value);
 }

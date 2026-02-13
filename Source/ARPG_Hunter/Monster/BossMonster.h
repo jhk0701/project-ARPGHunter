@@ -37,5 +37,5 @@ public:
 	void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool CanUseSkill();
-	void StartGimic(EGimicType _type, uint16 _gimicValue);
+	void ReceiveGimic(EGimicType _type, uint16 _gimicValue);
 };

@@ -46,8 +46,8 @@ bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)
 	if (CurState != NORMAL)
 		return false;
 
-	CurGimicType = _type;
 	CurState = GIMIC;
+	CurGimicType = _type;
 	GimicValue = _gimicValue;
 
 	return true;
@@ -76,6 +76,16 @@ void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
 		GetAnimInstance()->Montage_JumpToSection(EnumToName(EGimicType::END), GetCurrentMontage());
 
 	return;
+}
+
+void UBossActionComponent::EndGimic()
+{
+	if (CurState != GIMIC)
+		return;
+
+	CurState = NORMAL;
+	CurGimicType = EGimicType::END;
+	GimicValue = 0;
 }
 
 bool UBossActionComponent::InterruptCounter(const FHitInfo& _hitInfo)
