@@ -48,7 +48,11 @@ bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)
 
 	CurState = GIMIC;
 	CurGimicType = _type;
-	GimicValue = _gimicValue;
+	GimicMaxValue = _gimicValue;
+	GimicValue = GimicMaxValue;
+
+	OnGimicValueChanged.ExecuteIfBound(GimicValue, GimicMaxValue);
+	OnGimicStart.ExecuteIfBound(_type);
 
 	return true;
 }
@@ -73,15 +77,18 @@ void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
 	}
 
 	if (bInterrupted)
+	{
 		GetAnimInstance()->Montage_JumpToSection(EnumToName(EGimicType::END), GetCurrentMontage());
-
-	return;
+		EndGimic();
+	}
 }
 
 void UBossActionComponent::EndGimic()
 {
 	if (CurState != GIMIC)
 		return;
+
+	OnGimicEnd.ExecuteIfBound(CurGimicType);
 
 	CurState = NORMAL;
 	CurGimicType = EGimicType::END;
@@ -112,13 +119,11 @@ bool UBossActionComponent::InterruptStagger(const FHitInfo& _hitInfo)
 		return false;
 
 	if (GimicValue <= _hitInfo.StaggerDamage)
-	{
-		// 무력화 완료
-		GimicValue = 0;
-		return true;
-	}
+		GimicValue = 0; // 무력화 완료
 	else
 		GimicValue -= _hitInfo.StaggerDamage; // 무력화 진행
 
-	return false;
+	OnGimicValueChanged.ExecuteIfBound(GimicValue, GimicMaxValue);
+
+	return GimicValue == 0;
 }

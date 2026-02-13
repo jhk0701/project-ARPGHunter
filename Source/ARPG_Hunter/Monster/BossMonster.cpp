@@ -26,6 +26,10 @@ ABossMonster::ABossMonster()
 	if (BBFinder.Succeeded())
 		SetBlackboardData(BBFinder.Object);
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> UserWidgetFinder(TEXT("/Game/06-UI/WBP_BossStatusBar.WBP_BossStatusBar_C"));
+	if (UserWidgetFinder.Succeeded())
+		StatusBarClass = UserWidgetFinder.Class;
+
 	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
 }
 
@@ -37,10 +41,35 @@ void ABossMonster::BeginPlay()
 	if (StatusBarClass)
 	{
 		StatusBar = CreateWidget<UUWMonsterStatusBar>(GetWorld(), StatusBarClass);
+		TObjectPtr<UUWBossMonsterStatusBar> StatusBarInst = Cast<UUWBossMonsterStatusBar>(StatusBar);
 
 		UUWBossMonsterStatusBar* BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
 		GetStatComp()->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(BossUI, &UUWBossMonsterStatusBar::SetHealthBarPercent);
 		GetStatComp()->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(BossUI, &UUWBossMonsterStatusBar::SetStaggerBarPercent);
+		
+		UBossActionComponent* BossAction = Cast<UBossActionComponent>(ActionComp);
+		BossAction->OnGimicValueChanged.BindUObject(StatusBarInst, &UUWBossMonsterStatusBar::SetGimicStaggerBarPercent);
+		BossAction->OnGimicStart.BindLambda(
+			[this](EGimicType _type) 
+			{
+				if(_type == EGimicType::STAGGER)
+				{
+					TObjectPtr<UUWBossMonsterStatusBar> UI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+					UI->ShowGimicStagger();
+				}
+			}
+		);
+		BossAction->OnGimicEnd.BindLambda(
+			[this](EGimicType _type) 
+			{
+				if (_type == EGimicType::STAGGER)
+				{
+					TObjectPtr<UUWBossMonsterStatusBar> UI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+					UI->HideGimicStagger();
+				}
+			}
+		);
+
 	}
 }
 
@@ -121,14 +150,14 @@ void ABossMonster::OnDead()
 	}
 }
 
-bool ABossMonster::CanUseSkill()
+bool ABossMonster::CanUseGimic()
 {
 	UStatComponent* Stat = GetStatComp();
 	return Stat->GetResourceValue(ECharacterResourceType::SKILL) ==
 		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);
 }
 
-void ABossMonster::ReceiveGimic(EGimicType _type, uint16 _gimicValue)
+void ABossMonster::HandleGimicNotify(EGimicType _type, uint16 _gimicValue)
 {
 	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
 	if (_type < EGimicType::END)

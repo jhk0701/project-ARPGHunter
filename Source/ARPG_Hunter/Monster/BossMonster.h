@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Monster/MonsterBase.h"
+#include "Interface/GimicHandler.h"
 #include "BossMonster.generated.h"
 
 enum class EMonsterAttackType : uint8;
@@ -13,16 +14,16 @@ enum class EGimicType : uint8;
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API ABossMonster : public AMonsterBase
+class ARPG_HUNTER_API ABossMonster : public AMonsterBase, public IGimicHandler
 {
 	GENERATED_BODY()
 private:
 	TArray<float> ActionTotalWeights;
 
 	// Player HUD에 보스 체력바 출력
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UUserWidget> StatusBarClass;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<UUserWidget> StatusBar;
 
 protected:
@@ -36,6 +37,6 @@ public:
 	float Attack(EMonsterAttackType _type) override;
 	void HitBy(const FHitInfo& _hitInfo) override;
 
-	bool CanUseSkill();
-	void ReceiveGimic(EGimicType _type, uint16 _gimicValue);
+	bool CanUseGimic() override;
+	void HandleGimicNotify(EGimicType _type, uint16 _gimicValue) override;
 };
