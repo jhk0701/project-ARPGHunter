@@ -25,15 +25,12 @@ class ARPG_HUNTER_API UMonsterActionComponent : public UActionComponent
 
 private:
 	FMonsterData* Data;
-	EMonsterState CurState;
 
 	uint8 CurAttackIdx{ 0 };
 	TObjectPtr<UAnimMontage> CurAttackMontage{ nullptr };
 
 protected:
 	FMonsterData* GetData() const { return Data; }
-	EMonsterState GetState() const { return CurState; }
-	void SetState(EMonsterState _state) { CurState = _state; }
 
 public:
 	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
@@ -41,10 +38,11 @@ public:
 	float PlayAttackAction();
 	virtual void PlayHitAction(EMonsterState _state);
 
-	TObjectPtr<UAnimMontage> GetCurrentMontage() { return CurAttackMontage; }
+	TObjectPtr<UAnimMontage> GetCurrentMontage() const { return CurAttackMontage; }
 
 	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
-	uint8 GetCurAttackIdx() { return CurAttackIdx; }
+	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
+	
 };
 
 
@@ -66,17 +64,12 @@ public:
 	FGimicEvent OnGimicEnd;
 	FOnGimicValueChanged OnGimicValueChanged;
 
-	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
-
 	virtual void PlayHitAction(EMonsterState _state) override;
 
 	bool StartGimic(EGimicType _type, uint16 _gimicValue);
 	void InterruptGimic(const FHitInfo& _hitInfo);
 	void EndGimic();
 
-	bool IsInGimic() const;
 	uint16 GetGimicMaxValue() const { return GimicMaxValue; }
 	uint16 GetGimicValue() const { return GimicValue; }
-
-	// void PlayGroggyAction();
 };

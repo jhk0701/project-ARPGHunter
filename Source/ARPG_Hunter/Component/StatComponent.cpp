@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -144,7 +144,7 @@ void UStatComponent::TakeStaminaDamage(uint32 _damage)
 }
 
 
-void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond)
+void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bIsLoop)
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 
@@ -157,12 +157,12 @@ void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond)
 			FCharacterResource* pStamina = &Resource[ECharacterResourceType::STAMINA];
 
 			if (IsStaggering())
-				RecoverResource(ECharacterResourceType::STAMINA, pStamina->MaxValue * 0.5f);
+				RecoverResource(ECharacterResourceType::STAMINA, pStamina->MaxValue * StaminaRecoverOnStagger);
 			else
 				RecoverResource(ECharacterResourceType::STAMINA, StaminaRecoveryPerSecond * StaminaRecoveryRate);
 		},
 		StaminaRecoveryRate,
-		true,
+		_bIsLoop,
 		_pauseSecond
 	);
 }

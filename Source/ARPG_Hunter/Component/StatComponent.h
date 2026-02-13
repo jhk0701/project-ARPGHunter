@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -77,6 +77,8 @@ private:
 	float StaminaRecoveryPauseTime{ 1.0f };
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
 	float PenaltyTimeOnStaminaExhaustion{ 5.0f };
+	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
+	float StaminaRecoverOnStagger{ 0.5f };
 
 	FTimerHandle StaminaRecoveryTimer;
 
@@ -126,7 +128,7 @@ public:
 	void TakeStaminaDamage(uint32 _damage);
 	bool TryUseStamina(uint32 _amount);
 	void StartStaminaRecovery();
-	void PauseAndRestartStaminaRecovery(float _pauseSecond);
+	void PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bIsLoop = true);
 
 	void ApplyEffect(TObjectPtr<UEffectData> _effectData);
 	void RegisterEffect(TObjectPtr<UEffect> _effect);

@@ -73,6 +73,15 @@ void ABossMonster::BeginPlay()
 	}
 }
 
+void ABossMonster::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	if (TimerManager.IsTimerActive(GroggyRecoverTimer))
+		TimerManager.ClearTimer(GroggyRecoverTimer);
+}
+
 void ABossMonster::Init(const FMonsterInitParam& _param)
 {
 	Super::Init(_param);
@@ -132,17 +141,28 @@ void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 		BossAction->PlayHitAction(EMonsterState::DEAD);
 		return;
 	}
-	else if (GetStatComp()->GetResourceValue(ECharacterResourceType::STAMINA) == 0)
+	else if (GetStatComp()->IsStaggering() && GetState() != EMonsterState::GROGGY)
 	{
-		// 강제 종료
+		if (GetState() == EMonsterState::GIMIC)
+			BossAction->EndGimic();  // 강제 종료
+
+		SetState(EMonsterState::GROGGY);
 		BossAction->PlayHitAction(EMonsterState::GROGGY);
-		if (BossAction->IsInGimic()) 
-			BossAction->EndGimic(); 
+
+		GetWorld()->GetTimerManager().SetTimer(GroggyRecoverTimer, 
+			[this]() 
+			{
+				TObjectPtr<UStatComponent> Stat = GetStatComp();
+				Stat->RecoverResource(ECharacterResourceType::STAMINA, Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
+				SetState(EMonsterState::NORMAL);
+			}, 
+			3.0f, false);
+
 		return;
 	}
 
 	// 기믹 처리
-	if (BossAction->IsInGimic())
+	if (GetState() == EMonsterState::GIMIC)
 		BossAction->InterruptGimic(_hitInfo);
 }
 
@@ -169,11 +189,18 @@ void ABossMonster::HandleGimicNotify(EGimicType _type, uint16 _gimicValue)
 	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
 	if (_type < EGimicType::END)
 	{
+		if (GetState() != EMonsterState::NORMAL)
+			return;
+		
 		BossAction->StartGimic(_type, _gimicValue);
+		SetState(EMonsterState::GIMIC);
 		
 		UStatComponent* Stat = GetStatComp();
 		Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
 	}
 	else
+	{
 		BossAction->EndGimic();
+		SetState(EMonsterState::NORMAL);
+	}
 }

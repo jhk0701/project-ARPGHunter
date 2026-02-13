@@ -11,6 +11,7 @@
 
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
+enum class EMonsterState : uint8;
 struct FMonsterData;
 struct FMonsterAction;
 
@@ -36,6 +37,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	FName ID;
 	FMonsterData* Data;
+	EMonsterState CurState;
 
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SectionID{0};
@@ -73,6 +75,7 @@ protected:
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
 	void SetMovable(bool _bIsMovable);
+	void SetState(EMonsterState _state) { CurState = _state; }
 
 	uint8 GetSectionID() const { return SectionID; }
 	FMonsterData* GetData() const { return Data; }
@@ -97,6 +100,7 @@ public:
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	EMonsterType GetType() const;
+	EMonsterState GetState() const { return CurState; }
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;

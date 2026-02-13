@@ -26,8 +26,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<UUserWidget> StatusBar;
 
+	FTimerHandle GroggyRecoverTimer;
+
 protected:
 	void BeginPlay() override;
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	void OnDead() override;
 
 public:

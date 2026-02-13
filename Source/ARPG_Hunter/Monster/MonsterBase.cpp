@@ -49,6 +49,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	ID = _param.ID;
 	SectionID = _param.SectionIndex;
 	Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
+	CurState = EMonsterState::NORMAL;
 
 	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();

@@ -49,12 +49,6 @@ void UMonsterActionComponent::PlayHitAction(EMonsterState _state)
 }
 
 
-void UBossActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
-{
-	Super::Init(_data, _ownerAnimInstance, _firePointComp);
-	SetState(EMonsterState::NORMAL);
-}
-
 void UBossActionComponent::PlayHitAction(EMonsterState _state)
 {
 	if (nullptr == GetData()->HitMontage)
@@ -69,10 +63,6 @@ void UBossActionComponent::PlayHitAction(EMonsterState _state)
 
 bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)
 {
-	if (GetState() != EMonsterState::NORMAL)
-		return false;
-
-	SetState(EMonsterState::GIMIC);
 	CurGimicType = _type;
 	GimicMaxValue = _gimicValue;
 	GimicValue = GimicMaxValue;
@@ -111,19 +101,10 @@ void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
 
 void UBossActionComponent::EndGimic()
 {
-	if (IsInGimic() == false)
-		return;
-
 	OnGimicEnd.ExecuteIfBound(CurGimicType);
 
-	SetState(EMonsterState::NORMAL);
 	CurGimicType = EGimicType::END;
 	GimicValue = 0;
-}
-
-bool UBossActionComponent::IsInGimic() const
-{
-	return GetState() == EMonsterState::GIMIC;
 }
 
 bool UBossActionComponent::InterruptCounter(const FHitInfo& _hitInfo)
