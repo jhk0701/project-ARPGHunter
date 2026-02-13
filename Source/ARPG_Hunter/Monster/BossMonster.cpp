@@ -8,11 +8,11 @@
 
 #include "Define/Enum.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
-#include "Controller/MonsterAIController.h"
 #include "Data/MonsterData.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/MonsterActionComponent.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
+#include "UI/Actor/DamageFont.h"
 
 ABossMonster::ABossMonster()
 {
@@ -202,5 +202,19 @@ void ABossMonster::HandleGimicNotify(EGimicType _type, uint16 _gimicValue)
 	{
 		BossAction->EndGimic();
 		SetState(EMonsterState::NORMAL);
+	}
+}
+
+void ABossMonster::ShowDamageUI(bool _bIsCritical, uint32 _damage)
+{
+	Super::ShowDamageUI(_bIsCritical, _damage);
+
+	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+	if (TObjectPtr<AActor> Instance = ObjectPool->Get(ADamageFont::StaticClass()))
+	{
+		TObjectPtr<ADamageFont> DamageFont = Cast<ADamageFont>(Instance);
+		DamageFont->SetActorLocation(GetActorLocation() + FVector(0, 0, FMath::FRandRange(DamageFontYRange.X, DamageFontYRange.Y)));
+		DamageFont->UpdateUI(_damage, _bIsCritical);
+		DamageFont->ShowUI();
 	}
 }

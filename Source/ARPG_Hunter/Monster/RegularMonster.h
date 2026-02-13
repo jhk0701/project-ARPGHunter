@@ -19,7 +19,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "UI")
-	FVector2D DamageFontYRange{FVector2D(-50.0f, 50.0f)};
+	FVector2D DamageFontYRange{ -50.0f, 50.0f };
 
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UWidgetComponent> WidgetComp;

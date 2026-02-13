@@ -25,6 +25,8 @@ private:
 	TSubclassOf<class UUserWidget> StatusBarClass;
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<UUserWidget> StatusBar;
+	UPROPERTY(EditAnywhere, Category = "UI")
+	FVector2D  DamageFontYRange{0.0f, 50.0f};
 
 	FTimerHandle GroggyRecoverTimer;
 
@@ -32,6 +34,7 @@ protected:
 	void BeginPlay() override;
 	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	void OnDead() override;
+	void ShowDamageUI(bool _bIsCritical, uint32 _damage) override;
 
 public:
 	ABossMonster();

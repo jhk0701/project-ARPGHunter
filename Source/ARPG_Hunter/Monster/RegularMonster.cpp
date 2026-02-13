@@ -48,11 +48,13 @@ void ARegularMonster::ShowDamageUI(bool _bIsCritical, uint32 _damage)
 
 	// 데미지 폰트 UI 출력
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-
-	ADamageFont* ADamage = Cast<ADamageFont>(ObjectPool->Get(ADamageFont::StaticClass()));
-	ADamage->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0, 0, FMath::RandRange(DamageFontYRange.X, DamageFontYRange.Y)));
-	ADamage->UpdateUI(_damage, _bIsCritical);
-	ADamage->ShowUI();
+	if (TObjectPtr<AActor> Instance = ObjectPool->Get(ADamageFont::StaticClass())) 
+	{
+		TObjectPtr<ADamageFont> DamageFont = Cast<ADamageFont>(Instance);
+		DamageFont->SetActorLocation(WidgetComp->GetComponentLocation() + FVector(0, 0, FMath::RandRange(DamageFontYRange.X, DamageFontYRange.Y)));
+		DamageFont->UpdateUI(_damage, _bIsCritical);
+		DamageFont->ShowUI();
+	}
 }
 
 void ARegularMonster::Init(const FMonsterInitParam& _param)
