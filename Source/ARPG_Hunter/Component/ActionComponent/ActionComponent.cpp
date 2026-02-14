@@ -16,7 +16,7 @@ UActionComponent::UActionComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
+void UActionComponent::Init(TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
 	OwnerAnimInstance = _ownerAnimInstance;
 	FirePointComp = _firePointComp;

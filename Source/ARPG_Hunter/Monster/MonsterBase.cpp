@@ -12,8 +12,10 @@
 #include "Controller/MonsterAIController.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/MonsterActionComponent.h"
-#include "Data/Action.h"
+
 #include "Data/MonsterData.h"
+#include "Data/MonsterConfig.h"
+#include "Data/Action.h"
 #include "Data/EffectData.h"
 
 #include "Define/Debug.h"
@@ -53,20 +55,20 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();
-	MeshComp->SetSkeletalMesh(Data->BodyMesh);
-	MeshComp->SetRelativeLocation(FVector(0.0f, 0.0f, -Data->HalfHeight * Data->MeshScale));
+	MeshComp->SetSkeletalMesh(Data->Config->BodyMesh);
+	MeshComp->SetRelativeLocation(FVector(0.0f, 0.0f, -Data->Config->HalfHeight * Data->MeshScale));
 	MeshComp->SetRelativeScale3D(FVector(Data->MeshScale));
 
 	UCapsuleComponent* Capsule = GetCapsuleComponent();
-	Capsule->SetCapsuleHalfHeight(Data->HalfHeight * Data->MeshScale);
-	Capsule->SetCapsuleRadius(Data->Radius * Data->MeshScale);
+	Capsule->SetCapsuleHalfHeight(Data->Config->HalfHeight * Data->MeshScale);
+	Capsule->SetCapsuleRadius(Data->Config->Radius * Data->MeshScale);
 
 	SetActorLocation(_param.Location);
 	SetActorRotation(_param.Rotation);
 
-	if (Data->WeaponMesh)
+	if (Data->Config->WeaponMesh)
 	{
-		WeaponComp->SetSkeletalMesh(Data->WeaponMesh);
+		WeaponComp->SetSkeletalMesh(Data->Config->WeaponMesh);
 		WeaponComp->SetHiddenInGame(false);
 
 		FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
@@ -90,7 +92,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Monster")));
 	
 	// 애니메이션 설정
-	MeshComp->SetAnimInstanceClass(Data->AnimBP);
+	MeshComp->SetAnimInstanceClass(Data->Config->AnimBP);
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 	if (AnimInst)
 		AnimInst->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
@@ -115,7 +117,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == ActionComp->GetCurrentMontage() || _montage == Data->HitMontage)
+	if (_montage == ActionComp->GetCurrentMontage() || _montage == Data->Config->HitMontage)
 		OnAttackMontageEnded.ExecuteIfBound();
 
 	if (_bInterrupted == false)
@@ -136,10 +138,10 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	ShowDamageUI(_hitInfo.bIsCriticalHit, _hitInfo.Damage);
 
 	// 피격 시, 이펙트 출력
-	if (Data->VFXOnHit)
+	if (Data->Config->VFXOnHit)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
-			Data->VFXOnHit,
+			Data->Config->VFXOnHit,
 			_hitInfo.HitResult->ImpactPoint,
 			_hitInfo.HitResult->ImpactNormal.Rotation(),
 			FVector::OneVector,
@@ -160,7 +162,7 @@ float AMonsterBase::Attack(EMonsterAttackType _type)
 		return -1.0f;
 
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
-	if (AnimInst->Montage_IsPlaying(Data->HitMontage))
+	if (AnimInst->Montage_IsPlaying(Data->Config->HitMontage))
 		return -1.0f;
 
 	// 공격
@@ -243,7 +245,7 @@ bool AMonsterBase::IsDead() const
 }
 EMonsterType AMonsterBase::GetType() const
 {
-	return Data->Type;
+	return Data->Config->Type;
 }
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {

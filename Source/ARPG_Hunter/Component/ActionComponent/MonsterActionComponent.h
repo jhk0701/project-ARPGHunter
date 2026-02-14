@@ -33,7 +33,7 @@ protected:
 	FMonsterData* GetData() const { return Data; }
 
 public:
-	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
+	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
 	
 	float PlayAttackAction();
 	virtual void PlayHitAction(EMonsterState _state);

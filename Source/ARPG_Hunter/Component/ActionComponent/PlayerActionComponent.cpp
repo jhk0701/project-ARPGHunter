@@ -4,16 +4,16 @@
 #include "Component/ActionComponent/PlayerActionComponent.h"
 
 #include "Define/Enum.h"
-#include "Data/WeaponTypeData.h"
+#include "Data/WeaponConfig.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
 
-void UPlayerActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
+void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
-	Super::Init(_data, _ownerAnimInstance, _firePointComp);
+	Super::Init(_ownerAnimInstance, _firePointComp);
 
 	// 플레이어 데이터를 기반으로 장비 모션을 적용
-	CurWeaponType = static_cast<FWeaponTypeData*>(_data);
+	CurWeapon = _data;
 	ResetAction();
 }
 
@@ -61,7 +61,7 @@ void UPlayerActionComponent::SetActionProcess(EActionProcess _eProcess)
 
 void UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
-	TObjectPtr<UAction> DodgeAction = CurWeaponType->DodgeAction;
+	TObjectPtr<UAction> DodgeAction = CurWeapon->DodgeAction;
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	if (IsInProgress() || DodgeAction->Montage == nullptr ||
@@ -84,17 +84,17 @@ void UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(floa
 
 void UPlayerActionComponent::PlayHitAction(bool _isDead)
 {
-	if (CurWeaponType->HitMontage == nullptr)
+	if (CurWeapon->HitMontage == nullptr)
 		return;
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	// 피격 모션 실행 시, 콤보 초기화
-	AnimInst->Montage_Play(CurWeaponType->HitMontage);
+	AnimInst->Montage_Play(CurWeapon->HitMontage);
 
 	if (_isDead)
-		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), CurWeaponType->HitMontage);
+		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), CurWeapon->HitMontage);
 	else
-		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), CurWeaponType->HitMontage);
+		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), CurWeapon->HitMontage);
 
 	SetActionResetTimer(ActionResetSecond);
 }
@@ -105,10 +105,10 @@ void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 		return;
 
 	uint8 id = !bIsInAttackCombo ?
-		*CurWeaponType->AttackCombo->Start.Find(_type) :
-		*CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type);
+		*CurWeapon->AttackCombo->Start.Find(_type) :
+		*CurWeapon->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type);
 
-	UAction* Action = CurWeaponType->AttackCombo->AttackAcionArray[id];
+	UAction* Action = CurWeapon->AttackCombo->AttackAcionArray[id];
 
 	if (_predicate &&
 		_predicate(Action->StaminaUsage) == false)
@@ -131,7 +131,7 @@ void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 
 void UPlayerActionComponent::ProcessAttackProgress()
 {
-	UAction* Action = CurWeaponType->AttackCombo->AttackAcionArray[CurAttackActionID];
+	UAction* Action = CurWeapon->AttackCombo->AttackAcionArray[CurAttackActionID];
 
 	// 공격 액션 지속 중, 스태미너 소모
 	// 스태미너 부족 시, 바로 Complete로 진행
@@ -174,14 +174,14 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 	// 다음 공격이 가능한 상태인지 확인
 	// 스매시 공격 중 일반 공격으로 전환 불가
 	if (CurActionProcess < EActionProcess::COMPLETE ||
-		GetAnimInstance()->Montage_IsPlaying(CurWeaponType->HitMontage))
+		GetAnimInstance()->Montage_IsPlaying(CurWeapon->HitMontage))
 		return false;
 
 	if (bIsInAttackCombo == false) // 첫 공격인 경우
-		return CurWeaponType->AttackCombo->Start.Find(_type) != nullptr;
+		return CurWeapon->AttackCombo->Start.Find(_type) != nullptr;
 
 	// 마지막 콤보였는지 확인
-	return CurWeaponType->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
+	return CurWeapon->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
 }
 
 

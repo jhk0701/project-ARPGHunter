@@ -15,7 +15,7 @@
 #include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Controller/PlayerCombatController.h"
-#include "Data/WeaponTypeData.h"
+#include "Data/WeaponConfig.h"
 
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
@@ -90,7 +90,7 @@ void APlayerCharacter::BeginPlay()
 	EquipComp->Init();
 
 	// TODO : 플레이어 저장 데이터 기반으로 변경
-	ActionComp->Init(DataManager->GetWeaponTypeData(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), WeaponMeshComp);
+	ActionComp->Init(DataManager->GetWeaponConfig(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), WeaponMeshComp);
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;

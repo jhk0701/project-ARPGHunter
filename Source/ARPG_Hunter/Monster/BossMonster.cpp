@@ -9,6 +9,7 @@
 #include "Define/Enum.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Data/MonsterData.h"
+#include "Data/MonsterConfig.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/MonsterActionComponent.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
@@ -87,7 +88,7 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	Super::Init(_param);
 
 	FMonsterData* MonsterData = GetData();
-	for (const FMonsterAction& Action : MonsterData->AttackActions)
+	for (const FMonsterAction& Action : MonsterData->Config->AttackActions)
 	{
 		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 	}
@@ -112,9 +113,9 @@ float ABossMonster::Attack(EMonsterAttackType _type)
 	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_type)]);
 	float Sum = 0.0f;
 
-	for (uint8 i = 0; i < MonsterData->AttackActions.Num(); ++i)
+	for (uint8 i = 0; i < MonsterData->Config->AttackActions.Num(); ++i)
 	{
-		const FMonsterAction& Action = MonsterData->AttackActions[i];
+		const FMonsterAction& Action = MonsterData->Config->AttackActions[i];
 
 		if (Action.Type != _type)
 			continue;

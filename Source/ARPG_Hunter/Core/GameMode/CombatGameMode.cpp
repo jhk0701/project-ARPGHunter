@@ -10,15 +10,15 @@
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/DataManager.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
-#include "Data/StageData.h"
-#include "Data/MonsterData.h"
-#include "Data/Action.h"
 #include "Core/GameState/CombatGameState.h"
 #include "Controller/PlayerCombatController.h"
-#include "UI/PlayerHUD.h"
+#include "Data/StageData.h"
+#include "Data/MonsterData.h"
+#include "Data/MonsterConfig.h"
+#include "Data/Action.h"
 #include "Monster/MonsterBase.h"
 #include "SubObject/SubObject.h"
-
+#include "UI/PlayerHUD.h"
 #include "Define/Debug.h"
 
 ACombatGameMode::ACombatGameMode()
@@ -106,7 +106,7 @@ void ACombatGameMode::RegisterObjectPool()
 	{
 		for (const FMonsterSpawn& Spawn : Section.Spawn)
 		{
-			EMonsterType Type = DataManager->GetMonsterData(Spawn.MonsterID)->Type;
+			EMonsterType Type = DataManager->GetMonsterData(Spawn.MonsterID)->Config->Type;
 			if (nullptr == MaxCountPerType.Find(Type))
 				MaxCountPerType.Add(Type, 0);
 
@@ -114,7 +114,7 @@ void ACombatGameMode::RegisterObjectPool()
 			
 			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 			
-			for (const FMonsterAction& ActionData : MonsterData->AttackActions)
+			for (const FMonsterAction& ActionData : MonsterData->Config->AttackActions)
 			{
 				if (nullptr == ActionData.Action->SubObjectClass)
 					continue; 
@@ -200,7 +200,7 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 100.0f, Loc);
 			FRotator Rot(0, FMath::Rand() % 360, 0);
 
-			AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Type]);
+			AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Config->Type]);
 			AMonsterBase* Instance = Cast<AMonsterBase>(Inst);
 
 			FMonsterInitParam InitParam

@@ -6,19 +6,20 @@
 #include "Define/Enum.h"
 #include "Data/Action.h"
 #include "Data/MonsterData.h"
+#include "Data/MonsterConfig.h"
 #include "Interface/Hitable.h"
 #include "Monster/BossMonster.h"
 
 void UMonsterActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
-	Super::Init(_data, _ownerAnimInstance, _firePointComp);
+	Super::Init(_ownerAnimInstance, _firePointComp);
 
 	Data = static_cast<FMonsterData*>(_data);
 }
 
 float UMonsterActionComponent::PlayAttackAction()
 {
-	const FMonsterAction& MonsterAction = Data->AttackActions[GetCurAttackIdx()];
+	const FMonsterAction& MonsterAction = Data->Config->AttackActions[GetCurAttackIdx()];
 	SetCurrentAction(MonsterAction.Action);
 
 	TObjectPtr<UAnimMontage> AttackMontage = MonsterAction.Action->Montage;
@@ -36,29 +37,29 @@ float UMonsterActionComponent::PlayAttackAction()
 
 void UMonsterActionComponent::PlayHitAction(EMonsterState _state)
 {
-	if (nullptr == Data->HitMontage)
+	if (nullptr == Data->Config->HitMontage)
 		return;
 
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 	
-	AnimInst->Montage_Play(Data->HitMontage);
+	AnimInst->Montage_Play(Data->Config->HitMontage);
 	if (_state == EMonsterState::DEAD)
-		AnimInst->Montage_JumpToSection(EnumToName(_state), Data->HitMontage);
+		AnimInst->Montage_JumpToSection(EnumToName(_state), Data->Config->HitMontage);
 	else
-		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), Data->HitMontage);
+		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), Data->Config->HitMontage);
 }
 
 
 void UBossActionComponent::PlayHitAction(EMonsterState _state)
 {
-	if (nullptr == GetData()->HitMontage)
+	if (nullptr == GetData()->Config->HitMontage)
 		return;
 
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
-	AnimInst->Montage_Play(GetData()->HitMontage);
+	AnimInst->Montage_Play(GetData()->Config->HitMontage);
 	if (_state == EMonsterState::DEAD || _state == EMonsterState::GROGGY)
-		AnimInst->Montage_JumpToSection(EnumToName(_state), GetData()->HitMontage);
+		AnimInst->Montage_JumpToSection(EnumToName(_state), GetData()->Config->HitMontage);
 }
 
 bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)

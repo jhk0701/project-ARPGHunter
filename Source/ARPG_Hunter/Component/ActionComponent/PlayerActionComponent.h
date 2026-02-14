@@ -7,7 +7,7 @@
 #include "PlayerActionComponent.generated.h"
 
 class UAction;
-struct FWeaponTypeData;
+class UWeaponConfig;
 enum class EActionProcess : uint8;
 enum class EActionInput : uint8;
 enum class EAttackType : uint8;
@@ -21,7 +21,7 @@ class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
 	GENERATED_BODY()
 
 private:
-	FWeaponTypeData* CurWeaponType;
+	TObjectPtr<UWeaponConfig> CurWeapon;
 	bool bIsInAttackCombo{ false };
 	
 	uint8 CurAttackActionID{ 0 };
@@ -43,13 +43,13 @@ private:
 	void ClearActionProgressTimer();
 
 public:
-	void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp) override;
+	void Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
 	void Clear() override;
 
 	void ResetAction();
 	void SetActionProcess(EActionProcess _eProcess);
 
-	bool IsValid() const { return CurWeaponType != nullptr; }
+	bool IsValid() const { return CurWeapon != nullptr; }
 	bool IsInProgress() const;
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
