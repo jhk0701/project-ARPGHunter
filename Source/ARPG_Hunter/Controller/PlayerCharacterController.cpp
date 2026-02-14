@@ -106,3 +106,30 @@ void APlayerCharacterController::InputInteract(const FInputActionValue& _value)
 {
 	ControlledCharacter->Interact();
 }
+
+void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
+{
+	bCursorIsLocked = true;
+
+	// 커서 출력
+	SetShowMouseCursor(bCursorIsLocked); 
+
+	// 마우스 클릭 활성화
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(_uiToFocus);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
+	
+	SetInputMode(InputMode);
+}
+
+void APlayerCharacterController::UnLockCursor()
+{
+	bCursorIsLocked = false;
+
+	// 커서 가리기
+	SetShowMouseCursor(bCursorIsLocked);
+
+	// 마우스 클릭 비활성화
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
+}

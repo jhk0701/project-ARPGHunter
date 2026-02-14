@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/UserWidget/PopUp/UWPopUp.h"
 #include "UWStageSelect.generated.h"
 
 class UTextBlock;
@@ -48,7 +48,7 @@ public:
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UUWStageSelect : public UUserWidget
+class ARPG_HUNTER_API UUWStageSelect : public UUWPopUp
 {
 	GENERATED_BODY()
 
@@ -97,9 +97,7 @@ private:
 public:
 	FOnClickStartButton OnClickStartButton;
 
-	void ShowUI();
-	UFUNCTION()
-	void HideUI();
+	void ShowUI() override;
 
 protected:
 	virtual void NativeOnInitialized() override;

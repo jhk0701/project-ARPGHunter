@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/UserWidget/PopUp/UWPopUp.h"
 #include "UWStageResult.generated.h"
 
 class UTextBlock;
@@ -15,7 +15,7 @@ DECLARE_DELEGATE(FOnClickReturnButton);
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UUWStageResult : public UUserWidget
+class ARPG_HUNTER_API UUWStageResult : public UUWPopUp
 {
 	GENERATED_BODY()
 
@@ -33,8 +33,7 @@ private:
 public:
 	FOnClickReturnButton OnClickReturnButton;
 
-	void ShowUI();
-	void HideUI();
+	void ShowUI() override;
 
 	void Update(bool _bIsClear, const struct FStageData* _stageData);
 

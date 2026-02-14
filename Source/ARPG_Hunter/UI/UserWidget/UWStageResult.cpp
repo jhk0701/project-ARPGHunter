@@ -17,16 +17,12 @@ void UUWStageResult::NativeOnInitialized()
 
 void UUWStageResult::ShowUI()
 {
-	AddToViewport();
+	Super::ShowUI();
 
 	if (OpenAnim)
 		PlayAnimation(OpenAnim);
 }
 
-void UUWStageResult::HideUI()
-{
-	RemoveFromParent();
-}
 
 void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 {
@@ -45,4 +41,5 @@ void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 void UUWStageResult::ClickReturnButton()
 {
 	OnClickReturnButton.ExecuteIfBound();
+	HideUI();
 }

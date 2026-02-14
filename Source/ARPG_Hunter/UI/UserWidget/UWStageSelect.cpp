@@ -72,20 +72,17 @@ void UUWStageSelect::NativeOnInitialized()
 
 void UUWStageSelect::ShowUI()
 {
+	Super::ShowUI();
+
 	CurRegionID = FName(TEXT("1"));
 	CurStageID = NAME_None;
 
 	RefreshStageSlot();
-	AddToViewport();
 
 	if (OpenAnim)
 		PlayAnimation(OpenAnim);
 }
 
-void UUWStageSelect::HideUI()
-{
-	RemoveFromParent();
-}
 
 void UUWStageSelect::ClickStartButton()
 {
@@ -93,6 +90,8 @@ void UUWStageSelect::ClickStartButton()
 		return;
 
 	OnClickStartButton.ExecuteIfBound(CurStageID);
+
+	HideUI();
 }
 
 void UUWStageSelect::ClickStageSlot(uint8 _index)

@@ -23,6 +23,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APlayerCharacter> ControlledCharacter;
 	UPROPERTY(VisibleAnywhere)
+	bool bCursorIsLocked{ false };
+	
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputMappingContext> PlayerIMC;
 
 	UPROPERTY(VisibleAnywhere)
@@ -33,6 +36,13 @@ private:
 	TObjectPtr<UInputAction> SprintAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> InteractAction;
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
+
+	TObjectPtr<UInputMappingContext> GetPlayerIMC() { return PlayerIMC; }
+	TObjectPtr<APlayerCharacter> GetControlledPlayer() { return ControlledCharacter; }
 
 public:
 	APlayerCharacterController();
@@ -50,10 +60,7 @@ public:
 	UFUNCTION()
 	void InputInteract(const FInputActionValue& _value);
 
-protected:
-	virtual void BeginPlay() override;
-	virtual void SetupInputComponent() override;
-
-	TObjectPtr<UInputMappingContext> GetPlayerIMC() { return PlayerIMC; }
-	TObjectPtr<APlayerCharacter> GetControlledPlayer() { return ControlledCharacter; }
+	void LockCursor(TSharedPtr<SWidget> _uiToFocus);
+	void UnLockCursor();
+	bool CursorIsLocked() const { return bCursorIsLocked; }
 };
