@@ -17,9 +17,6 @@ struct ARPG_HUNTER_API FMonsterData : public FTableRowBase
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UMonsterConfig> Config;
-
 	// Stat
 	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint32> BaseStat;
@@ -37,5 +34,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MoveRangeOnAttack{ 100.0f }; 
 	UPROPERTY(EditAnywhere)
-	float MoveSpeed{ 200.0f }; 
+	float MoveSpeed{ 200.0f };
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMonsterConfig> Config;
 };

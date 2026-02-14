@@ -4,7 +4,6 @@
 #include "Core/Subsystem/DataManager.h"
 #include "Engine/DataTable.h"
 #include "Define/Enum.h"
-#include "Data/WeaponTypeData.h"
 #include "Data/WeaponConfig.h"
 #include "Data/MonsterData.h"
 #include "Data/StageData.h"
