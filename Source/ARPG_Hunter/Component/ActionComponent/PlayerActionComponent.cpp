@@ -79,6 +79,7 @@ void UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(floa
 		AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeAction->Montage);
 
 	ActivateActionEffect(DodgeAction->EffectOnStart, GetOwner());
+	ResetAction();
 }
 
 void UPlayerActionComponent::PlayHitAction(bool _isDead)
