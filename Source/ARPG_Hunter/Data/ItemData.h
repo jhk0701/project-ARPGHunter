@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
@@ -13,8 +14,8 @@ enum class ECharacterStatType :uint8;
 /**
  * 
  */
-USTRUCT()
-struct ARPG_HUNTER_API FItemData : public FTableRowBase
+UCLASS()
+class ARPG_HUNTER_API UItem : public UDataAsset
 {
 	GENERATED_BODY()
 public:
@@ -28,36 +29,53 @@ public:
 	TObjectPtr<UTexture> Thumbnail;
 };
 
-USTRUCT()
-struct ARPG_HUNTER_API FConsumableItemData : public FItemData
+UCLASS()
+class ARPG_HUNTER_API UConsumableItem : public UItem
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
 	uint8 AllowCountOnCombat{10}; // 전투 시, 소지 가능 횟수
 	UPROPERTY(EditAnywhere)
-	TArray<TObjectPtr<class UEffect>> Effects; // 사용 시, 효과
+	float Cooldown{ 5.0f }; // 사용 쿨타임
+	UPROPERTY(EditAnywhere)
+	TArray<TObjectPtr<class UEffectData>> Effects; // 사용 시, 효과
 };
 
+UCLASS(Abstract)
+class ARPG_HUNTER_API UEquipableItem : public UItem
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TMap<ECharacterStatType, uint16> Stat;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> Mesh;
+};
 
-USTRUCT()
-struct ARPG_HUNTER_API FWeaponItemData : public FItemData
+UCLASS()
+class ARPG_HUNTER_API UWeaponItem : public UEquipableItem
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
 	EWeaponType Type;
-	UPROPERTY(EditAnywhere)
-	TMap<ECharacterStatType, uint16> WeaponStat;
 };
 
-USTRUCT()
-struct ARPG_HUNTER_API FArmorItemData : public FItemData
+UCLASS()
+class ARPG_HUNTER_API UArmorItem : public UEquipableItem
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
 	EArmorPart Type;
+};
+
+USTRUCT()
+struct ARPG_HUNTER_API FItemData : public FTableRowBase 
+{
+	GENERATED_BODY()
+public:
 	UPROPERTY(EditAnywhere)
-	TMap<ECharacterStatType, uint16> ArmorStat;
+	TObjectPtr<UItem> Item;
 };
