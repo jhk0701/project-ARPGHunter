@@ -256,7 +256,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 				Hitable->HitBy(HitInfo);
 			}
 
-			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.1f);
+			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.3f);
 		}
 	);
 }
@@ -282,11 +282,6 @@ void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 	StatComp->ApplyEffect(_effectData);
 }
 
-void APlayerCharacter::ShakeCameraOnAttack(float _scale)
-{
-	ShakeCamera(CameraShakeOnAttack, _scale);
-}
-
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -294,6 +289,11 @@ void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, fl
 		return;
 
 	PlayerController->ClientStartCameraShake(_shakeClass, _scale);
+}
+
+void APlayerCharacter::ShakeCameraOnAttack(float _scale)
+{
+	ShakeCamera(CameraShakeOnAttack, _scale);
 }
 
 #pragma region Interaction
