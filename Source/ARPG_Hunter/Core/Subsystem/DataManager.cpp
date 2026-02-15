@@ -7,6 +7,7 @@
 #include "Data/WeaponConfig.h"
 #include "Data/MonsterData.h"
 #include "Data/StageData.h"
+#include "Data/ItemData.h"
 
 UDataManager::UDataManager()
 {
@@ -25,6 +26,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> StageDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_StageData.DT_StageData'"));
 	if (StageDataTableFinder.Succeeded())
 		StageDataTable = StageDataTableFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> ItemDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_ItemData.DT_ItemData'"));
+	if (ItemDataTableFinder.Succeeded())
+		ItemDataTable = ItemDataTableFinder.Object;
 }
 
 TObjectPtr<UWeaponConfig> UDataManager::GetWeaponConfig(EWeaponType _type) const
@@ -45,4 +50,9 @@ FRegionData* UDataManager::GetRegionData(const FName& _id) const
 FStageData* UDataManager::GetStageData(const FName& _id) const
 {
 	return StageDataTable->FindRow<FStageData>(_id, TEXT("Stage Data Table Search"));
+}
+
+FItemData* UDataManager::GetItemData(const FName& _id) const
+{
+	return ItemDataTable->FindRow<FItemData>(_id, TEXT("Item Data Table Search"));
 }

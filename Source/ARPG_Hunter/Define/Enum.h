@@ -2,11 +2,21 @@
 #pragma once
 
 UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	ITEM				UMETA(DisplayName = "Item"),
+	CONSUMABLE			UMETA(DisplayName = "Consumable Item"),
+	
+	WEAPON				UMETA(DisplayName = "Weapon"),
+	ARMOR				UMETA(DisplayName = "Armor"),
+	EQUIPABLE = WEAPON	UMETA(Hidden), // Weapon 이하는 모두 Equipable 계열이라 표시
+};
+
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	SWORD		UMETA(DisplayName = "Sword"),
 };
-
 FName EnumToName(EWeaponType _value);
 
 UENUM(BlueprintType)

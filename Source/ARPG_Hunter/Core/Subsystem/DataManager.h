@@ -28,6 +28,8 @@ private:
 	TObjectPtr<UDataTable> RegionDataTable;
 	UPROPERTY()
 	TObjectPtr<UDataTable> StageDataTable;
+	UPROPERTY()
+	TObjectPtr<UDataTable> ItemDataTable;
 
 public:
 	UDataManager();
@@ -36,4 +38,5 @@ public:
 	struct FMonsterData* GetMonsterData(const FName& _id) const;
 	struct FRegionData* GetRegionData(const FName& _id) const;
 	struct FStageData* GetStageData(const FName& _id) const;
+	struct FItemData* GetItemData(const FName& _id) const;
 };

@@ -10,12 +10,13 @@
 enum class EWeaponType :uint8;
 enum class EArmorPart :uint8;
 enum class ECharacterStatType :uint8;
+enum class EItemType : uint8;
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UItem : public UDataAsset
+class ARPG_HUNTER_API UItemConfig : public UDataAsset
 {
 	GENERATED_BODY()
 public:
@@ -24,13 +25,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString Desc;
 	UPROPERTY(EditAnywhere)
-	uint16 MaxCount; // 최대 9999개까지 소지 가능
+	uint16 MaxAmount; // 최대 9999개까지 소지 가능
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UTexture> Thumbnail;
 };
 
 UCLASS()
-class ARPG_HUNTER_API UConsumableItem : public UItem
+class ARPG_HUNTER_API UConsumableItemConfig : public UItemConfig
 {
 	GENERATED_BODY()
 public:
@@ -43,7 +44,7 @@ public:
 };
 
 UCLASS(Abstract)
-class ARPG_HUNTER_API UEquipableItem : public UItem
+class ARPG_HUNTER_API UEquipmentItemConfig : public UItemConfig
 {
 	GENERATED_BODY()
 public:
@@ -54,7 +55,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API UWeaponItem : public UEquipableItem
+class ARPG_HUNTER_API UWeaponItemConfig : public UEquipmentItemConfig
 {
 	GENERATED_BODY()
 public:
@@ -63,7 +64,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API UArmorItem : public UEquipableItem
+class ARPG_HUNTER_API UArmorItemConfig : public UEquipmentItemConfig
 {
 	GENERATED_BODY()
 public:
@@ -77,5 +78,7 @@ struct ARPG_HUNTER_API FItemData : public FTableRowBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UItem> Item;
+	EItemType Type;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UItemConfig> Item;
 };
