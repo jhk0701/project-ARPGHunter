@@ -4,8 +4,9 @@
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 
-void UItem::Init(uint16 _amount, TObjectPtr<UItemConfig> _config)
+void UItem::Init(const FName& _id, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
+	ID = _id;
 	Amount = _amount;
 	Config = _config;
 }
@@ -35,4 +36,12 @@ bool UItem::TrySubAmount(uint16 _amount)
 bool UItem::IsFull() const
 {
 	return Config->MaxAmount == Amount;
+}
+
+
+void UEquipmentItem::Init(const FName& _id, uint16 _amount, TObjectPtr<UItemConfig> _config)
+{
+	check(_amount == 1);
+
+	Super::Init(_id, 1, _config);
 }

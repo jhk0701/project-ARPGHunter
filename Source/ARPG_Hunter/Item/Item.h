@@ -16,25 +16,39 @@ class ARPG_HUNTER_API UItem : public UObject
 {
 	GENERATED_BODY()
 private:
+	FName ID;
 	uint16 Amount{ 1 };
 	UPROPERTY()
 	TObjectPtr<UItemConfig> Config;
 
 public:
-	void Init(uint16 _amount, TObjectPtr<UItemConfig> _config);
+	virtual void Init(const FName& _id, uint16 _amount, TObjectPtr<UItemConfig> _config);
 
-	bool TryAddAmount(uint16 _amount, uint16& _outRemain);
+	virtual bool TryAddAmount(uint16 _amount, uint16& _outRemain);
 	bool TrySubAmount(uint16 _amount);
 
 	bool IsFull() const;
+	
+	const FName& GetID() const { return ID; }
 	uint16 GetAmount() const { return Amount; }
+	const TObjectPtr<UItemConfig> GetConfig() { return Config; }
 };
 
 UCLASS()
-class ARPG_HUNTER_API UEquipableItem : public UItem
+class ARPG_HUNTER_API UConsumableItem : public UItem 
 {
 	GENERATED_BODY()
 private:
-	// TODO: 강화 및 인챈트 정보 추가
+	// TODO : 아이템 사용 후, 쿨타임 로직
+
+};
+
+UCLASS()
+class ARPG_HUNTER_API UEquipmentItem : public UItem
+{
+	GENERATED_BODY()
+private:
+	// TODO: 강화 및 인챈트 데이터
 public:
+	void Init(const FName& _id, uint16 _amount, TObjectPtr<UItemConfig> _config) override;
 };
