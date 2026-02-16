@@ -53,7 +53,4 @@ public:
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
 	
 	void AddItem(const FName & _itemID, uint16 _amount);
-
-	UFUNCTION(BlueprintCallable)
-	void TestAddItem(const FName& _itemID, int _amount);
 };

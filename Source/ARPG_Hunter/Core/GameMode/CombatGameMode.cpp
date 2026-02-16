@@ -18,14 +18,14 @@
 #include "Data/Action.h"
 #include "Monster/MonsterBase.h"
 #include "SubObject/SubObject.h"
-#include "UI/PlayerHUD.h"
+#include "UI/CombatHUD.h"
 #include "Define/Debug.h"
 
 ACombatGameMode::ACombatGameMode()
 {
 	PlayerControllerClass = APlayerCombatController::StaticClass();
 	GameStateClass = ACombatGameState::StaticClass();
-	HUDClass = APlayerHUD::StaticClass();
+	HUDClass = ACombatHUD::StaticClass();
 
 	if (nullptr == MonsterClass.Find(EMonsterType::REGULAR))
 		MonsterClass.Add(EMonsterType::REGULAR);

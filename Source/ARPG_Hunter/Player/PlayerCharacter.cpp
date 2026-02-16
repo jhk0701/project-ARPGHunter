@@ -17,7 +17,7 @@
 #include "Controller/PlayerCombatController.h"
 #include "Data/WeaponConfig.h"
 
-#include "UI/PlayerHUD.h"
+#include "UI/CombatHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
 #include "Interface/Interactable.h"
@@ -97,10 +97,10 @@ void APlayerCharacter::BeginPlay()
 
 	if (APlayerCombatController* CombatController = Cast<APlayerCombatController>(GetController()))
 	{
-		APlayerHUD* PlayerHUD = CombatController->GetHUD<APlayerHUD>();
-		ensure(PlayerHUD);
+		ACombatHUD* CombatHUD = CombatController->GetHUD<ACombatHUD>();
+		ensure(CombatHUD);
 
-		UUWPlayerHUD* PlayerUI = Cast<UUWPlayerHUD>(PlayerHUD->GetPlayerUI());
+		UUWPlayerHUD* PlayerUI = Cast<UUWPlayerHUD>(CombatHUD->GetPlayerUI());
 		UUWPlayerStatusBar* StatusBar = PlayerUI->GetPlayerStatusBar();
 		
 		StatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));

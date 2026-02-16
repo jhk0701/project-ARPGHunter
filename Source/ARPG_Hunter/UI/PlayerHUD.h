@@ -9,28 +9,14 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class ARPG_HUNTER_API APlayerHUD : public AHUD
 {
 	GENERATED_BODY()
 
-private:
-	UPROPERTY()
-	TSubclassOf<UUserWidget> PlayerUIClass;
-	UPROPERTY()
-	TObjectPtr<UUserWidget> PlayerUI;
-	UPROPERTY()
-	TSubclassOf<UUserWidget> StageResultUIClass;
-	UPROPERTY()
-	TObjectPtr<UUserWidget> StageResultUI;
-
-	UPROPERTY()
-	TSubclassOf<class ADamageFont> DamageUIClass;
-
 public:
 	APlayerHUD();
-	TObjectPtr<UUserWidget> GetPlayerUI() { return PlayerUI; }
-	void ShowResultUI(bool _bOnCleared, const struct FStageData* _stageData);
+private:
 
 protected:
 	void BeginPlay() override;

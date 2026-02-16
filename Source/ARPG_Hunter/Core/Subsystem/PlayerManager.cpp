@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Core/Subsystem/PlayerManager.h"
 
 #include "Core/Subsystem/DataManager.h"
@@ -56,9 +55,4 @@ void UPlayerManager::AddItem(const FName& _itemID, uint16 _amount)
 
 	FAddItemParam Param(GetGameInstance()->GetSubsystem<UDataManager>(), _itemID, _amount, Index);
 	bool bIsSuccess = Inventory->TryAddItem(Param);
-}
-
-void UPlayerManager::TestAddItem(const FName& _itemID, int _amount)
-{
-	AddItem(_itemID, _amount);
 }
