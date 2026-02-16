@@ -49,4 +49,5 @@ public:
 	bool TryFindItem(const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
 
 	TObjectPtr<UItem> GetItem(uint8 _idx) const { return Container[_idx]; }
+	const TArray<TObjectPtr<UItem>>& GetContainer() const { return Container; }
 };

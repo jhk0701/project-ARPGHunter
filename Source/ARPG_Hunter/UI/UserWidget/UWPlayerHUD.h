@@ -6,7 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "UWPlayerHUD.generated.h"
 
+class UButton;
 class UUWPlayerStatusBar;
+
+DECLARE_DELEGATE(FOnClickButton)
 
 /**
  * 상시 노출시킬 UI : 메뉴 버튼 등등
@@ -33,4 +36,16 @@ UCLASS()
 class ARPG_HUNTER_API UUWNonCombatHUD : public UUWPlayerHUD
 {
 	GENERATED_BODY()
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> MaintenanceButton;
+
+protected:
+	void NativeOnInitialized() override;
+
+public:
+	FOnClickButton OnClickMaintenanceButton;
+	
+	UFUNCTION()
+	void ClickMaintenanceButton();
 };

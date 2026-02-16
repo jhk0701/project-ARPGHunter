@@ -90,7 +90,6 @@ void UUWStageSelect::ClickStartButton()
 		return;
 
 	OnClickStartButton.ExecuteIfBound(CurStageID);
-
 	HideUI();
 }
 

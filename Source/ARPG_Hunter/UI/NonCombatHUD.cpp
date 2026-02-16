@@ -3,8 +3,11 @@
 
 #include "UI/NonCombatHUD.h"
 
+#include "Core/Subsystem/PlayerManager.h"
+#include "Player/Inventory.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenanceWindow.h"
+#include "UI/UserWidget/UWInventory.h"
 
 
 ANonCombatHUD::ANonCombatHUD()
@@ -26,11 +29,30 @@ void ANonCombatHUD::BeginPlay()
 	{
 		NonCombatUI = CreateWidget<UUWNonCombatHUD>(GetWorld(), NonCombatUIClass);
 		if (NonCombatUI)
+		{
 			NonCombatUI->AddToViewport();
+			NonCombatUI->OnClickMaintenanceButton.BindLambda(
+				[this]() 
+				{
+					ShowMaintenanceUI();
+				}
+			);
+		}
 	}
 
-	if (MaintenanceUIClass) 
+	if (MaintenanceUIClass)
+	{
 		MaintenanceUI = CreateWidget<UUWMaintenanceWindow>(GetWorld(), MaintenanceUIClass);
+		if (MaintenanceUI) 
+		{
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+			TObjectPtr<UUWInventory> InventoryUI = MaintenanceUI->GetInventory();
+			
+			InventoryUI->Init(Inventory->GetContainer());
+			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
+		}
+	}
 }
 
 void ANonCombatHUD::ShowMaintenanceUI()

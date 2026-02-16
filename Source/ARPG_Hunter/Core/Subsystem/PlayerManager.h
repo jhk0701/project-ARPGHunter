@@ -51,6 +51,7 @@ public:
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
-	
+
+	const TObjectPtr<UInventory> GetInventory() { return Inventory; }
 	void AddItem(const FName & _itemID, uint16 _amount);
 };
