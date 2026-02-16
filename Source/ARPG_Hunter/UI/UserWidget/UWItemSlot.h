@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,8 +16,14 @@ class ARPG_HUNTER_API UUWItemSlot : public UUserWidget
 	
 private:
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class USizeBox> Frame;
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> Thumbnail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> AmountLabel;
 
 public:
-	// void Update(struct FItemData* ItemData);
+	void SetSize(const FVector2D& _size);
+	void SetItem(TObjectPtr<class UItem> _item);
+	void ClearSlot();
 };

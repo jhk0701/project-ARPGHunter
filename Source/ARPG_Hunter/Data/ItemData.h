@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint16 MaxAmount; // 최대 9999개까지 소지 가능
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UTexture> Thumbnail;
+	TObjectPtr<UTexture2D> Thumbnail;
 };
 
 UCLASS()

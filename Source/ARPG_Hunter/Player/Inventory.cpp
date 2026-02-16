@@ -53,12 +53,12 @@ bool UInventory::TryAddItem(FAddItemParam& _param)
 		{
 			// 남김없이 다 추가된 경우
 			_param.OutIdx = Index;
-			OnInventoryChanged.Broadcast(Index);
+			OnInventoryChanged.Broadcast(Index, Container[Index]);
 			return true;
 		}
 
 		_param.Amount = RemainAmount; // 획득 후, 해당 슬롯이 다 차서 남은 갯수 -> 신규 획득 처리
-		OnInventoryChanged.Broadcast(Index);
+		OnInventoryChanged.Broadcast(Index, Container[Index]);
 	}
 
 	// 신규 획득
@@ -69,7 +69,8 @@ bool UInventory::TryAddItem(FAddItemParam& _param)
 	// 신규 아이템 인스턴스 추가
 	Container[Index] = CreateItem(_param);
 	_param.OutIdx = Index;
-	OnInventoryChanged.Broadcast(Index);
+
+	OnInventoryChanged.Broadcast(Index, Container[Index]);
 
 	return true;
 }
@@ -85,7 +86,7 @@ bool UInventory::TrySubItem(uint8 _idx, uint16 _amount)
 		if (Container[_idx]->GetAmount() == 0)
 			Container[_idx] == nullptr;
 
-		OnInventoryChanged.Broadcast(_idx); // 이 시점에서 nullptr일 것
+		OnInventoryChanged.Broadcast(_idx, Container[_idx]); // 이 시점에서 nullptr일 것
 	}
 
 	return bIsSuccess;

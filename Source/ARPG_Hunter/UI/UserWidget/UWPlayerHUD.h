@@ -9,7 +9,7 @@
 class UUWPlayerStatusBar;
 
 /**
- * 만들어진 위젯을 배치하는 캔버스 용도의 위젯
+ * 상시 노출시킬 UI : 메뉴 버튼 등등
  */
 UCLASS(Abstract)
 class ARPG_HUNTER_API UUWPlayerHUD : public UUserWidget
@@ -26,7 +26,7 @@ private:
 	TObjectPtr<UUWPlayerStatusBar> PlayerStatusBar;
 
 public:
-	UUWPlayerStatusBar* GetPlayerStatusBar() const { return PlayerStatusBar; }
+	TObjectPtr<UUWPlayerStatusBar> GetPlayerStatusBar() const { return PlayerStatusBar; }
 };
 
 UCLASS()

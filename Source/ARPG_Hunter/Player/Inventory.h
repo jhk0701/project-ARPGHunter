@@ -23,7 +23,7 @@ public:
 	{};
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, uint8);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInventoryChanged, uint8, TObjectPtr<UItem>);
 
 /**
  * 
