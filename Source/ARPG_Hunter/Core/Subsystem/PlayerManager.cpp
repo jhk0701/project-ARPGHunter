@@ -3,6 +3,10 @@
 
 #include "Core/Subsystem/PlayerManager.h"
 
+#include "Core/Subsystem/DataManager.h"
+#include "Define/Enum.h"
+#include "Player/Inventory.h"
+
 UPlayerManager::UPlayerManager()
 {
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
@@ -16,6 +20,11 @@ UPlayerManager::UPlayerManager()
 
 void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 {
+	Super::Initialize(Collection);
+
+	Inventory = NewObject<UInventory>(this);
+	Inventory->Init();
+
 	Stat[ECharacterStatType::HEALTH]					= 500;
 	Stat[ECharacterStatType::STAMINA]					= 100;
 	Stat[ECharacterStatType::SKILL]						= 100;
@@ -27,13 +36,29 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	// TODO : 플레이어 저장 데이터 적용하기
 }
 
+void UPlayerManager::Deinitialize()
+{
+	Super::Deinitialize();
+
+	Inventory = nullptr;
+}
+
 void UPlayerManager::AddGold(uint32 _amount)
 {
 	Gold.Value += _amount;
 	Gold.OnValueChanged.Broadcast(Gold.Value);
 }
 
-void UPlayerManager::AddItem(const FName& _itemID, const uint8 _cnt)
+void UPlayerManager::AddItem(const FName& _itemID, uint16 _amount)
 {
-	// TODO : 아이템 시스템 추가
+	//아이템 추가
+	uint8 Index;
+
+	FAddItemParam Param(GetGameInstance()->GetSubsystem<UDataManager>(), _itemID, _amount, Index);
+	bool bIsSuccess = Inventory->TryAddItem(Param);
+}
+
+void UPlayerManager::TestAddItem(const FName& _itemID, int _amount)
+{
+	AddItem(_itemID, _amount);
 }

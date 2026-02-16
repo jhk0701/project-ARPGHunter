@@ -38,7 +38,6 @@ bool UItem::IsFull() const
 	return Config->MaxAmount == Amount;
 }
 
-
 void UEquipmentItem::Init(const FName& _id, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
 	check(_amount == 1);

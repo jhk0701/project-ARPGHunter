@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Define/Enum.h"
 #include "PlayerManager.generated.h"
+
+class UInventory;
+enum class ECharacterStatType : uint8;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCurrencyChanged, uint32);
 
@@ -35,15 +37,23 @@ private:
 	UPROPERTY(EditAnywhere)
 	FCurrency Gold;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInventory> Inventory;
+
 public:
 	UPlayerManager();
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+
 	const TMap<ECharacterStatType, uint32>& GetPlayerStat() const { return Stat; }
 
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
+	
+	void AddItem(const FName & _itemID, uint16 _amount);
 
-	void AddItem(const FName & _itemID, const uint8 _cnt);
+	UFUNCTION(BlueprintCallable)
+	void TestAddItem(const FName& _itemID, int _amount);
 };
