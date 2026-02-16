@@ -11,6 +11,8 @@ class UEquipmentItemConfig;
 enum class EEquipmentType : uint8;
 enum class ECharacterStatType :uint8;
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, EEquipmentType, TObjectPtr<UEquipmentItem>);
+
 /**
  * 
  */
@@ -28,7 +30,13 @@ private:
 	TMap<ECharacterStatType, uint32> EquipmentStat;
 
 public:
+	FOnEquipmentChanged OnEquipmentChanged;
+
 	void Init();
 	TObjectPtr<UEquipmentItem> Equip(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment);
 	TObjectPtr<UEquipmentItem> Unequip(EEquipmentType _type);
+
+	const TObjectPtr<UEquipmentItem> GetEquipment(EEquipmentType _type) const { return Container[_type]; }
+	const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& GetContainer() const { return Container; }
+	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const { return EquipmentStat; }
 };
