@@ -12,6 +12,8 @@
 void UInventory::Init(uint8 _size)
 {
 	Container.SetNum(_size);
+
+	// TODO: 저장 데이터 반영
 }
 
 TObjectPtr<UItem> UInventory::CreateItem(const FAddItemParam& _param)

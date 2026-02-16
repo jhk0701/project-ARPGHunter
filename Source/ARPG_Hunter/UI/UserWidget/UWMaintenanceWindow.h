@@ -6,6 +6,7 @@
 #include "UI/UserWidget/PopUp/UWPopUp.h"
 #include "UWMaintenanceWindow.generated.h"
 
+class UButton;
 class UUWInventory;
 
 /**
@@ -18,8 +19,16 @@ class ARPG_HUNTER_API UUWMaintenanceWindow : public UUWPopUp
 private:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UUWInventory> Inventory;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> CloseButton;
+
+protected:
+	void NativeOnInitialized() override;
 
 public:
 	TObjectPtr<UUWInventory> GetInventory() const { return Inventory; }
+
+	UFUNCTION()
+	void ClickCloseButton();
 	
 };

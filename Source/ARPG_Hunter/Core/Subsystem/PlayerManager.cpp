@@ -5,6 +5,8 @@
 #include "Core/Subsystem/DataManager.h"
 #include "Define/Enum.h"
 #include "Player/Inventory.h"
+#include "Player/Equipment.h"
+
 
 UPlayerManager::UPlayerManager()
 {
@@ -22,7 +24,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	Inventory = NewObject<UInventory>(this);
-	Inventory->Init();
+	Equipment = NewObject<UEquipment>(this);
 
 	Stat[ECharacterStatType::HEALTH]					= 500;
 	Stat[ECharacterStatType::STAMINA]					= 100;
@@ -33,6 +35,8 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Stat[ECharacterStatType::CRITICAL_DAMAGE_PERCENT]	= 100;
 
 	// TODO : 플레이어 저장 데이터 적용하기
+	Inventory->Init();
+	Equipment->Init();
 }
 
 void UPlayerManager::Deinitialize()
@@ -40,6 +44,7 @@ void UPlayerManager::Deinitialize()
 	Super::Deinitialize();
 
 	Inventory = nullptr;
+	Equipment = nullptr;
 }
 
 void UPlayerManager::AddGold(uint32 _amount)

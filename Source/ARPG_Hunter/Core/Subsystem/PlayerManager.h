@@ -7,6 +7,7 @@
 #include "PlayerManager.generated.h"
 
 class UInventory;
+class UEquipment;
 enum class ECharacterStatType : uint8;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCurrencyChanged, uint32);
@@ -31,14 +32,13 @@ class ARPG_HUNTER_API UPlayerManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 	
 private:
-	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint32> Stat;
-
-	UPROPERTY(EditAnywhere)
 	FCurrency Gold;
-
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY()
 	TObjectPtr<UInventory> Inventory;
+	UPROPERTY()
+	TObjectPtr<UEquipment> Equipment;
 
 public:
 	UPlayerManager();
@@ -52,7 +52,8 @@ public:
 	void AddGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
 
-	const TObjectPtr<UInventory> GetInventory() { return Inventory; }
+	const TObjectPtr<UInventory> GetInventory() const { return Inventory; }
+	const TObjectPtr<UEquipment> GetEquipment() const { return Equipment; }
 
 	UFUNCTION(BlueprintCallable)
 	void AddItem(const FName & _itemID, int32 _amount);

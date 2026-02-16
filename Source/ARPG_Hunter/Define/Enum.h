@@ -20,11 +20,15 @@ enum class EWeaponType : uint8
 FName EnumToName(EWeaponType _value);
 
 UENUM(BlueprintType)
-enum class EArmorPart : uint8
+enum class EEquipmentType : uint8
 {
+	WEAPON		UMETA(DisplayName = "Weapon"),
+
 	HEAD		UMETA(DisplayName = "Head"),
 	TOP			UMETA(DisplayName = "Top"),
 	BOTTOM		UMETA(DisplayName = "Bottom"),
+
+	END			UMETA(Hidden)
 };
 
 UENUM(BlueprintType)

@@ -8,7 +8,7 @@
 #include "ItemData.generated.h"
 
 enum class EWeaponType :uint8;
-enum class EArmorPart :uint8;
+enum class EEquipmentType :uint8;
 enum class ECharacterStatType :uint8;
 enum class EItemType : uint8;
 
@@ -43,11 +43,13 @@ public:
 	TArray<TObjectPtr<class UEffectData>> Effects; // 사용 시, 효과
 };
 
-UCLASS(Abstract)
+UCLASS()
 class ARPG_HUNTER_API UEquipmentItemConfig : public UItemConfig
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	EEquipmentType Type;
 	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint16> Stat;
 	UPROPERTY(EditAnywhere)
@@ -60,16 +62,7 @@ class ARPG_HUNTER_API UWeaponItemConfig : public UEquipmentItemConfig
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	EWeaponType Type;
-};
-
-UCLASS()
-class ARPG_HUNTER_API UArmorItemConfig : public UEquipmentItemConfig
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	EArmorPart Type;
+	EWeaponType WeaponType;
 };
 
 USTRUCT()
