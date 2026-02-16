@@ -100,8 +100,8 @@ void APlayerCharacter::BeginPlay()
 		ACombatHUD* CombatHUD = CombatController->GetHUD<ACombatHUD>();
 		ensure(CombatHUD);
 
-		UUWPlayerHUD* PlayerUI = Cast<UUWPlayerHUD>(CombatHUD->GetPlayerUI());
-		UUWPlayerStatusBar* StatusBar = PlayerUI->GetPlayerStatusBar();
+		UUWCombatHUD* CombatUI = Cast<UUWCombatHUD>(CombatHUD->GetPlayerUI());
+		UUWPlayerStatusBar* StatusBar = CombatUI->GetPlayerStatusBar();
 		
 		StatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		StatusBar->SetStaminaBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));

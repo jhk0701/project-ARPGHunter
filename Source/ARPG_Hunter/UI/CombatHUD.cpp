@@ -12,7 +12,7 @@
 ACombatHUD::ACombatHUD()
 {
 	// 플레이어 HUD
-	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerUIFinder(TEXT("/Game/06-UI/WBP_CombatPlayerHUD.WBP_CombatPlayerHUD_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerUIFinder(TEXT("/Game/06-UI/HUD/WBP_CombatHUD.WBP_CombatHUD_C"));
 	if (PlayerUIFinder.Succeeded())
 		PlayerUIClass = PlayerUIFinder.Class;
 
