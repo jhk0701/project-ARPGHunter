@@ -48,7 +48,7 @@ void UPlayerManager::AddGold(uint32 _amount)
 	Gold.OnValueChanged.Broadcast(Gold.Value);
 }
 
-void UPlayerManager::AddItem(const FName& _itemID, uint16 _amount)
+void UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
 	//아이템 추가
 	uint8 Index;

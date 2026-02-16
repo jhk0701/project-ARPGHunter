@@ -18,6 +18,7 @@ void UUWInventory::Init(const TArray<TObjectPtr<UItem>>& _items)
 	{
 		ItemSlots[i] = CreateWidget<UUWItemSlot>(this, ItemSlotClass);
 		ItemSlots[i]->SetItem(_items[i]); // null 일 경우 내부에서 Clear해줌
+		ItemSlots[i]->SetSize(SlotSize);
 		SlotContainer->AddChild(ItemSlots[i]);
 	}
 }
