@@ -25,12 +25,17 @@ void UUWItemSlot::SetItem(TObjectPtr<UItem> _item)
 
 	Thumbnail->SetBrushFromTexture(_item->GetConfig()->Thumbnail);
 	Thumbnail->SetVisibility(ESlateVisibility::Visible);
-	AmountLabel->SetText(FText::AsNumber(_item->GetAmount()));
+
+	if (_item->GetAmount() > 1)
+	{
+		AmountLabel->SetVisibility(ESlateVisibility::Visible);
+		AmountLabel->SetText(FText::AsNumber(_item->GetAmount()));
+	}
 }
 
 void UUWItemSlot::ClearSlot()
 {
 	Thumbnail->SetBrushFromTexture(nullptr);
 	Thumbnail->SetVisibility(ESlateVisibility::Hidden);
-	AmountLabel->SetText(FText::GetEmpty());
+	AmountLabel->SetVisibility(ESlateVisibility::Hidden);
 }

@@ -5,9 +5,11 @@
 
 #include "Core/Subsystem/PlayerManager.h"
 #include "Player/Inventory.h"
+#include "Player/Equipment.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenanceWindow.h"
 #include "UI/UserWidget/UWInventory.h"
+#include "UI/UserWidget/UWEquipment.h"
 
 
 ANonCombatHUD::ANonCombatHUD()
@@ -46,11 +48,16 @@ void ANonCombatHUD::BeginPlay()
 		if (MaintenanceUI) 
 		{
 			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
 			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 			TObjectPtr<UUWInventory> InventoryUI = MaintenanceUI->GetInventory();
-			
 			InventoryUI->Init(Inventory->GetContainer());
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
+
+			TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+			TObjectPtr<UUWEquipment> EquipmentUI = MaintenanceUI->GetEquipment();
+			EquipmentUI->Init(Equipment->GetContainer());
+			Equipment->OnEquipmentChanged.AddUObject(EquipmentUI, &UUWEquipment::SetSlot);
 		}
 	}
 }

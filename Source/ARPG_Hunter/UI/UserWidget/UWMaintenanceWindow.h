@@ -8,6 +8,7 @@
 
 class UButton;
 class UUWInventory;
+class UUWEquipment;
 
 /**
  * 
@@ -17,8 +18,11 @@ class ARPG_HUNTER_API UUWMaintenanceWindow : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUWInventory> Inventory;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWEquipment> Equipment;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> CloseButton;
 
@@ -26,7 +30,8 @@ protected:
 	void NativeOnInitialized() override;
 
 public:
-	TObjectPtr<UUWInventory> GetInventory() const { return Inventory; }
+	const TObjectPtr<UUWInventory> GetInventory() const { return Inventory; }
+	const TObjectPtr<UUWEquipment> GetEquipment() const { return Equipment; }
 
 	UFUNCTION()
 	void ClickCloseButton();

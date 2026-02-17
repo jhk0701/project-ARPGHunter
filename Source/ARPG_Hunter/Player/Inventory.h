@@ -14,12 +14,11 @@ struct FAddItemParam
 {
 public:
 	TObjectPtr<UDataManager> DataManager;
-	const FName& ID;
+	FName ID;
 	uint16 Amount;
-	uint8& OutIdx;
+	uint8 OutIndex;
 
-	FAddItemParam(TObjectPtr<UDataManager> _dataManager, const FName& _id, uint16 _amount, uint8& _outIdx)
-		: DataManager(_dataManager), ID(_id), Amount(_amount), OutIdx(_outIdx)
+	FAddItemParam(TObjectPtr<UDataManager> _dataManager) : DataManager(_dataManager)
 	{};
 };
 
@@ -36,7 +35,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TArray<TObjectPtr<UItem>> Container;
 
-	TObjectPtr<UItem> CreateItem(const FAddItemParam& _param);
 	bool TryFindEmpty(uint8& _outIdx);
 
 public:
@@ -44,6 +42,7 @@ public:
 
 	void Init(uint8 _size = 80);
 
+	TObjectPtr<UItem> CreateItem(const FAddItemParam& _param);
 	bool TryAddItem(FAddItemParam& _param);
 	bool TrySubItem(uint8 _idx, uint16 _amount);
 	bool TryFindItem(const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;

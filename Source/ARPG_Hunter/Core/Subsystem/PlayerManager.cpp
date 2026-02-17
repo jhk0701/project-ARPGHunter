@@ -6,6 +6,7 @@
 #include "Define/Enum.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
+#include "Item/Item.h"
 
 
 UPlayerManager::UPlayerManager()
@@ -37,6 +38,8 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	// TODO : 플레이어 저장 데이터 적용하기
 	Inventory->Init();
 	Equipment->Init();
+
+	ProvideBasicEquipment();
 }
 
 void UPlayerManager::Deinitialize()
@@ -56,8 +59,33 @@ void UPlayerManager::AddGold(uint32 _amount)
 void UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
 	//아이템 추가
-	uint8 Index;
+	FAddItemParam Param(GetGameInstance()->GetSubsystem<UDataManager>());
+	Param.ID = _itemID;
+	Param.Amount = _amount;
 
-	FAddItemParam Param(GetGameInstance()->GetSubsystem<UDataManager>(), _itemID, _amount, Index);
-	bool bIsSuccess = Inventory->TryAddItem(Param);
+	Inventory->TryAddItem(Param);
+}
+
+void UPlayerManager::ProvideBasicEquipment()
+{
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	
+	FAddItemParam Param(DataManager);
+	Param.Amount = 1;
+
+	Param.ID = FName(TEXT("3001"));
+	TObjectPtr<UItem> Armor1 = Inventory->CreateItem(Param);
+	Equipment->Equip(EEquipmentType::HEAD, Cast<UEquipmentItem>(Armor1));
+
+	Param.ID = FName(TEXT("3002"));
+	TObjectPtr<UItem> Armor2 = Inventory->CreateItem(Param);
+	Equipment->Equip(EEquipmentType::TOP, Cast<UEquipmentItem>(Armor2));
+
+	Param.ID = FName(TEXT("3003"));
+	TObjectPtr<UItem> Armor3 = Inventory->CreateItem(Param);
+	Equipment->Equip(EEquipmentType::BOTTOM, Cast<UEquipmentItem>(Armor3));
+
+	Param.ID = FName(TEXT("4001"));
+	TObjectPtr<UItem> Weapon = Inventory->CreateItem(Param);
+	Equipment->Equip(EEquipmentType::WEAPON, Cast<UEquipmentItem>(Weapon));
 }

@@ -54,7 +54,7 @@ bool UInventory::TryAddItem(FAddItemParam& _param)
 		if (Container[Index]->TryAddAmount(_param.Amount, RemainAmount))
 		{
 			// 남김없이 다 추가된 경우
-			_param.OutIdx = Index;
+			_param.OutIndex = Index;
 			OnInventoryChanged.Broadcast(Index, Container[Index]);
 			return true;
 		}
@@ -70,7 +70,7 @@ bool UInventory::TryAddItem(FAddItemParam& _param)
 
 	// 신규 아이템 인스턴스 추가
 	Container[Index] = CreateItem(_param);
-	_param.OutIdx = Index;
+	_param.OutIndex = Index;
 
 	OnInventoryChanged.Broadcast(Index, Container[Index]);
 

@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Equipment.generated.h"
 
+class UItem;
 class UEquipmentItem;
 class UEquipmentItemConfig;
 enum class EEquipmentType : uint8;
