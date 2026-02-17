@@ -35,6 +35,7 @@ TObjectPtr<UEquipmentItem> UEquipment::Equip(EEquipmentType _type, TObjectPtr<UE
 
 	Container[_type] = _equipment;
 	OnEquipmentChanged.Broadcast(_type, Container[_type]);
+	OnStatValueChanged.Broadcast(EquipmentStat);
 
 	return PrevItem;
 }
@@ -51,6 +52,7 @@ TObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
 
 	Container[_type] = nullptr;
 	OnEquipmentChanged.Broadcast(_type, Container[_type]);
+	OnStatValueChanged.Broadcast(EquipmentStat);
 
 	return PrevItem;
 }

@@ -60,7 +60,6 @@ enum class EActionProcess : uint8
 
 	NONE			UMETA(Hidden)
 };
-
 FName EnumToName(EActionProcess _value);
 
 UENUM(BlueprintType)
@@ -83,6 +82,7 @@ enum class ECharacterStatType : uint8
 
 	END							UMETA(Hidden),
 };
+FName EnumToName(ECharacterStatType _type);
 
 UENUM()
 enum class ECharacterResourceType : uint8

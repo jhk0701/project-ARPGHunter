@@ -31,6 +31,29 @@ FName EnumToName(EActionProcess _value)
 	}
 }
 
+FName EnumToName(ECharacterStatType _type)
+{
+	switch (_type)
+	{
+	case ECharacterStatType::HEALTH:
+		return FName(TEXT("Health"));
+	case ECharacterStatType::STAMINA:
+		return FName(TEXT("Stamina"));
+	case ECharacterStatType::SKILL:
+		return FName(TEXT("Skill"));
+	case ECharacterStatType::ATTACK:
+		return FName(TEXT("Attack"));
+	case ECharacterStatType::DEFENSE:
+		return FName(TEXT("Defense"));
+	case ECharacterStatType::CRITICAL_PERCENT:
+		return FName(TEXT("Critical"));
+	case ECharacterStatType::CRITICAL_DAMAGE_PERCENT:
+		return FName(TEXT("Critical Damage"));
+	default:
+		return NAME_None;
+	}
+}
+
 FName EnumToName(EGimicType _type)
 {
 	switch (_type)

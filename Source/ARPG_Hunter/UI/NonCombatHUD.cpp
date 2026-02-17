@@ -56,8 +56,9 @@ void ANonCombatHUD::BeginPlay()
 
 			TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 			TObjectPtr<UUWEquipment> EquipmentUI = MaintenanceUI->GetEquipment();
-			EquipmentUI->Init(Equipment->GetContainer());
+			EquipmentUI->Init(Equipment->GetContainer(), Equipment->GetEquipmentStat());
 			Equipment->OnEquipmentChanged.AddUObject(EquipmentUI, &UUWEquipment::SetSlot);
+			Equipment->OnStatValueChanged.AddUObject(EquipmentUI, &UUWEquipment::SetStatInfo);
 		}
 	}
 }

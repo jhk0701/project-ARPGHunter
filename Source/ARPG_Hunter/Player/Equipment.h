@@ -13,6 +13,8 @@ enum class EEquipmentType : uint8;
 enum class ECharacterStatType :uint8;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, EEquipmentType, TObjectPtr<UEquipmentItem>);
+typedef TMap<ECharacterStatType, uint32> FDelegateStatMap;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnStatValueChanged, const FDelegateStatMap&);
 
 /**
  * 
@@ -32,6 +34,7 @@ private:
 
 public:
 	FOnEquipmentChanged OnEquipmentChanged;
+	FOnStatValueChanged OnStatValueChanged;
 
 	void Init();
 	TObjectPtr<UEquipmentItem> Equip(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment);
