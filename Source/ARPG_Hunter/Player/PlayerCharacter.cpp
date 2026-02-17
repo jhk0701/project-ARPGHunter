@@ -85,7 +85,7 @@ void APlayerCharacter::BeginPlay()
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 
-	StatComp->Init(PlayerManager->GetPlayerStat());
+	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
 	StatComp->StartStaminaRecovery();
 	EquipComp->Init();
 
@@ -197,7 +197,10 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 	if (StatComp->IsDead())
 		return;
 
-	StatComp->TakeDamage(_hitInfo.Damage, 
+	uint32 Damage = _hitInfo.Damage;
+	AdjustDefense(Damage);
+
+	StatComp->TakeDamage(Damage,
 		[this]() 
 		{
 			ActionComp->PlayHitAction(StatComp->IsDead());
@@ -233,7 +236,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			if (WeakThis.IsValid() == false || WeakActionComp.IsValid() == false)
 				return;
 
-			uint16 Damage = WeakThis->CalculateBaseDamage();
+			uint32 Damage = WeakThis->CalculateBaseDamage();
 			bool bIsCritical = false;
 
 			for (FHitResult& Hit : _hitResults)
@@ -256,25 +259,35 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 				Hitable->HitBy(HitInfo);
 			}
 
-			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.3f);
+			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.5f);
 		}
 	);
 }
 
-uint16 APlayerCharacter::CalculateBaseDamage()
+uint32 APlayerCharacter::CalculateBaseDamage()
 {
 	return StatComp->GetStat(ECharacterStatType::ATTACK) * ActionComp->GetAttackActionDamagePer() * 0.01f;
 }
 
-bool APlayerCharacter::CalculateCritical(uint16& _damage)
+bool APlayerCharacter::CalculateCritical(uint32& _outDamage)
 {
 	uint32 critial = FMath::Rand() % 100;
 
 	bool bIsCritical = critial <= StatComp->GetStat(ECharacterStatType::CRITICAL_PERCENT);
 	if (bIsCritical)
-		_damage *= (1.0f + StatComp->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT) * 0.01f);
+		_outDamage *= (1.0f + StatComp->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT) * 0.01f);
 
 	return bIsCritical;
+}
+
+void APlayerCharacter::AdjustDefense(uint32& _outDamage)
+{
+	uint32 DefensedValue = StatComp->GetStat(ECharacterStatType::DEFENSE) / 3;
+	
+	if (_outDamage >= DefensedValue)
+		_outDamage -= DefensedValue;
+	else
+		_outDamage = 0;
 }
 
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)

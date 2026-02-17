@@ -76,10 +76,12 @@ public:
 
 private:
 	void SmoothRotateToInputDir(float DeltaTime);
+
 	// 기본 데미지 계산
-	uint16 CalculateBaseDamage(); 
-	bool CalculateCritical(uint16& _damage);
-	
+	uint32 CalculateBaseDamage(); 
+	bool CalculateCritical(uint32& _outDamage);
+	void AdjustDefense(uint32& _outDamage);
+
 	void CheckInteractable();
 
 protected:

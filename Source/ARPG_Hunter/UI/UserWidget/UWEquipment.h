@@ -34,11 +34,11 @@ class ARPG_HUNTER_API UUWEquipment : public UUserWidget
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUWEquipmentStatInfo> StatInfoUIClass;
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UUniformGridPanel> SlotContainer;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWEquipmentStatInfo> StatInfoUIClass;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UVerticalBox> StatContainer;
 

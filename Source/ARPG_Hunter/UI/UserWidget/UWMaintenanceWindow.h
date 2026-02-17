@@ -8,6 +8,7 @@
 
 class UButton;
 class UNamedSlot;
+class UUWItemDetail;
 
 /**
  * 
@@ -17,6 +18,9 @@ class ARPG_HUNTER_API UUWMaintenanceWindow : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWItemDetail> ItemDetailUIClass;
+	TObjectPtr<UUWItemDetail> ItemDetail;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UNamedSlot> InventorySlot;

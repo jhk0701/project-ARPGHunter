@@ -50,6 +50,11 @@ void UPlayerManager::Deinitialize()
 	Equipment = nullptr;
 }
 
+const TMap<ECharacterStatType, uint32>& UPlayerManager::GetEquipmentStat() const
+{
+	return Equipment->GetEquipmentStat();
+}
+
 void UPlayerManager::AddGold(uint32 _amount)
 {
 	Gold.Value += _amount;

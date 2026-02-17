@@ -10,6 +10,12 @@
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
+void UUWItemSlot::Init(uint8 _idx, const FVector2D& _size)
+{
+	Index = _idx;
+	SetSize(_size);
+}
+
 void UUWItemSlot::SetSize(const FVector2D& _size)
 {
 	Frame->SetWidthOverride(_size.X);

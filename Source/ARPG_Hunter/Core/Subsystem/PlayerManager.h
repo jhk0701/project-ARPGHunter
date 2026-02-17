@@ -46,7 +46,8 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	const TMap<ECharacterStatType, uint32>& GetPlayerStat() const { return Stat; }
+	const TMap<ECharacterStatType, uint32>& GetStat() const { return Stat; }
+	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const;
 
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);

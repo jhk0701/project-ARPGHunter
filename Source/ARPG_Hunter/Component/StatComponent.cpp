@@ -14,11 +14,6 @@ UStatComponent::UStatComponent()
 	{
 		ECharacterStatType type = static_cast<ECharacterStatType>(i);
 
-		if (!Stat.Find(type))
-			Stat.Add(type);
-
-		Stat[type] = 100;
-
 		if(!EffectedStat.Find(type))
 			EffectedStat.Add(type);
 
@@ -37,10 +32,15 @@ UStatComponent::UStatComponent()
 void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)
 {
 	Stat = _initStat;
-
 	GetResource(ECharacterResourceType::HEALTH).Init(Stat[ECharacterStatType::HEALTH]);
 	GetResource(ECharacterResourceType::STAMINA).Init(Stat[ECharacterStatType::STAMINA]);
 	GetResource(ECharacterResourceType::SKILL).Init(Stat[ECharacterStatType::SKILL], false);
+}
+
+void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
+{
+	Init(_initStat);
+	EquipmentStat = _equipmentStat;
 }
 
 void UStatComponent::Clear()

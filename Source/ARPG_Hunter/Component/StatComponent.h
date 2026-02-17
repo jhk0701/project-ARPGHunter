@@ -66,6 +66,8 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterStatType, uint32> Stat;
+	UPROPERTY(VisibleAnywhere, Category = "Stat|Equiment", meta = (AllowPrivateAccess = "true"))
+	TMap<ECharacterStatType, uint32> EquipmentStat;
 	UPROPERTY(VisibleAnywhere, Category = "Resource", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterResourceType, FCharacterResource> Resource;
 
@@ -100,11 +102,15 @@ public:
 	FOnHitEvent OnHitEvent; // 피격 이벤트
 
 	void Init(const TMap<ECharacterStatType, uint32>& _initStat);
+	void Init(const TMap<ECharacterStatType, uint32>& _initStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void Clear();
  
 	uint32 GetStat(ECharacterStatType _type, bool _bExceptEffect = false) const 
 	{ 
 		uint32 Result = Stat[_type];
+
+		Result += EquipmentStat[_type];
+
 		if(_bExceptEffect == false)
 			Result += EffectedStat[_type];
 		return Result;
