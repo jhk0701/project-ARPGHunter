@@ -28,6 +28,9 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> InteractActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Interact.IA_Interact'"));
 	if (InteractActionFinder.Succeeded())
 		InteractAction = InteractActionFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> ShortCurActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut.IA_ShortCut'"));
+	if (ShortCurActionFinder.Succeeded())
+		ShortCutAction = ShortCurActionFinder.Object;
 }
 
 void APlayerCharacterController::BeginPlay()
@@ -58,6 +61,7 @@ void APlayerCharacterController::SetupInputComponent()
 		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
 
 		InputComp->BindAction(InteractAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputInteract);
+		InputComp->BindAction(ShortCutAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputShortCut);
 	}	
 }
 
@@ -106,6 +110,13 @@ void APlayerCharacterController::InputInteract(const FInputActionValue& _value)
 {
 	ControlledCharacter->Interact();
 }
+
+void APlayerCharacterController::InputShortCut(const FInputActionValue& _value)
+{
+	EShortCutType Type = static_cast<EShortCutType>(_value.Get<float>());
+	ShortCut(Type);
+}
+
 
 void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
 {

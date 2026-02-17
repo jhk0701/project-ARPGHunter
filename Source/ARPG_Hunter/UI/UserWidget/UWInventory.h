@@ -31,7 +31,7 @@ private:
 	TObjectPtr<class UTextBlock> GoldLabel;
 
 public:
-	void Init(const TArray<TObjectPtr<UItem>>& _items);
+	void Init(const TArray<TObjectPtr<UItem>>& _items, uint32 _gold);
 	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
 };

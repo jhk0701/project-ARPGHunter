@@ -39,7 +39,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Inventory->Init();
 	Equipment->Init();
 
-	ProvideBasicEquipment();
+	ProvideBasicProperty();
 }
 
 void UPlayerManager::Deinitialize()
@@ -66,7 +66,7 @@ void UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 	Inventory->TryAddItem(Param);
 }
 
-void UPlayerManager::ProvideBasicEquipment()
+void UPlayerManager::ProvideBasicProperty()
 {
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	
@@ -88,4 +88,6 @@ void UPlayerManager::ProvideBasicEquipment()
 	Param.ID = FName(TEXT("4001"));
 	TObjectPtr<UItem> Weapon = Inventory->CreateItem(Param);
 	Equipment->Equip(EEquipmentType::WEAPON, Cast<UEquipmentItem>(Weapon));
+
+	Gold.Value = 3000;
 }

@@ -3,12 +3,12 @@
 
 #include "Core/GameMode/NonCombatGameMode.h"
 
-#include "Controller/PlayerCharacterController.h"
+#include "Controller/PlayerNonCombatController.h"
 #include "UI/NonCombatHUD.h"
 
 
 ANonCombatGameMode::ANonCombatGameMode()
 {
-	PlayerControllerClass = APlayerCharacterController::StaticClass();
+	PlayerControllerClass = APlayerNonCombatController::StaticClass();
 	HUDClass = ANonCombatHUD::StaticClass();
 }

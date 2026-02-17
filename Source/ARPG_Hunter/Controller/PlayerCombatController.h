@@ -18,22 +18,23 @@ class ARPG_HUNTER_API APlayerCombatController : public APlayerCharacterControlle
 {
 	GENERATED_BODY()
 
+public:
+	APlayerCombatController();
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> DodgeAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> AttackAction;
 
-public:
-	APlayerCombatController();
+protected:
+	virtual void SetupInputComponent() override;
 
+public:
 	UFUNCTION()
 	void InputDodge(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputAttack(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputAttackEnd(const FInputActionValue& _value);
-
-protected:
-	virtual void SetupInputComponent() override;
 };

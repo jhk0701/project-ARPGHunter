@@ -9,7 +9,7 @@
 #include "Item/Item.h"
 #include "UI/UserWidget/UWItemSlot.h"
 
-void UUWInventory::Init(const TArray<TObjectPtr<UItem>>& _items)
+void UUWInventory::Init(const TArray<TObjectPtr<UItem>>& _items, uint32 _gold)
 {
 	check(ItemSlotClass); // 없는 경우 크래시
 
@@ -21,6 +21,8 @@ void UUWInventory::Init(const TArray<TObjectPtr<UItem>>& _items)
 		ItemSlots[i]->SetSize(SlotSize);
 		SlotContainer->AddChild(ItemSlots[i]);
 	}
+
+	SetGoldLabel(_gold);
 }
 
 void UUWInventory::SetSlot(uint8 _idx, TObjectPtr<UItem> _item)

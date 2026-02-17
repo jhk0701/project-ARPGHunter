@@ -58,5 +58,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddItem(const FName & _itemID, int32 _amount);
 	
-	void ProvideBasicEquipment();
+	void ProvideBasicProperty();
 };
