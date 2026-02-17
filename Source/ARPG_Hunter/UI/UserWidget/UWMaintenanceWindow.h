@@ -7,8 +7,7 @@
 #include "UWMaintenanceWindow.generated.h"
 
 class UButton;
-class UUWInventory;
-class UUWEquipment;
+class UNamedSlot;
 
 /**
  * 
@@ -18,10 +17,11 @@ class ARPG_HUNTER_API UUWMaintenanceWindow : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
+
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWInventory> Inventory;
+	TObjectPtr<UNamedSlot> InventorySlot;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWEquipment> Equipment;
+	TObjectPtr<UNamedSlot> EquipmentSlot;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> CloseButton;
@@ -30,10 +30,9 @@ protected:
 	void NativeOnInitialized() override;
 
 public:
-	const TObjectPtr<UUWInventory> GetInventory() const { return Inventory; }
-	const TObjectPtr<UUWEquipment> GetEquipment() const { return Equipment; }
-
+	void SetInventoryUI(TObjectPtr<UUserWidget> _ui);
+	void SetEquipmentUI(TObjectPtr<UUserWidget> _ui);
+	
 	UFUNCTION()
 	void ClickCloseButton();
-	
 };

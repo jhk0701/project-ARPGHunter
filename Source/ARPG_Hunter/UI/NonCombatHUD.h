@@ -7,6 +7,8 @@
 #include "NonCombatHUD.generated.h"
 
 class UUWNonCombatHUD;
+class UUWInventory;
+class UUWEquipment;
 class UUWMaintenanceWindow;
 
 /**
@@ -25,9 +27,20 @@ private:
 	TObjectPtr<UUWNonCombatHUD> NonCombatUI;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWInventory> InventoryUIClass;
+	UPROPERTY()
+	TObjectPtr<UUWInventory> InventoryUI;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWEquipment> EquipmentUIClass;
+	UPROPERTY()
+	TObjectPtr<UUWEquipment> EquipmentUI;
+	
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWMaintenanceWindow> MaintenanceUIClass;
 	UPROPERTY()
 	TObjectPtr<UUWMaintenanceWindow> MaintenanceUI;
+
 protected:
 	void BeginPlay() override;
 

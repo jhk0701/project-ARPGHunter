@@ -5,6 +5,7 @@
 #include "Components/SizeBox.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Blueprint/DragDropOperation.h"
 
 #include "Data/ItemData.h"
 #include "Item/Item.h"

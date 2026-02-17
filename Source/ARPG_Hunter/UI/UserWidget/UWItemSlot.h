@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UWItemSlot.generated.h"
 
+class UItem;
 /**
  * 
  */
@@ -21,9 +22,8 @@ private:
 	TObjectPtr<class UImage> Thumbnail;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> AmountLabel;
-
 public:
 	void SetSize(const FVector2D& _size);
-	void SetItem(TObjectPtr<class UItem> _item);
+	void SetItem(TObjectPtr<UItem> _item);
 	void ClearSlot();
 };
