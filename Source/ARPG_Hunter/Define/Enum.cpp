@@ -15,6 +15,23 @@ FName EnumToName(EWeaponType _value)
 	}
 }
 
+FString EnumToString(EEquipmentType _type)
+{
+	switch (_type)
+	{
+	case EEquipmentType::WEAPON:
+		return TEXT("Weapon");
+	case EEquipmentType::HEAD:
+		return TEXT("Head");
+	case EEquipmentType::TOP:
+		return TEXT("Top");
+	case EEquipmentType::BOTTOM:
+		return TEXT("Bottom");
+	default:
+		return FString();
+	}
+}
+
 FName EnumToName(EActionProcess _value)
 {
 	switch (_value)

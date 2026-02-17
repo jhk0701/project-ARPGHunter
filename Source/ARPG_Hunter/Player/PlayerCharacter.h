@@ -12,6 +12,7 @@
 class UCameraShakeBase;
 enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
+enum class EEquipmentType :uint8;
 
 UCLASS()
 class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler, public IEffectable
@@ -23,18 +24,10 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UEquipmentComponent> EquipComp;
-	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UPlayerActionComponent> ActionComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> HeadMeshComp;
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> TopMeshComp;
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> BottomMeshComp;
-	UPROPERTY(EditAnywhere, Category = "Mesh|Weapon")
-	TObjectPtr<USkeletalMeshComponent> WeaponMeshComp;
+	TMap<EEquipmentType, TObjectPtr<USkeletalMeshComponent>> MapEquipmentMeshComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
@@ -75,6 +68,9 @@ public:
 	APlayerCharacter();
 
 private:
+	void InitEquipment(TObjectPtr<class UEquipment> _equipment);
+	void UpdateEquipment(EEquipmentType _type, TObjectPtr<class UEquipmentItem> _equipment);
+	
 	void SmoothRotateToInputDir(float DeltaTime);
 
 	// 기본 데미지 계산

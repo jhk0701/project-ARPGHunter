@@ -8,14 +8,17 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/WidgetComponent.h"
 
+#include "Define/Enum.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/DataManager.h"
 #include "Core/GameMode/CombatGameMode.h"
 #include "Component/StatComponent.h"
-#include "Component/EquipmentComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Controller/PlayerCombatController.h"
 #include "Data/WeaponConfig.h"
+#include "Player/Equipment.h"
+#include "Data/ItemData.h"
+#include "Item/Item.h"
 
 #include "UI/CombatHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
@@ -29,17 +32,26 @@ APlayerCharacter::APlayerCharacter()
 
 #pragma region Create Comp
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
-	EquipComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipComp"));
 	ActionComp = CreateDefaultSubobject<UPlayerActionComponent>(TEXT("ActionComp"));
+	
+	MapEquipmentMeshComp.Add(EEquipmentType::TOP, GetMesh());
 
-	TopMeshComp = GetMesh();
-	HeadMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadMesh"));
-	HeadMeshComp->SetupAttachment(TopMeshComp);
-	BottomMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BottomMesh"));
-	BottomMeshComp->SetupAttachment(TopMeshComp);
+	for (uint8 i = 0; i < static_cast<uint8>(EEquipmentType::END); ++i)
+	{
+		EEquipmentType Type = static_cast<EEquipmentType>(i);
+		if (Type == EEquipmentType::TOP)
+			continue;
 
-	WeaponMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMeshComp->SetupAttachment(TopMeshComp, FName(TEXT("socket_hand_r")));
+		TObjectPtr<USkeletalMeshComponent>& MeshComp = MapEquipmentMeshComp.Add(Type, CreateDefaultSubobject<USkeletalMeshComponent>(*FString::Printf(TEXT("%sMesh"), *EnumToString(Type))));
+		
+		if (Type == EEquipmentType::WEAPON)
+			MeshComp->SetupAttachment(MapEquipmentMeshComp[EEquipmentType::TOP], FName(TEXT("socket_hand_r")));
+		else
+		{
+			MeshComp->SetupAttachment(MapEquipmentMeshComp[EEquipmentType::TOP]);
+			MeshComp->SetLeaderPoseComponent(MapEquipmentMeshComp[EEquipmentType::TOP]);
+		}
+	}
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(GetRootComponent());
@@ -51,9 +63,6 @@ APlayerCharacter::APlayerCharacter()
 #pragma endregion
 
 #pragma region Init Comp
-	HeadMeshComp->SetLeaderPoseComponent(TopMeshComp);
-	BottomMeshComp->SetLeaderPoseComponent(TopMeshComp);
-	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -84,13 +93,17 @@ void APlayerCharacter::BeginPlay()
 	// 플레이어 데이터 받아오기
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-
+	
 	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
 	StatComp->StartStaminaRecovery();
-	EquipComp->Init();
 
+	TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+	InitEquipment(Equipment);
+	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
+	
+	
 	// TODO : 플레이어 저장 데이터 기반으로 변경
-	ActionComp->Init(DataManager->GetWeaponConfig(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), WeaponMeshComp);
+	ActionComp->Init(DataManager->GetWeaponConfig(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), MapEquipmentMeshComp[EEquipmentType::WEAPON]);
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
@@ -132,6 +145,31 @@ void APlayerCharacter::Tick(float DeltaTime)
 	SmoothRotateToInputDir(DeltaTime);
 	CheckInteractable();
 }
+
+void APlayerCharacter::InitEquipment(TObjectPtr<UEquipment> _equipment)
+{
+	for (uint8 i = 0; i < static_cast<uint8>(EEquipmentType::END); ++i)
+	{
+		EEquipmentType Type = static_cast<EEquipmentType>(i);
+		UpdateEquipment(Type, _equipment->GetEquipment(Type));
+	}
+	
+}
+
+void APlayerCharacter::UpdateEquipment(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment)
+{
+	if (_equipment == nullptr)
+	{
+		MapEquipmentMeshComp[_type]->SetSkeletalMesh(nullptr);
+		return;
+	}
+
+	if (TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(_equipment->GetConfig())) 
+		MapEquipmentMeshComp[_type]->SetSkeletalMesh(Config->Mesh);
+	else
+		MapEquipmentMeshComp[_type]->SetSkeletalMesh(nullptr);
+}
+
 
 void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 {
