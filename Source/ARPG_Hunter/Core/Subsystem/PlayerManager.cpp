@@ -39,6 +39,8 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Inventory->Init();
 	Equipment->Init();
 
+	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
+
 	ProvideBasicProperty();
 }
 
@@ -69,6 +71,16 @@ void UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 	Param.Amount = _amount;
 
 	Inventory->TryAddItem(Param);
+}
+
+void UPlayerManager::BroadcastStatChanged()
+{
+	OnStatValueChanged.Broadcast(Stat, GetEquipmentStat());
+}
+
+void UPlayerManager::EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat)
+{
+	OnStatValueChanged.Broadcast(Stat, _equipmentStat);
 }
 
 void UPlayerManager::ProvideBasicProperty()

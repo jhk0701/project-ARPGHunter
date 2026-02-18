@@ -9,7 +9,6 @@
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenance.h"
 #include "UI/UserWidget/UWInventory.h"
-#include "UI/UserWidget/UWEquipment.h"
 
 
 ANonCombatHUD::ANonCombatHUD()
@@ -53,8 +52,9 @@ void ANonCombatHUD::BeginPlay()
 		MaintenanceUI = CreateWidget<UUWMaintenance>(GetWorld(), MaintenanceUIClass);
 
 		TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-		MaintenanceUI->Init(Equipment->GetContainer());
+		MaintenanceUI->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat(), Equipment->GetContainer());
 		Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
+		PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
 	}
 	/*if (InventoryUIClass)
 	{

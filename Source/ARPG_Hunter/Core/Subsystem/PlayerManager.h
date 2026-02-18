@@ -10,7 +10,10 @@ class UInventory;
 class UEquipment;
 enum class ECharacterStatType : uint8;
 
+using FPMAliasMapStat = TMap<ECharacterStatType, uint32>;
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCurrencyChanged, uint32);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, const FPMAliasMapStat&, const FPMAliasMapStat&);
 
 USTRUCT()
 struct FCurrency 
@@ -30,7 +33,10 @@ UCLASS()
 class ARPG_HUNTER_API UPlayerManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPlayerManager();
+
 private:
 	TMap<ECharacterStatType, uint32> Stat;
 	FCurrency Gold;
@@ -40,8 +46,11 @@ private:
 	UPROPERTY()
 	TObjectPtr<UEquipment> Equipment;
 
+	void BroadcastStatChanged();
+	void EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat);
+
 public:
-	UPlayerManager();
+	FOnStatValueChanged OnStatValueChanged;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
