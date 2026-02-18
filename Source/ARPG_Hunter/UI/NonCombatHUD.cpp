@@ -72,7 +72,15 @@ void ANonCombatHUD::BeginPlay()
 		if (InventoryUI)
 		{
 			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-			InventoryUI->Init(Inventory->GetContainerSize(), PlayerManager->GetGold());
+			
+			InventoryUI->Init(
+				Inventory->GetContainerSize(), 
+				PlayerManager->GetGold(), 
+				[Inventory](EItemType _type)
+				{ 
+					return &Inventory->GetContainer(_type);
+				}
+			);
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
 			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
 		}
