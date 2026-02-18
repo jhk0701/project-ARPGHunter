@@ -31,6 +31,12 @@ void UUWInventory::NativeOnInitialized()
 	}
 }
 
+void UUWInventory::ShowUI()
+{
+	Super::ShowUI();
+	UpdateSlot();
+}
+
 void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemfunc)
 {
 	GetItemByTypeFunc = _getItemfunc;
@@ -75,10 +81,15 @@ void UUWInventory::ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt)
 		Pair.Value->UpdateStateWithoutEvent(false);
 	}
 
-	if (GetItemByTypeFunc) 
-	{
-		const TArray<TObjectPtr<UItem>>* ItemArr = GetItemByTypeFunc(CurType);
-		for (uint8 i = 0; i < ItemArr->Num(); ++i)
-			SetSlot(i, (*ItemArr)[i]);
-	}
+	UpdateSlot();
+}
+
+void UUWInventory::UpdateSlot()
+{
+	if (GetItemByTypeFunc == nullptr)
+		return;
+
+	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemByTypeFunc(CurType);
+	for (uint8 i = 0; i < ItemArr->Num(); ++i)
+		SetSlot(i, (*ItemArr)[i]);
 }

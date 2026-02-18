@@ -38,6 +38,8 @@ void UUWItemSlot::SetItem(TObjectPtr<UItem> _item)
 		AmountLabel->SetVisibility(ESlateVisibility::Visible);
 		AmountLabel->SetText(FText::AsNumber(_item->GetAmount()));
 	}
+	else
+		AmountLabel->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWItemSlot::ClearSlot()

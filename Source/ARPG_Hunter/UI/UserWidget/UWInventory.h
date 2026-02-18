@@ -38,6 +38,8 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UWrapBox> SlotContainer;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUWItemDetail> SelectedItemDetail;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> GoldLabel;
@@ -48,9 +50,13 @@ protected:
 	void NativeOnInitialized() override;
 
 public:
+	virtual void ShowUI() override;
+
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemfunc = nullptr);
 	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
+
+	void UpdateSlot();
 
 	UFUNCTION()
 	void ClickCloseButton();

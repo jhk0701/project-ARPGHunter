@@ -13,22 +13,9 @@ class UHorizontalBox;
 class UWrapBox;
 class UUWItemSlot;
 class UEquipmentItem;
+class UUWStatInfo;
 enum class ECharacterStatType : uint8;
 enum class EEquipmentType : uint8;
-
-UCLASS()
-class ARPG_HUNTER_API UUWStatInfo : public UUserWidget
-{
-	GENERATED_BODY()
-private:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> NameLabel;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> ValueLabel;
-public:
-	void SetStatName(ECharacterStatType _type);
-	void SetStatValue(uint32 _baseValue, uint32 _equipmentValue);
-};
 
 
 /**
