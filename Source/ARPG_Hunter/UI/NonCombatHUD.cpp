@@ -3,6 +3,7 @@
 
 #include "UI/NonCombatHUD.h"
 
+#include "Define/Enum.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
@@ -19,12 +20,9 @@ ANonCombatHUD::ANonCombatHUD()
 	static ConstructorHelpers::FClassFinder<UUWMaintenance> MaintenanceUIFinder(TEXT("/Game/06-UI/WBP_Maintenance.WBP_Maintenance_C"));
 	if (MaintenanceUIFinder.Succeeded())
 		MaintenanceUIClass = MaintenanceUIFinder.Class;
-
-	/*static ConstructorHelpers::FClassFinder<UUWInventory> InventoryUIFinder(TEXT("/Game/06-UI/WBP_Inventory.WBP_Inventory_C"));
+	static ConstructorHelpers::FClassFinder<UUWInventory> InventoryUIFinder(TEXT("/Game/06-UI/WBP_Inventory.WBP_Inventory_C"));
 	if (InventoryUIFinder.Succeeded())
 		InventoryUIClass = InventoryUIFinder.Class;
-	
-	*/
 }
 
 void ANonCombatHUD::BeginPlay()
@@ -37,10 +35,21 @@ void ANonCombatHUD::BeginPlay()
 		if (NonCombatUI)
 		{
 			NonCombatUI->AddToViewport();
-			NonCombatUI->OnClickMaintenanceButton.BindLambda(
-				[this]() 
+			NonCombatUI->OnClickShortCutButton.BindLambda(
+				[this](EShortCutType _type)
 				{
-					ShowMaintenanceUI();
+					switch (_type)
+					{
+						/*case EShortCutType::ESC:
+							break;*/
+					case EShortCutType::TAB:
+						ShowMaintenanceUI();
+						break;
+					case EShortCutType::INVENTORY:
+						ShowInventoryUI();
+						break;
+					}
+					
 				}
 			);
 		}
@@ -56,31 +65,18 @@ void ANonCombatHUD::BeginPlay()
 		Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
 		PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
 	}
-	/*if (InventoryUIClass)
+
+	if (InventoryUIClass)
 	{
 		InventoryUI = CreateWidget<UUWInventory>(GetWorld(), InventoryUIClass);
-		if (InventoryUI) 
+		if (InventoryUI)
 		{
 			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-			InventoryUI->Init(Inventory->GetContainer(), PlayerManager->GetGold());
+			InventoryUI->Init(Inventory->GetContainerSize(), PlayerManager->GetGold());
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
 			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
 		}
 	}
-
-	if (EquipmentUIClass)
-	{
-		EquipmentUI = CreateWidget<UUWEquipment>(GetWorld(), EquipmentUIClass);
-		if (EquipmentUI) 
-		{
-			TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-			EquipmentUI->Init(Equipment->GetContainer(), Equipment->GetEquipmentStat());
-			Equipment->OnEquipmentChanged.AddUObject(EquipmentUI, &UUWEquipment::SetSlot);
-			Equipment->OnStatValueChanged.AddUObject(EquipmentUI, &UUWEquipment::SetStatInfo);
-		}
-	}
-
-	*/
 }
 
 void ANonCombatHUD::ShowMaintenanceUI()
@@ -97,4 +93,20 @@ void ANonCombatHUD::HideMaintenanceUI()
 		return;
 
 	MaintenanceUI->HideUI();
+}
+
+void ANonCombatHUD::ShowInventoryUI()
+{
+	if (nullptr == InventoryUI)
+		return;
+
+	InventoryUI->ShowUI();
+}
+
+void ANonCombatHUD::HideInventoryUI()
+{
+	if (nullptr == InventoryUI)
+		return;
+
+	InventoryUI->HideUI();
 }

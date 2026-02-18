@@ -9,7 +9,9 @@
 class UButton;
 class UUWPlayerStatusBar;
 
-DECLARE_DELEGATE(FOnClickButton)
+enum class EShortCutType : uint8;
+
+DECLARE_DELEGATE_OneParam(FOnClickButton, EShortCutType)
 
 /**
  * 상시 노출시킬 UI : 메뉴 버튼 등등
@@ -39,13 +41,17 @@ class ARPG_HUNTER_API UUWNonCombatHUD : public UUWPlayerHUD
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> MaintenanceButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> InventoryButton;
 
 protected:
 	void NativeOnInitialized() override;
 
 public:
-	FOnClickButton OnClickMaintenanceButton;
+	FOnClickButton OnClickShortCutButton;
 	
 	UFUNCTION()
 	void ClickMaintenanceButton();
+	UFUNCTION()
+	void ClickInventoryButton();
 };

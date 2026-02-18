@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/UserWidget/PopUp/UWPopUp.h"
 #include "UWInventory.generated.h"
 
-class UUWItemSlot;
 class UItem;
+class UUWItemSlot;
 
 /**
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UUWInventory : public UUserWidget
+class ARPG_HUNTER_API UUWInventory : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
@@ -29,9 +29,17 @@ private:
 	TObjectPtr<class UWrapBox> SlotContainer;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> GoldLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UButton> CloseButton;
+
+protected:
+	void NativeOnInitialized() override;
 
 public:
-	void Init(const TArray<TObjectPtr<UItem>>& _items, uint32 _gold);
+	void Init(uint8 _initSize, uint32 _gold);
 	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
+
+	UFUNCTION()
+	void ClickCloseButton();
 };

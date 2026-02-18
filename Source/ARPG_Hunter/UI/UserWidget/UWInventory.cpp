@@ -4,21 +4,28 @@
 #include "UI/UserWidget/UWInventory.h"
 #include "Components/WrapBox.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 #include "UI/UserWidget/UWItemSlot.h"
 
-void UUWInventory::Init(const TArray<TObjectPtr<UItem>>& _items, uint32 _gold)
+void UUWInventory::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	CloseButton->OnClicked.AddDynamic(this, &UUWInventory::ClickCloseButton);
+}
+
+void UUWInventory::Init(uint8 _initSize, uint32 _gold)
 {
 	check(ItemSlotClass); // 없는 경우 크래시
 
-	ItemSlots.SetNum(_items.Num());
-	for (int i = 0; i < _items.Num(); ++i)
+	ItemSlots.SetNum(_initSize);
+	for (int i = 0; i < _initSize; ++i)
 	{
 		ItemSlots[i] = CreateWidget<UUWItemSlot>(this, ItemSlotClass);
 		ItemSlots[i]->Init(i, SlotSize);
-		ItemSlots[i]->SetItem(_items[i]); // null 일 경우 내부에서 Clear해줌
 		SlotContainer->AddChild(ItemSlots[i]);
 	}
 
@@ -33,4 +40,9 @@ void UUWInventory::SetSlot(uint8 _idx, TObjectPtr<UItem> _item)
 void UUWInventory::SetGoldLabel(uint32 _goldValue)
 {
 	GoldLabel->SetText(FText::FromString(FString::FormatAsNumber(_goldValue).Append(TEXT(" G"))));
+}
+
+void UUWInventory::ClickCloseButton()
+{
+	HideUI();
 }

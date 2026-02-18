@@ -8,18 +8,24 @@
 
 class UItem;
 class UItemConfig;
-class UDataManager;
+struct FItemData;
+enum class EItemType : uint8;
 
 struct FAddItemParam 
 {
 public:
-	TObjectPtr<UDataManager> DataManager;
 	FName ID;
 	uint16 Amount;
 	uint8 OutIndex;
+	FItemData* Data;
+};
 
-	FAddItemParam(TObjectPtr<UDataManager> _dataManager) : DataManager(_dataManager)
-	{};
+USTRUCT()
+struct FItemArray 
+{
+	GENERATED_BODY()
+public:
+	TArray<TObjectPtr<UItem>> Array;
 };
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInventoryChanged, uint8, TObjectPtr<UItem>);
@@ -33,20 +39,21 @@ class ARPG_HUNTER_API UInventory : public UObject
 	GENERATED_BODY()
 private:
 	UPROPERTY(VisibleAnywhere)
-	TArray<TObjectPtr<UItem>> Container;
+	TMap<EItemType, FItemArray> Container;
 
-	bool TryFindEmpty(uint8& _outIdx);
+	bool TryFindEmpty(EItemType _type, uint8& _outIdx);
 
 public:
 	FOnInventoryChanged OnInventoryChanged;
 
-	void Init(uint8 _size = 80);
+	void Init(uint8 _size = 100);
 
-	TObjectPtr<UItem> CreateItem(const FAddItemParam& _param);
+	TObjectPtr<UItem> CreateItem(FAddItemParam& _param);
 	bool TryAddItem(FAddItemParam& _param);
-	bool TrySubItem(uint8 _idx, uint16 _amount);
-	bool TryFindItem(const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
+	bool TrySubItem(EItemType _type, uint8 _idx, uint16 _amount);
+	bool TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
 
-	TObjectPtr<UItem> GetItem(uint8 _idx) const { return Container[_idx]; }
-	const TArray<TObjectPtr<UItem>>& GetContainer() const { return Container; }
+	uint8 GetContainerSize() const;
+	TObjectPtr<UItem> GetItem(EItemType _type, uint8 _idx) const { return Container[_type].Array[_idx]; }
+	const TArray<TObjectPtr<UItem>>& GetContainer(EItemType _type) const { return Container[_type].Array; }
 };

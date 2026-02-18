@@ -11,11 +11,7 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
-enum class EShortCutType : uint8 
-{
-	ESC,
-	TAB,
-};
+enum class EShortCutType : uint8;
 
 /**
  * 

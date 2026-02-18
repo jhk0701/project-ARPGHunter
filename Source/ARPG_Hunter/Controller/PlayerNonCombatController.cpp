@@ -3,6 +3,7 @@
 
 #include "Controller/PlayerNonCombatController.h"
 
+#include "Define/Enum.h"
 #include "UI/NonCombatHUD.h"
 
 
@@ -10,9 +11,12 @@ void APlayerNonCombatController::ShortCut(EShortCutType _key)
 {
 	Super::ShortCut(_key);
 
+	TObjectPtr<ANonCombatHUD> HUD = Cast<ANonCombatHUD>(GetHUD());
+	if (nullptr == HUD)
+		return;
+
 	if(_key == EShortCutType::TAB)
-	{
-		if (TObjectPtr<ANonCombatHUD> HUD = Cast<ANonCombatHUD>(GetHUD())) 
-			HUD->ShowMaintenanceUI();
-	}
+		HUD->ShowMaintenanceUI();
+	else if(_key == EShortCutType::INVENTORY)
+		HUD->ShowInventoryUI();
 }

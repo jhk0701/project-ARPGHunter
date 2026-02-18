@@ -31,11 +31,11 @@ private:
 	UPROPERTY()
 	TObjectPtr<UUWMaintenance> MaintenanceUI;
 
-	/*UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWInventory> InventoryUIClass;
 	UPROPERTY()
 	TObjectPtr<UUWInventory> InventoryUI;
-	*/
+	
 
 protected:
 	void BeginPlay() override;
@@ -43,4 +43,7 @@ protected:
 public:
 	void ShowMaintenanceUI();
 	void HideMaintenanceUI();
+
+	void ShowInventoryUI();
+	void HideInventoryUI();
 };

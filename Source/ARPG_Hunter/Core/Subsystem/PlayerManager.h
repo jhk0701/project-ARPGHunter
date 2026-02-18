@@ -66,7 +66,7 @@ public:
 	const TObjectPtr<UEquipment> GetEquipment() const { return Equipment; }
 
 	UFUNCTION(BlueprintCallable)
-	void AddItem(const FName & _itemID, int32 _amount);
+	uint8 AddItem(const FName & _itemID, int32 _amount);
 	
 	void ProvideBasicProperty();
 };

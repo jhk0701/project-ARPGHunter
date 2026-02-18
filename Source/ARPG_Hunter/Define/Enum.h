@@ -7,9 +7,11 @@ enum class EItemType : uint8
 	ITEM				UMETA(DisplayName = "Item"),
 	CONSUMABLE			UMETA(DisplayName = "Consumable Item"),
 	
-	WEAPON				UMETA(DisplayName = "Weapon"),
-	ARMOR				UMETA(DisplayName = "Armor"),
-	EQUIPABLE = WEAPON	UMETA(Hidden), // Weapon 이하는 모두 Equipable 계열이라 표시
+	WEAPON				UMETA(DisplayName = "Weapon Item"),
+	EQUIPABLE = WEAPON	UMETA(Hidden), // 장비 계열이라고 표시
+	ARMOR				UMETA(DisplayName = "Armor Item"),
+	
+	END					UMETA(Hidden)
 };
 
 UENUM(BlueprintType)
@@ -135,3 +137,12 @@ enum class EMonsterState : uint8
 	GROGGY,
 };
 FName EnumToName(EMonsterState _type);
+
+enum class EShortCutType : uint8
+{
+	ESC,
+	TAB,
+	INVENTORY,
+
+	END
+};

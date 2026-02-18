@@ -63,14 +63,17 @@ void UPlayerManager::AddGold(uint32 _amount)
 	Gold.OnValueChanged.Broadcast(Gold.Value);
 }
 
-void UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
+uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
 	//아이템 추가
-	FAddItemParam Param(GetGameInstance()->GetSubsystem<UDataManager>());
+	FAddItemParam Param;
 	Param.ID = _itemID;
 	Param.Amount = _amount;
+	Param.Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_itemID);
 
 	Inventory->TryAddItem(Param);
+
+	return Param.OutIndex;
 }
 
 void UPlayerManager::BroadcastStatChanged()
@@ -85,26 +88,25 @@ void UPlayerManager::EquipmentStatChanged(const TMap<ECharacterStatType, uint32>
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	AddItem(FName(TEXT("1001")), 10);
+	AddItem(FName(TEXT("1002")), 10);
 	
-	FAddItemParam Param(DataManager);
-	Param.Amount = 1;
+	uint8 Index = 0;
+	Index = AddItem(FName(TEXT("3001")), 1);
+	Equipment->Equip(EEquipmentType::HEAD, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::ARMOR, Index)));
+	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
 
-	Param.ID = FName(TEXT("3001"));
-	TObjectPtr<UItem> Armor1 = Inventory->CreateItem(Param);
-	Equipment->Equip(EEquipmentType::HEAD, Cast<UEquipmentItem>(Armor1));
+	Index = AddItem(FName(TEXT("3002")), 1);
+	Equipment->Equip(EEquipmentType::TOP, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::ARMOR, Index)));
+	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
 
-	Param.ID = FName(TEXT("3002"));
-	TObjectPtr<UItem> Armor2 = Inventory->CreateItem(Param);
-	Equipment->Equip(EEquipmentType::TOP, Cast<UEquipmentItem>(Armor2));
+	Index = AddItem(FName(TEXT("3003")), 1);
+	Equipment->Equip(EEquipmentType::BOTTOM, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::ARMOR, Index)));
+	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
 
-	Param.ID = FName(TEXT("3003"));
-	TObjectPtr<UItem> Armor3 = Inventory->CreateItem(Param);
-	Equipment->Equip(EEquipmentType::BOTTOM, Cast<UEquipmentItem>(Armor3));
-
-	Param.ID = FName(TEXT("4001"));
-	TObjectPtr<UItem> Weapon = Inventory->CreateItem(Param);
-	Equipment->Equip(EEquipmentType::WEAPON, Cast<UEquipmentItem>(Weapon));
+	Index = AddItem(FName(TEXT("4001")), 1);
+	Equipment->Equip(EEquipmentType::WEAPON, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::WEAPON, Index)));
+	Inventory->TrySubItem(EItemType::WEAPON, Index, 1);
 
 	Gold.Value = 3000;
 }

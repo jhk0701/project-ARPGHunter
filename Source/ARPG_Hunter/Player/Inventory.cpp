@@ -4,26 +4,29 @@
 #include "Player/Inventory.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/DataManager.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
 
 void UInventory::Init(uint8 _size)
 {
-	Container.SetNum(_size);
+	for (uint8 i = 0; i < static_cast<uint8>(EItemType::END); ++i)
+	{
+		EItemType Type = static_cast<EItemType>(i);
+		FItemArray& ItemArr = Container.Add(Type);
+		ItemArr.Array.SetNum(_size);
+	}
 
 	// TODO: 저장 데이터 반영
 }
 
-TObjectPtr<UItem> UInventory::CreateItem(const FAddItemParam& _param)
+TObjectPtr<UItem> UInventory::CreateItem(FAddItemParam& _param)
 {
-	FItemData* ItemData = _param.DataManager->GetItemData(_param.ID);
-	if (nullptr == ItemData)
+	if (nullptr == _param.Data)
 		return nullptr;
 
 	TObjectPtr<UItem> Instance = nullptr;
-	switch (ItemData->Type)
+	switch (_param.Data->Type)
 	{
 	case EItemType::ITEM:
 		Instance = NewObject<UItem>();
@@ -38,7 +41,7 @@ TObjectPtr<UItem> UInventory::CreateItem(const FAddItemParam& _param)
 	}
 
 	if (Instance)
-		Instance->Init(_param.ID, _param.Amount, ItemData->Item);
+		Instance->Init(_param.ID, _param.Amount, _param.Data->Item);
 
 	return Instance;
 }
@@ -46,62 +49,63 @@ TObjectPtr<UItem> UInventory::CreateItem(const FAddItemParam& _param)
 bool UInventory::TryAddItem(FAddItemParam& _param)
 {
 	uint8 Index = 0;
+	EItemType Type = _param.Data->Type;
 	
-	if (TryFindItem(_param.ID, Index, [](TObjectPtr<UItem> _existItem) { return _existItem->IsFull() == false; }))
+	if (TryFindItem(Type,_param.ID, Index, [](TObjectPtr<UItem> _existItem) { return _existItem->IsFull() == false; }))
 	{
 		// 기존 아이템 추가 획득
 		uint16 RemainAmount = 0;
-		if (Container[Index]->TryAddAmount(_param.Amount, RemainAmount))
+		if (Container[Type].Array[Index]->TryAddAmount(_param.Amount, RemainAmount))
 		{
 			// 남김없이 다 추가된 경우
 			_param.OutIndex = Index;
-			OnInventoryChanged.Broadcast(Index, Container[Index]);
+			OnInventoryChanged.Broadcast(Index, Container[Type].Array[Index]);
 			return true;
 		}
 
 		_param.Amount = RemainAmount; // 획득 후, 해당 슬롯이 다 차서 남은 갯수 -> 신규 획득 처리
-		OnInventoryChanged.Broadcast(Index, Container[Index]);
+		OnInventoryChanged.Broadcast(Index, Container[Type].Array[Index]);
 	}
 
 	// 신규 획득
 	// 남은 공간 확인
-	if (TryFindEmpty(Index) == false)
+	if (TryFindEmpty(Type, Index) == false)
 		return false; // 여유 공간이 없는 상황
 
 	// 신규 아이템 인스턴스 추가
-	Container[Index] = CreateItem(_param);
+	Container[Type].Array[Index] = CreateItem(_param);
 	_param.OutIndex = Index;
 
-	OnInventoryChanged.Broadcast(Index, Container[Index]);
+	OnInventoryChanged.Broadcast(Index, Container[Type].Array[Index]);
 
 	return true;
 }
 
-bool UInventory::TrySubItem(uint8 _idx, uint16 _amount)
+bool UInventory::TrySubItem(EItemType _type, uint8 _idx, uint16 _amount)
 {
-	if (nullptr == Container[_idx])
+	if (nullptr == Container[_type].Array[_idx])
 		return false;
 
-	bool bIsSuccess = Container[_idx]->TrySubAmount(_amount);
+	bool bIsSuccess = Container[_type].Array[_idx]->TrySubAmount(_amount);
 	if (bIsSuccess) 
 	{
-		if (Container[_idx]->GetAmount() == 0)
-			Container[_idx] == nullptr;
+		if (Container[_type].Array[_idx]->GetAmount() == 0)
+			Container[_type].Array[_idx] == nullptr;
 
-		OnInventoryChanged.Broadcast(_idx, Container[_idx]); // 이 시점에서 nullptr일 것
+		OnInventoryChanged.Broadcast(_idx, Container[_type].Array[_idx]); // 이 시점에서 nullptr일 것
 	}
 
 	return bIsSuccess;
 }
 
-bool UInventory::TryFindItem(const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate) const
+bool UInventory::TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate) const
 {
 	for (uint8 i = 0; i < Container.Num(); ++i)
 	{
-		if (nullptr == Container[i] || Container[i]->GetID() != _id)
+		if (nullptr == Container[_type].Array[i] || Container[_type].Array[i]->GetID() != _id)
 			continue;
 
-		if((_predicate && _predicate(Container[i])) || _predicate == nullptr)
+		if((_predicate && _predicate(Container[_type].Array[i])) || _predicate == nullptr)
 		{
 			_outIdx = i;
 			return true;
@@ -111,11 +115,11 @@ bool UInventory::TryFindItem(const FName& _id, uint8& _outIdx, TFunction<bool(TO
 	return false;
 }
 
-bool UInventory::TryFindEmpty(uint8& _outIdx)
+bool UInventory::TryFindEmpty(EItemType _type, uint8& _outIdx)
 {
 	for (uint8 i = 0; i < Container.Num(); ++i)
 	{
-		if (nullptr == Container[i])
+		if (nullptr == Container[_type].Array[i])
 		{
 			_outIdx = i;
 			return true;
@@ -123,4 +127,9 @@ bool UInventory::TryFindEmpty(uint8& _outIdx)
 	}
 
 	return false;
+}
+
+uint8 UInventory::GetContainerSize() const
+{
+	return Container.begin()->Value.Array.Num();
 }
