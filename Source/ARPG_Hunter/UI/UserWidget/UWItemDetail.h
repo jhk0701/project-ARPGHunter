@@ -7,6 +7,9 @@
 #include "UWItemDetail.generated.h"
 
 class UTextBlock;
+class UVerticalBox;
+class UUWStatInfo;
+enum class ECharacterStatType :uint8;
 
 /**
  * 
@@ -23,13 +26,21 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> DescLabel;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UWrapBox> EquipmentInfo;
+	TObjectPtr<UVerticalBox> ConsumableInfo;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> AmountLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> CooldownLabel;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UWrapBox> EquipmentInfo;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUWStatInfo> StatInfoUIClass;
+	TSubclassOf<UUWStatInfo> StatInfoUIClass;
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<class UVerticalBox> StatInfoContainer;
-	
+	TObjectPtr<UVerticalBox> StatInfoContainer;
+	UPROPERTY()
+	TMap<ECharacterStatType, TObjectPtr<UUWStatInfo>> MapStatInfo;
+
 protected:
 	void NativeOnInitialized() override;
 

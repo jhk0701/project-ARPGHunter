@@ -12,6 +12,7 @@
 #include "Item/Item.h"
 #include "UI/ContentWidget/UWCheckBox.h"
 #include "UI/UserWidget/UWItemSlot.h"
+#include "UI/UserWidget/UWItemDetail.h"
 
 void UUWInventory::NativeOnInitialized()
 {
@@ -34,12 +35,14 @@ void UUWInventory::NativeOnInitialized()
 void UUWInventory::ShowUI()
 {
 	Super::ShowUI();
+
+	SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 	UpdateSlot();
 }
 
-void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemfunc)
+void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc)
 {
-	GetItemByTypeFunc = _getItemfunc;
+	GetItemArrFunc = _getItemArrFunc;
 
 	check(ItemSlotClass); // 없는 경우 크래시
 
@@ -48,6 +51,8 @@ void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TO
 	{
 		ItemSlots[i] = CreateWidget<UUWItemSlot>(this, ItemSlotClass);
 		ItemSlots[i]->Init(i, SlotSize);
+		ItemSlots[i]->OnSlotClicked.BindUObject(this, &UUWInventory::OnSlotClicked);
+
 		SlotContainer->AddChild(ItemSlots[i]);
 	}
 
@@ -81,15 +86,27 @@ void UUWInventory::ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt)
 		Pair.Value->UpdateStateWithoutEvent(false);
 	}
 
+	SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 	UpdateSlot();
 }
 
 void UUWInventory::UpdateSlot()
 {
-	if (GetItemByTypeFunc == nullptr)
+	if (GetItemArrFunc == nullptr)
 		return;
 
-	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemByTypeFunc(CurType);
+	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurType);
 	for (uint8 i = 0; i < ItemArr->Num(); ++i)
 		SetSlot(i, (*ItemArr)[i]);
+}
+
+void UUWInventory::OnSlotClicked(uint8 _index)
+{
+	if (GetItemArrFunc == nullptr)
+		return;
+
+	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurType);
+	SelectedItemDetail->SetDetail((*ItemArr)[_index]);
+
+	SelectedItemDetail->SetVisibility(ESlateVisibility::Visible);
 }

@@ -10,6 +10,19 @@
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
+FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		OnSlotClicked.ExecuteIfBound(Index);
+		return FReply::Handled();
+	}
+
+	return FReply::Unhandled();
+}
+
 void UUWItemSlot::Init(uint8 _idx, const FVector2D& _size)
 {
 	Index = _idx;

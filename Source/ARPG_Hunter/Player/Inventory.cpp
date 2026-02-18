@@ -41,7 +41,7 @@ TObjectPtr<UItem> UInventory::CreateItem(FAddItemParam& _param)
 	}
 
 	if (Instance)
-		Instance->Init(_param.ID, _param.Amount, _param.Data->Item);
+		Instance->Init(_param.ID, _param.Data->Type, _param.Amount, _param.Data->Item);
 
 	return Instance;
 }

@@ -9,8 +9,8 @@
 
 enum class EWeaponType :uint8;
 enum class EEquipmentType :uint8;
-enum class ECharacterStatType :uint8;
 enum class EItemType : uint8;
+enum class ECharacterStatType :uint8;
 
 /**
  * 

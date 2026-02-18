@@ -21,7 +21,7 @@ class ARPG_HUNTER_API UUWInventory : public UUWPopUp
 	GENERATED_BODY()
 private:
 	EItemType CurType;
-	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemByTypeFunc;
+	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemArrFunc;
 
 	UPROPERTY(EditAnywhere)
 	FVector2D SlotSize{80.0f,80.0f};
@@ -46,13 +46,15 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> CloseButton;
 
+	void OnSlotClicked(uint8 _index);
+
 protected:
 	void NativeOnInitialized() override;
 
 public:
 	virtual void ShowUI() override;
 
-	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemfunc = nullptr);
+	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
 

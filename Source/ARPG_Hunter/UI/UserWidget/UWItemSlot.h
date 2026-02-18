@@ -7,6 +7,9 @@
 #include "UWItemSlot.generated.h"
 
 class UItem;
+
+DECLARE_DELEGATE_OneParam(FOnSlotClicked, uint8);
+
 /**
  * 
  */
@@ -25,7 +28,13 @@ private:
 	TObjectPtr<class UImage> Thumbnail;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> AmountLabel;
+
+protected:
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
 public:
+	FOnSlotClicked OnSlotClicked;
+
 	void Init(uint8 _idx, const FVector2D& _size);
 	void SetSize(const FVector2D& _size);
 	void SetItem(TObjectPtr<UItem> _item);

@@ -23,5 +23,7 @@ private:
 	TObjectPtr<UTextBlock> ValueLabel;
 public:
 	void SetStatName(ECharacterStatType _type);
+	
+	void SetStatValue(uint32 _value);
 	void SetStatValue(uint32 _baseValue, uint32 _equipmentValue);
 };
