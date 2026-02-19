@@ -10,6 +10,12 @@
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
+void UUWItemSlot::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	MarkSelected(false);
+}
+
 FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
@@ -60,4 +66,9 @@ void UUWItemSlot::ClearSlot()
 	Thumbnail->SetBrushFromTexture(nullptr);
 	Thumbnail->SetVisibility(ESlateVisibility::Hidden);
 	AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UUWItemSlot::MarkSelected(bool _bIsSelected)
+{
+	SelectedMark->SetVisibility(_bIsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }

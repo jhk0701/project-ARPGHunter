@@ -7,6 +7,7 @@
 #include "UWItemSlot.generated.h"
 
 class UItem;
+class UImage;
 
 DECLARE_DELEGATE_OneParam(FOnSlotClicked, uint8);
 
@@ -25,11 +26,14 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class USizeBox> Frame;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UImage> Thumbnail;
+	TObjectPtr<UImage> Thumbnail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> SelectedMark;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> AmountLabel;
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 public:
@@ -39,4 +43,6 @@ public:
 	void SetSize(const FVector2D& _size);
 	void SetItem(TObjectPtr<UItem> _item);
 	void ClearSlot();
+
+	void MarkSelected(bool _bIsSelected);
 };

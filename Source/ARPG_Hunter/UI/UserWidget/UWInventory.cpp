@@ -17,7 +17,7 @@
 void UUWInventory::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	CurType = EItemType::WEAPON;
+	CurCategory = EItemType::WEAPON;
 
 	CloseButton->OnClicked.AddDynamic(this, &UUWInventory::ClickCloseButton);
 
@@ -62,6 +62,7 @@ void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TO
 void UUWInventory::SetSlot(uint8 _idx, TObjectPtr<UItem> _item)
 {
 	ItemSlots[_idx]->SetItem(_item);
+	ItemSlots[_idx]->MarkSelected(false);
 }
 
 void UUWInventory::SetGoldLabel(uint32 _goldValue)
@@ -76,11 +77,11 @@ void UUWInventory::ClickCloseButton()
 
 void UUWInventory::ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt)
 {
-	CurType = static_cast<EItemType>(_opt);
+	CurCategory = static_cast<EItemType>(_opt);
 	
 	for(const TPair<EItemType, TObjectPtr<UUWCheckBox>>& Pair : Category)
 	{
-		if (Pair.Key == CurType)
+		if (Pair.Key == CurCategory)
 			continue;
 
 		Pair.Value->UpdateStateWithoutEvent(false);
@@ -92,21 +93,29 @@ void UUWInventory::ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt)
 
 void UUWInventory::UpdateSlot()
 {
-	if (GetItemArrFunc == nullptr)
+	if (!IsValid())
 		return;
 
-	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurType);
+	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurCategory);
 	for (uint8 i = 0; i < ItemArr->Num(); ++i)
 		SetSlot(i, (*ItemArr)[i]);
 }
 
 void UUWInventory::OnSlotClicked(uint8 _index)
 {
-	if (GetItemArrFunc == nullptr)
+	if (!IsValid())
 		return;
 
-	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurType);
-	SelectedItemDetail->SetDetail((*ItemArr)[_index]);
-
-	SelectedItemDetail->SetVisibility(ESlateVisibility::Visible);
+	ItemSlots[CurSelectedSlot]->MarkSelected(false);
+	CurSelectedSlot = _index;
+	
+	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurCategory);
+	if ((*ItemArr)[_index] != nullptr)
+	{
+		ItemSlots[CurSelectedSlot]->MarkSelected(true);
+		SelectedItemDetail->SetDetail((*ItemArr)[_index]);
+		SelectedItemDetail->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+		SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }

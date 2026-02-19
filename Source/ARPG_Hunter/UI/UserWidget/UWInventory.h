@@ -20,8 +20,9 @@ class ARPG_HUNTER_API UUWInventory : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
-	EItemType CurType;
+	EItemType CurCategory;
 	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemArrFunc;
+	uint8 CurSelectedSlot;
 
 	UPROPERTY(EditAnywhere)
 	FVector2D SlotSize{80.0f,80.0f};
@@ -55,6 +56,8 @@ public:
 	virtual void ShowUI() override;
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
+	bool IsValid() const { return GetItemArrFunc != nullptr; }
+
 	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
 
