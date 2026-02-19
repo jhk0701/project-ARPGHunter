@@ -17,13 +17,15 @@ void UUWMaintenance::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	// 생성 시, 초기화
-
 	CloseButton->OnClicked.AddDynamic(this, &UUWMaintenance::ClickCloseButton);
 
 	if (WeaponContainer->GetChildrenCount() > 1) 
 	{
 		TObjectPtr<UUWItemSlot> WeaponSlot = Cast<UUWItemSlot>(WeaponContainer->GetChildAt(1));
 		MapEquipmentSlot.Add(EEquipmentType::WEAPON, WeaponSlot);
+
+		WeaponSlot->Init(0);
+		WeaponSlot->OnSlotClicked.BindLambda([this](uint8 _opt) { ClickEquipmentSlot(EItemType::WEAPON, _opt); });
 	}
 
 	if (ArmorContainer->GetChildrenCount() > 3) 
@@ -32,8 +34,10 @@ void UUWMaintenance::NativeOnInitialized()
 		{
 			EEquipmentType Type = static_cast<EEquipmentType>(i);
 			TObjectPtr<UUWItemSlot> ArmorSlot = Cast<UUWItemSlot>(ArmorContainer->GetChildAt(i));
-
 			MapEquipmentSlot.Add(Type, ArmorSlot);
+
+			ArmorSlot->Init(i);
+			ArmorSlot->OnSlotClicked.BindLambda([this](uint8 _opt) { ClickEquipmentSlot(EItemType::ARMOR, _opt); });
 		}
 	}
 
@@ -43,26 +47,26 @@ void UUWMaintenance::NativeOnInitialized()
 		{
 			ECharacterStatType Type = static_cast<ECharacterStatType>(i);
 			TObjectPtr<UUWStatInfo> StatInfoInst = CreateWidget<UUWStatInfo>(GetWorld(), StatInfoUIClass);
-			
 			MapStatInfo.Add(Type, StatInfoInst);
+
 			StatInfoInst->SetStatName(Type);
 			StatContainer->AddChild(StatInfoInst);
 		}
 	}
 }
 
-void UUWMaintenance::Init(const TMap<ECharacterStatType, uint32>& _stat, const TMap<ECharacterStatType, uint32>& _equipmentStat, const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& _equipment)
+void UUWMaintenance::Init(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat, const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& _equipment)
 {
-	for (const TPair<ECharacterStatType, uint32>& Pair : _stat)
+	for (const TPair<ECharacterStatType, uint32>& Pair : _playerStat)
 		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _equipmentStat[Pair.Key]);
 
 	for (const TPair<EEquipmentType, TObjectPtr<UEquipmentItem>>& Pair : _equipment)
 		MapEquipmentSlot[Pair.Key]->SetItem(Pair.Value);
 }
 
-void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _stat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
+void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
 {
-	for (const TPair<ECharacterStatType, uint32>& Pair : _stat)
+	for (const TPair<ECharacterStatType, uint32>& Pair : _playerStat)
 		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _equipmentStat[Pair.Key]);
 }
 
@@ -74,4 +78,9 @@ void UUWMaintenance::SetEquipment(EEquipmentType _type, TObjectPtr<UEquipmentIte
 void UUWMaintenance::ClickCloseButton()
 {
 	HideUI();
+}
+
+void UUWMaintenance::ClickEquipmentSlot(EItemType _type, uint8 _opt)
+{
+	OnEquipmentSlotClicked.ExecuteIfBound(_type, _opt);
 }

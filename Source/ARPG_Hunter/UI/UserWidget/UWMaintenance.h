@@ -6,17 +6,15 @@
 #include "UI/UserWidget/PopUp/UWPopUp.h"
 #include "UWMaintenance.generated.h"
 
-class UTextBlock;
-class UButton;
-class UVerticalBox;
-class UHorizontalBox;
 class UWrapBox;
 class UUWItemSlot;
 class UEquipmentItem;
 class UUWStatInfo;
 enum class ECharacterStatType : uint8;
 enum class EEquipmentType : uint8;
+enum class EItemType : uint8;
 
+DECLARE_DELEGATE_TwoParams(FOnEquipmentSlotClicked, EItemType, uint8);
 
 /**
  * 
@@ -39,19 +37,23 @@ private:
 	UPROPERTY()
 	TMap<ECharacterStatType, TObjectPtr<UUWStatInfo>> MapStatInfo;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UVerticalBox> StatContainer;
+	TObjectPtr<class UVerticalBox> StatContainer;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UButton> CloseButton;
+	TObjectPtr<class UButton> CloseButton;
 
 protected:
 	void NativeOnInitialized() override;
 
 public:
-	void Init(const TMap<ECharacterStatType, uint32>& _stat, const TMap<ECharacterStatType, uint32>& _equipmentStat, const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& _equipment);
-	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _stat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
+	FOnEquipmentSlotClicked OnEquipmentSlotClicked;
+
+	void Init(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat, const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& _equipment);
+	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void SetEquipment(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment);
 
 	UFUNCTION()
 	void ClickCloseButton();
+
+	void ClickEquipmentSlot(EItemType _type, uint8 _opt);
 };

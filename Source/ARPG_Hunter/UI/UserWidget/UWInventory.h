@@ -20,6 +20,7 @@ class ARPG_HUNTER_API UUWInventory : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
+	bool bIsSelectMode{ false };
 	EItemType CurCategory;
 	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemArrFunc;
 	uint8 CurSelectedSlot;
@@ -54,6 +55,8 @@ protected:
 
 public:
 	virtual void ShowUI() override;
+	virtual void HideUI() override;
+	void ShowUIAsSelectMode(EItemType _itemType);
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }

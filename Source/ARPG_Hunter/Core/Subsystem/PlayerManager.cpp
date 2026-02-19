@@ -85,19 +85,19 @@ void UPlayerManager::ProvideBasicProperty()
 	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);
-	Equipment->Equip(EEquipmentType::HEAD, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::ARMOR, Index)));
+	Equipment->Equip(EEquipmentType::HEAD, Inventory->GetItem(EItemType::ARMOR, Index));
 	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
 
 	Index = AddItem(FName(TEXT("3002")), 1);
-	Equipment->Equip(EEquipmentType::TOP, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::ARMOR, Index)));
+	Equipment->Equip(EEquipmentType::TOP, Inventory->GetItem(EItemType::ARMOR, Index));
 	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
 
 	Index = AddItem(FName(TEXT("3003")), 1);
-	Equipment->Equip(EEquipmentType::BOTTOM, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::ARMOR, Index)));
+	Equipment->Equip(EEquipmentType::BOTTOM, Inventory->GetItem(EItemType::ARMOR, Index));
 	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
 
 	Index = AddItem(FName(TEXT("4001")), 1);
-	Equipment->Equip(EEquipmentType::WEAPON, Cast<UEquipmentItem>(Inventory->GetItem(EItemType::WEAPON, Index)));
+	Equipment->Equip(EEquipmentType::WEAPON, Inventory->GetItem(EItemType::WEAPON, Index));
 	Inventory->TrySubItem(EItemType::WEAPON, Index, 1);
 
 	Gold.Value = 3000;

@@ -37,7 +37,26 @@ void UUWInventory::ShowUI()
 	Super::ShowUI();
 
 	SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+	CategoryContainer->SetVisibility(bIsSelectMode ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
 	UpdateSlot();
+}
+
+void UUWInventory::HideUI()
+{
+	if (bIsSelectMode) 
+	{
+		RemoveFromParent();
+		bIsSelectMode = false;
+	}
+	else 
+		Super::HideUI();
+}
+
+void UUWInventory::ShowUIAsSelectMode(EItemType _itemType)
+{
+	CurCategory = _itemType;
+	bIsSelectMode = true;
+	ShowUI();
 }
 
 void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc)

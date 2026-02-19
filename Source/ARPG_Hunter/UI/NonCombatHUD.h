@@ -18,6 +18,7 @@ UCLASS()
 class ARPG_HUNTER_API ANonCombatHUD : public APlayerHUD
 {
 	GENERATED_BODY()
+
 public:
 	ANonCombatHUD();
 private:
@@ -35,7 +36,6 @@ private:
 	TSubclassOf<UUWInventory> InventoryUIClass;
 	UPROPERTY()
 	TObjectPtr<UUWInventory> InventoryUI;
-	
 
 protected:
 	void BeginPlay() override;

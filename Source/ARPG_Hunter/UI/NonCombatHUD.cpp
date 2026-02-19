@@ -59,11 +59,14 @@ void ANonCombatHUD::BeginPlay()
 	if (MaintenanceUIClass)
 	{
 		MaintenanceUI = CreateWidget<UUWMaintenance>(GetWorld(), MaintenanceUIClass);
+		if (MaintenanceUI) 
+		{
+			TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 
-		TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-		MaintenanceUI->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat(), Equipment->GetContainer());
-		Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
-		PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
+			MaintenanceUI->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat(), Equipment->GetContainer());
+			Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
+			PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
+		}
 	}
 
 	if (InventoryUIClass)
@@ -84,6 +87,16 @@ void ANonCombatHUD::BeginPlay()
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
 			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
 		}
+	}
+
+	if (MaintenanceUI && InventoryUI) 
+	{
+		MaintenanceUI->OnEquipmentSlotClicked.BindLambda(
+			[this](EItemType _type, uint8 _opt) 
+			{
+				InventoryUI->ShowUIAsSelectMode(_type);
+			}
+		);
 	}
 }
 

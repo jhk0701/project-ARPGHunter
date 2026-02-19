@@ -29,6 +29,11 @@ FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 	return FReply::Unhandled();
 }
 
+void UUWItemSlot::Init(uint8 _idx)
+{
+	Index = _idx;
+}
+
 void UUWItemSlot::Init(uint8 _idx, const FVector2D& _size)
 {
 	Index = _idx;
