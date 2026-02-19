@@ -4,6 +4,7 @@
 
 #include "Core/Subsystem/DataManager.h"
 #include "Define/Enum.h"
+#include "Data/PlayerConfig.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
@@ -12,6 +13,10 @@
 
 UPlayerManager::UPlayerManager()
 {
+	static ConstructorHelpers::FObjectFinder<UPlayerConfig> PlayerConfigFinder(TEXT("/Script/ARPG_Hunter.PlayerConfig'/Game/03-Data/PlayerDefaultConfig.PlayerDefaultConfig'"));
+	if (PlayerConfigFinder.Succeeded())
+		PlayerDefault = PlayerConfigFinder.Object;
+
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
 	{
 		ECharacterStatType type = static_cast<ECharacterStatType>(i);
@@ -29,13 +34,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Equipment = NewObject<UEquipment>(this);
 	QuickSlot = NewObject<UQuickSlot>(this);
 
-	Stat[ECharacterStatType::HEALTH]					= 500;
-	Stat[ECharacterStatType::STAMINA]					= 100;
-	Stat[ECharacterStatType::SKILL]						= 100;
-	Stat[ECharacterStatType::ATTACK]					= 20;
-	Stat[ECharacterStatType::DEFENSE]					= 20;
-	Stat[ECharacterStatType::CRITICAL_PERCENT]			= 10;
-	Stat[ECharacterStatType::CRITICAL_DAMAGE_PERCENT]	= 100;
+	Stat = PlayerDefault->InitStat;
 
 	// TODO : 플레이어 저장 데이터 적용하기
 	Inventory->Init();
@@ -108,4 +107,9 @@ void UPlayerManager::ProvideBasicProperty()
 
 	AddItem(FName(TEXT("2002")), 10);
 	AddItem(FName(TEXT("2003")), 10);
+}
+
+TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) const
+{
+	return PlayerDefault->MapDefalutMesh[_type];
 }

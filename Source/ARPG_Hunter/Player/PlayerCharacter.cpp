@@ -160,7 +160,8 @@ void APlayerCharacter::UpdateEquipment(EEquipmentType _type, TObjectPtr<UEquipme
 {
 	if (_equipment == nullptr)
 	{
-		MapEquipmentMeshComp[_type]->SetSkeletalMesh(nullptr);
+		TObjectPtr<USkeletalMesh> DefaultMesh = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetDefaultMesh(_type);
+		MapEquipmentMeshComp[_type]->SetSkeletalMesh(DefaultMesh);
 		return;
 	}
 
