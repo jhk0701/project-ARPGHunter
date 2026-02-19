@@ -140,11 +140,21 @@ void ANonCombatHUD::BeginPlay()
 			[this](EItemType _type, uint8 _index) 
 			{
 				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				
 				TObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
 				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
 
 				PlayerManager->GetEquipment()->Equip(EquipmentConfig->Type, Item); // 장착
+			}
+		);
+
+		InventoryUI->OnUnequipButtonClicked.BindLambda(
+			[this](EItemType _type, uint8 _index) 
+			{
+				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+				TObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
+				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
+
+				PlayerManager->GetEquipment()->Unequip(EquipmentConfig->Type); // 장착 해제
 			}
 		);
 	}

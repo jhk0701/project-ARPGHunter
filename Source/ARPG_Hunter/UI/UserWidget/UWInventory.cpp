@@ -22,6 +22,7 @@ void UUWInventory::NativeOnInitialized()
 	CloseButton->OnClicked.AddDynamic(this, &UUWInventory::ClickCloseButton);
 	ThrowButton->OnClicked.AddDynamic(this, &UUWInventory::ClickThrowItem);
 	EquipButton->OnClicked.AddDynamic(this, &UUWInventory::ClickEquipItem);
+	UnequipButton->OnClicked.AddDynamic(this, &UUWInventory::ClickUnequipItem);
 
 	for (uint8 i = 0; i < CategoryContainer->GetChildrenCount(); ++i)
 	{
@@ -160,7 +161,23 @@ void UUWInventory::ShowSelectedItemDetail(bool _bShow)
 	SelectedItemDetail->SetVisibility(_bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	ItemOptionContainer->SetVisibility(_bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
-	EquipButton->SetVisibility(CurCategory < EItemType::EQUIPABLE ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+	if (CurCategory < EItemType::CONSUMABLE)
+	{
+		EquipButton->SetVisibility(ESlateVisibility::Collapsed);
+		UnequipButton->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+
+	if (ItemSlots[CurSelectedSlot]->IsEquipped())
+	{
+		EquipButton->SetVisibility(ESlateVisibility::Collapsed);
+		UnequipButton->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		EquipButton->SetVisibility(ESlateVisibility::Visible);
+		UnequipButton->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UUWInventory::ClickThrowItem()
@@ -172,6 +189,16 @@ void UUWInventory::ClickThrowItem()
 void UUWInventory::ClickEquipItem()
 {
 	OnEquipButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
+	OnSlotClicked(CurSelectedSlot);
+	UpdateSlot();
+
+	if (bIsSelectMode)
+		HideUI();
+}
+
+void UUWInventory::ClickUnequipItem()
+{
+	OnUnequipButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
 	OnSlotClicked(CurSelectedSlot);
 	UpdateSlot();
 

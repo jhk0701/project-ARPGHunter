@@ -51,4 +51,5 @@ public:
 
 	void MarkSelected(bool _bIsSelected);
 	void MarkEquipped(bool _bIsEquipped);
+	bool IsEquipped() const;
 };

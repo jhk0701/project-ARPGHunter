@@ -61,6 +61,8 @@ private:
 	TObjectPtr<UButton> ThrowButton;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> EquipButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> UnequipButton;
 
 	void OnSlotClicked(uint8 _index);
 	void ShowSelectedItemDetail(bool _bShow);
@@ -88,9 +90,12 @@ public:
 
 	FOnItemOptionClicked OnThrowButtonClicked;
 	FOnItemOptionClicked OnEquipButtonClicked;
+	FOnItemOptionClicked OnUnequipButtonClicked;
 
 	UFUNCTION()
 	void ClickThrowItem();
 	UFUNCTION()
 	void ClickEquipItem();
+	UFUNCTION()
+	void ClickUnequipItem();
 };

@@ -96,3 +96,8 @@ void UUWItemSlot::MarkEquipped(bool _bIsEquipped)
 {
 	EquippedMark->SetVisibility(_bIsEquipped ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
+
+bool UUWItemSlot::IsEquipped() const
+{
+	return EquippedMark->GetVisibility() == ESlateVisibility::Visible;
+}

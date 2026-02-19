@@ -36,8 +36,8 @@ void UUWItemDetail::SetDetail(TObjectPtr<UItem> _item)
 	NameLabel->SetText(FText::FromString(Config->Name));
 	DescLabel->SetText(FText::FromString(Config->Desc));
 
-	ConsumableInfo->SetVisibility(ESlateVisibility::Hidden);
-	EquipmentInfo->SetVisibility(ESlateVisibility::Hidden);
+	ConsumableInfo->SetVisibility(ESlateVisibility::Collapsed);
+	EquipmentInfo->SetVisibility(ESlateVisibility::Collapsed);
 
 	if (_item->GetType() == EItemType::CONSUMABLE)
 	{
@@ -57,7 +57,7 @@ void UUWItemDetail::SetDetail(TObjectPtr<UItem> _item)
 			TypeLabel->SetText(FText::FromString(TEXT("방어구")));
 
 		for (const TPair<ECharacterStatType, TObjectPtr<UUWStatInfo>>& Pair : MapStatInfo)
-			Pair.Value->SetVisibility(ESlateVisibility::Hidden);
+			Pair.Value->SetVisibility(ESlateVisibility::Collapsed);
 
 		TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Config);
 		for (const TPair<ECharacterStatType, uint32>& Pair : EquipmentConfig->Stat)
