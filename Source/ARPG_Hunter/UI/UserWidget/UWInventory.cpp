@@ -47,10 +47,10 @@ void UUWInventory::ShowUI()
 void UUWInventory::ShowUI(EItemType _itemType, TObjectPtr<UItem> _item)
 {
 	Super::ShowUI();
-	UpdateSlot();
 
 	CurCategory = _itemType;
 	bIsSelectMode = true;
+	UpdateSlot();
 
 	CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
 	ShowSelectedItemDetail(false);

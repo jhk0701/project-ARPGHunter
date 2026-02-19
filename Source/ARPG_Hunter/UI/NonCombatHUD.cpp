@@ -7,6 +7,7 @@
 #include "Core/Subsystem/PlayerManager.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
+#include "Player/QuickSlot.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenance.h"
 #include "UI/UserWidget/UWInventory.h"
@@ -63,8 +64,17 @@ void ANonCombatHUD::BeginPlay()
 		if (MaintenanceUI) 
 		{
 			TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+			TObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
 
-			MaintenanceUI->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat(), Equipment->GetContainer());
+			FUWMaintenanceInitParam InitParm
+			(
+				PlayerManager->GetStat(),
+				PlayerManager->GetEquipmentStat(),
+				Equipment->GetContainer(),
+				QuickSlot->GetContainer()
+			);
+
+			MaintenanceUI->Init(InitParm);
 			Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
 			PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
 		}

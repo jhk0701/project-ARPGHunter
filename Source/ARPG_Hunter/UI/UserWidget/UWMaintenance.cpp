@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
+#include "Components/HorizontalBox.h"
 #include "Components/WrapBox.h"
 
 #include "Define/Enum.h"
@@ -41,6 +42,21 @@ void UUWMaintenance::NativeOnInitialized()
 		}
 	}
 
+	if (QuickSlotContainer) 
+	{
+		int32 Cnt = QuickSlotContainer->GetChildrenCount();
+		ArrQuickSlot.SetNum(Cnt);
+
+		for (int32 i = 0; i < Cnt; ++i)
+		{
+			TObjectPtr<UUWItemSlot> QuickSlot = Cast<UUWItemSlot>(QuickSlotContainer->GetChildAt(i));
+			ArrQuickSlot[i] = QuickSlot;
+
+			QuickSlot->Init(i);
+			// QuickSlot->OnSlotClicked.BindLambda();
+		}
+	}
+
 	if (StatInfoUIClass) 
 	{
 		for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
@@ -55,13 +71,16 @@ void UUWMaintenance::NativeOnInitialized()
 	}
 }
 
-void UUWMaintenance::Init(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat, const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& _equipment)
+void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 {
-	for (const TPair<ECharacterStatType, uint32>& Pair : _playerStat)
-		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _equipmentStat[Pair.Key]);
+	for (const TPair<ECharacterStatType, uint32>& Pair : _param.PlayerStat)
+		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _param.EquipmentStat[Pair.Key]);
 
-	for (const TPair<EEquipmentType, TObjectPtr<UEquipmentItem>>& Pair : _equipment)
+	for (const TPair<EEquipmentType, TObjectPtr<UEquipmentItem>>& Pair : _param.Equipment)
 		MapEquipmentSlot[Pair.Key]->SetItem(Pair.Value);
+
+	for (uint8 i = 0; i < _param.QuickSlot.Num(); ++i)
+		ArrQuickSlot[i]->SetItem(_param.QuickSlot[i]);
 }
 
 void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)

@@ -66,7 +66,8 @@ public:
 
 	const TObjectPtr<UInventory> GetInventory() const { return Inventory; }
 	const TObjectPtr<UEquipment> GetEquipment() const { return Equipment; }
-
+	const TObjectPtr<UQuickSlot> GetQuickSlot() const { return QuickSlot; }
+	 
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName & _itemID, int32 _amount);
 	

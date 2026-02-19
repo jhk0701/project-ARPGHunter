@@ -8,11 +8,21 @@
 
 class UWrapBox;
 class UUWItemSlot;
-class UEquipmentItem;
 class UUWStatInfo;
+class UEquipmentItem;
+class UConsumableItem;
 enum class ECharacterStatType : uint8;
 enum class EEquipmentType : uint8;
 enum class EItemType : uint8;
+
+struct FUWMaintenanceInitParam 
+{
+public:
+	const TMap<ECharacterStatType, uint32>& PlayerStat;
+	const TMap<ECharacterStatType, uint32>& EquipmentStat;
+	const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& Equipment;
+	const TArray<TObjectPtr<UConsumableItem>>& QuickSlot;
+};
 
 DECLARE_DELEGATE_TwoParams(FOnEquipmentSlotClicked, EItemType, uint8);
 
@@ -33,6 +43,8 @@ private:
 	TObjectPtr<UWrapBox> ArmorContainer;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UHorizontalBox> QuickSlotContainer;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWItemSlot>> ArrQuickSlot;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWStatInfo> StatInfoUIClass;
@@ -50,7 +62,7 @@ protected:
 public:
 	FOnEquipmentSlotClicked OnEquipmentSlotClicked;
 
-	void Init(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat, const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& _equipment);
+	void Init(const FUWMaintenanceInitParam& _param);
 	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void SetEquipment(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment);
 
