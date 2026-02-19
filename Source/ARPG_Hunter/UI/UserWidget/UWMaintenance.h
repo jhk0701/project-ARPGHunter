@@ -25,6 +25,7 @@ public:
 };
 
 DECLARE_DELEGATE_TwoParams(FOnEquipmentSlotClicked, EItemType, uint8);
+DECLARE_DELEGATE_OneParam(FOnQuickSlotClicked, uint8);
 
 /**
  * 
@@ -61,13 +62,15 @@ protected:
 
 public:
 	FOnEquipmentSlotClicked OnEquipmentSlotClicked;
+	FOnQuickSlotClicked OnQuickSlotClicked;
 
 	void Init(const FUWMaintenanceInitParam& _param);
 	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void SetEquipment(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment);
+	void SetQuickSlot(uint8 _index, TObjectPtr<UConsumableItem> _consumable);
 
 	UFUNCTION()
 	void ClickCloseButton();
-
 	void ClickEquipmentSlot(EItemType _type, uint8 _opt);
+	void ClickQuickSlot(uint8 _idx);
 };

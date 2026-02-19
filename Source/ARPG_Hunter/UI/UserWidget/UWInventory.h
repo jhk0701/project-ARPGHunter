@@ -30,6 +30,7 @@ private:
 	EItemType CurCategory;
 	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemArrFunc;
 	uint8 CurSelectedSlot;
+	int8 OptionalIndex{ -1 }; // 장비, 소비템 장착 시, 자리에 해당하는 인덱스가 들어올 것. (장비 : 타입 열거형 값, 소비템 : 퀵슬롯 인덱스)
 
 	UPROPERTY(EditAnywhere)
 	FVector2D SlotSize{80.0f,80.0f};
@@ -73,15 +74,16 @@ protected:
 public:
 	virtual void ShowUI() override;
 	virtual void HideUI() override;
-	void ShowUI(EItemType _itemType, TObjectPtr<UItem> _item);
+	void ShowUI(EItemType _itemType, TObjectPtr<UItem> _item, uint8 _optionalIdx);
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }
 
+	void UpdateSlot();
+
 	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
-
-	void UpdateSlot();
+	int8 GetOptionalIndex() const { return OptionalIndex; }
 
 	UFUNCTION()
 	void ClickCloseButton();

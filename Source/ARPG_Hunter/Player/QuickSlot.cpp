@@ -40,7 +40,7 @@ TObjectPtr<UConsumableItem> UQuickSlot::Unregister(uint8 _index)
 	Prev->SetQuickSlotIndex(-1);
 	
 	Container[_index] = nullptr;
-	OnQuickSlotChanged.Broadcast(_index, Prev);
+	OnQuickSlotChanged.Broadcast(_index, Container[_index]);
 
 	return Prev;
 }

@@ -53,7 +53,7 @@ void UUWMaintenance::NativeOnInitialized()
 			ArrQuickSlot[i] = QuickSlot;
 
 			QuickSlot->Init(i);
-			// QuickSlot->OnSlotClicked.BindLambda();
+			QuickSlot->OnSlotClicked.BindUObject(this, &UUWMaintenance::ClickQuickSlot);
 		}
 	}
 
@@ -94,6 +94,11 @@ void UUWMaintenance::SetEquipment(EEquipmentType _type, TObjectPtr<UEquipmentIte
 	MapEquipmentSlot[_type]->SetItem(_equipment);
 }
 
+void UUWMaintenance::SetQuickSlot(uint8 _index, TObjectPtr<UConsumableItem> _consumable)
+{
+	ArrQuickSlot[_index]->SetItem(_consumable);
+}
+
 void UUWMaintenance::ClickCloseButton()
 {
 	HideUI();
@@ -102,4 +107,9 @@ void UUWMaintenance::ClickCloseButton()
 void UUWMaintenance::ClickEquipmentSlot(EItemType _type, uint8 _opt)
 {
 	OnEquipmentSlotClicked.ExecuteIfBound(_type, _opt);
+}
+
+void UUWMaintenance::ClickQuickSlot(uint8 _idx)
+{
+	OnQuickSlotClicked.ExecuteIfBound(_idx);
 }

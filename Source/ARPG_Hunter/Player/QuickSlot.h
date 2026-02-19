@@ -34,6 +34,7 @@ public:
 	TObjectPtr<UConsumableItem> Unregister(uint8 _index);
 
 	const TArray<TObjectPtr<UConsumableItem>>& GetContainer() const { return Container; }
+	TObjectPtr<UConsumableItem> GetItem(uint8 _index) const { return Container[_index]; }
 
 	void UseItem(uint8 _index);
 };

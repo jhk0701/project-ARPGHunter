@@ -38,6 +38,8 @@ void UUWInventory::NativeOnInitialized()
 void UUWInventory::ShowUI()
 {
 	Super::ShowUI();
+
+	OptionalIndex = -1;
 	UpdateSlot();
 
 	CategoryContainer->SetVisibility(ESlateVisibility::Visible);
@@ -45,12 +47,13 @@ void UUWInventory::ShowUI()
 	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWInventory::ShowUI(EItemType _itemType, TObjectPtr<UItem> _item)
+void UUWInventory::ShowUI(EItemType _itemType, TObjectPtr<UItem> _item, uint8 _optionalIdx)
 {
 	Super::ShowUI();
 
-	CurCategory = _itemType;
 	bIsSelectMode = true;
+	CurCategory = _itemType;
+	OptionalIndex = _optionalIdx;
 	UpdateSlot();
 
 	CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
@@ -161,7 +164,8 @@ void UUWInventory::ShowSelectedItemDetail(bool _bShow)
 	SelectedItemDetail->SetVisibility(_bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	ItemOptionContainer->SetVisibility(_bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
-	if (CurCategory < EItemType::CONSUMABLE)
+	if ((CurCategory == EItemType::ITEM) ||
+		(CurCategory == EItemType::CONSUMABLE && OptionalIndex < 0))
 	{
 		EquipButton->SetVisibility(ESlateVisibility::Collapsed);
 		UnequipButton->SetVisibility(ESlateVisibility::Collapsed);
