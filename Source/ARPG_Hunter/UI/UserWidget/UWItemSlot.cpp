@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Blueprint/DragDropOperation.h"
 
+#include "Define/Enum.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
@@ -14,6 +15,7 @@ void UUWItemSlot::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	MarkSelected(false);
+	MarkEquipped(false);
 }
 
 FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -64,6 +66,17 @@ void UUWItemSlot::SetItem(TObjectPtr<UItem> _item)
 	}
 	else
 		AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+
+	bool bIsEquiped = false;
+	if (_item->GetType() >= EItemType::CONSUMABLE) 
+	{
+		if (TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(_item))
+			bIsEquiped = Consumable->GetQuickSlotIndex() >= 0;
+		else if (TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(_item))
+			bIsEquiped = Equipment->GetEquipmentIndex() >= 0;
+	}
+
+	MarkEquipped(bIsEquiped);
 }
 
 void UUWItemSlot::ClearSlot()
@@ -71,9 +84,15 @@ void UUWItemSlot::ClearSlot()
 	Thumbnail->SetBrushFromTexture(nullptr);
 	Thumbnail->SetVisibility(ESlateVisibility::Hidden);
 	AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+	MarkEquipped(false);
 }
 
 void UUWItemSlot::MarkSelected(bool _bIsSelected)
 {
 	SelectedMark->SetVisibility(_bIsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+void UUWItemSlot::MarkEquipped(bool _bIsEquipped)
+{
+	EquippedMark->SetVisibility(_bIsEquipped ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }

@@ -173,4 +173,8 @@ void UUWInventory::ClickEquipItem()
 {
 	OnEquipButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
 	OnSlotClicked(CurSelectedSlot);
+	UpdateSlot();
+
+	if (bIsSelectMode)
+		HideUI();
 }

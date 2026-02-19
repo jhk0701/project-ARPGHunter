@@ -83,27 +83,29 @@ void UPlayerManager::EquipmentStatChanged(const TMap<ECharacterStatType, uint32>
 
 void UPlayerManager::ProvideBasicProperty()
 {
+	Gold.Value = 3000;
+
 	AddItem(FName(TEXT("1001")), 10);
 	AddItem(FName(TEXT("1002")), 10);
 	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);
 	Equipment->Equip(EEquipmentType::HEAD, Inventory->GetItem(EItemType::ARMOR, Index));
-	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
-
+	
 	Index = AddItem(FName(TEXT("3002")), 1);
 	Equipment->Equip(EEquipmentType::TOP, Inventory->GetItem(EItemType::ARMOR, Index));
-	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
-
+	
 	Index = AddItem(FName(TEXT("3003")), 1);
 	Equipment->Equip(EEquipmentType::BOTTOM, Inventory->GetItem(EItemType::ARMOR, Index));
-	Inventory->TrySubItem(EItemType::ARMOR, Index, 1);
-
+	
 	Index = AddItem(FName(TEXT("4001")), 1);
 	Equipment->Equip(EEquipmentType::WEAPON, Inventory->GetItem(EItemType::WEAPON, Index));
-	Inventory->TrySubItem(EItemType::WEAPON, Index, 1);
-
+	
 	AddItem(FName(TEXT("4002")), 1);
 
-	Gold.Value = 3000;
+	Index = AddItem(FName(TEXT("2001")), 10);
+	QuickSlot->Register(0, Inventory->GetItem(EItemType::CONSUMABLE, Index));
+
+	AddItem(FName(TEXT("2002")), 10);
+	AddItem(FName(TEXT("2003")), 10);
 }

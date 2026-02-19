@@ -13,19 +13,22 @@ void UQuickSlot::Init(uint8 _size)
 	Container.SetNum(_size);
 }
 
-TObjectPtr<UConsumableItem> UQuickSlot::Register(uint8 _index, TObjectPtr<UConsumableItem> _consumableItem)
+void UQuickSlot::Register(uint8 _index, TObjectPtr<UItem> _consumableItem)
 {
 	if (Container.Num() <= _index)
-		return nullptr;
+		return;
 
-	TObjectPtr<UConsumableItem> Prev = nullptr;
+	TObjectPtr<UConsumableItem> ConsumableItem = Cast<UConsumableItem>(_consumableItem);
+	if (nullptr == ConsumableItem)
+		return;
+	
+	ConsumableItem->SetQuickSlotIndex(_index);
+
 	if (Container[_index] != nullptr)
-		Prev = Unregister(_index);
+		Unregister(_index);
 
-	Container[_index] = _consumableItem;
+	Container[_index] = ConsumableItem;
 	OnQuickSlotChanged.Broadcast(_index, Container[_index]);
-
-	return Prev;
 }
 
 TObjectPtr<UConsumableItem> UQuickSlot::Unregister(uint8 _index)
@@ -34,6 +37,8 @@ TObjectPtr<UConsumableItem> UQuickSlot::Unregister(uint8 _index)
 		return nullptr;
 
 	TObjectPtr<UConsumableItem> Prev = Container[_index];
+	Prev->SetQuickSlotIndex(-1);
+	
 	Container[_index] = nullptr;
 	OnQuickSlotChanged.Broadcast(_index, Prev);
 

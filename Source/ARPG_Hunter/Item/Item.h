@@ -19,7 +19,6 @@ private:
 	FName ID;
 	EItemType Type;
 	uint16 Amount{ 1 };
-
 	UPROPERTY()
 	TObjectPtr<UItemConfig> Config;
 
@@ -42,9 +41,13 @@ class ARPG_HUNTER_API UConsumableItem : public UItem
 {
 	GENERATED_BODY()
 private:
+	int32 QuickSlotIndex{ -1 };
+
 	// TODO : 아이템 사용 후, 쿨타임 로직
 public:
 	void Consume();
+	void SetQuickSlotIndex(int32 _idx) { QuickSlotIndex = _idx; }
+	int32 GetQuickSlotIndex() const { return QuickSlotIndex; }
 };
 
 UCLASS()
@@ -52,7 +55,12 @@ class ARPG_HUNTER_API UEquipmentItem : public UItem
 {
 	GENERATED_BODY()
 private:
+	// 장착 시, 0 이상 값. EEquipmentType 의 값이 들어올 것
+	int32 EquipmentIndex{ -1 }; 
+
 	// TODO: 강화 및 인챈트 데이터
 public:
 	void Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config) override;
+	void SetEquipmentIndex(int32 _idx) { EquipmentIndex = _idx; }
+	int32 GetEquipmentIndex() const { return EquipmentIndex; }
 };

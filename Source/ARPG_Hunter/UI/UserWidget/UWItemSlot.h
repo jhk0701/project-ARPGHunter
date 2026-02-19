@@ -30,6 +30,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> SelectedMark;
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> EquippedMark;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> AmountLabel;
 
 protected:
@@ -47,4 +50,5 @@ public:
 	void ClearSlot();
 
 	void MarkSelected(bool _bIsSelected);
+	void MarkEquipped(bool _bIsEquipped);
 };

@@ -21,17 +21,18 @@ void UEquipment::Init()
 	// TODO: 저장 데이터 반영
 }
 
-TObjectPtr<UEquipmentItem> UEquipment::Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment)
+void UEquipment::Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment)
 {
 	TObjectPtr<UEquipmentItem> NewEquipment = Cast<UEquipmentItem>(_equipment);
 	check(NewEquipment);
 
-	TObjectPtr<UEquipmentItem> PrevItem = nullptr;
 	if (Container[_type] != nullptr) 
-		PrevItem = Unequip(_type);
+		Unequip(_type);
 
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(NewEquipment->GetConfig());
 	check(Config);
+
+	NewEquipment->SetEquipmentIndex(static_cast<int32>(_type));
 
 	for (const TPair<ECharacterStatType, uint16>& Pair : Config->Stat)
 		EquipmentStat[Pair.Key] += Pair.Value;
@@ -39,8 +40,6 @@ TObjectPtr<UEquipmentItem> UEquipment::Equip(EEquipmentType _type, TObjectPtr<UI
 	Container[_type] = NewEquipment;
 	OnEquipmentChanged.Broadcast(_type, Container[_type]);
 	OnStatValueChanged.Broadcast(EquipmentStat);
-
-	return PrevItem;
 }
 
 TObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
@@ -49,6 +48,8 @@ TObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
 	
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(PrevItem->GetConfig());
 	check(Config);
+
+	PrevItem->SetEquipmentIndex(-1);
 
 	for (const TPair<ECharacterStatType, uint16>& Pair : Config->Stat)
 		EquipmentStat[Pair.Key] -= Pair.Value;

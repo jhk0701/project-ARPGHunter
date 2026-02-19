@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "QuickSlot.generated.h"
 
+class UItem;
 class UConsumableItem;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnQuickSlotChanged, uint8, TObjectPtr<UConsumableItem>);
@@ -29,7 +30,7 @@ public:
 	FOnQuickSlotChanged OnQuickSlotChanged;
 
 	void Init(uint8 _size = 4);
-	TObjectPtr<UConsumableItem> Register(uint8 _index, TObjectPtr<UConsumableItem> _consumableItem);
+	void Register(uint8 _index, TObjectPtr<UItem> _consumableItem);
 	TObjectPtr<UConsumableItem> Unregister(uint8 _index);
 
 	const TArray<TObjectPtr<UConsumableItem>>& GetContainer() const { return Container; }

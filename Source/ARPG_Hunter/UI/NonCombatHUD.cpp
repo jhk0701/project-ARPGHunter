@@ -95,6 +95,7 @@ void ANonCombatHUD::BeginPlay()
 					return &Inventory->GetContainer(_type);
 				}
 			);
+
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
 			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
 		}
@@ -139,20 +140,11 @@ void ANonCombatHUD::BeginPlay()
 			[this](EItemType _type, uint8 _index) 
 			{
 				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-				TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-
-				TObjectPtr<UItem> Item = Inventory->GetItem(_type, _index);
+				
+				TObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
 				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
 
-				// 장착
-				TObjectPtr<UEquipmentItem> PrevEquipment = Equipment->Equip(EquipmentConfig->Type, Item);
-				Inventory->TrySubItem(_type, _index, Item->GetAmount());
-				if (PrevEquipment)
-				{
-					uint8 Index = 0;
-					Inventory->TryAddItem(PrevEquipment, Index);
-				}
+				PlayerManager->GetEquipment()->Equip(EquipmentConfig->Type, Item); // 장착
 			}
 		);
 	}

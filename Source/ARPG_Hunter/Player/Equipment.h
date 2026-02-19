@@ -37,7 +37,7 @@ public:
 	FOnEquipmentStatChanged OnStatValueChanged;
 
 	void Init();
-	TObjectPtr<UEquipmentItem> Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment);
+	void Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment);
 	TObjectPtr<UEquipmentItem> Unequip(EEquipmentType _type);
 
 	const TObjectPtr<UEquipmentItem> GetEquipment(EEquipmentType _type) const { return Container[_type]; }
