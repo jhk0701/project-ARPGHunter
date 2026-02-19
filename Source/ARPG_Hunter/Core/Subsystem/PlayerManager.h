@@ -53,7 +53,6 @@ public:
 	FOnStatValueChanged OnStatValueChanged;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	virtual void Deinitialize() override;
 
 	const TMap<ECharacterStatType, uint32>& GetStat() const { return Stat; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const;

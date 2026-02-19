@@ -44,14 +44,6 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	ProvideBasicProperty();
 }
 
-void UPlayerManager::Deinitialize()
-{
-	Super::Deinitialize();
-
-	Inventory = nullptr;
-	Equipment = nullptr;
-}
-
 const TMap<ECharacterStatType, uint32>& UPlayerManager::GetEquipmentStat() const
 {
 	return Equipment->GetEquipmentStat();

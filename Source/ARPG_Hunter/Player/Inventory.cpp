@@ -90,7 +90,7 @@ bool UInventory::TrySubItem(EItemType _type, uint8 _idx, uint16 _amount)
 	if (bIsSuccess) 
 	{
 		if (Container[_type].Array[_idx]->GetAmount() == 0)
-			Container[_type].Array[_idx] == nullptr;
+			Container[_type].Array[_idx] = nullptr;
 
 		OnInventoryChanged.Broadcast(_idx, Container[_type].Array[_idx]); // 이 시점에서 nullptr일 것
 	}
@@ -119,7 +119,7 @@ bool UInventory::TryFindEmpty(EItemType _type, uint8& _outIdx)
 {
 	for (uint8 i = 0; i < Container.Num(); ++i)
 	{
-		if (nullptr == Container[_type].Array[i])
+		if (Container[_type].Array[i] == nullptr)
 		{
 			_outIdx = i;
 			return true;
