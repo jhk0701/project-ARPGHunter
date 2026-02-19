@@ -27,6 +27,7 @@ public:
 	virtual void Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config);
 	virtual bool TryAddAmount(uint16 _amount, uint16& _outRemain);
 	bool TrySubAmount(uint16 _amount);
+	void SetAmount(uint16 _amount) { Amount = _amount; }
 
 	bool IsFull() const;
 

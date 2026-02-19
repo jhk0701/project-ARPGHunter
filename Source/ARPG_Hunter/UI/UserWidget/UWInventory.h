@@ -8,9 +8,15 @@
 
 class UItem;
 class UUWItemSlot;
+class UUWItemDetail;
 class UUWCheckBox;
+class UWrapBox;
+class UHorizontalBox;
+class UButton;
 
 enum class EItemType : uint8;
+
+DECLARE_DELEGATE_TwoParams(FOnItemOptionClicked, EItemType, uint8);
 
 /**
  * 
@@ -29,7 +35,7 @@ private:
 	FVector2D SlotSize{80.0f,80.0f};
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UHorizontalBox> CategoryContainer;
+	TObjectPtr<UHorizontalBox> CategoryContainer;
 	UPROPERTY()
 	TMap<EItemType, TObjectPtr<UUWCheckBox>> Category;
 
@@ -37,18 +43,27 @@ private:
 	TSubclassOf<UUWItemSlot> ItemSlotClass;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWItemSlot>> ItemSlots;
-	
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UWrapBox> SlotContainer;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UUWItemDetail> SelectedItemDetail;
+	TObjectPtr<UWrapBox> SlotContainer;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> GoldLabel;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UButton> CloseButton;
+	TObjectPtr<UButton> CloseButton;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWItemDetail> SelectedItemDetail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWItemDetail> ComparedItemDetail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UHorizontalBox> ItemOptionContainer;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ThrowButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> EquipButton;
 
 	void OnSlotClicked(uint8 _index);
+	void ShowSelectedItemDetail(bool _bShow);
 
 protected:
 	void NativeOnInitialized() override;
@@ -56,7 +71,7 @@ protected:
 public:
 	virtual void ShowUI() override;
 	virtual void HideUI() override;
-	void ShowUIAsSelectMode(EItemType _itemType);
+	void ShowUI(EItemType _itemType, TObjectPtr<UItem> _item);
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }
@@ -70,4 +85,12 @@ public:
 	void ClickCloseButton();
 	UFUNCTION()
 	void ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt);
+
+	FOnItemOptionClicked OnThrowButtonClicked;
+	FOnItemOptionClicked OnEquipButtonClicked;
+
+	UFUNCTION()
+	void ClickThrowItem();
+	UFUNCTION()
+	void ClickEquipItem();
 };

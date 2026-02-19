@@ -100,5 +100,7 @@ void UPlayerManager::ProvideBasicProperty()
 	Equipment->Equip(EEquipmentType::WEAPON, Inventory->GetItem(EItemType::WEAPON, Index));
 	Inventory->TrySubItem(EItemType::WEAPON, Index, 1);
 
+	AddItem(FName(TEXT("4002")), 1);
+
 	Gold.Value = 3000;
 }

@@ -20,6 +20,8 @@ void UUWInventory::NativeOnInitialized()
 	CurCategory = EItemType::WEAPON;
 
 	CloseButton->OnClicked.AddDynamic(this, &UUWInventory::ClickCloseButton);
+	ThrowButton->OnClicked.AddDynamic(this, &UUWInventory::ClickThrowItem);
+	EquipButton->OnClicked.AddDynamic(this, &UUWInventory::ClickEquipItem);
 
 	for (uint8 i = 0; i < CategoryContainer->GetChildrenCount(); ++i)
 	{
@@ -35,10 +37,31 @@ void UUWInventory::NativeOnInitialized()
 void UUWInventory::ShowUI()
 {
 	Super::ShowUI();
-
-	SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
-	CategoryContainer->SetVisibility(bIsSelectMode ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
 	UpdateSlot();
+
+	CategoryContainer->SetVisibility(ESlateVisibility::Visible);
+	ShowSelectedItemDetail(false);
+	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UUWInventory::ShowUI(EItemType _itemType, TObjectPtr<UItem> _item)
+{
+	Super::ShowUI();
+	UpdateSlot();
+
+	CurCategory = _itemType;
+	bIsSelectMode = true;
+
+	CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
+	ShowSelectedItemDetail(false);
+
+	if (_item)
+	{
+		ComparedItemDetail->SetDetail(_item);
+		ComparedItemDetail->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+		ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWInventory::HideUI()
@@ -50,13 +73,6 @@ void UUWInventory::HideUI()
 	}
 	else 
 		Super::HideUI();
-}
-
-void UUWInventory::ShowUIAsSelectMode(EItemType _itemType)
-{
-	CurCategory = _itemType;
-	bIsSelectMode = true;
-	ShowUI();
 }
 
 void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc)
@@ -106,7 +122,7 @@ void UUWInventory::ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt)
 		Pair.Value->UpdateStateWithoutEvent(false);
 	}
 
-	SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+	ShowSelectedItemDetail(false);
 	UpdateSlot();
 }
 
@@ -133,8 +149,28 @@ void UUWInventory::OnSlotClicked(uint8 _index)
 	{
 		ItemSlots[CurSelectedSlot]->MarkSelected(true);
 		SelectedItemDetail->SetDetail((*ItemArr)[_index]);
-		SelectedItemDetail->SetVisibility(ESlateVisibility::Visible);
+		ShowSelectedItemDetail(true);
 	}
 	else
-		SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+		ShowSelectedItemDetail(false);
+}
+
+void UUWInventory::ShowSelectedItemDetail(bool _bShow)
+{
+	SelectedItemDetail->SetVisibility(_bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	ItemOptionContainer->SetVisibility(_bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+
+	EquipButton->SetVisibility(CurCategory < EItemType::EQUIPABLE ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+}
+
+void UUWInventory::ClickThrowItem()
+{
+	OnThrowButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
+	OnSlotClicked(CurSelectedSlot);
+}
+
+void UUWInventory::ClickEquipItem()
+{
+	OnEquipButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
+	OnSlotClicked(CurSelectedSlot);
 }

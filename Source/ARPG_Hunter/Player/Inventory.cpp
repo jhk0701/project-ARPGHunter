@@ -81,6 +81,38 @@ bool UInventory::TryAddItem(FAddItemParam& _param)
 	return true;
 }
 
+bool UInventory::TryAddItem(TObjectPtr<UItem> _item, uint8& _outIndex)
+{
+	EItemType Type = _item->GetType();
+
+	// 기존 아이템 확인
+	if (TryFindItem(Type, _item->GetID(), _outIndex, [](TObjectPtr<UItem> _existItem) { return _existItem->IsFull() == false; }))
+	{
+		// 기존 아이템 추가 획득
+		uint16 RemainAmount = 0;
+		if (Container[Type].Array[_outIndex]->TryAddAmount(_item->GetAmount(), RemainAmount))
+		{
+			// 남김없이 다 추가된 경우
+			OnInventoryChanged.Broadcast(_outIndex, Container[Type].Array[_outIndex]);
+			return true;
+		}
+
+		_item->SetAmount(RemainAmount); // 획득 후, 해당 슬롯이 다 차서 남은 갯수 -> 신규 획득 처리
+		OnInventoryChanged.Broadcast(_outIndex, Container[Type].Array[_outIndex]);
+	}
+
+	// 신규 획득
+	// 남은 공간 확인
+	if (TryFindEmpty(Type, _outIndex) == false)
+		return false; // 여유 공간이 없는 상황
+
+	// 신규 아이템 인스턴스 추가
+	Container[Type].Array[_outIndex] = _item;
+	OnInventoryChanged.Broadcast(_outIndex, Container[Type].Array[_outIndex]);
+
+	return true;
+}
+
 bool UInventory::TrySubItem(EItemType _type, uint8 _idx, uint16 _amount)
 {
 	if (nullptr == Container[_type].Array[_idx])

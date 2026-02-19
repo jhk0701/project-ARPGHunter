@@ -10,7 +10,8 @@
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenance.h"
 #include "UI/UserWidget/UWInventory.h"
-
+#include "Item/Item.h"
+#include "Data/ItemData.h"
 
 ANonCombatHUD::ANonCombatHUD()
 {
@@ -94,7 +95,54 @@ void ANonCombatHUD::BeginPlay()
 		MaintenanceUI->OnEquipmentSlotClicked.BindLambda(
 			[this](EItemType _type, uint8 _opt) 
 			{
-				InventoryUI->ShowUIAsSelectMode(_type);
+				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
+				TObjectPtr<UItem> ItemToCompare;
+				switch (_type)
+				{
+				case EItemType::CONSUMABLE:
+					// 퀵슬롯 관련
+					break;
+				case EItemType::WEAPON:
+					ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(EEquipmentType::WEAPON);
+					break;
+				case EItemType::ARMOR:
+					EEquipmentType Type = static_cast<EEquipmentType>(_opt);
+					ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(Type);
+					break;
+				}
+				
+				InventoryUI->ShowUI(_type, ItemToCompare);
+			}
+		);
+
+		InventoryUI->OnThrowButtonClicked.BindLambda(
+			[this](EItemType _type, uint8 _index) 
+			{
+				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+				TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+				Inventory->TrySubItem(_type, _index, Inventory->GetItem(_type, _index)->GetAmount());
+			}
+		);
+
+		InventoryUI->OnEquipButtonClicked.BindLambda(
+			[this](EItemType _type, uint8 _index) 
+			{
+				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+				TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+				TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+
+				TObjectPtr<UItem> Item = Inventory->GetItem(_type, _index);
+				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
+
+				// 장착
+				TObjectPtr<UEquipmentItem> PrevEquipment = Equipment->Equip(EquipmentConfig->Type, Item);
+				Inventory->TrySubItem(_type, _index, Item->GetAmount());
+				if (PrevEquipment)
+				{
+					uint8 Index = 0;
+					Inventory->TryAddItem(PrevEquipment, Index);
+				}
 			}
 		);
 	}
