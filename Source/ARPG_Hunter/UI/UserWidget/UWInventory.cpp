@@ -182,6 +182,9 @@ void UUWInventory::ShowSelectedItemDetail(bool _bShow)
 
 void UUWInventory::ClickThrowItem()
 {
+	if (ItemSlots[CurSelectedSlot]->IsEquipped())
+		return;
+
 	OnThrowButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
 	OnSlotClicked(CurSelectedSlot);
 }
@@ -189,8 +192,8 @@ void UUWInventory::ClickThrowItem()
 void UUWInventory::ClickEquipItem()
 {
 	OnEquipButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
-	OnSlotClicked(CurSelectedSlot);
 	UpdateSlot();
+	OnSlotClicked(CurSelectedSlot);
 
 	if (bIsSelectMode)
 		HideUI();
@@ -199,8 +202,8 @@ void UUWInventory::ClickEquipItem()
 void UUWInventory::ClickUnequipItem()
 {
 	OnUnequipButtonClicked.ExecuteIfBound(CurCategory, CurSelectedSlot);
-	OnSlotClicked(CurSelectedSlot);
 	UpdateSlot();
+	OnSlotClicked(CurSelectedSlot);
 
 	if (bIsSelectMode)
 		HideUI();
