@@ -6,6 +6,7 @@
 #include "Define/Enum.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
+#include "Player/QuickSlot.h"
 #include "Item/Item.h"
 
 
@@ -26,6 +27,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Inventory = NewObject<UInventory>(this);
 	Equipment = NewObject<UEquipment>(this);
+	QuickSlot = NewObject<UQuickSlot>(this);
 
 	Stat[ECharacterStatType::HEALTH]					= 500;
 	Stat[ECharacterStatType::STAMINA]					= 100;
@@ -38,6 +40,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	// TODO : 플레이어 저장 데이터 적용하기
 	Inventory->Init();
 	Equipment->Init();
+	QuickSlot->Init();
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 

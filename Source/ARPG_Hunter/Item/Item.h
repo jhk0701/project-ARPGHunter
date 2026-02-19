@@ -43,6 +43,8 @@ class ARPG_HUNTER_API UConsumableItem : public UItem
 	GENERATED_BODY()
 private:
 	// TODO : 아이템 사용 후, 쿨타임 로직
+public:
+	void Consume();
 };
 
 UCLASS()

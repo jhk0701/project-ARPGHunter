@@ -8,6 +8,7 @@
 
 class UInventory;
 class UEquipment;
+class UQuickSlot;
 enum class ECharacterStatType : uint8;
 
 using FPMAliasMapStat = TMap<ECharacterStatType, uint32>;
@@ -45,6 +46,8 @@ private:
 	TObjectPtr<UInventory> Inventory;
 	UPROPERTY()
 	TObjectPtr<UEquipment> Equipment;
+	UPROPERTY()
+	TObjectPtr<UQuickSlot> QuickSlot;
 
 	void BroadcastStatChanged();
 	void EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat);

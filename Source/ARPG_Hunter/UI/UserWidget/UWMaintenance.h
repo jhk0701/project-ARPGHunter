@@ -31,6 +31,8 @@ private:
 	TObjectPtr<UWrapBox> WeaponContainer;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UWrapBox> ArmorContainer;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UHorizontalBox> QuickSlotContainer;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWStatInfo> StatInfoUIClass;

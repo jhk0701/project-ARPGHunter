@@ -35,11 +35,15 @@ bool UItem::TrySubAmount(uint16 _amount)
 	return true;
 }
 
-
 bool UItem::IsFull() const
 {
 	return Config->MaxAmount == Amount;
 }
+
+void UConsumableItem::Consume()
+{
+}
+
 
 void UEquipmentItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
