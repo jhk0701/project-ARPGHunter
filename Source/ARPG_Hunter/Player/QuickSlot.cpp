@@ -4,21 +4,19 @@
 #include "Player/QuickSlot.h"
 #include "Player/Inventory.h"
 #include "Item/Item.h"
-#include "Interface/Effectable.h"
 
 UQuickSlot::UQuickSlot()
 {
 }
 
-void UQuickSlot::Init(TWeakObjectPtr<UInventory> _container, uint8 _size)
+void UQuickSlot::Init(uint8 _size)
 {
-	Inventory = _container;
 	Container.SetNum(_size);
 }
 
 bool UQuickSlot::IsValidSlot(uint8 _index) const
 {
-	return Container.Num() > _index && Container[_index] != nullptr;
+	return Container.Num() > _index && Container[_index].IsValid();
 }
 
 void UQuickSlot::Register(uint8 _index, TWeakObjectPtr<UItem> _consumableItem)
@@ -32,7 +30,7 @@ void UQuickSlot::Register(uint8 _index, TWeakObjectPtr<UItem> _consumableItem)
 	
 	ConsumableItem->SetQuickSlotIndex(_index);
 
-	if (Container[_index] != nullptr)
+	if (Container[_index].Get() != nullptr)
 		Unregister(_index);
 
 	Container[_index] = ConsumableItem;
@@ -53,9 +51,17 @@ TWeakObjectPtr<UConsumableItem> UQuickSlot::Unregister(uint8 _index)
 	return Prev;
 }
 
+void UQuickSlot::ClearSlot(uint8 _index)
+{
+	Container[_index] = nullptr;
+	OnQuickSlotChanged.Broadcast(_index, Container[_index]);
+}
+
 void UQuickSlot::UseItem(uint8 _index, IEffectable* _target)
 {
 	if (!IsValidSlot(_index))
 		return;
 
+	Container[_index]->Consume(_target);
+	OnQuickSlotUsed.ExecuteIfBound(_index, Container[_index]->GetInventoryIndex());
 }

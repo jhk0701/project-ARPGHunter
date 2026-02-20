@@ -4,6 +4,9 @@
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 
+#include "Interface/Effectable.h"
+#include "Data/EffectData.h"
+
 void UItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
 	ID = _id;
@@ -37,6 +40,13 @@ bool UItem::TrySubAmount(uint16 _amount)
 bool UItem::IsFull() const
 {
 	return Config->MaxAmount == Amount;
+}
+
+void UConsumableItem::Consume(IEffectable* _target)
+{
+	TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(GetConfig());
+	for (const TObjectPtr<UEffectData> Effect : ConsumableConfig->Effects)
+		_target->ApplyEffect(Effect);
 }
 
 void UEquipmentItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)

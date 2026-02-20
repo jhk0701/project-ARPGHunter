@@ -28,13 +28,15 @@ public:
 	virtual bool TryAddAmount(uint16 _amount, uint16& _outRemain);
 	bool TrySubAmount(uint16 _amount);
 	void SetAmount(uint16 _amount) { Amount = _amount; }
-
-	bool IsFull() const;
+	void SetInventoryIndex(uint8 _index) { InventoryIndex = _index; }
 
 	const FName& GetID() const { return ID; }
 	EItemType GetType() const { return Type; }
 	uint16 GetAmount() const { return Amount; }
+	uint8 GetInventoryIndex() const { return InventoryIndex; }
 	const TObjectPtr<UItemConfig> GetConfig() { return Config; }
+	
+	bool IsFull() const;
 };
 
 UCLASS()
@@ -45,6 +47,7 @@ private:
 	int32 QuickSlotIndex{ -1 };
 
 public:
+	void Consume(class IEffectable* _target);
 	void SetQuickSlotIndex(int32 _idx) { QuickSlotIndex = _idx; }
 	int32 GetQuickSlotIndex() const { return QuickSlotIndex; }
 };

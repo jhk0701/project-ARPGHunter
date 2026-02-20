@@ -53,8 +53,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UQuickSlot> QuickSlot;
 
-	void BroadcastStatChanged();
 	void EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat);
+	void QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx);
 
 public:
 	FOnStatValueChanged OnStatValueChanged;

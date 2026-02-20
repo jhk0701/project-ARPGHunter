@@ -29,7 +29,7 @@ public:
 	TArray<TObjectPtr<UItem>> Array;
 };
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInventoryChanged, uint8, TObjectPtr<UItem>);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInventoryChanged, uint8, TWeakObjectPtr<UItem>);
 
 /**
  * 

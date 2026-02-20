@@ -29,7 +29,7 @@ public:
 
 private:
 	UPROPERTY()
-	TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>> Container;
+	TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>> Container; // 아이템 약참조. 실소유권은 인벤토리에게 있음
 	TMap<ECharacterStatType, uint32> EquipmentStat;
 
 public:

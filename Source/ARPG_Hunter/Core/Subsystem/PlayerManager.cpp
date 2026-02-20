@@ -39,9 +39,10 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	// TODO : 플레이어 저장 데이터 적용하기
 	Inventory->Init();
 	Equipment->Init();
-	QuickSlot->Init(Inventory);
+	QuickSlot->Init();
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
+	QuickSlot->OnQuickSlotUsed.BindUObject(this, &UPlayerManager::QuickSlotItemUsed);
 
 	ProvideBasicProperty();
 }
@@ -70,14 +71,18 @@ uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 	return Param.OutIndex;
 }
 
-void UPlayerManager::BroadcastStatChanged()
-{
-	OnStatValueChanged.Broadcast(Stat, GetEquipmentStat());
-}
-
 void UPlayerManager::EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat)
 {
 	OnStatValueChanged.Broadcast(Stat, _equipmentStat);
+}
+
+void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
+{
+	Inventory->TrySubItem(EItemType::CONSUMABLE, _inventoryIdx, 1);
+
+	// 사용 후 소모템을 모두 소진한 경우, 등록한 슬롯 비우기
+	if (Inventory->GetItem(EItemType::CONSUMABLE, _inventoryIdx).IsValid() == false)
+		QuickSlot->ClearSlot(_quickSlotIdx); 
 }
 
 void UPlayerManager::ProvideBasicProperty()
@@ -102,11 +107,11 @@ void UPlayerManager::ProvideBasicProperty()
 	
 	AddItem(FName(TEXT("4002")), 1);
 
-	Index = AddItem(FName(TEXT("2001")), 10);
+	Index = AddItem(FName(TEXT("2001")), 3);
 	QuickSlot->Register(0, Inventory->GetItem(EItemType::CONSUMABLE, Index));
 
-	AddItem(FName(TEXT("2002")), 10);
-	AddItem(FName(TEXT("2003")), 10);
+	AddItem(FName(TEXT("2002")), 3);
+	AddItem(FName(TEXT("2003")), 3);
 }
 
 TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) const

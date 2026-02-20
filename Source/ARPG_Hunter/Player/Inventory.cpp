@@ -74,6 +74,7 @@ bool UInventory::TryAddItem(FAddItemParam& _param)
 
 	// 신규 아이템 인스턴스 추가
 	Container[Type].Array[Index] = CreateItem(_param);
+	Container[Type].Array[Index]->SetInventoryIndex(Index);
 	_param.OutIndex = Index;
 
 	OnInventoryChanged.Broadcast(Index, Container[Type].Array[Index]);
@@ -108,6 +109,7 @@ bool UInventory::TryAddItem(TObjectPtr<UItem> _item, uint8& _outIndex)
 
 	// 신규 아이템 인스턴스 추가
 	Container[Type].Array[_outIndex] = _item;
+	Container[Type].Array[_outIndex]->SetInventoryIndex(_outIndex);
 	OnInventoryChanged.Broadcast(_outIndex, Container[Type].Array[_outIndex]);
 
 	return true;

@@ -81,7 +81,7 @@ public:
 
 	void UpdateSlot();
 
-	void SetSlot(uint8 _idx, TObjectPtr<UItem> _item);
+	void SetSlot(uint8 _idx, TWeakObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
 	int8 GetOptionalIndex() const { return OptionalIndex; }
 

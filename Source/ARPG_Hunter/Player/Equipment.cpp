@@ -26,7 +26,7 @@ void UEquipment::Equip(EEquipmentType _type, TWeakObjectPtr<UItem> _equipment)
 	TObjectPtr<UEquipmentItem> NewEquipment = Cast<UEquipmentItem>(_equipment);
 	check(NewEquipment);
 
-	if (Container[_type] != nullptr) 
+	if (Container[_type].Get() != nullptr) 
 		Unequip(_type);
 
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(NewEquipment->GetConfig());
