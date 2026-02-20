@@ -3,11 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/UserWidget/UWItemSlotBase.h"
 #include "UWItemSlot.generated.h"
-
-class UItem;
-class UImage;
 
 DECLARE_DELEGATE_OneParam(FOnSlotClicked, uint8);
 
@@ -15,25 +12,14 @@ DECLARE_DELEGATE_OneParam(FOnSlotClicked, uint8);
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UUWItemSlot : public UUserWidget
+class ARPG_HUNTER_API UUWItemSlot : public UUWItemSlotBase
 {
 	GENERATED_BODY()
-	
 private:
-	UPROPERTY(VisibleAnywhere)
-	uint8 Index;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class USizeBox> Frame;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> Thumbnail;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> SelectedMark;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> EquippedMark;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> AmountLabel;
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -42,12 +28,8 @@ protected:
 public:
 	FOnSlotClicked OnSlotClicked;
 
-	void Init(uint8 _idx);
-	void Init(uint8 _idx, const FVector2D& _size);
-	
-	void SetSize(const FVector2D& _size);
-	void SetItem(TWeakObjectPtr<UItem> _item);
-	void ClearSlot();
+	virtual void SetItem(TWeakObjectPtr<UItem> _item) override;
+	virtual void ClearSlot() override;
 
 	void MarkSelected(bool _bIsSelected);
 	void MarkEquipped(bool _bIsEquipped);

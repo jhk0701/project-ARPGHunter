@@ -2,13 +2,10 @@
 
 
 #include "UI/UserWidget/UWItemSlot.h"
-#include "Components/SizeBox.h"
 #include "Components/Image.h"
-#include "Components/TextBlock.h"
 #include "Blueprint/DragDropOperation.h"
 
 #include "Define/Enum.h"
-#include "Data/ItemData.h"
 #include "Item/Item.h"
 
 void UUWItemSlot::NativeOnInitialized()
@@ -24,51 +21,19 @@ FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		OnSlotClicked.ExecuteIfBound(Index);
+		OnSlotClicked.ExecuteIfBound(GetIndex());
 		return FReply::Handled();
 	}
 
 	return FReply::Unhandled();
 }
 
-void UUWItemSlot::Init(uint8 _idx)
-{
-	Index = _idx;
-}
-
-void UUWItemSlot::Init(uint8 _idx, const FVector2D& _size)
-{
-	Index = _idx;
-	SetSize(_size);
-}
-
-void UUWItemSlot::SetSize(const FVector2D& _size)
-{
-	Frame->SetWidthOverride(_size.X);
-	Frame->SetHeightOverride(_size.Y);
-}
-
 void UUWItemSlot::SetItem(TWeakObjectPtr<UItem> _item)
 {
-	if (_item.IsValid() == false)
-	{
-		ClearSlot();
-		return;
-	}
-
-	Thumbnail->SetBrushFromTexture(_item->GetConfig()->Thumbnail);
-	Thumbnail->SetVisibility(ESlateVisibility::Visible);
-
-	if (_item->GetAmount() > 1)
-	{
-		AmountLabel->SetVisibility(ESlateVisibility::Visible);
-		AmountLabel->SetText(FText::AsNumber(_item->GetAmount()));
-	}
-	else
-		AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+	Super::SetItem(_item);
 
 	bool bIsEquiped = false;
-	if (_item->GetType() >= EItemType::CONSUMABLE) 
+	if (_item->GetType() >= EItemType::CONSUMABLE)
 	{
 		if (TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(_item))
 			bIsEquiped = Consumable->GetQuickSlotIndex() >= 0;
@@ -81,9 +46,8 @@ void UUWItemSlot::SetItem(TWeakObjectPtr<UItem> _item)
 
 void UUWItemSlot::ClearSlot()
 {
-	Thumbnail->SetBrushFromTexture(nullptr);
-	Thumbnail->SetVisibility(ESlateVisibility::Hidden);
-	AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+	Super::ClearSlot();
+
 	MarkEquipped(false);
 }
 

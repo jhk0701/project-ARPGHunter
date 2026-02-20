@@ -31,6 +31,8 @@ public:
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInventoryChanged, uint8, TWeakObjectPtr<UItem>);
 
+constexpr uint8 DEFAULT_INVENTORY_SIZE = 100;
+
 /**
  * 
  */
@@ -47,7 +49,7 @@ private:
 public:
 	FOnInventoryChanged OnInventoryChanged;
 
-	void Init(uint8 _size = 100);
+	void Init(uint8 _size = DEFAULT_INVENTORY_SIZE);
 
 	TObjectPtr<UItem> CreateItem(FAddItemParam& _param);
 	bool TryAddItem(FAddItemParam& _param);
