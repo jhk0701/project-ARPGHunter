@@ -9,7 +9,7 @@
 class UItem;
 class UConsumableItem;
 
-DECLARE_DELEGATE_TwoParams(FOnQuickSlotUsed, uint8, uint8);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnQuickSlotUsed, uint8, uint8);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnQuickSlotChanged, uint8, TWeakObjectPtr<UConsumableItem>);
 
 constexpr uint8 DEFAULT_QUICKSLOT_SIZE = 4;

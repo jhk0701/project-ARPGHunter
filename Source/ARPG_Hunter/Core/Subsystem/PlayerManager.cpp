@@ -42,7 +42,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	QuickSlot->Init();
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
-	QuickSlot->OnQuickSlotUsed.BindUObject(this, &UPlayerManager::QuickSlotItemUsed);
+	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
 
 	ProvideBasicProperty();
 }

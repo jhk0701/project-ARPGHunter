@@ -8,6 +8,7 @@
 
 class UButton;
 class UUWPlayerStatusBar;
+class UUWQuickSlot;
 
 enum class EShortCutType : uint8;
 
@@ -29,9 +30,12 @@ class ARPG_HUNTER_API UUWCombatHUD : public UUWPlayerHUD
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUWPlayerStatusBar> PlayerStatusBar;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWQuickSlot> QuickSlot;
 
 public:
 	TObjectPtr<UUWPlayerStatusBar> GetPlayerStatusBar() const { return PlayerStatusBar; }
+	TObjectPtr<UUWQuickSlot> GetQuickSlot() const { return QuickSlot; }
 };
 
 UCLASS()

@@ -92,8 +92,9 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// 플레이어 데이터 받아오기
-	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	// TODO : 플레이어 저장 데이터 기반으로 변경
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	
 	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
 	StatComp->StartStaminaRecovery();
@@ -102,29 +103,26 @@ void APlayerCharacter::BeginPlay()
 	InitEquipment(Equipment);
 	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
 	
-	
-	// TODO : 플레이어 저장 데이터 기반으로 변경
 	ActionComp->Init(DataManager->GetWeaponConfig(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), MapEquipmentMeshComp[EEquipmentType::WEAPON]);
 
-	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
 
-	if (APlayerCombatController* CombatController = Cast<APlayerCombatController>(GetController()))
+	if (TObjectPtr<APlayerCombatController> CombatController = Cast<APlayerCombatController>(GetController()))
 	{
-		ACombatHUD* CombatHUD = CombatController->GetHUD<ACombatHUD>();
-		ensure(CombatHUD);
+		TObjectPtr<ACombatHUD> CombatHUD = CombatController->GetHUD<ACombatHUD>();
+		check(CombatHUD);
 
-		UUWCombatHUD* CombatUI = Cast<UUWCombatHUD>(CombatHUD->GetPlayerUI());
-		UUWPlayerStatusBar* StatusBar = CombatUI->GetPlayerStatusBar();
+		TObjectPtr<UUWPlayerStatusBar> StatusBarUI = CombatHUD->GetPlayerUI()->GetPlayerStatusBar();
 		
-		StatusBar->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-		StatusBar->SetStaminaBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
-		StatusBar->SetSkillBarPercent(StatComp->GetResourceValue(ECharacterResourceType::SKILL), StatComp->GetResourceMaxValue(ECharacterResourceType::SKILL));
+		StatusBarUI->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+		StatusBarUI->SetStaminaBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
+		StatusBarUI->SetSkillBarPercent(StatComp->GetResourceValue(ECharacterResourceType::SKILL), StatComp->GetResourceMaxValue(ECharacterResourceType::SKILL));
 
-		// UI 이벤트 바인딩
-		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBar, &UUWPlayerStatusBar::SetHealthBarPercent);
-		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBar, &UUWPlayerStatusBar::SetStaminaBarPercent);
-		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBar, &UUWPlayerStatusBar::SetSkillBarPercent);
+		// HP Bar UI 이벤트 바인딩
+		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
+		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
 	}
 
 	InteractWidget->SetHiddenInGame(true);

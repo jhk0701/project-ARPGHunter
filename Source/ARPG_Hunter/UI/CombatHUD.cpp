@@ -4,20 +4,24 @@
 #include "UI/CombatHUD.h"
 
 #include "Core/GameMode/CombatGameMode.h"
-#include "Core/WorldSubsystem/ObjectPoolManager.h"
+#include "Core/Subsystem/PlayerManager.h"
+#include "Player/QuickSlot.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWStageResult.h"
+#include "UI/UserWidget/UWQuickSlot.h"
+
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
 
 ACombatHUD::ACombatHUD()
 {
 	// 플레이어 HUD
-	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerUIFinder(TEXT("/Game/06-UI/HUD/WBP_CombatHUD.WBP_CombatHUD_C"));
+	static ConstructorHelpers::FClassFinder<UUWCombatHUD> PlayerUIFinder(TEXT("/Game/06-UI/HUD/WBP_CombatHUD.WBP_CombatHUD_C"));
 	if (PlayerUIFinder.Succeeded())
 		PlayerUIClass = PlayerUIFinder.Class;
 
 	// 스테이지 결과 UI
-	static ConstructorHelpers::FClassFinder<UUserWidget> StageResultUIFinder(TEXT("/Game/06-UI/WBP_StageResult.WBP_StageResult_C"));
+	static ConstructorHelpers::FClassFinder<UUWStageResult> StageResultUIFinder(TEXT("/Game/06-UI/WBP_StageResult.WBP_StageResult_C"));
 	if (StageResultUIFinder.Succeeded())
 		StageResultUIClass = StageResultUIFinder.Class;
 
@@ -32,14 +36,32 @@ void ACombatHUD::BeginPlay()
 
 	if (PlayerUIClass)
 	{
-		PlayerUI = CreateWidget<UUWPlayerHUD>(GetWorld(), PlayerUIClass);
-		if (PlayerUI)
+		PlayerUI = CreateWidget<UUWCombatHUD>(GetWorld(), PlayerUIClass);
+		if (PlayerUI) 
+		{
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+			
+			TObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
+			TObjectPtr<UUWQuickSlot> QuickSlotUI = PlayerUI->GetQuickSlot();
+			QuickSlotUI->Init(QuickSlot->GetContainer());
+
+			// 전투 관련 월드에서만 띄울 것이므로 AddWeakLambda로 바인딩
+			QuickSlot->OnQuickSlotUsed.AddWeakLambda(this, 
+				[this](uint8 _quickSlotIdx, uint8 _inventoryIdx) 
+				{
+					// 플레이어가 퀵슬롯 아이템 사용 시, 업데이트
+					TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlot()->GetItem(_quickSlotIdx));
+				}
+			);
+
 			PlayerUI->AddToViewport();
+		}
 	}
 
 	if (StageResultUIClass)
 	{
-		StageResultUI = CreateWidget<UUserWidget>(GetWorld(), StageResultUIClass);
+		StageResultUI = CreateWidget<UUWStageResult>(GetWorld(), StageResultUIClass);
 
 		if (ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
 			GameMode->OnGameEnd.AddUObject(this, &ACombatHUD::ShowResultUI);

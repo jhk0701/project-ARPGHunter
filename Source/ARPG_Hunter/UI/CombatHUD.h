@@ -6,6 +6,9 @@
 #include "UI/PlayerHUD.h"
 #include "CombatHUD.generated.h"
 
+class UUWCombatHUD;
+class UUWStageResult;
+
 /**
  * 
  */
@@ -17,14 +20,15 @@ public:
 	ACombatHUD();
 	
 private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWCombatHUD> PlayerUIClass;
 	UPROPERTY()
-	TSubclassOf<UUserWidget> PlayerUIClass;
+	TObjectPtr<UUWCombatHUD> PlayerUI;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWStageResult> StageResultUIClass;
 	UPROPERTY()
-	TObjectPtr<UUserWidget> PlayerUI;
-	UPROPERTY()
-	TSubclassOf<UUserWidget> StageResultUIClass;
-	UPROPERTY()
-	TObjectPtr<UUserWidget> StageResultUI;
+	TObjectPtr<UUWStageResult> StageResultUI;
 
 	UPROPERTY()
 	TSubclassOf<class ADamageFont> DamageUIClass;
@@ -33,6 +37,6 @@ protected:
 	void BeginPlay() override;
 
 public:
-	TObjectPtr<UUserWidget> GetPlayerUI() { return PlayerUI; }
+	TObjectPtr<UUWCombatHUD> GetPlayerUI() const { return PlayerUI; }
 	void ShowResultUI(bool _bOnCleared, const struct FStageData* _stageData);
 };
