@@ -33,6 +33,7 @@ private:
 
 public:
 	FOnQuickSlotUsed OnQuickSlotUsed;
+	FOnQuickSlotUsed OnPostQuickSlotUsed;
 	FOnQuickSlotChanged OnQuickSlotChanged;
 
 	void Init(uint8 _size = DEFAULT_QUICKSLOT_SIZE);

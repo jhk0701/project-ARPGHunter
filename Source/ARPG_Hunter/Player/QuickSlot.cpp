@@ -61,9 +61,8 @@ void UQuickSlot::UseItem(uint8 _index, IEffectable* _target)
 {
 	if (!IsValidSlot(_index))
 		return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Use Item"));
-
+	
 	Container[_index]->Consume(_target);
 	OnQuickSlotUsed.Broadcast(_index, Container[_index]->GetInventoryIndex());
+	OnPostQuickSlotUsed.Broadcast(_index, Container[_index]->GetInventoryIndex());
 }

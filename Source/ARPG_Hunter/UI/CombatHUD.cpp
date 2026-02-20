@@ -46,12 +46,10 @@ void ACombatHUD::BeginPlay()
 			QuickSlotUI->Init(QuickSlot->GetContainer());
 
 			// 전투 관련 월드에서만 띄울 것이므로 AddWeakLambda로 바인딩
-			QuickSlot->OnQuickSlotUsed.AddWeakLambda(this, 
+			QuickSlot->OnPostQuickSlotUsed.AddWeakLambda(this,
 				[this](uint8 _quickSlotIdx, uint8 _inventoryIdx) 
 				{
 					// 플레이어가 퀵슬롯 아이템 사용 시, 업데이트
-					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Use Item Event"));
-
 					TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlotItem(_quickSlotIdx));
 				}
