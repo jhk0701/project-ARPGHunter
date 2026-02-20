@@ -241,7 +241,7 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 	StatComp->TakeDamage(Damage,
 		[this]() 
 		{
-			ActionComp->PlayHitAction(StatComp->IsDead());
+			ActionComp->PlayHitAction(); // hit 애니메이션 실행
 			ShakeCamera(CameraShakeOnHit); 
 		}
 	);
@@ -255,6 +255,8 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 
 		ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 		GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
+
+		ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
 	}
 }
 

@@ -53,7 +53,8 @@ public:
 	bool IsInProgress() const;
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
-	void PlayHitAction(bool _isDead);
+	void PlayHitAction();
+	void PlayDeadAction();
 
 	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
 	void ProcessAttackProgress();

@@ -82,21 +82,28 @@ void UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(floa
 	ResetAction();
 }
 
-void UPlayerActionComponent::PlayHitAction(bool _isDead)
+
+void UPlayerActionComponent::PlayHitAction()
 {
 	if (CurWeapon->HitMontage == nullptr)
 		return;
+
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	AnimInst->Montage_Play(CurWeapon->HitMontage);
+	AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), CurWeapon->HitMontage);
 
 	// 피격 모션 실행 시, 콤보 초기화
-	AnimInst->Montage_Play(CurWeapon->HitMontage);
-
-	if (_isDead)
-		AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), CurWeapon->HitMontage);
-	else
-		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), CurWeapon->HitMontage);
-
 	SetActionResetTimer(ActionResetSecond);
+}
+
+void UPlayerActionComponent::PlayDeadAction()
+{
+	if (CurWeapon->HitMontage == nullptr)
+		return;
+
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	AnimInst->Montage_Play(CurWeapon->HitMontage);
+	AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), CurWeapon->HitMontage);
 }
 
 void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
