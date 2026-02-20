@@ -18,6 +18,11 @@ UStatComponent::UStatComponent()
 			EffectedStat.Add(type);
 
 		EffectedStat[type] = 0;
+
+		if (!EquipmentStat.Find(type))
+			EquipmentStat.Add(type);
+
+		EquipmentStat[type] = 0;
 	}
 
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterResourceType::END); ++i)

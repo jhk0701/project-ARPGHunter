@@ -113,6 +113,7 @@ public:
 
 		if(_bExceptEffect == false)
 			Result += EffectedStat[_type];
+
 		return Result;
 	}
 	uint32 GetResourceValue(ECharacterResourceType _type) const { return Resource[_type].Value; }
