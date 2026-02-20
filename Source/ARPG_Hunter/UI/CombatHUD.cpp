@@ -54,6 +54,12 @@ void ACombatHUD::BeginPlay()
 					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlot()->GetItem(_quickSlotIdx));
 				}
 			);
+			QuickSlot->OnQuickSlotChanged.AddWeakLambda(this, 
+				[this](uint8 _quickSlotIdx, TWeakObjectPtr<UConsumableItem> _item)
+				{
+					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, _item);
+				}
+			);
 
 			PlayerUI->AddToViewport();
 		}

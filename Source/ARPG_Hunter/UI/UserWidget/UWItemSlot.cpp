@@ -32,6 +32,9 @@ void UUWItemSlot::SetItem(TWeakObjectPtr<UItem> _item)
 {
 	Super::SetItem(_item);
 
+	if (_item.IsValid() == false)
+		return;
+
 	bool bIsEquiped = false;
 	if (_item->GetType() >= EItemType::CONSUMABLE)
 	{

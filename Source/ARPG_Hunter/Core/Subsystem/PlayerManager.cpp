@@ -10,7 +10,6 @@
 #include "Player/QuickSlot.h"
 #include "Item/Item.h"
 
-
 UPlayerManager::UPlayerManager()
 {
 	static ConstructorHelpers::FObjectFinder<UPlayerConfig> PlayerConfigFinder(TEXT("/Script/ARPG_Hunter.PlayerConfig'/Game/03-Data/PlayerDefaultConfig.PlayerDefaultConfig'"));
@@ -82,7 +81,9 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 
 	// 사용 후 소모템을 모두 소진한 경우, 등록한 슬롯 비우기
 	if (Inventory->GetItem(EItemType::CONSUMABLE, _inventoryIdx).IsValid() == false)
-		QuickSlot->ClearSlot(_quickSlotIdx); 
+	{
+		QuickSlot->ClearSlot(_quickSlotIdx);
+	}
 }
 
 void UPlayerManager::ProvideBasicProperty()

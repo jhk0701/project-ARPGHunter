@@ -119,7 +119,7 @@ void APlayerCharacter::BeginPlay()
 		StatusBarUI->SetStaminaBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
 		StatusBarUI->SetSkillBarPercent(StatComp->GetResourceValue(ECharacterResourceType::SKILL), StatComp->GetResourceMaxValue(ECharacterResourceType::SKILL));
 
-		// HP Bar UI 이벤트 바인딩
+		// HPBar UI 이벤트 바인딩
 		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
@@ -337,8 +337,7 @@ void APlayerCharacter::UseQuickSlot(uint8 _index)
 {
 	// 퀵슬롯 사용
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	TObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
-	QuickSlot->UseItem(_index, this);
+	PlayerManager->GetQuickSlot()->UseItem(_index, this);
 }
 
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)
