@@ -21,7 +21,7 @@ void UEquipment::Init()
 	// TODO: 저장 데이터 반영
 }
 
-void UEquipment::Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment)
+void UEquipment::Equip(EEquipmentType _type, TWeakObjectPtr<UItem> _equipment)
 {
 	TObjectPtr<UEquipmentItem> NewEquipment = Cast<UEquipmentItem>(_equipment);
 	check(NewEquipment);
@@ -42,10 +42,11 @@ void UEquipment::Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment)
 	OnStatValueChanged.Broadcast(EquipmentStat);
 }
 
-TObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
+TWeakObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
 {
-	TObjectPtr<UEquipmentItem> PrevItem = Container[_type];
-	
+	TWeakObjectPtr<UEquipmentItem> PrevItem = Container[_type];
+	check(PrevItem.IsValid());
+
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(PrevItem->GetConfig());
 	check(Config);
 

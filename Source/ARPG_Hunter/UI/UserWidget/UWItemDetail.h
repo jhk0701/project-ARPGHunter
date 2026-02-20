@@ -45,5 +45,5 @@ protected:
 	void NativeOnInitialized() override;
 
 public:
-	void SetDetail(TObjectPtr<class UItem> _item);
+	void SetDetail(TWeakObjectPtr<class UItem> _item);
 };

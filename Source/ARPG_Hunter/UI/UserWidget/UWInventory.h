@@ -74,7 +74,7 @@ protected:
 public:
 	virtual void ShowUI() override;
 	virtual void HideUI() override;
-	void ShowUI(EItemType _itemType, TObjectPtr<UItem> _item, uint8 _optionalIdx);
+	void ShowUI(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx);
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }

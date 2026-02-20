@@ -48,9 +48,9 @@ void UUWItemSlot::SetSize(const FVector2D& _size)
 	Frame->SetHeightOverride(_size.Y);
 }
 
-void UUWItemSlot::SetItem(TObjectPtr<UItem> _item)
+void UUWItemSlot::SetItem(TWeakObjectPtr<UItem> _item)
 {
-	if (nullptr == _item)
+	if (_item.IsValid() == false)
 	{
 		ClearSlot();
 		return;

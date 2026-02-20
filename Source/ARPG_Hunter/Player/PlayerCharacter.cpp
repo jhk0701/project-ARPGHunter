@@ -12,11 +12,12 @@
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/DataManager.h"
 #include "Core/GameMode/CombatGameMode.h"
+#include "Controller/PlayerCombatController.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
-#include "Controller/PlayerCombatController.h"
-#include "Data/WeaponConfig.h"
 #include "Player/Equipment.h"
+#include "Player/QuickSlot.h"
+#include "Data/WeaponConfig.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
@@ -156,7 +157,7 @@ void APlayerCharacter::InitEquipment(TObjectPtr<UEquipment> _equipment)
 	
 }
 
-void APlayerCharacter::UpdateEquipment(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment)
+void APlayerCharacter::UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment)
 {
 	if (_equipment == nullptr)
 	{
@@ -332,6 +333,14 @@ void APlayerCharacter::AdjustDefense(uint32& _outDamage)
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
+}
+
+void APlayerCharacter::UseQuickSlot(uint8 _index)
+{
+	// 퀵슬롯 사용
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	TObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
+	QuickSlot->UseItem(_index, this);
 }
 
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)

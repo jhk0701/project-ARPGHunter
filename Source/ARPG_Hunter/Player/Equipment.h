@@ -13,7 +13,7 @@ enum class EEquipmentType : uint8;
 enum class ECharacterStatType :uint8;
 
 using FEquipmentAliasMapStat = TMap<ECharacterStatType, uint32>;
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, EEquipmentType, TObjectPtr<UEquipmentItem>);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, EEquipmentType, TWeakObjectPtr<UEquipmentItem>);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEquipmentStatChanged, const FEquipmentAliasMapStat&);
 
 /**
@@ -29,7 +29,7 @@ public:
 
 private:
 	UPROPERTY()
-	TMap<EEquipmentType, TObjectPtr<UEquipmentItem>> Container;
+	TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>> Container;
 	TMap<ECharacterStatType, uint32> EquipmentStat;
 
 public:
@@ -37,10 +37,10 @@ public:
 	FOnEquipmentStatChanged OnStatValueChanged;
 
 	void Init();
-	void Equip(EEquipmentType _type, TObjectPtr<UItem> _equipment);
-	TObjectPtr<UEquipmentItem> Unequip(EEquipmentType _type);
+	void Equip(EEquipmentType _type, TWeakObjectPtr<UItem> _equipment);
+	TWeakObjectPtr<UEquipmentItem> Unequip(EEquipmentType _type);
 
-	const TObjectPtr<UEquipmentItem> GetEquipment(EEquipmentType _type) const { return Container[_type]; }
-	const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& GetContainer() const { return Container; }
+	const TWeakObjectPtr<UEquipmentItem> GetEquipment(EEquipmentType _type) const { return Container[_type]; }
+	const TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& GetContainer() const { return Container; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const { return EquipmentStat; }
 };

@@ -39,7 +39,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	// TODO : 플레이어 저장 데이터 적용하기
 	Inventory->Init();
 	Equipment->Init();
-	QuickSlot->Init();
+	QuickSlot->Init(Inventory);
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 

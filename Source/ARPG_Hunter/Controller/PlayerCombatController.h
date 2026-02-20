@@ -26,6 +26,8 @@ private:
 	TObjectPtr<UInputAction> DodgeAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> AttackAction;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> QuickSlotAction;
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -37,4 +39,6 @@ public:
 	void InputAttack(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputAttackEnd(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputQuickSlot(const FInputActionValue& _value);
 };

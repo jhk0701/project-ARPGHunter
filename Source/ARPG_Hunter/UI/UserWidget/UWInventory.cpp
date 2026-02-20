@@ -47,7 +47,7 @@ void UUWInventory::ShowUI()
 	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWInventory::ShowUI(EItemType _itemType, TObjectPtr<UItem> _item, uint8 _optionalIdx)
+void UUWInventory::ShowUI(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx)
 {
 	Super::ShowUI();
 
@@ -59,7 +59,7 @@ void UUWInventory::ShowUI(EItemType _itemType, TObjectPtr<UItem> _item, uint8 _o
 	CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
 	ShowSelectedItemDetail(false);
 
-	if (_item)
+	if (_item.IsValid())
 	{
 		ComparedItemDetail->SetDetail(_item);
 		ComparedItemDetail->SetVisibility(ESlateVisibility::Visible);

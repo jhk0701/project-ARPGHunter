@@ -16,6 +16,10 @@ APlayerCombatController::APlayerCombatController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> AttackActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Attack.IA_Attack'"));
 	if (AttackActionFinder.Succeeded())
 		AttackAction = AttackActionFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> QuickSlotActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_QuickSlot.IA_QuickSlot'"));
+	if (QuickSlotActionFinder.Succeeded())
+		QuickSlotAction = QuickSlotActionFinder.Object;
 }
 
 void APlayerCombatController::SetupInputComponent()
@@ -28,6 +32,8 @@ void APlayerCombatController::SetupInputComponent()
 
 		InputComp->BindAction(AttackAction, ETriggerEvent::Triggered, this, &APlayerCombatController::InputAttack);
 		InputComp->BindAction(AttackAction, ETriggerEvent::Completed, this, &APlayerCombatController::InputAttackEnd);
+
+		InputComp->BindAction(QuickSlotAction, ETriggerEvent::Triggered, this, &APlayerCombatController::InputQuickSlot);
 	}
 }
 
@@ -38,11 +44,17 @@ void APlayerCombatController::InputDodge(const FInputActionValue& _value)
 
 void APlayerCombatController::InputAttack(const FInputActionValue& _value)
 {
-	uint8 val = static_cast<uint8>(_value.Get<float>()) - 1;
-	GetControlledPlayer()->Attack(static_cast<EAttackType>(val));
+	uint8 Val = static_cast<uint8>(_value.Get<float>()) - 1;
+	GetControlledPlayer()->Attack(static_cast<EAttackType>(Val));
 }
 
 void APlayerCombatController::InputAttackEnd(const FInputActionValue& _value)
 {
 	GetControlledPlayer()->AttackEnd();
+}
+
+void APlayerCombatController::InputQuickSlot(const FInputActionValue& _value)
+{
+	uint8 Index = static_cast<uint8>(_value.Get<float>()) - 1;
+	GetControlledPlayer()->UseQuickSlot(Index);
 }

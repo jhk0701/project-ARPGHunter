@@ -109,7 +109,7 @@ void ANonCombatHUD::BeginPlay()
 			{
 				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 
-				TObjectPtr<UItem> ItemToCompare;
+				TWeakObjectPtr<UItem> ItemToCompare;
 				if (_type == EItemType::WEAPON) 
 					ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(EEquipmentType::WEAPON);
 				else if(_type == EItemType::ARMOR)
@@ -128,7 +128,7 @@ void ANonCombatHUD::BeginPlay()
 				// 소비템 인벤토리 열기
 				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 
-				TObjectPtr<UItem> ItemToCompare = PlayerManager->GetQuickSlot()->GetItem(_index);
+				TWeakObjectPtr<UItem> ItemToCompare = PlayerManager->GetQuickSlot()->GetItem(_index);
 				InventoryUI->ShowUI(EItemType::CONSUMABLE, ItemToCompare, _index);
 			}
 		);
@@ -146,7 +146,7 @@ void ANonCombatHUD::BeginPlay()
 			[this](EItemType _type, uint8 _index) 
 			{
 				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				TObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
+				TWeakObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
 
 				if (_type >= EItemType::EQUIPABLE) 
 				{
@@ -165,7 +165,7 @@ void ANonCombatHUD::BeginPlay()
 			[this](EItemType _type, uint8 _index) 
 			{
 				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				TObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
+				TWeakObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
 
 				if (_type >= EItemType::EQUIPABLE) 
 				{

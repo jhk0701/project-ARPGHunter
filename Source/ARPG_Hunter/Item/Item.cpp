@@ -4,7 +4,6 @@
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 
-
 void UItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
 	ID = _id;
@@ -39,11 +38,6 @@ bool UItem::IsFull() const
 {
 	return Config->MaxAmount == Amount;
 }
-
-void UConsumableItem::Consume()
-{
-}
-
 
 void UEquipmentItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {

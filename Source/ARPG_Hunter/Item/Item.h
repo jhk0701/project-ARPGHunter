@@ -19,6 +19,7 @@ private:
 	FName ID;
 	EItemType Type;
 	uint16 Amount{ 1 };
+	uint8 InventoryIndex{ 0 };
 	UPROPERTY()
 	TObjectPtr<UItemConfig> Config;
 
@@ -43,9 +44,7 @@ class ARPG_HUNTER_API UConsumableItem : public UItem
 private:
 	int32 QuickSlotIndex{ -1 };
 
-	// TODO : 아이템 사용 후, 쿨타임 로직
 public:
-	void Consume();
 	void SetQuickSlotIndex(int32 _idx) { QuickSlotIndex = _idx; }
 	int32 GetQuickSlotIndex() const { return QuickSlotIndex; }
 };

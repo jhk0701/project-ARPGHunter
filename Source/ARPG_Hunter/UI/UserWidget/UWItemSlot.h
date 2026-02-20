@@ -46,7 +46,7 @@ public:
 	void Init(uint8 _idx, const FVector2D& _size);
 	
 	void SetSize(const FVector2D& _size);
-	void SetItem(TObjectPtr<UItem> _item);
+	void SetItem(TWeakObjectPtr<UItem> _item);
 	void ClearSlot();
 
 	void MarkSelected(bool _bIsSelected);

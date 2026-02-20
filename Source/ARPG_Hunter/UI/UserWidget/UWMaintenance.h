@@ -20,8 +20,8 @@ struct FUWMaintenanceInitParam
 public:
 	const TMap<ECharacterStatType, uint32>& PlayerStat;
 	const TMap<ECharacterStatType, uint32>& EquipmentStat;
-	const TMap<EEquipmentType, TObjectPtr<UEquipmentItem>>& Equipment;
-	const TArray<TObjectPtr<UConsumableItem>>& QuickSlot;
+	const TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Equipment;
+	const TArray<TWeakObjectPtr<UConsumableItem>>& QuickSlot;
 };
 
 DECLARE_DELEGATE_TwoParams(FOnEquipmentSlotClicked, EItemType, uint8);
@@ -66,8 +66,8 @@ public:
 
 	void Init(const FUWMaintenanceInitParam& _param);
 	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
-	void SetEquipment(EEquipmentType _type, TObjectPtr<UEquipmentItem> _equipment);
-	void SetQuickSlot(uint8 _index, TObjectPtr<UConsumableItem> _consumable);
+	void SetEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment);
+	void SetQuickSlot(uint8 _index, TWeakObjectPtr<UConsumableItem> _consumable);
 
 	UFUNCTION()
 	void ClickCloseButton();

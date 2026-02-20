@@ -30,7 +30,7 @@ void UUWItemDetail::NativeOnInitialized()
 	}
 }
 
-void UUWItemDetail::SetDetail(TObjectPtr<UItem> _item)
+void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 {
 	TObjectPtr<UItemConfig> Config = _item->GetConfig();
 	NameLabel->SetText(FText::FromString(Config->Name));

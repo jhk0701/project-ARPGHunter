@@ -25,6 +25,7 @@ struct FItemArray
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY()
 	TArray<TObjectPtr<UItem>> Array;
 };
 
@@ -55,6 +56,6 @@ public:
 	bool TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
 
 	uint8 GetContainerSize() const;
-	TObjectPtr<UItem> GetItem(EItemType _type, uint8 _idx) const { return Container[_type].Array[_idx]; }
+	TWeakObjectPtr<UItem> GetItem(EItemType _type, uint8 _idx) const { return Container[_type].Array[_idx]; }
 	const TArray<TObjectPtr<UItem>>& GetContainer(EItemType _type) const { return Container[_type].Array; }
 };

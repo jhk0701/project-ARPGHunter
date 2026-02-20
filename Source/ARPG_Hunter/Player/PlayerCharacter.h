@@ -64,12 +64,16 @@ private:
 
 #pragma endregion
 
+#pragma region QuickSlot
+
+#pragma endregion
+
 public:
 	APlayerCharacter();
 
 private:
 	void InitEquipment(TObjectPtr<class UEquipment> _equipment);
-	void UpdateEquipment(EEquipmentType _type, TObjectPtr<class UEquipmentItem> _equipment);
+	void UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<class UEquipmentItem> _equipment);
 	
 	void SmoothRotateToInputDir(float DeltaTime);
 
@@ -110,6 +114,7 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
+	void UseQuickSlot(uint8 _index);
 
 	void ShakeCameraOnAttack(float _scale = 1.0f);
 	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
