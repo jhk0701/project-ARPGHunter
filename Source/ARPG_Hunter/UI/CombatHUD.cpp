@@ -50,8 +50,10 @@ void ACombatHUD::BeginPlay()
 				[this](uint8 _quickSlotIdx, uint8 _inventoryIdx) 
 				{
 					// 플레이어가 퀵슬롯 아이템 사용 시, 업데이트
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Use Item Event"));
+
 					TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlot()->GetItem(_quickSlotIdx));
+					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlotItem(_quickSlotIdx));
 				}
 			);
 			QuickSlot->OnQuickSlotChanged.AddWeakLambda(this, 

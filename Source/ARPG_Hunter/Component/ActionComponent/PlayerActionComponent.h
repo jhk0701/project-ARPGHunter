@@ -55,6 +55,7 @@ public:
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
 	void PlayHitAction();
 	void PlayDeadAction();
+	void PlayItemUsageAction();
 
 	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
 	void ProcessAttackProgress();

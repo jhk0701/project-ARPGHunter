@@ -106,6 +106,19 @@ void UPlayerActionComponent::PlayDeadAction()
 	AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), CurWeapon->HitMontage);
 }
 
+void UPlayerActionComponent::PlayItemUsageAction()
+{
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (CurWeapon->ItemUsageMontage == nullptr || 
+		AnimInst->Montage_IsPlaying(CurWeapon->ItemUsageMontage))
+		return;
+
+	if (bIsInAttackCombo)
+		SetActionResetTimer(ActionResetSecond);
+
+	AnimInst->Montage_Play(CurWeapon->ItemUsageMontage);
+}
+
 void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
 {
 	if (IsValidAttackInput(_type) == false)
@@ -181,7 +194,8 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 	// 다음 공격이 가능한 상태인지 확인
 	// 스매시 공격 중 일반 공격으로 전환 불가
 	if (CurActionProcess < EActionProcess::COMPLETE ||
-		GetAnimInstance()->Montage_IsPlaying(CurWeapon->HitMontage))
+		GetAnimInstance()->Montage_IsPlaying(CurWeapon->HitMontage) || 
+		GetAnimInstance()->Montage_IsPlaying(CurWeapon->ItemUsageMontage))
 		return false;
 
 	if (bIsInAttackCombo == false) // 첫 공격인 경우

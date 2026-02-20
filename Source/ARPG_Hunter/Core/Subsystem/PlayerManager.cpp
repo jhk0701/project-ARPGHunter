@@ -119,3 +119,13 @@ TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) c
 {
 	return PlayerDefault->MapDefalutMesh[_type];
 }
+
+TWeakObjectPtr<UConsumableItem> UPlayerManager::GetQuickSlotItem(uint8 _idx) const
+{
+	return QuickSlot->GetItem(_idx);
+}
+
+void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
+{
+	QuickSlot->UseItem(_index, _target);
+}

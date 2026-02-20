@@ -57,6 +57,10 @@ private:
 	void QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx);
 
 public:
+	const TObjectPtr<UInventory> GetInventory() const { return Inventory; }
+	const TObjectPtr<UEquipment> GetEquipment() const { return Equipment; }
+	const TObjectPtr<UQuickSlot> GetQuickSlot() const { return QuickSlot; }
+
 	FOnStatValueChanged OnStatValueChanged;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -67,13 +71,12 @@ public:
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
-
-	const TObjectPtr<UInventory> GetInventory() const { return Inventory; }
-	const TObjectPtr<UEquipment> GetEquipment() const { return Equipment; }
-	const TObjectPtr<UQuickSlot> GetQuickSlot() const { return QuickSlot; }
-	 
+ 
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName & _itemID, int32 _amount);
 	void ProvideBasicProperty();
 	TObjectPtr<USkeletalMesh> GetDefaultMesh(EEquipmentType _type) const;
+
+	TWeakObjectPtr<class UConsumableItem> GetQuickSlotItem(uint8 _idx) const;
+	void UseQuickSlotItem(uint8 _index, class IEffectable* _target);
 };

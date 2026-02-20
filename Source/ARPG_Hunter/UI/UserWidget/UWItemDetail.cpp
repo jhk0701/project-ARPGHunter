@@ -45,7 +45,6 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 
 		TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Config);
 		AmountLabel->SetText(FText::AsNumber(ConsumableConfig->AllowCountOnCombat));
-		CooldownLabel->SetText(FText::AsTime(ConsumableConfig->Cooldown));
 
 		ConsumableInfo->SetVisibility(ESlateVisibility::Visible);
 	}

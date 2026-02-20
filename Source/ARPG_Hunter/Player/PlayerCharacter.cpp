@@ -16,7 +16,6 @@
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Player/Equipment.h"
-#include "Player/QuickSlot.h"
 #include "Data/WeaponConfig.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
@@ -253,7 +252,7 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 		FStageEventContext Context;
 		Context.Target = this;
 
-		ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+		TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 		GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
 
 		ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
@@ -337,9 +336,22 @@ void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 
 void APlayerCharacter::UseQuickSlot(uint8 _index)
 {
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	TWeakObjectPtr<UConsumableItem> QuickSlotItem = PlayerManager->GetQuickSlotItem(_index);
+
+	if (QuickSlotItem.IsValid() == false)
+		return;
+
+	// 아이템 사용 모션 재생
+	ActionComp->PlayItemUsageAction();
+	UsingQuickSlotIndex = _index;
+}
+
+void APlayerCharacter::HandleUseItemNotify()
+{
 	// 퀵슬롯 사용
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	PlayerManager->GetQuickSlot()->UseItem(_index, this);
+	PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
 }
 
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)

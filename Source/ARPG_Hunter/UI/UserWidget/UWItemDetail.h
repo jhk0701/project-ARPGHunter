@@ -29,8 +29,6 @@ private:
 	TObjectPtr<UVerticalBox> ConsumableInfo;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> AmountLabel;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> CooldownLabel;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UWrapBox> EquipmentInfo;

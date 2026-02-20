@@ -66,6 +66,8 @@ private:
 
 #pragma region QuickSlot
 
+	uint8 UsingQuickSlotIndex;
+
 #pragma endregion
 
 public:
@@ -114,7 +116,9 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
+	
 	void UseQuickSlot(uint8 _index);
+	void HandleUseItemNotify();
 
 	void ShakeCameraOnAttack(float _scale = 1.0f);
 	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);

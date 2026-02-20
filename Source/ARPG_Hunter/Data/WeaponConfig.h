@@ -20,6 +20,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimMontage> ItemUsageMontage;
+	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<class UAction> DodgeAction;
 	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
 	TObjectPtr<class UActionComboData> AttackCombo;
