@@ -255,8 +255,6 @@ bool APlayerCharacter::IsDead()
 
 void APlayerCharacter::OnDead()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Player Is Dead"));
-
 	// 플레이어 사망 후 처리
 	// 플레이어 사망 이벤트 발행
 	FStageEventContext Context;
