@@ -5,4 +5,5 @@
 
 UARPGGameInstance::UARPGGameInstance()
 {
+	StageID = TEXT("1");
 }

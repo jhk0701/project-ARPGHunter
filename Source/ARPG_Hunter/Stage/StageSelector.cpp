@@ -4,10 +4,7 @@
 #include "Stage/StageSelector.h"
 #include "Components/BoxComponent.h"
 
-#include "Core/ARPGGameInstance.h"
 #include "Core/GameMode/ARPGGameMode.h"
-#include "Core/Subsystem/DataManager.h"
-#include "Data/StageData.h"
 #include "UI/UserWidget/UWStageSelect.h"
 
 // Sets default values
@@ -44,13 +41,5 @@ void AStageSelector::Interact()
 
 void AStageSelector::StartGame(const FName& _selectedID)
 {
-	UARPGGameInstance* GI = Cast<UARPGGameInstance>(GetGameInstance());
-	UDataManager* DataManager = GI->GetSubsystem<UDataManager>();
-	FStageData* StageData = DataManager->GetStageData(_selectedID);
-
-	if (nullptr == StageData)
-		return;
-
-	GI->SetStageID(_selectedID);
-	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(StageData->LevelToLoad);
+	GetWorld()->GetAuthGameMode<AARPGGameMode>()->OpenLevel(_selectedID);
 }

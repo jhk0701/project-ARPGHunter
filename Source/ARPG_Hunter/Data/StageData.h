@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -64,6 +64,10 @@ public:
 	uint32 RewardGold;
 	UPROPERTY(EditAnywhere)
 	TArray<FRewardItem> RewardItems;
+
+	// 스테이지에서 재생할 사운드
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USoundBase> BgmSource;
 };
 
 USTRUCT(BlueprintType)
