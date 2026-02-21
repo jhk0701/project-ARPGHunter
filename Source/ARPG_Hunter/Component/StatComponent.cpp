@@ -64,7 +64,11 @@ void UStatComponent::Clear()
 
 void UStatComponent::StartStaminaRecovery()
 {
-	GetWorld()->GetTimerManager().SetTimer(
+	TObjectPtr<UWorld> World = GetWorld();
+	if (World == nullptr)
+		return;
+
+	World->GetTimerManager().SetTimer(
 		StaminaRecoveryTimer,
 		[this]()
 		{
@@ -131,6 +135,9 @@ bool UStatComponent::TakeDamage(uint32 _damage, TFunction<void()> _stiffAction)
 		RefResource.Value = 0;
 		RefResource.InvokeDelegate();
 	}
+
+	if (IsDead())
+		OnDead.Broadcast();
 
 	return true;
 }

@@ -35,6 +35,13 @@ AMonsterBase::AMonsterBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
+void AMonsterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	StatComp->OnDead.AddUObject(this, &AMonsterBase::OnDead);
+}
+
 void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -99,9 +106,9 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	ActionComp->Init(Data, AnimInst, WeaponComp);
 
 	// AI BlackBoard 설정
-	if (AMonsterAIController* MonsterAI = Cast<AMonsterAIController>(GetController()))
+	if (TObjectPtr<AMonsterAIController> MonsterAI = Cast<AMonsterAIController>(GetController()))
 	{
-		UBlackboardComponent* BBComp = MonsterAI->GetBlackboardComponent();
+		TObjectPtr<UBlackboardComponent> BBComp = MonsterAI->GetBlackboardComponent();
 		check(BBComp);
 		
 		BBComp->SetValueAsFloat(FName(TEXT("RecoginitionRange")), Data->RecoginitionRange);
@@ -150,8 +157,8 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 		);
 	}
 
-	if (StatComp->IsDead())
-		OnDead();
+	/*if (StatComp->IsDead())
+		OnDead();*/
 
 	SetMovable(false);
 }
@@ -250,4 +257,18 @@ EMonsterType AMonsterBase::GetType() const
 void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	StatComp->ApplyEffect(_effectData);
+}
+
+TWeakObjectPtr<AActor> AMonsterBase::GetTarget() const
+{
+	TObjectPtr<AMonsterAIController> AICon = Cast<AMonsterAIController>(GetController());
+	if (AICon == nullptr)
+		return nullptr;
+
+	TObjectPtr<UBlackboardComponent> BBComp = AICon->GetBlackboardComponent();
+	if (BBComp == nullptr)
+		return nullptr;
+
+	TWeakObjectPtr<AActor> Target = Cast<AActor>(BBComp->GetValueAsObject(FName(TEXT("Target"))));
+	return Target;
 }

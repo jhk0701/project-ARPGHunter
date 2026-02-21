@@ -85,6 +85,7 @@ private:
 	void AdjustDefense(uint32& _outDamage);
 
 	void CheckInteractable();
+	void OnDead();
 
 protected:
 	virtual void BeginPlay() override;

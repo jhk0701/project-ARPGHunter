@@ -98,6 +98,7 @@ void APlayerCharacter::BeginPlay()
 	
 	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
 	StatComp->StartStaminaRecovery();
+	StatComp->OnDead.AddUObject(this, &APlayerCharacter::OnDead);
 
 	TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 	InitEquipment(Equipment);
@@ -245,24 +246,26 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 			ShakeCamera(CameraShakeOnHit); 
 		}
 	);
-
-	if (StatComp->IsDead()) 
-	{
-		// 플레이어 사망 후 처리
-		// 플레이어 사망 이벤트 발행
-		FStageEventContext Context;
-		Context.Target = this;
-
-		TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-		GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
-
-		ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
-	}
 }
 
 bool APlayerCharacter::IsDead()
 {
 	return StatComp->IsDead();
+}
+
+void APlayerCharacter::OnDead()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Player Is Dead"));
+
+	// 플레이어 사망 후 처리
+	// 플레이어 사망 이벤트 발행
+	FStageEventContext Context;
+	Context.Target = this;
+
+	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
+
+	ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
 }
 
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
@@ -332,11 +335,17 @@ void APlayerCharacter::AdjustDefense(uint32& _outDamage)
 
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
+	if (StatComp->IsDead())
+		return;
+
 	StatComp->ApplyEffect(_effectData);
 }
 
 void APlayerCharacter::UseQuickSlot(uint8 _index)
 {
+	if (StatComp->IsDead())
+		return;
+
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	TWeakObjectPtr<UConsumableItem> QuickSlotItem = PlayerManager->GetQuickSlotItem(_index);
 
@@ -414,6 +423,7 @@ void APlayerCharacter::CheckInteractable()
 		InteractWidget->SetWorldLocation(HitResult.GetActor()->GetActorLocation());
 	}
 }
+
 
 void APlayerCharacter::Interact()
 {

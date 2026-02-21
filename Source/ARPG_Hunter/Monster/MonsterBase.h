@@ -24,7 +24,7 @@ struct FMonsterInitParam
 };
 
 DECLARE_DELEGATE(FOnAttackMontageEnded);
-DECLARE_DELEGATE_OneParam(FOnDead, TObjectPtr<class AMonsterBase>);
+DECLARE_DELEGATE_OneParam(FOnMonsterDead, TObjectPtr<class AMonsterBase>);
 
 UCLASS(Abstract)
 class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
@@ -63,6 +63,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMonsterActionComponent> ActionComp;
 
+	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	UFUNCTION()
@@ -85,7 +86,7 @@ protected:
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;
-	FOnDead OnMonsterDead;
+	FOnMonsterDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
 	virtual float Attack(EMonsterAttackType _type);
@@ -104,4 +105,6 @@ public:
 
 	// IEffectable을(를) 통해 상속됨
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
+
+	TWeakObjectPtr<AActor> GetTarget() const;
 };

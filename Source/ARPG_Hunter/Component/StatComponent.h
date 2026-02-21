@@ -7,7 +7,10 @@
 #include "Define/Enum.h"
 #include "StatComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
+
+class UEffectData;
+class UEffect;
+struct FEffectParam;
 
 enum class EHitOption : uint8
 {
@@ -16,11 +19,9 @@ enum class EHitOption : uint8
 	IMMUNE_HIT		// 피격 면역 : 피격 모션 + 데미지 무효
 };
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHitEvent, EHitOption&, uint32&)
-
-class UEffectData;
-class UEffect;
-struct FEffectParam;
+DECLARE_MULTICAST_DELEGATE(FOnDead);
 
 USTRUCT()
 struct FCharacterResource
@@ -100,6 +101,7 @@ private:
 
 public:	
 	FOnHitEvent OnHitEvent; // 피격 이벤트
+	FOnDead OnDead;
 
 	void Init(const TMap<ECharacterStatType, uint32>& _initStat);
 	void Init(const TMap<ECharacterStatType, uint32>& _initStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);

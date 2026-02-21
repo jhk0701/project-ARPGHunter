@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTService/BTService_AimToTarget.h"
@@ -18,7 +18,7 @@ void UBTService_AimToTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target")));
+	TObjectPtr<UObject> Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target")));
 	if (nullptr == Target)
 		return;
 
