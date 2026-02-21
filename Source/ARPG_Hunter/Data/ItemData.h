@@ -39,6 +39,9 @@ public:
 	uint8 AllowCountOnCombat{10}; // 전투 시, 소지 가능 횟수
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<class UEffectData>> Effects; // 사용 시, 효과
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UParticleSystem> VFX;
 };
 
 UCLASS()

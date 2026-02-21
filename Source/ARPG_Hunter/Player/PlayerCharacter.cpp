@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/WidgetComponent.h"
 
 #include "Define/Enum.h"
@@ -351,7 +352,17 @@ void APlayerCharacter::HandleUseItemNotify()
 {
 	// 퀵슬롯 사용
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
+	TWeakObjectPtr<UConsumableItem> Item = PlayerManager->GetQuickSlotItem(UsingQuickSlotIndex);
+	if (Item.IsValid()) 
+	{
+		TObjectPtr<UConsumableItemConfig> Config = Cast<UConsumableItemConfig>(Item->GetConfig());
+		if (Config->VFX)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Config->VFX, GetActorLocation(), GetActorRotation(), true, EPSCPoolMethod::AutoRelease);
+		}
+
+		PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
+	}
 }
 
 void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)
