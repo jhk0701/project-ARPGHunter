@@ -36,6 +36,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> StaggerBar;
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UOverlay> GimicStaggerContainer;
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> GimicStaggerBar;
 
 public:

@@ -2,6 +2,7 @@
 
 
 #include "UI/UserWidget/UWMonsterStatusBar.h"
+#include "Components/Overlay.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 
@@ -35,10 +36,10 @@ void UUWBossMonsterStatusBar::HideUI()
 
 void UUWBossMonsterStatusBar::ShowGimicStagger()
 {
-	GimicStaggerBar->SetVisibility(ESlateVisibility::Visible);
+	GimicStaggerContainer->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UUWBossMonsterStatusBar::HideGimicStagger()
 {
-	GimicStaggerBar->SetVisibility(ESlateVisibility::Hidden);
+	GimicStaggerContainer->SetVisibility(ESlateVisibility::Hidden);
 }
