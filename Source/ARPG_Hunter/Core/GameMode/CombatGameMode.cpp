@@ -180,10 +180,10 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 		return 0;
 
 	const FSection& SectionData = StageData->Sections[_sectionID];
-	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-	UDataManager* DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	TObjectPtr<UObjectPoolManager> ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	
-	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	TObjectPtr<UNavigationSystemV1> NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 	if (nullptr == NavSys)
 		return 0;
 
@@ -200,8 +200,8 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 100.0f, Loc);
 			FRotator Rot(0, FMath::Rand() % 360, 0);
 
-			AActor* Inst = ObjectPool->Get(MonsterClass[MonsterData->Config->Type]);
-			AMonsterBase* Instance = Cast<AMonsterBase>(Inst);
+			TObjectPtr<AActor> Inst = ObjectPool->Get(MonsterClass[MonsterData->Config->Type]);
+			TObjectPtr<AMonsterBase> Instance = Cast<AMonsterBase>(Inst);
 
 			FMonsterInitParam InitParam
 			{

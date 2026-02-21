@@ -31,6 +31,9 @@ void AARPGGameMode::BeginPlay()
 		BgmPlayer = GetWorld()->SpawnActor<AAmbientSound>(BgmPlayerClass);
 
 		TObjectPtr<UARPGGameInstance> GI = GetGameInstance<UARPGGameInstance>();
+		if (GI->GetStageID().IsNone())
+			GI->SetStageID(TEXT("0"));
+
 		FStageData* StageData = GI->GetSubsystem<UDataManager>()->GetStageData(GI->GetStageID());
 		if (StageData->BgmSource)
 		{

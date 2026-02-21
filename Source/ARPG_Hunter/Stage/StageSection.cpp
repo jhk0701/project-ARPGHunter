@@ -45,7 +45,7 @@ void AStageSection::BeginSection()
 	State = EState::IN_PROGRESS;
 
 	// 게임모드에게 몬스터 스폰 요청
-	ACombatGameMode* GameMode = Cast<ACombatGameMode>(GetWorld()->GetAuthGameMode());
+	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	if (nullptr == GameMode)
 	{
 		State = EState::CLEARED;
@@ -60,7 +60,7 @@ void AStageSection::EndSection()
 {
 	State = EState::CLEARED;
 
-	ACombatGameMode* GameMode = Cast<ACombatGameMode>(GetWorld()->GetAuthGameMode());
+	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	GameMode->StageEvent[EStageEvent::HUNT].Remove(EventHandle);
 
 	FStageEventContext Context;

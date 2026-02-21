@@ -62,7 +62,8 @@ void UQuickSlot::UseItem(uint8 _index, IEffectable* _target)
 	if (!IsValidSlot(_index))
 		return;
 	
+	uint8 InventoryIndex = Container[_index]->GetInventoryIndex();
 	Container[_index]->Consume(_target);
-	OnQuickSlotUsed.Broadcast(_index, Container[_index]->GetInventoryIndex());
-	OnPostQuickSlotUsed.Broadcast(_index, Container[_index]->GetInventoryIndex());
+	OnQuickSlotUsed.Broadcast(_index, InventoryIndex);
+	OnPostQuickSlotUsed.Broadcast(_index, InventoryIndex);
 }
