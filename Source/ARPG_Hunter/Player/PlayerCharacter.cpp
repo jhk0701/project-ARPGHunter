@@ -184,10 +184,12 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 	SetActorRotation(FQuat::Slerp(GetActorQuat(), TargetRot.Quaternion(), RotateSpeedToInputDir * DeltaTime));
 }
 
-
 void APlayerCharacter::SetIsSprint(bool _isSprint)
 {
-	IsSprint = _isSprint;
+	if(StatComp->IsStaggering())
+		IsSprint = false;
+	else
+		IsSprint = _isSprint;
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;

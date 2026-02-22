@@ -56,6 +56,8 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
+	
+	void SetStageData(const FName& _stageID);
 
 private:
 	void RegisterObjectPool();

@@ -5,4 +5,5 @@
 
 UARPGGameInstance::UARPGGameInstance()
 {
+	StageID = TEXT("1"); // TODO : 타이틀 씬 만들때 제거할 것
 }

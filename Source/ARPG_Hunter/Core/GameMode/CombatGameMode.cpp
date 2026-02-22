@@ -93,6 +93,14 @@ void ACombatGameMode::BeginPlay()
 	RegisterObjectPool();
 }
 
+void ACombatGameMode::SetStageData(const FName& _stageID)
+{
+	UARPGGameInstance* GI = Cast<UARPGGameInstance>(GetGameInstance());
+	if (nullptr == GI)
+		return;
+	StageData = GI->GetSubsystem<UDataManager>()->GetStageData(_stageID);
+}
+
 void ACombatGameMode::RegisterObjectPool()
 {
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
