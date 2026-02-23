@@ -15,7 +15,7 @@ void UUWMonsterStatusBar::SetHealthBarPercent(uint16 _remain, uint16 _max)
 
 void UUWMonsterStatusBar::PlayOpenAnim()
 {
-	if(OpenAnim)
+	if (OpenAnim)
 		PlayAnimation(OpenAnim);
 }
 
@@ -33,6 +33,8 @@ void UUWBossMonsterStatusBar::ShowUI()
 {
 	HideGimicStagger();
 	AddToViewport();
+
+	PlayOpenAnim();
 }
 
 void UUWBossMonsterStatusBar::HideUI()

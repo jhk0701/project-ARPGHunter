@@ -65,7 +65,7 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
 	{
 		MonsterStatusBar->SetHealthBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::HEALTH), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-		WidgetComp->SetHiddenInGame(true);
+		MonsterStatusBar->SetRenderOpacity(0.0f);
 	}
 }
 
@@ -91,8 +91,11 @@ void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)
 void ARegularMonster::OnTargetFound()
 {
 	Super::OnTargetFound();
-	WidgetComp->SetHiddenInGame(false);
+	
 
-	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
+	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
+	{
+		MonsterStatusBar->SetRenderOpacity(1.0f);
 		MonsterStatusBar->PlayOpenAnim();
+	}
 }

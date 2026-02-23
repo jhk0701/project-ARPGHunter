@@ -101,8 +101,6 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
 		BossUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		BossUI->SetStaggerBarPercent(Stat->GetResourceValue(ECharacterResourceType::STAMINA), Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
-
-		BossUI->ShowUI();
 	}
 }
 
@@ -227,6 +225,6 @@ void ABossMonster::OnTargetFound()
 	if (StatusBar) 
 	{
 		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
-		BossUI->PlayOpenAnim();
+		BossUI->ShowUI();
 	}
 }
