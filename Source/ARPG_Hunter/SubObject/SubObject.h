@@ -41,8 +41,10 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float Damage{ 20.0f };
 
+	TFunction<void(TArray<FHitResult>&)> OnHit;
+
 public:
-	virtual void Init(TObjectPtr<USubObjectConfig> _config);
+	virtual void Init(TObjectPtr<USubObjectConfig> _config, TFunction<void(TArray<FHitResult>&)> _onHitAction);
 	virtual void Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector);
 	virtual void Disable();
 

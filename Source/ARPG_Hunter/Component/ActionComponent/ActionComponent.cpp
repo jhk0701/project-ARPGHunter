@@ -138,7 +138,7 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 	// 투사체 발사
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	TObjectPtr<ASubObject> SubObj = Cast<ASubObject>(ObjectPool->Get(SubObjectClass));
-	SubObj->Init(CurrentAction->SubObjectConfig);
+	SubObj->Init(CurrentAction->SubObjectConfig, MoveTemp(_onHitAction));
 	
 	FVector FireVector;
 	switch (CurrentAction->ArrOption[_opt].Detail)

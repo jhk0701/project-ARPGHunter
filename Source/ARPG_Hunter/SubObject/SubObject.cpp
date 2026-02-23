@@ -34,15 +34,18 @@ void ASubObject::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (nullptr == OtherActor)
 		return;
 
+	HitResult = SweepResult;
 	Hit(OtherActor);
 }
 
-void ASubObject::Init(TObjectPtr<USubObjectConfig> _config)
+void ASubObject::Init(TObjectPtr<USubObjectConfig> _config, TFunction<void(TArray<FHitResult>&)> _onHitAction)
 {
 	Config = _config;
 	ElapsedTime = 0.f;
 	MeshComp->SetStaticMesh(Config->Mesh);
 	BoxComp->SetBoxExtent(Config->Mesh->GetBoundingBox().GetExtent());
+
+	OnHit = _onHitAction;
 }
 
 void ASubObject::Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector)
@@ -60,14 +63,14 @@ void ASubObject::Disable()
 
 void ASubObject::Hit(TObjectPtr<AActor> _target)
 {
-	if (IHitable* Hitable = Cast<IHitable>(_target))
+	if (OnHit) 
 	{
-		FHitInfo HitInfo;
-		HitInfo.Damage = Damage;
-		HitInfo.Attacker = Attacker;
-		HitInfo.HitResult = &HitResult;
-		Hitable->HitBy(HitInfo);
+		TArray<FHitResult> ArrResult;
+		ArrResult.Add(HitResult);
+
+		OnHit(ArrResult);
 	}
+
 
 	Disable();
 }

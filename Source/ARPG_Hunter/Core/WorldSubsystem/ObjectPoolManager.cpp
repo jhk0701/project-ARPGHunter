@@ -46,10 +46,8 @@ TObjectPtr<AActor> UActorObjectPool::Get()
 {
 	TObjectPtr<AActor> inst;
 
-	if (Pool.IsEmpty())
+	if (Pool.Dequeue(inst) == false)
 		inst = Create();
-	else
-		Pool.Dequeue(inst);
 
 	ActivateActor(inst);
 
