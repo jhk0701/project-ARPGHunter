@@ -31,7 +31,6 @@ void AStageSection::PostInitializeComponents()
 void AStageSection::BeginPlay()
 {
 	Super::BeginPlay();
-
 	State = EState::READY;
 }
 
@@ -56,12 +55,11 @@ void AStageSection::BeginSection()
 	}
 
 	SpawnedCount = GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
-	EventHandle = GameMode->StageEvent[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
 
-	if (SpawnedCount == 0)
-	{
-		EndSection();
-	}
+	if (SpawnedCount > 0)
+		EventHandle = GameMode->StageEvent[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
+	else
+		State = EState::CLEARED;
 }
 
 void AStageSection::EndSection()
@@ -81,7 +79,7 @@ void AStageSection::OnMonsterDead(const FStageEventContext& _context)
 	if (_context.SectionIndex != Index)
 		return;
 	
-	ensure(SpawnedCount > 0);
+	check(SpawnedCount > 0);
 	SpawnedCount--;
 
 	if (SpawnedCount == 0)

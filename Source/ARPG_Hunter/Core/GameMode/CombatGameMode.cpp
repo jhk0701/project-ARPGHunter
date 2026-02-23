@@ -114,14 +114,18 @@ void ACombatGameMode::RegisterObjectPool()
 
 	for (const FSection& Section : StageData->Sections)
 	{
+		TMap<EMonsterType, uint8> CurSectionCountPerType;
+
 		for (const FMonsterSpawn& Spawn : Section.Spawn)
 		{
 			EMonsterType Type = DataManager->GetMonsterData(Spawn.MonsterID)->Config->Type;
 			if (nullptr == MaxCountPerType.Find(Type))
 				MaxCountPerType.Add(Type, 0);
+			if (nullptr == CurSectionCountPerType.Find(Type))
+				CurSectionCountPerType.Add(Type, 0);
 
-			MaxCountPerType[Type] = FMath::Max(Spawn.Count, MaxCountPerType[Type]);
-			
+			CurSectionCountPerType[Type] += Spawn.Count;
+
 			FMonsterData* MonsterData = DataManager->GetMonsterData(Spawn.MonsterID);
 			
 			for (const FMonsterAction& ActionData : MonsterData->Config->AttackActions)
@@ -139,6 +143,14 @@ void ACombatGameMode::RegisterObjectPool()
 				MaxCountSubObject.Add(ActionData.Action->SubObjectClass, 5);
 			}
 		}
+
+		for (uint8 i = 0; i < static_cast<uint8>(EMonsterType::END); ++i)
+		{
+			EMonsterType Type = static_cast<EMonsterType>(i);
+			if (CurSectionCountPerType.Find(Type) != nullptr && MaxCountPerType.Find(Type))
+				MaxCountPerType[Type] = FMath::Max(CurSectionCountPerType[Type], MaxCountPerType[Type]);
+		}
+
 	}
 
 	// 오브젝트 풀링 등록
