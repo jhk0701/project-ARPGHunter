@@ -9,6 +9,7 @@
 
 #include "Core/Subsystem/DataManager.h"
 #include "Data/StageData.h"
+#include "Data/ItemData.h"
 #include "UI/UserWidget/UWItemSlot.h"
 
 
@@ -63,6 +64,7 @@ void UUWStageSelect::NativeOnInitialized()
 		for (int i = 0; i < InitRewardItemSlotSize; ++i)
 		{
 			ItemSlotContainer[i] = CreateWidget<UUWItemSlot>(GetWorld(), ItemSlotClass);
+			ItemSlotContainer[i]->SetSize(ItemSlotSize);
 			RewardItemContainer->AddChild(ItemSlotContainer[i]);
 		}
 	}
@@ -174,8 +176,9 @@ void UUWStageSelect::RefreshStageInfo()
 	for (; i < StageData->RewardItems.Num(); ++i)
 	{
 		ItemSlotContainer[i]->SetVisibility(ESlateVisibility::Visible);
-		// TODO : 아이템 기능 만들고 나서 추가해줄 것
-		// ItemSlotContainer[i]->uyp
+		
+		FItemData* ItemData = DataManager->GetItemData(StageData->RewardItems[i].ID);
+		ItemSlotContainer[i]->SetThumbnailOnly(ItemData->Item->Thumbnail);
 	}
 
 	// 미사용 슬롯 숨기기

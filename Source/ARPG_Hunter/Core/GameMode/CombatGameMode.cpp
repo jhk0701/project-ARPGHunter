@@ -19,6 +19,7 @@
 #include "Monster/MonsterBase.h"
 #include "SubObject/SubObject.h"
 #include "UI/CombatHUD.h"
+
 #include "Define/Debug.h"
 
 ACombatGameMode::ACombatGameMode()
@@ -71,8 +72,7 @@ void ACombatGameMode::BeginPlay()
 	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>()) 
 	{
 		// TODO: 멀티 플레이 시, 현재 플레이어들의 인원수 전달
-		CombatGameState->Init(1, StageData->Sections);
-
+		
 		CombatGameState->OnSectionCleared.BindLambda(
 			[this](bool _bIsCleared)
 			{
@@ -87,6 +87,8 @@ void ACombatGameMode::BeginPlay()
 					GameFail();
 			}
 		);
+
+		CombatGameState->Init(1, StageData->Sections);
 	}
 
 	// 오브젝트 풀링

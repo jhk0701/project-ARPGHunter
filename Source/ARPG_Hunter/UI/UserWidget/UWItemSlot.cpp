@@ -47,6 +47,14 @@ void UUWItemSlot::SetItem(TWeakObjectPtr<UItem> _item)
 	MarkEquipped(bIsEquiped);
 }
 
+void UUWItemSlot::SetThumbnailOnly(TObjectPtr<UTexture2D> _tex)
+{
+	Super::SetThumbnailOnly(_tex);
+
+	MarkSelected(false);
+	MarkEquipped(false);
+}
+
 void UUWItemSlot::ClearSlot()
 {
 	Super::ClearSlot();

@@ -37,5 +37,7 @@ public:
 
 	void SetSize(const FVector2D& _size);
 	virtual void SetItem(TWeakObjectPtr<UItem> _item);
+	virtual void SetThumbnailOnly(TObjectPtr<UTexture2D> _tex);
+
 	virtual void ClearSlot();
 };

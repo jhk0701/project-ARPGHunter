@@ -2,12 +2,17 @@
 
 
 #include "Core/GameState/CombatGameState.h"
+
+#include "Data/StageData.h"
 #include "Core/GameMode/CombatGameMode.h"
 
-void ACombatGameState::Init(uint8 _playerCnt, const TArray<struct FSection>& _section)
+void ACombatGameState::Init(uint8 _playerCnt, const TArray<FSection>& _section)
 {
 	PlayerCount = _playerCnt;
-	bSectionCleared.SetNumZeroed(_section.Num());
+	bSectionCleared.SetNum(_section.Num());
+
+	for (uint8 i = 0; i < _section.Num(); i++)
+		bSectionCleared[i] = _section[i].Spawn.Num() == 0;
 
 	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	GameMode->StageEvent[EStageEvent::PLAYER_DEAD].AddLambda(

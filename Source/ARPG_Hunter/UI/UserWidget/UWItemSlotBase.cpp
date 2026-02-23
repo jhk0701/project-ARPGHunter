@@ -47,6 +47,14 @@ void UUWItemSlotBase::SetItem(TWeakObjectPtr<UItem> _item)
 		AmountLabel->SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UUWItemSlotBase::SetThumbnailOnly(TObjectPtr<UTexture2D> _tex)
+{
+	Thumbnail->SetBrushFromTexture(_tex);
+	Thumbnail->SetVisibility(ESlateVisibility::Visible);
+
+	AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UUWItemSlotBase::ClearSlot()
 {
 	Thumbnail->SetBrushFromTexture(nullptr);

@@ -29,6 +29,7 @@ public:
 	FOnSlotClicked OnSlotClicked;
 
 	virtual void SetItem(TWeakObjectPtr<UItem> _item) override;
+	virtual void SetThumbnailOnly(TObjectPtr<UTexture2D> _tex) override;
 	virtual void ClearSlot() override;
 
 	void MarkSelected(bool _bIsSelected);

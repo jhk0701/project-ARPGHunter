@@ -71,6 +71,8 @@ private:
 	TSubclassOf<UUWItemSlot> ItemSlotClass;
 	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
 	uint8 InitRewardItemSlotSize = 24;
+	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
+	FVector2D ItemSlotSize{ 50.0f, 50.0f };
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> StageList;

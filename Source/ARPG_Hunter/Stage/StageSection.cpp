@@ -3,7 +3,10 @@
 
 #include "Stage/StageSection.h"
 #include "Components/BoxComponent.h"
+
+#include "Define/Debug.h"
 #include "Core/GameMode/CombatGameMode.h"
+
 
 // Sets default values
 AStageSection::AStageSection()
@@ -54,6 +57,11 @@ void AStageSection::BeginSection()
 
 	SpawnedCount = GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
 	EventHandle = GameMode->StageEvent[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
+
+	if (SpawnedCount == 0)
+	{
+		EndSection();
+	}
 }
 
 void AStageSection::EndSection()
@@ -74,7 +82,6 @@ void AStageSection::OnMonsterDead(const FStageEventContext& _context)
 		return;
 	
 	ensure(SpawnedCount > 0);
-
 	SpawnedCount--;
 
 	if (SpawnedCount == 0)
