@@ -36,6 +36,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<class UWidgetComponent> InteractWidget;
+
+
 #pragma endregion
 
 #pragma region Attribute

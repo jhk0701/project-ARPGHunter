@@ -107,4 +107,5 @@ public:
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
 
 	TWeakObjectPtr<AActor> GetTarget() const;
+	virtual void OnTargetFound() {};
 };

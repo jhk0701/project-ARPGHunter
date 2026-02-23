@@ -144,6 +144,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	SmoothRotateToInputDir(DeltaTime);
 	CheckInteractable();
+
+
 }
 
 void APlayerCharacter::InitEquipment(TObjectPtr<UEquipment> _equipment)
@@ -432,7 +434,6 @@ void APlayerCharacter::Interact()
 
 	CurInteractable->Interact();
 }
-
 
 #pragma endregion
 

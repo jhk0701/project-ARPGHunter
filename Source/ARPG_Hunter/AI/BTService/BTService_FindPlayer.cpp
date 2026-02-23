@@ -19,7 +19,7 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	
-	AMonsterBase* Monster = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	TObjectPtr<AMonsterBase> Monster = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
 	if (Monster == nullptr)
 		return;
 
@@ -40,9 +40,8 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 	);
 
 	if (IsHit)
+	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), HitResult.GetActor());
-
-	// Monster->GetRecognitionRange
-	// APawn* PlayerPawn = OwnerComp.GetWorld()->GetFirstPlayerController()->GetPawn();
-	// OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("TargetActor"), PlayerPawn);
+		Monster->OnTargetFound();
+	}
 }

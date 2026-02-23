@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/BossMonster.h"
@@ -98,7 +98,7 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	{
 		UStatComponent* Stat = GetStatComp();
 
-		UUWBossMonsterStatusBar* BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
 		BossUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		BossUI->SetStaggerBarPercent(Stat->GetResourceValue(ECharacterResourceType::STAMINA), Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
 
@@ -217,5 +217,16 @@ void ABossMonster::ShowDamageUI(bool _bIsCritical, uint32 _damage)
 		DamageFont->SetActorLocation(GetActorLocation() + FVector(0, 0, FMath::FRandRange(DamageFontYRange.X, DamageFontYRange.Y)));
 		DamageFont->UpdateUI(_damage, _bIsCritical);
 		DamageFont->ShowUI();
+	}
+}
+
+void ABossMonster::OnTargetFound()
+{
+	Super::OnTargetFound();
+
+	if (StatusBar) 
+	{
+		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+		BossUI->PlayOpenAnim();
 	}
 }

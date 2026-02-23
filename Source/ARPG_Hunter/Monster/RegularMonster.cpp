@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Monster/RegularMonster.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -62,8 +62,11 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 	Super::Init(_param);
 
 	// UI 설정
-	if (UUWMonsterStatusBar* MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
+	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
+	{
 		MonsterStatusBar->SetHealthBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::HEALTH), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+		WidgetComp->SetHiddenInGame(true);
+	}
 }
 
 void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
@@ -83,4 +86,13 @@ void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)
 	Dir.Normalize();
 
 	LaunchCharacter(Dir * _hitInfo.KnockBackStrength, true, true);
+}
+
+void ARegularMonster::OnTargetFound()
+{
+	Super::OnTargetFound();
+	WidgetComp->SetHiddenInGame(false);
+
+	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget())) 
+		MonsterStatusBar->PlayOpenAnim();
 }
