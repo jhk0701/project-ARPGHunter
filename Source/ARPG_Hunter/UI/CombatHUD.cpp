@@ -25,7 +25,7 @@ ACombatHUD::ACombatHUD()
 	if (StageResultUIFinder.Succeeded())
 		StageResultUIClass = StageResultUIFinder.Class;
 
-	static ConstructorHelpers::FClassFinder<AActor> DamageUIFinder(TEXT("/Game/02-BP/DamageFont/BP_DamageFont.BP_DamageFont_C"));
+	static ConstructorHelpers::FClassFinder<AActor> DamageUIFinder(TEXT("/Game/02-BP/UI/BP_DamageFont.BP_DamageFont_C"));
 	if (DamageUIFinder.Succeeded())
 		DamageUIClass = DamageUIFinder.Class;
 }
