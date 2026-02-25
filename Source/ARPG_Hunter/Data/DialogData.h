@@ -13,6 +13,10 @@ USTRUCT()
 struct ARPG_HUNTER_API FDialogData : public FTableRowBase
 {
 	GENERATED_BODY()
-public:
 
+public:
+	UPROPERTY(EditAnywhere)
+	FName NPCName;
+	UPROPERTY(EditAnywhere)
+	FString Message;
 };

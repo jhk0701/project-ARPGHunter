@@ -4,7 +4,9 @@
 #include "NPC/NPC.h"
 #include "Components/CapsuleComponent.h"
 
+#include "Core/Subsystem/DataManager.h"
 #include "Data/NPCConfig.h"
+#include "Data/DialogData.h"
 #include "UI/UserWidget/UWNPCDialog.h"
 
 ANPC::ANPC()
@@ -42,7 +44,7 @@ void ANPC::BeginPlay()
 	if (DialogUIClass)
 		DialogUI = CreateWidget<UUWNPCDialog>(GetWorld(), DialogUIClass);
 	
-	for (const FNPCDialog& Dialog : Config->Dialogs)
+	for (const FNPCDialogOption& Dialog : Config->DialogOptions)
 	{
 		if (nullptr == Dialog.UIClass)
 			continue;
@@ -57,7 +59,9 @@ void ANPC::Interact()
 	if (nullptr == DialogUI || nullptr == Config)
 		return;
 
-	DialogUI->SetDialogOption(Config->Dialogs);
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+
+	DialogUI->Init(DataManager->GetDialogData(Config->FirstDialogID), Config->DialogOptions);
 	DialogUI->ShowUI();
 }
 

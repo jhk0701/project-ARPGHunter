@@ -1,13 +1,15 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/Subsystem/DataManager.h"
 #include "Engine/DataTable.h"
+
 #include "Define/Enum.h"
 #include "Data/WeaponConfig.h"
 #include "Data/MonsterData.h"
 #include "Data/StageData.h"
 #include "Data/ItemData.h"
+#include "Data/DialogData.h"
 
 UDataManager::UDataManager()
 {
@@ -30,6 +32,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> ItemDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_ItemData.DT_ItemData'"));
 	if (ItemDataTableFinder.Succeeded())
 		ItemDataTable = ItemDataTableFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> DialogDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_DialogData.DT_DialogData'"));
+	if (DialogDataTableFinder.Succeeded())
+		DialogDataTable = DialogDataTableFinder.Object;
 }
 
 TObjectPtr<UWeaponConfig> UDataManager::GetWeaponConfig(EWeaponType _type) const
@@ -55,4 +61,9 @@ FStageData* UDataManager::GetStageData(const FName& _id) const
 FItemData* UDataManager::GetItemData(const FName& _id) const
 {
 	return ItemDataTable->FindRow<FItemData>(_id, TEXT("Item Data Table Search"));
+}
+
+FDialogData* UDataManager::GetDialogData(const FName& _id) const
+{
+	return DialogDataTable->FindRow<FDialogData>(_id, TEXT("Dialog Data Table Search"));
 }

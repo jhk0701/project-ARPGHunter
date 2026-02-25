@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,6 +30,8 @@ private:
 	TObjectPtr<UDataTable> StageDataTable;
 	UPROPERTY()
 	TObjectPtr<UDataTable> ItemDataTable;
+	UPROPERTY()
+	TObjectPtr<UDataTable> DialogDataTable;
 
 public:
 	UDataManager();
@@ -39,4 +41,5 @@ public:
 	struct FRegionData* GetRegionData(const FName& _id) const;
 	struct FStageData* GetStageData(const FName& _id) const;
 	struct FItemData* GetItemData(const FName& _id) const;
+	struct FDialogData* GetDialogData(const FName& _id) const;
 };

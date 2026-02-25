@@ -7,7 +7,7 @@
 #include "NPCConfig.generated.h"
 
 USTRUCT()
-struct FNPCDialog 
+struct FNPCDialogOption
 {
 	GENERATED_BODY()
 public:
@@ -15,7 +15,7 @@ public:
 	FString DialogTitle;
 
 	UPROPERTY(EditAnywhere)
-	uint32 DialogOption;
+	uint32 DialogParam;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUWPopUp> UIClass;
@@ -32,11 +32,13 @@ class ARPG_HUNTER_API UNPCConfig : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	FName NpcID;
+	UPROPERTY(EditAnywhere)
+	FName FirstDialogID;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> Mesh;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAnimInstance> AnimInstClass;
 	UPROPERTY(EditAnywhere)
-	TArray<FNPCDialog> Dialogs;
+	TArray<FNPCDialogOption> DialogOptions;
 };

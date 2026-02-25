@@ -1,15 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/UserWidget/UWNPCDialog.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "Components/VerticalBox.h"
 
 #include "Data/NPCConfig.h"
+#include "Data/DialogData.h"
+
+void UUWDialogOption::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	Button->OnClicked.AddDynamic(this, &UUWDialogOption::ClickOption);
+}
 
 void UUWDialogOption::SetButtonLabel(const FText& _text)
 {
 	ButtonLabel->SetText(_text);
+}
+
+void UUWDialogOption::ClickOption()
+{
+	OnOptionClicked.ExecuteIfBound();
 }
 
 void UUWNPCDialog::SupplyOptionInst(uint8 _amount)
@@ -38,20 +51,35 @@ void UUWNPCDialog::NativeOnInitialized()
 		DialogOptionContainer->AddChild(DialogOptionInst[i]);
 		DialogOptionInst[i]->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	CloseOption = CreateWidget<UUWDialogOption>(GetWorld(), DialogOptionClass);
+	CloseOption->SetButtonLabel(FText::FromString(TEXT("대화 끝내기")));
+	CloseOption->OnOptionClicked.BindUObject(this, &UUWNPCDialog::HideUI);
 }
 
-void UUWNPCDialog::SetDialogOption(const TArray<FNPCDialog>& _options)
+void UUWNPCDialog::HideUI()
 {
-	if (_options.Num() > DialogOptionCount) 
-	{
-		uint8 Diff = _options.Num() - DialogOptionCount;
-		SupplyOptionInst(Diff);
-		DialogOptionCount = _options.Num();
-	}
+	Super::HideUI();
+	
+	CloseOption->SetVisibility(ESlateVisibility::Collapsed);
+	DialogOptionContainer->RemoveChild(CloseOption);
+}
 
-	for (uint8 i = 0; i < _options.Num(); ++i)
+void UUWNPCDialog::Init(FDialogData* _dialogData, const TArray<FNPCDialogOption>& _options)
+{
+	if (_dialogData == nullptr)
+		return;
+
+	NameLabel->SetText(FText::FromName(_dialogData->NPCName));
+	DialogLabel->SetText(FText::FromString(_dialogData->Message));
+
+	uint8 i = 0;
+	for (i = 0; i < _options.Num(); ++i)
 	{
 		DialogOptionInst[i]->SetVisibility(ESlateVisibility::Visible);
 		DialogOptionInst[i]->SetButtonLabel(FText::FromString(_options[i].DialogTitle));
 	}
+
+	CloseOption->SetVisibility(ESlateVisibility::Visible);
+	DialogOptionContainer->AddChild(CloseOption);
 }
