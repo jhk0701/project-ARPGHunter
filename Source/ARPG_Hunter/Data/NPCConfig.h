@@ -15,9 +15,6 @@ public:
 	FString DialogTitle;
 
 	UPROPERTY(EditAnywhere)
-	uint32 DialogParam;
-
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUWPopUp> UIClass;
 };
 
