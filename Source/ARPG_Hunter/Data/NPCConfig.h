@@ -1,10 +1,25 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "NPCConfig.generated.h"
+
+USTRUCT()
+struct FNPCDialog 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	FString DialogTitle;
+
+	UPROPERTY(EditAnywhere)
+	uint32 DialogOption;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUWPopUp> PopUpUI;
+};
 
 /**
  * 
@@ -13,8 +28,15 @@ UCLASS()
 class ARPG_HUNTER_API UNPCConfig : public UDataAsset
 {
 	GENERATED_BODY()
-public:
-	UPROPERTY()
-	TObjectPtr<USkeletalMesh> Skeletal;
 
+public:
+	UPROPERTY(EditAnywhere)
+	FName NpcID;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkeletalMesh> Mesh;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UAnimInstance> AnimInstClass;
+	UPROPERTY(EditAnywhere)
+	TArray<FNPCDialog> Dialogs;
 };
