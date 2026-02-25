@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -68,7 +68,7 @@ void APlayerCharacterController::SetupInputComponent()
 
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
-	if (ControlledCharacter->IsDead())
+	if (ControlledCharacter->IsDead() || bCursorIsLocked)
 		return;
 
 	FVector2D Dir = _value.Get<FVector2D>();
@@ -120,8 +120,10 @@ void APlayerCharacterController::InputShortCut(const FInputActionValue& _value)
 
 void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
 {
-	bCursorIsLocked = true;
+	ControlledCharacter->SetInputDirection(FVector2D::ZeroVector);
 
+	bCursorIsLocked = true;
+	
 	// 커서 출력
 	SetShowMouseCursor(bCursorIsLocked); 
 

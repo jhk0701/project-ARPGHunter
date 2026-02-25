@@ -18,7 +18,7 @@ public:
 	uint32 DialogOption;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUWPopUp> PopUpUI;
+	TSubclassOf<class UUWPopUp> UIClass;
 };
 
 /**

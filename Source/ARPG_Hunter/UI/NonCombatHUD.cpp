@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/NonCombatHUD.h"
@@ -11,6 +11,7 @@
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenance.h"
 #include "UI/UserWidget/UWInventory.h"
+
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 
@@ -25,8 +26,8 @@ ANonCombatHUD::ANonCombatHUD()
 	static ConstructorHelpers::FClassFinder<UUWInventory> InventoryUIFinder(TEXT("/Game/06-UI/WBP_Inventory.WBP_Inventory_C"));
 	if (InventoryUIFinder.Succeeded())
 		InventoryUIClass = InventoryUIFinder.Class;
-}
 
+}
 void ANonCombatHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -102,85 +103,92 @@ void ANonCombatHUD::BeginPlay()
 		}
 	}
 
-	if (MaintenanceUI && InventoryUI) 
-	{
-		MaintenanceUI->OnEquipmentSlotClicked.BindLambda(
-			[this](EItemType _type, uint8 _opt) 
-			{
-				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-
-				TWeakObjectPtr<UItem> ItemToCompare;
-				if (_type == EItemType::WEAPON) 
-					ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(EEquipmentType::WEAPON);
-				else if(_type == EItemType::ARMOR)
-				{
-					EEquipmentType Type = static_cast<EEquipmentType>(_opt);
-					ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(Type);
-				}
-				
-				InventoryUI->ShowUI(_type, ItemToCompare, _opt);
-			}
-		);
-
-		MaintenanceUI->OnQuickSlotClicked.BindLambda(
-			[this](uint8 _index) 
-			{
-				// 소비템 인벤토리 열기
-				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-
-				TWeakObjectPtr<UItem> ItemToCompare = PlayerManager->GetQuickSlot()->GetItem(_index);
-				InventoryUI->ShowUI(EItemType::CONSUMABLE, ItemToCompare, _index);
-			}
-		);
-
-		InventoryUI->OnThrowButtonClicked.BindLambda(
-			[this](EItemType _type, uint8 _index) 
-			{
-				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-				Inventory->TrySubItem(_type, _index, Inventory->GetItem(_type, _index)->GetAmount()); // 아이템 버리기
-			}
-		);
-
-		InventoryUI->OnEquipButtonClicked.BindLambda(
-			[this](EItemType _type, uint8 _index) 
-			{
-				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				TWeakObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
-
-				if (_type >= EItemType::EQUIPABLE) 
-				{
-					TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
-					PlayerManager->GetEquipment()->Equip(EquipmentConfig->Type, Item); // 장착
-				}
-				else if (_type == EItemType::CONSUMABLE) 
-				{
-					TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Item->GetConfig());
-					PlayerManager->GetQuickSlot()->Register(InventoryUI->GetOptionalIndex(), Item); // 퀵슬롯 등록
-				}
-			}
-		);
-
-		InventoryUI->OnUnequipButtonClicked.BindLambda(
-			[this](EItemType _type, uint8 _index) 
-			{
-				TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-				TWeakObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
-
-				if (_type >= EItemType::EQUIPABLE) 
-				{
-					TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
-					PlayerManager->GetEquipment()->Unequip(EquipmentConfig->Type); // 장착 해제
-				}
-				else if (_type == EItemType::CONSUMABLE) 
-				{
-					TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Item->GetConfig());
-					PlayerManager->GetQuickSlot()->Unregister(InventoryUI->GetOptionalIndex()); // 퀵슬롯 등록 해제
-				}
-			}
-		);
-	}
+	BindMainenanceAndInventory();
 }
+
+void ANonCombatHUD::BindMainenanceAndInventory()
+{
+	if (MaintenanceUI == nullptr || InventoryUI == nullptr)
+		return;
+
+	MaintenanceUI->OnEquipmentSlotClicked.BindLambda(
+		[this](EItemType _type, uint8 _opt)
+		{
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
+			TWeakObjectPtr<UItem> ItemToCompare;
+			if (_type == EItemType::WEAPON)
+				ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(EEquipmentType::WEAPON);
+			else if (_type == EItemType::ARMOR)
+			{
+				EEquipmentType Type = static_cast<EEquipmentType>(_opt);
+				ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(Type);
+			}
+
+			InventoryUI->ShowUI(_type, ItemToCompare, _opt);
+		}
+	);
+
+	MaintenanceUI->OnQuickSlotClicked.BindLambda(
+		[this](uint8 _index)
+		{
+			// 소비템 인벤토리 열기
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
+			TWeakObjectPtr<UItem> ItemToCompare = PlayerManager->GetQuickSlot()->GetItem(_index);
+			InventoryUI->ShowUI(EItemType::CONSUMABLE, ItemToCompare, _index);
+		}
+	);
+
+	InventoryUI->OnThrowButtonClicked.BindLambda(
+		[this](EItemType _type, uint8 _index)
+		{
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+			Inventory->TrySubItem(_type, _index, Inventory->GetItem(_type, _index)->GetAmount()); // 아이템 버리기
+		}
+	);
+
+	InventoryUI->OnEquipButtonClicked.BindLambda(
+		[this](EItemType _type, uint8 _index)
+		{
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+			TWeakObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
+
+			if (_type >= EItemType::EQUIPABLE)
+			{
+				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
+				PlayerManager->GetEquipment()->Equip(EquipmentConfig->Type, Item); // 장착
+			}
+			else if (_type == EItemType::CONSUMABLE)
+			{
+				TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Item->GetConfig());
+				PlayerManager->GetQuickSlot()->Register(InventoryUI->GetOptionalIndex(), Item); // 퀵슬롯 등록
+			}
+		}
+	);
+
+	InventoryUI->OnUnequipButtonClicked.BindLambda(
+		[this](EItemType _type, uint8 _index)
+		{
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+			TWeakObjectPtr<UItem> Item = PlayerManager->GetInventory()->GetItem(_type, _index);
+
+			if (_type >= EItemType::EQUIPABLE)
+			{
+				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
+				PlayerManager->GetEquipment()->Unequip(EquipmentConfig->Type); // 장착 해제
+			}
+			else if (_type == EItemType::CONSUMABLE)
+			{
+				TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Item->GetConfig());
+				PlayerManager->GetQuickSlot()->Unregister(InventoryUI->GetOptionalIndex()); // 퀵슬롯 등록 해제
+			}
+		}
+	);
+
+}
+
 
 void ANonCombatHUD::ShowMaintenanceUI()
 {

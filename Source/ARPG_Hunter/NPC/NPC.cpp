@@ -17,6 +17,8 @@ ANPC::ANPC()
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(ColliderComp);
 
+	// 기본값으로 설정
+	// 레벨에 배치하고 변경해서 사용
 	static ConstructorHelpers::FObjectFinder<UNPCConfig> ConfigFinder(TEXT("/Script/ARPG_Hunter.NPCConfig'/Game/03-Data/NPCConfig/NPC_Seller.NPC_Seller'"));
 	if (ConfigFinder.Succeeded())
 		Config = ConfigFinder.Object;
@@ -24,13 +26,14 @@ ANPC::ANPC()
 	static ConstructorHelpers::FClassFinder<UUWNPCDialog> DialogUIFinder(TEXT("/Game/06-UI/WBP_NpcDialog.WBP_NpcDialog_C"));
 	if (DialogUIFinder.Succeeded())
 		DialogUIClass = DialogUIFinder.Class;
+
 }
 
 void ANPC::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (Config == nullptr)
+	if (nullptr == Config)
 		return;
 	
 	MeshComp->SetSkeletalMesh(Config->Mesh);
@@ -38,11 +41,23 @@ void ANPC::BeginPlay()
 
 	if (DialogUIClass)
 		DialogUI = CreateWidget<UUWNPCDialog>(GetWorld(), DialogUIClass);
+	
+	for (const FNPCDialog& Dialog : Config->Dialogs)
+	{
+		if (nullptr == Dialog.UIClass)
+			continue;
+
+		TObjectPtr<UUWPopUp> UIInstance = CreateWidget<UUWPopUp>(GetWorld(), Dialog.UIClass);
+		MapUIInstance.Add(Dialog.UIClass->StaticClass(), UIInstance);
+	}
 }
 
 void ANPC::Interact()
 {
-	if(DialogUI)
-		DialogUI->ShowUI();
+	if (nullptr == DialogUI || nullptr == Config)
+		return;
+
+	DialogUI->SetDialogOption(Config->Dialogs);
+	DialogUI->ShowUI();
 }
 
