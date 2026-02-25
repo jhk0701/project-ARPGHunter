@@ -64,4 +64,3 @@ void ANPC::Interact()
 	DialogUI->Init(DataManager->GetDialogData(Config->FirstDialogID), Config->DialogOptions);
 	DialogUI->ShowUI();
 }
-

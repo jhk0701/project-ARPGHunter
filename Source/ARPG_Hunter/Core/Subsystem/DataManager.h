@@ -31,6 +31,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UDataTable> ItemDataTable;
 	UPROPERTY()
+	TObjectPtr<UDataTable> ItemProductDataTable;
+	UPROPERTY()
 	TObjectPtr<UDataTable> DialogDataTable;
 
 public:
@@ -41,5 +43,6 @@ public:
 	struct FRegionData* GetRegionData(const FName& _id) const;
 	struct FStageData* GetStageData(const FName& _id) const;
 	struct FItemData* GetItemData(const FName& _id) const;
+	struct FItemProductData* GetItemProductData(const FName& _id) const;
 	struct FDialogData* GetDialogData(const FName& _id) const;
 };

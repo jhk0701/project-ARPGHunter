@@ -9,6 +9,7 @@
 #include "Data/MonsterData.h"
 #include "Data/StageData.h"
 #include "Data/ItemData.h"
+#include "Data/ItemProductData.h"
 #include "Data/DialogData.h"
 
 UDataManager::UDataManager()
@@ -32,6 +33,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> ItemDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_ItemData.DT_ItemData'"));
 	if (ItemDataTableFinder.Succeeded())
 		ItemDataTable = ItemDataTableFinder.Object;
+	
+	static ConstructorHelpers::FObjectFinder<UDataTable> ItemProductDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_ItemProductData.DT_ItemProductData'"));
+	if (ItemProductDataTableFinder.Succeeded())
+		ItemProductDataTable = ItemProductDataTableFinder.Object;
 
 	static ConstructorHelpers::FObjectFinder<UDataTable> DialogDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_DialogData.DT_DialogData'"));
 	if (DialogDataTableFinder.Succeeded())
@@ -61,6 +66,11 @@ FStageData* UDataManager::GetStageData(const FName& _id) const
 FItemData* UDataManager::GetItemData(const FName& _id) const
 {
 	return ItemDataTable->FindRow<FItemData>(_id, TEXT("Item Data Table Search"));
+}
+
+FItemProductData* UDataManager::GetItemProductData(const FName& _id) const
+{
+	return ItemProductDataTable->FindRow<FItemProductData>(_id, TEXT("Item Product Data Table Search"));
 }
 
 FDialogData* UDataManager::GetDialogData(const FName& _id) const
