@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -44,5 +44,6 @@ public:
 	struct FStageData* GetStageData(const FName& _id) const;
 	struct FItemData* GetItemData(const FName& _id) const;
 	struct FItemProductData* GetItemProductData(const FName& _id) const;
+	void GetAllItemProduct(TArray<struct FItemProductData*>& _outArr) const;
 	struct FDialogData* GetDialogData(const FName& _id) const;
 };

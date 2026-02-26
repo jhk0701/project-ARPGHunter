@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "ItemProductData.generated.h"
+
 
 USTRUCT()
 struct FIngredient
@@ -28,7 +29,7 @@ struct ARPG_HUNTER_API FItemProductData  : public FTableRowBase
 public:
 	UPROPERTY(EditAnywhere)
 	FName ItemID; // 제작할 아이템 ID
-
+	
 	UPROPERTY(EditAnywhere)
 	TArray<FIngredient> Ingredients;
 	UPROPERTY(EditAnywhere)

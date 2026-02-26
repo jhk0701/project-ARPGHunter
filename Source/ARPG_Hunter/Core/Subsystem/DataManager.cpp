@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/Subsystem/DataManager.h"
@@ -71,6 +71,11 @@ FItemData* UDataManager::GetItemData(const FName& _id) const
 FItemProductData* UDataManager::GetItemProductData(const FName& _id) const
 {
 	return ItemProductDataTable->FindRow<FItemProductData>(_id, TEXT("Item Product Data Table Search"));
+}
+
+void UDataManager::GetAllItemProduct(TArray<struct FItemProductData*>& _outArr) const
+{
+	ItemProductDataTable->GetAllRows(TEXT("Item Product Data Table Search"), _outArr);
 }
 
 FDialogData* UDataManager::GetDialogData(const FName& _id) const

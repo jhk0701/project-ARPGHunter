@@ -10,6 +10,7 @@ class UButton;
 class UTextBlock;
 class UImage;
 class UVerticalBox;
+class UBorder;
 
 DECLARE_DELEGATE_OneParam(FOnProductSlotClicked, uint8)
 
@@ -33,11 +34,28 @@ protected:
 public:
 	FOnProductSlotClicked OnProductSlotClicked;
 
-	void Init(uint8 _idx);
+	void SetIndex(uint8 _idx) { Index = _idx; }
 	void SetSlot(const FText& _nameText, TObjectPtr<UTexture2D> _thumbnail);
 
 	UFUNCTION()
 	void ClickSlot();
+};
+
+
+UCLASS()
+class ARPG_HUNTER_API UUWIngredientSlot : public UUserWidget
+{
+	GENERATED_BODY()
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> NameLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> AmountLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> Thumbnail;
+
+public:
+	void SetSlot(const FText& _nameText, const FText& _amountText, TObjectPtr<UTexture2D> _thumbnail);
 };
 
 /**
@@ -49,16 +67,35 @@ class ARPG_HUNTER_API UUWEquipmentProduct : public UUWPopUp
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUWProductSlot> SlotClass;
-	UPROPERTY()
-	TArray<TObjectPtr<UUWProductSlot>> SlotInst;
-
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UVerticalBox> ProductSlotContainer;
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> CloseButton;
+	
+	TArray<struct FItemProductData*> DataArray;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWProductSlot> ProductSlotClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWProductSlot>> ProductSlotInst;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> ProductSlotContainer;
+	
+	uint8 CurIndex;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemNameLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemTypeLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UBorder> IngredientDetail;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWIngredientSlot> IngredientSlotClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWIngredientSlot>> IngredientSlotInst;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UScrollBox> IngredientSlotContainer;
+
+	void ClickProductSlot(uint8 _index);
 
 protected:
 	void NativeOnInitialized() override;
