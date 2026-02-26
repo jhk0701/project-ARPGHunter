@@ -19,7 +19,7 @@ void UUWInventory::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	CurCategory = EItemType::WEAPON;
 
-	CloseButton->OnClicked.AddDynamic(this, &UUWInventory::ClickCloseButton);
+	CloseButton->OnClicked.AddDynamic(this, &UUWInventory::HideUI);
 	ThrowButton->OnClicked.AddDynamic(this, &UUWInventory::ClickThrowItem);
 	EquipButton->OnClicked.AddDynamic(this, &UUWInventory::ClickEquipItem);
 	UnequipButton->OnClicked.AddDynamic(this, &UUWInventory::ClickUnequipItem);
@@ -39,13 +39,17 @@ void UUWInventory::ShowUI(bool _bIsSubUI)
 {
 	Super::ShowUI(_bIsSubUI);
 
+	if (OptionalIndex < 0) // 일반 인벤토리 열기
+	{
+		CategoryContainer->SetVisibility(ESlateVisibility::Visible);
+		UpdateCategory(CurCategory, false); // 외부요인으로 변경된 카테고리일 수 있으므로 UI에 반영
+	}
+	else // 선택모드 일땐 끄기
+		CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
+
 	UpdateSlot();
 	ShowSelectedItemDetail(false);
 
-	if (OptionalIndex < 0) // 일반 인벤토리 열기
-		CategoryContainer->SetVisibility(ESlateVisibility::Visible);
-	else // 선택모드 활성화
-		CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWInventory::SetSelectOption(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx)
@@ -97,25 +101,30 @@ void UUWInventory::SetGoldLabel(uint32 _goldValue)
 	GoldLabel->SetText(FText::FromString(FString::FormatAsNumber(_goldValue).Append(TEXT(" G"))));
 }
 
-void UUWInventory::ClickCloseButton()
-{
-	HideUI();
-}
-
 void UUWInventory::ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt)
 {
-	CurCategory = static_cast<EItemType>(_opt);
+	UpdateCategory(static_cast<EItemType>(_opt));
 	
-	for(const TPair<EItemType, TObjectPtr<UUWCheckBox>>& Pair : Category)
+	ShowSelectedItemDetail(false);
+}
+
+void UUWInventory::UpdateCategory(EItemType _category, bool _bUpdateSlot)
+{
+	CurCategory = _category;
+
+	for (const TPair<EItemType, TObjectPtr<UUWCheckBox>>& Pair : Category)
 	{
 		if (Pair.Key == CurCategory)
+		{
+			Pair.Value->UpdateStateWithoutEvent(true);
 			continue;
+		}
 
 		Pair.Value->UpdateStateWithoutEvent(false);
 	}
 
-	ShowSelectedItemDetail(false);
-	UpdateSlot();
+	if (_bUpdateSlot)
+		UpdateSlot();
 }
 
 void UUWInventory::UpdateSlot()

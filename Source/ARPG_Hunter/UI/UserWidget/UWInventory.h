@@ -86,9 +86,8 @@ public:
 	int8 GetOptionalIndex() const { return OptionalIndex; }
 
 	UFUNCTION()
-	void ClickCloseButton();
-	UFUNCTION()
 	void ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt);
+	void UpdateCategory(EItemType _category, bool _bUpdateSlot = true);
 
 	FOnItemOptionClicked OnThrowButtonClicked;
 	FOnItemOptionClicked OnEquipButtonClicked;
