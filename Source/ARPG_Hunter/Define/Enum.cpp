@@ -1,8 +1,41 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Define/Enum.h"
 #include "CoreMinimal.h"
+
+FString EnumToString(EItemType _type)
+{
+	switch (_type)
+	{
+	case EItemType::ITEM:
+		return TEXT("Item"); // IT_Item
+	case EItemType::CONSUMABLE:
+		return TEXT("Consumable"); // IT_Consumable
+	case EItemType::WEAPON:
+		return TEXT("Weapon");	// IT_Weapon
+	case EItemType::ARMOR:
+		return TEXT("Armor");  // IT_Armor
+	default:
+		return TEXT("None");
+	}
+}
+
+FText EnumToText(EItemType _type)
+{
+	switch (_type)
+	{
+	case EItemType::ITEM:
+		return FText::FromString(TEXT("일반 재료"));
+	case EItemType::CONSUMABLE:
+		return FText::FromString(TEXT("소비품"));
+	case EItemType::WEAPON:
+		return FText::FromString(TEXT("무기"));
+	case EItemType::ARMOR:
+		return FText::FromString(TEXT("방어구"));
+	default:
+		return FText();
+	}
+}
 
 FName EnumToName(EWeaponType _value)
 {

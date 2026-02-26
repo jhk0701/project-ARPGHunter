@@ -12,6 +12,9 @@ class UImage;
 class UVerticalBox;
 class UBorder;
 
+enum class ECharacterStatType : uint8;
+enum class EItemType : uint8;
+
 DECLARE_DELEGATE_OneParam(FOnProductSlotClicked, uint8)
 
 UCLASS()
@@ -84,18 +87,28 @@ private:
 	TObjectPtr<UTextBlock> ItemNameLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ItemTypeLabel;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUWStatInfo> StatInfoUIClass;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> StatInfoContainer;
+	UPROPERTY()
+	TMap<ECharacterStatType, TObjectPtr<UUWStatInfo>> MapStatInfo;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> IngredientDetail;
-
+	UPROPERTY(EditAnywhere)
+	uint8 InitIngredientSlotCount{ 10 }; // 초기 슬롯 생성 개수
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWIngredientSlot> IngredientSlotClass;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWIngredientSlot>> IngredientSlotInst;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UScrollBox> IngredientSlotContainer;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> GoldLabel;
 
 	void ClickProductSlot(uint8 _index);
+	void UpdateDetail();
 
 protected:
 	void NativeOnInitialized() override;
