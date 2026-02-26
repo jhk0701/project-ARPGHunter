@@ -115,6 +115,9 @@ private:
 	void ClickProductSlot(uint8 _index);
 	void UpdateDetail();
 
+	UFUNCTION()
+	void ClickProductButton();
+
 protected:
 	void NativeOnInitialized() override;
 

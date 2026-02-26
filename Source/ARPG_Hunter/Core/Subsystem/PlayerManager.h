@@ -70,6 +70,7 @@ public:
 
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
+	bool TrySubGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
  
 	UFUNCTION(BlueprintCallable)

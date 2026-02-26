@@ -17,6 +17,8 @@
 #include "Data/ItemProductData.h"
 #include "UI/UserWidget/UWStatInfo.h"
 
+#pragma region Sub Slot
+
 void UUWProductSlot::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -42,12 +44,14 @@ void UUWIngredientSlot::SetSlot(const FText& _nameText, const FText& _amountText
 	Thumbnail->SetBrushFromTexture(_thumbnail);
 }
 
+#pragma endregion
 
 void UUWEquipmentProduct::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
 	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentProduct::HideUI);
+	ProductButton->OnClicked.AddDynamic(this, &UUWEquipmentProduct::ClickProductButton);
 
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	DataManager->GetAllItemProduct(DataArray);
@@ -187,4 +191,33 @@ void UUWEquipmentProduct::UpdateDetail()
 	ProductButton->SetIsEnabled(bGoldIsEnough && bIngredientIsEnough);
 
 	IngredientDetail->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UUWEquipmentProduct::ClickProductButton()
+{
+	// 버튼을 클릭하기 위해선 재료들을 모두 가지고 있을 것
+	if (DataArray.Num() <= CurIndex)
+		return;
+
+	FItemProductData* ProductData = DataArray[CurIndex];
+
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	TObjectPtr<UPlayerManager> Player = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	TObjectPtr<UInventory> Inventory = Player->GetInventory();
+	
+	// 비용 지불
+	Player->TrySubGold(ProductData->GoldCost);
+
+	for (const FIngredient& Ingredient : ProductData->Ingredients)
+	{
+		uint8 Idx = 0;
+		FItemData* IngredientData = DataManager->GetItemData(Ingredient.ID);
+
+		Inventory->TryFindItem(IngredientData->Type, Ingredient.ID, Idx);
+		Inventory->TrySubItem(IngredientData->Type, Idx, Ingredient.RequireAmount);
+	}
+
+	// 아이템 인스턴스 추가
+	Player->AddItem(ProductData->ItemID, 1);
+	UpdateDetail();
 }

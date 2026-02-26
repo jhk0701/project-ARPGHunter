@@ -33,6 +33,8 @@ void UUWInventory::NativeOnInitialized()
 		EItemType Type = static_cast<EItemType>(CheckBox->GetOption());
 		Category.Add(Type, CheckBox);
 	}
+
+	OptionalIndex = -1;
 }
 
 void UUWInventory::ShowUI(bool _bIsSubUI)
@@ -41,6 +43,7 @@ void UUWInventory::ShowUI(bool _bIsSubUI)
 
 	if (OptionalIndex < 0) // 일반 인벤토리 열기
 	{
+		ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 		CategoryContainer->SetVisibility(ESlateVisibility::Visible);
 		UpdateCategory(CurCategory, false); // 외부요인으로 변경된 카테고리일 수 있으므로 UI에 반영
 	}

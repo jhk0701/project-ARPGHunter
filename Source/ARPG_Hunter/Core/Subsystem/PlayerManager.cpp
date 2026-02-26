@@ -57,6 +57,18 @@ void UPlayerManager::AddGold(uint32 _amount)
 	Gold.OnValueChanged.Broadcast(Gold.Value);
 }
 
+bool UPlayerManager::TrySubGold(uint32 _amount)
+{
+	if(Gold.Value < _amount)
+		return false;
+
+	Gold.Value -= _amount;
+	Gold.OnValueChanged.Broadcast(Gold.Value);
+
+	return true;
+}
+
+
 uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
 	//아이템 추가
@@ -86,10 +98,12 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	Gold.Value = 3000;
+	Gold.Value = 5000;
 
-	AddItem(FName(TEXT("1001")), 10);
-	AddItem(FName(TEXT("1002")), 10);
+	AddItem(FName(TEXT("1001")), 50);
+	AddItem(FName(TEXT("1002")), 50);
+	AddItem(FName(TEXT("1003")), 50);
+	AddItem(FName(TEXT("1004")), 50);
 	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);
@@ -103,8 +117,6 @@ void UPlayerManager::ProvideBasicProperty()
 	
 	Index = AddItem(FName(TEXT("4001")), 1);
 	Equipment->Equip(EEquipmentType::WEAPON, Inventory->GetItem(EItemType::WEAPON, Index));
-	
-	AddItem(FName(TEXT("4002")), 1);
 
 	Index = AddItem(FName(TEXT("2001")), 3);
 	QuickSlot->Register(0, Inventory->GetItem(EItemType::CONSUMABLE, Index));
