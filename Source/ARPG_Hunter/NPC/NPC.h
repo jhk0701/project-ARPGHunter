@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -33,11 +33,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "NPC|UI")
 	TObjectPtr<UUWNPCDialog> DialogUI;
 
-	/// <summary>
 	/// NPC 상호작용으로 파생된 UI는 NPC가 소유
-	/// </summary>
 	UPROPERTY(VisibleAnywhere, Category = "NPC|UI")
 	TMap<UClass*, TObjectPtr<UUWPopUp>> MapUIInstance;
+
+	TObjectPtr<UUWPopUp> GetUI(UClass* _key) 
+	{ 
+		if (nullptr == _key)
+			return nullptr;
+
+		return MapUIInstance[_key]; 
+	};
 
 protected:
 	// Called when the game starts or when spawned

@@ -33,7 +33,7 @@ private:
 public:
 	FOnClickReturnButton OnClickReturnButton;
 
-	void ShowUI() override;
+	void ShowUI(bool _bIsSubUI = false) override;
 
 	void Update(bool _bIsClear, const struct FStageData* _stageData);
 

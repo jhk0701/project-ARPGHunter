@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWEquipmentProduct.h"
@@ -10,7 +10,7 @@ void UUWProductSlot::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	Button->OnClicked.AddDynamic(this, &UUWProductSlot::ClickSlot);
+	SlotButton->OnClicked.AddDynamic(this, &UUWProductSlot::ClickSlot);
 }
 
 void UUWProductSlot::Init(uint8 _idx)
@@ -27,4 +27,23 @@ void UUWProductSlot::SetSlot(const FText& _nameText, TObjectPtr<UTexture2D> _thu
 void UUWProductSlot::ClickSlot()
 {
 	OnProductSlotClicked.ExecuteIfBound(Index);
+}
+
+void UUWEquipmentProduct::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentProduct::HideUI);
+}
+
+void UUWEquipmentProduct::ShowUI(bool _bIsSubUI)
+{
+	Super::ShowUI(_bIsSubUI);
+
+	Init();
+}
+
+void UUWEquipmentProduct::Init()
+{
+
 }

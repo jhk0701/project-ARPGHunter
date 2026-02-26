@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/NonCombatHUD.h"
@@ -125,7 +125,8 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 				ItemToCompare = PlayerManager->GetEquipment()->GetEquipment(Type);
 			}
 
-			InventoryUI->ShowUI(_type, ItemToCompare, _opt);
+			InventoryUI->SetSelectOption(_type, ItemToCompare, _opt);
+			InventoryUI->ShowUI(true);
 		}
 	);
 
@@ -136,7 +137,8 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 
 			TWeakObjectPtr<UItem> ItemToCompare = PlayerManager->GetQuickSlot()->GetItem(_index);
-			InventoryUI->ShowUI(EItemType::CONSUMABLE, ItemToCompare, _index);
+			InventoryUI->SetSelectOption(EItemType::CONSUMABLE, ItemToCompare, _index);
+			InventoryUI->ShowUI(true);
 		}
 	);
 
@@ -192,32 +194,24 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 
 void ANonCombatHUD::ShowMaintenanceUI()
 {
-	if (nullptr == MaintenanceUI)
-		return;
-
-	MaintenanceUI->ShowUI();
+	if (MaintenanceUI)
+		MaintenanceUI->ShowUI();
 }
 
 void ANonCombatHUD::HideMaintenanceUI()
 {
-	if (nullptr == MaintenanceUI)
-		return;
-
-	MaintenanceUI->HideUI();
+	if (MaintenanceUI)
+		MaintenanceUI->HideUI();
 }
 
 void ANonCombatHUD::ShowInventoryUI()
 {
-	if (nullptr == InventoryUI)
-		return;
-
-	InventoryUI->ShowUI();
+	if (InventoryUI)
+		InventoryUI->ShowUI();
 }
 
 void ANonCombatHUD::HideInventoryUI()
 {
-	if (nullptr == InventoryUI)
-		return;
-
-	InventoryUI->HideUI();
+	if (InventoryUI)
+		InventoryUI->HideUI();
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,6 +9,7 @@
 class UButton;
 class UTextBlock;
 class UImage;
+class UVerticalBox;
 
 DECLARE_DELEGATE_OneParam(FOnProductSlotClicked, uint8)
 
@@ -20,7 +21,7 @@ private:
 	uint8 Index;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UButton> Button;
+	TObjectPtr<UButton> SlotButton;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> NameLabel;
 	UPROPERTY(meta = (BindWidget))
@@ -50,6 +51,20 @@ class ARPG_HUNTER_API UUWEquipmentProduct : public UUWPopUp
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWProductSlot> SlotClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWProductSlot>> SlotInst;
 
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UVerticalBox> ProductSlotContainer;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> CloseButton;
+
+protected:
+	void NativeOnInitialized() override;
+
+public:
+	void ShowUI(bool _bIsSubUI) override;
+	void Init();
 
 };

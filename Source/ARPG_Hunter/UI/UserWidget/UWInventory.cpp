@@ -35,48 +35,36 @@ void UUWInventory::NativeOnInitialized()
 	}
 }
 
-void UUWInventory::ShowUI()
+void UUWInventory::ShowUI(bool _bIsSubUI)
 {
-	Super::ShowUI();
+	Super::ShowUI(_bIsSubUI);
 
-	OptionalIndex = -1;
 	UpdateSlot();
-
-	CategoryContainer->SetVisibility(ESlateVisibility::Visible);
 	ShowSelectedItemDetail(false);
-	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+
+	if (OptionalIndex < 0) // 일반 인벤토리 열기
+		CategoryContainer->SetVisibility(ESlateVisibility::Visible);
+	else // 선택모드 활성화
+		CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWInventory::ShowUI(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx)
+void UUWInventory::SetSelectOption(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx)
 {
-	Super::ShowUI();
-
-	bIsSelectMode = true;
 	CurCategory = _itemType;
 	OptionalIndex = _optionalIdx;
-	UpdateSlot();
-
-	CategoryContainer->SetVisibility(ESlateVisibility::Hidden);
-	ShowSelectedItemDetail(false);
 
 	if (_item.IsValid())
 	{
 		ComparedItemDetail->SetDetail(_item);
 		ComparedItemDetail->SetVisibility(ESlateVisibility::Visible);
 	}
-	else
-		ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWInventory::HideUI()
 {
-	if (bIsSelectMode) 
-	{
-		RemoveFromParent();
-		bIsSelectMode = false;
-	}
-	else 
-		Super::HideUI();
+	Super::HideUI();
+	OptionalIndex = -1;
+	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc)
@@ -199,7 +187,7 @@ void UUWInventory::ClickEquipItem()
 	UpdateSlot();
 	OnSlotClicked(CurSelectedSlot);
 
-	if (bIsSelectMode)
+	if (IsSubUI())
 		HideUI();
 }
 
@@ -209,6 +197,6 @@ void UUWInventory::ClickUnequipItem()
 	UpdateSlot();
 	OnSlotClicked(CurSelectedSlot);
 
-	if (bIsSelectMode)
+	if (IsSubUI())
 		HideUI();
 }

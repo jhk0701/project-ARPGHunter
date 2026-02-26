@@ -5,8 +5,10 @@
 
 #include "Controller/PlayerCharacterController.h"
 
-void UUWPopUp::ShowUI()
+void UUWPopUp::ShowUI(bool _bIsSubUI)
 {
+	bIsSubUI = _bIsSubUI;
+
 	// TODO : 멀티 플레이 시, 주의
 	// 리슨 서버 Host 일때는 주의
 	if (TObjectPtr<APlayerCharacterController> PC = Cast<APlayerCharacterController>(GetWorld()->GetFirstPlayerController()))
@@ -17,8 +19,11 @@ void UUWPopUp::ShowUI()
 
 void UUWPopUp::HideUI()
 {
+	RemoveFromParent();
+
+	if (bIsSubUI)
+		return;
+
 	if (TObjectPtr<APlayerCharacterController> PC = Cast<APlayerCharacterController>(GetWorld()->GetFirstPlayerController()))
 		PC->UnLockCursor();
-
-	RemoveFromParent();
 }
