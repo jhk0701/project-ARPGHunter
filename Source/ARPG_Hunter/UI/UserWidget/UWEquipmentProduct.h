@@ -107,6 +107,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> GoldLabel;
 
+	bool bIngredientIsEnough;
+	bool bGoldIsEnough;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ProductButton;
+
 	void ClickProductSlot(uint8 _index);
 	void UpdateDetail();
 
@@ -116,5 +121,4 @@ protected:
 public:
 	void ShowUI(bool _bIsSubUI) override;
 	void Init();
-
 };

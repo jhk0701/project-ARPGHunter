@@ -121,9 +121,11 @@ void UUWEquipmentProduct::UpdateDetail()
 	if (ItemData == nullptr)
 		return;
 
+	// 아이템 정보 UI 갱신
 	ItemNameLabel->SetText(FText::FromString(ItemData->Item->Name));
 	ItemTypeLabel->SetText(EnumToText(ItemData->Type));
 
+	// 아이템 스펙 정보 기입
 	for (const TPair<ECharacterStatType, TObjectPtr<UUWStatInfo>>& Pair : MapStatInfo)
 		Pair.Value->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -134,6 +136,7 @@ void UUWEquipmentProduct::UpdateDetail()
 		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value);
 	}
 
+	// 제작 재료 UI 갱신
 	// 부족한 경우 보충
 	if (ProductData->Ingredients.Num() > IngredientSlotInst.Num())
 	{
@@ -141,6 +144,8 @@ void UUWEquipmentProduct::UpdateDetail()
 		IngredientSlotContainer->AddChild(Inst);
 		IngredientSlotInst.Add(Inst);
 	}
+
+	bIngredientIsEnough = true;
 
 	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 	uint8 i = 0;
@@ -166,6 +171,8 @@ void UUWEquipmentProduct::UpdateDetail()
 		);
 
 		IngredientSlotInst[i]->SetVisibility(ESlateVisibility::Visible);
+
+		bIngredientIsEnough = bIngredientIsEnough && Amount >= ProductData->Ingredients[i].RequireAmount;
 	}
 
 	for (; i < IngredientSlotInst.Num(); ++i)
@@ -173,6 +180,11 @@ void UUWEquipmentProduct::UpdateDetail()
 
 	FString StrGold = FString::Printf(TEXT("%d / %d"), PlayerManager->GetGold(), ProductData->GoldCost);
 	GoldLabel->SetText(FText::FromString(StrGold));
+	
+	bGoldIsEnough = PlayerManager->GetGold() >= ProductData->GoldCost;
+
+	// 제작 버튼 활성화
+	ProductButton->SetIsEnabled(bGoldIsEnough && bIngredientIsEnough);
 
 	IngredientDetail->SetVisibility(ESlateVisibility::Visible);
 }
