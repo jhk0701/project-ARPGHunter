@@ -39,10 +39,10 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 	ConsumableInfo->SetVisibility(ESlateVisibility::Collapsed);
 	EquipmentInfo->SetVisibility(ESlateVisibility::Collapsed);
 
+	TypeLabel->SetText(EnumToText(_item->GetType()));
+
 	if (_item->GetType() == EItemType::CONSUMABLE)
 	{
-		TypeLabel->SetText(FText::FromString(TEXT("소비품")));
-
 		TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Config);
 		AmountLabel->SetText(FText::AsNumber(ConsumableConfig->AllowCountOnCombat));
 
@@ -50,11 +50,6 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 	}
 	else if (_item->GetType() >= EItemType::EQUIPABLE)
 	{
-		if (_item->GetType() == EItemType::WEAPON) 
-			TypeLabel->SetText(FText::FromString(TEXT("무기")));
-		else 
-			TypeLabel->SetText(FText::FromString(TEXT("방어구")));
-
 		for (const TPair<ECharacterStatType, TObjectPtr<UUWStatInfo>>& Pair : MapStatInfo)
 			Pair.Value->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -67,6 +62,5 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 
 		EquipmentInfo->SetVisibility(ESlateVisibility::Visible);
 	}
-	else
-		TypeLabel->SetText(FText::FromString(TEXT("일반 재료")));
+
 }

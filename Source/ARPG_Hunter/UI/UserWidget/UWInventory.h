@@ -26,7 +26,6 @@ class ARPG_HUNTER_API UUWInventory : public UUWPopUp
 {
 	GENERATED_BODY()
 private:
-	bool bIsSelectMode{ false };
 	EItemType CurCategory;
 	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemArrFunc;
 	uint8 CurSelectedSlot;
@@ -72,9 +71,10 @@ protected:
 	void NativeOnInitialized() override;
 
 public:
-	virtual void ShowUI() override;
-	virtual void HideUI() override;
-	void ShowUI(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx);
+	void ShowUI(bool _bIsSubUI = false) override;
+	void SetSelectOption(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx);
+
+	void HideUI() override;
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }
@@ -86,9 +86,8 @@ public:
 	int8 GetOptionalIndex() const { return OptionalIndex; }
 
 	UFUNCTION()
-	void ClickCloseButton();
-	UFUNCTION()
 	void ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt);
+	void UpdateCategory(EItemType _category, bool _bUpdateSlot = true);
 
 	FOnItemOptionClicked OnThrowButtonClicked;
 	FOnItemOptionClicked OnEquipButtonClicked;

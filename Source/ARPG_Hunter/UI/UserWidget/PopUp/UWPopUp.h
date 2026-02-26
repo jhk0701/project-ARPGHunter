@@ -13,9 +13,18 @@ UCLASS(Abstract)
 class ARPG_HUNTER_API UUWPopUp : public UUserWidget
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	bool bIsSubUI{ false };
+
+protected:
+	bool IsSubUI() const { return bIsSubUI; }
+
 public:
 	UFUNCTION()
-	virtual void ShowUI();
+	virtual void ShowUI(bool _bIsSubUI = false);
+
 	UFUNCTION()
 	virtual void HideUI();
 };

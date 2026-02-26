@@ -69,20 +69,20 @@ void ACombatHUD::BeginPlay()
 	{
 		StageResultUI = CreateWidget<UUWStageResult>(GetWorld(), StageResultUIClass);
 
-		if (ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
+		if (TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
 			GameMode->OnGameEnd.AddUObject(this, &ACombatHUD::ShowResultUI);
 	}
 
 	if (DamageUIClass)
 	{
-		UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+		TObjectPtr<UObjectPoolManager> ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 		ObjectPool->Register(ADamageFont::StaticClass(), [this]() { return GetWorld()->SpawnActor(DamageUIClass); }, 10);
 	}
 }
 
 void ACombatHUD::ShowResultUI(bool _bOnCleared, const FStageData* _stageData)
 {
-	UUWStageResult* ResultUI = Cast<UUWStageResult>(StageResultUI);
+	TObjectPtr<UUWStageResult> ResultUI = Cast<UUWStageResult>(StageResultUI);
 
 	ResultUI->Update(_bOnCleared, _stageData);
 	ResultUI->OnClickReturnButton.BindLambda(

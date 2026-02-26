@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "NPC/NPC.h"
@@ -42,7 +42,11 @@ void ANPC::BeginPlay()
 	MeshComp->SetAnimInstanceClass(Config->AnimInstClass);
 
 	if (DialogUIClass)
+	{
 		DialogUI = CreateWidget<UUWNPCDialog>(GetWorld(), DialogUIClass);
+		DialogUI->GetUIFunc.BindUObject(this, &ANPC::GetUI);
+		DialogUI->Init(Config->DialogOptions);
+	}
 	
 	for (const FNPCDialogOption& Dialog : Config->DialogOptions)
 	{
@@ -50,7 +54,7 @@ void ANPC::BeginPlay()
 			continue;
 
 		TObjectPtr<UUWPopUp> UIInstance = CreateWidget<UUWPopUp>(GetWorld(), Dialog.UIClass);
-		MapUIInstance.Add(Dialog.UIClass->StaticClass(), UIInstance);
+		MapUIInstance.Add(Dialog.UIClass, UIInstance);
 	}
 }
 
@@ -60,7 +64,6 @@ void ANPC::Interact()
 		return;
 
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-
-	DialogUI->Init(DataManager->GetDialogData(Config->FirstDialogID), Config->DialogOptions);
+	DialogUI->SetDialog(DataManager->GetDialogData(Config->FirstDialogID));
 	DialogUI->ShowUI();
 }

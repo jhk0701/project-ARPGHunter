@@ -15,9 +15,9 @@ void UUWStageResult::NativeOnInitialized()
 	ReturnButton->OnClicked.AddDynamic(this, &UUWStageResult::ClickReturnButton);
 }
 
-void UUWStageResult::ShowUI()
+void UUWStageResult::ShowUI(bool _bIsSubUI)
 {
-	Super::ShowUI();
+	Super::ShowUI(_bIsSubUI);
 
 	if (OpenAnim)
 		PlayAnimation(OpenAnim);

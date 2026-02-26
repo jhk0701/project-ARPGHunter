@@ -13,6 +13,8 @@ enum class EItemType : uint8
 	
 	END					UMETA(Hidden)
 };
+FString EnumToString(EItemType _type);
+FText EnumToText(EItemType _type);
 
 UENUM(BlueprintType)
 enum class EWeaponType : uint8

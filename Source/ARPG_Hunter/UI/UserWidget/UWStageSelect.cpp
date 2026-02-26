@@ -72,9 +72,9 @@ void UUWStageSelect::NativeOnInitialized()
 	Clear();
 }
 
-void UUWStageSelect::ShowUI()
+void UUWStageSelect::ShowUI(bool _bIsSubUI)
 {
-	Super::ShowUI();
+	Super::ShowUI(_bIsSubUI);
 
 	CurRegionID = FName(TEXT("1"));
 	CurStageID = NAME_None;
