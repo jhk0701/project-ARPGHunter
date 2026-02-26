@@ -111,12 +111,23 @@ private:
 	bool bGoldIsEnough;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ProductButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UBorder> ProductResult;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> ProductItemThumbnail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ProductItemLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> CompleteButton;
 
 	void ClickProductSlot(uint8 _index);
 	void UpdateDetail();
 
 	UFUNCTION()
 	void ClickProductButton();
+	UFUNCTION()
+	void ClickCompleteButton();
 
 protected:
 	void NativeOnInitialized() override;

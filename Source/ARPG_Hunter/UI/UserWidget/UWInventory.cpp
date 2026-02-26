@@ -52,7 +52,6 @@ void UUWInventory::ShowUI(bool _bIsSubUI)
 
 	UpdateSlot();
 	ShowSelectedItemDetail(false);
-
 }
 
 void UUWInventory::SetSelectOption(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx)

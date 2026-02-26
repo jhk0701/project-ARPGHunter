@@ -52,6 +52,7 @@ void UUWEquipmentProduct::NativeOnInitialized()
 
 	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentProduct::HideUI);
 	ProductButton->OnClicked.AddDynamic(this, &UUWEquipmentProduct::ClickProductButton);
+	CompleteButton->OnClicked.AddDynamic(this, &UUWEquipmentProduct::ClickCompleteButton);
 
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	DataManager->GetAllItemProduct(DataArray);
@@ -108,6 +109,7 @@ void UUWEquipmentProduct::Init()
 {
 	CurIndex = 0;
 	IngredientDetail->SetVisibility(ESlateVisibility::Hidden);
+	ProductResult->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWEquipmentProduct::ClickProductSlot(uint8 _index)
@@ -220,4 +222,14 @@ void UUWEquipmentProduct::ClickProductButton()
 	// 아이템 인스턴스 추가
 	Player->AddItem(ProductData->ItemID, 1);
 	UpdateDetail();
+
+	FItemData* ItemData = DataManager->GetItemData(ProductData->ItemID);
+	ProductItemThumbnail->SetBrushFromTexture(ItemData->Item->Thumbnail);
+	ProductItemLabel->SetText(FText::FromString(ItemData->Item->Name));
+	ProductResult->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UUWEquipmentProduct::ClickCompleteButton()
+{
+	ProductResult->SetVisibility(ESlateVisibility::Hidden);
 }
