@@ -83,7 +83,8 @@ void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TO
 	for (int i = 0; i < _initSize; ++i)
 	{
 		ItemSlots[i] = CreateWidget<UUWItemSlot>(this, ItemSlotClass);
-		ItemSlots[i]->Init(i, SlotSize);
+		ItemSlots[i]->Init(i);
+		ItemSlots[i]->SetSize(SlotSize);
 		ItemSlots[i]->OnSlotClicked.BindUObject(this, &UUWInventory::OnSlotClicked);
 
 		SlotContainer->AddChild(ItemSlots[i]);

@@ -15,12 +15,6 @@ void UUWItemSlotBase::Init(uint8 _idx)
 	Index = _idx;
 }
 
-void UUWItemSlotBase::Init(uint8 _idx, const FVector2D& _size)
-{
-	Index = _idx;
-	SetSize(_size);
-}
-
 void UUWItemSlotBase::SetSize(const FVector2D& _size)
 {
 	Frame->SetWidthOverride(_size.X);
