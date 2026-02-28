@@ -36,11 +36,11 @@ void UUWEquipmentProduct::NativeOnInitialized()
 		for (uint8 i = 0; i < DataArray.Num(); ++i)
 		{
 			FItemData* ItemData = DataManager->GetItemData(DataArray[i]->ItemID);
-			TObjectPtr<UUWProductSlot> SlotInst = CreateWidget<UUWProductSlot>(GetWorld(), ProductSlotClass);
+			TObjectPtr<UUWListElementSlot> SlotInst = CreateWidget<UUWListElementSlot>(GetWorld(), ProductSlotClass);
 
 			SlotInst->SetIndex(i);
 			SlotInst->SetSlot(ItemData);
-			SlotInst->OnProductSlotClicked.BindUObject(this, &UUWEquipmentProduct::ClickProductSlot);
+			SlotInst->OnSlotClicked.BindUObject(this, &UUWEquipmentProduct::ClickProductSlot);
 
 			ProductSlotInst[i] = SlotInst;
 			ProductSlotContainer->AddChild(SlotInst);

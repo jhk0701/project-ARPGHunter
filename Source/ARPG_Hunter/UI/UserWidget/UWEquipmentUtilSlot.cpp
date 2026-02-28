@@ -14,22 +14,22 @@ void UUWEquipmentUtilSlot::SetSlot(const FItemData* _itemData, const TArray<FTex
 	NameLabel->SetText(FText::FromString(_itemData->Item->Name));
 }
 
-void UUWProductSlot::NativeOnInitialized()
+void UUWListElementSlot::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	SlotButton->OnClicked.AddDynamic(this, &UUWProductSlot::ClickSlot);
+	SlotButton->OnClicked.AddDynamic(this, &UUWListElementSlot::ClickSlot);
 }
 
-void UUWProductSlot::ClickSlot()
+void UUWListElementSlot::ClickSlot()
 {
-	OnProductSlotClicked.ExecuteIfBound(Index);
+	OnSlotClicked.ExecuteIfBound(Index);
 }
 
 void UUWIngredientSlot::SetSlot(const FItemData* _itemData, const TArray<FText>* _addictiveText)
 {
 	Super::SetSlot(_itemData, _addictiveText);
 
-	if (_addictiveText)
+	if (_addictiveText && (*_addictiveText).Num() > 0)
 		AmountLabel->SetText((*_addictiveText)[0]);
 }

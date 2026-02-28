@@ -9,7 +9,7 @@ class UImage;
 class UTextBlock;
 struct FItemData;
 
-DECLARE_DELEGATE_OneParam(FOnProductSlotClicked, uint8)
+DECLARE_DELEGATE_OneParam(FOnIndexedSlotClicked, uint8);
 
 UCLASS()
 class ARPG_HUNTER_API UUWEquipmentUtilSlot : public UUserWidget
@@ -27,7 +27,7 @@ public:
 };
 
 UCLASS()
-class ARPG_HUNTER_API UUWProductSlot : public UUWEquipmentUtilSlot
+class ARPG_HUNTER_API UUWListElementSlot : public UUWEquipmentUtilSlot
 {
 	GENERATED_BODY()
 private:
@@ -40,7 +40,7 @@ protected:
 	void NativeOnInitialized() override;
 
 public:
-	FOnProductSlotClicked OnProductSlotClicked;
+	FOnIndexedSlotClicked OnSlotClicked;
 
 	void SetIndex(uint8 _idx) { Index = _idx; }
 

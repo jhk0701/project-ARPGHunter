@@ -12,7 +12,7 @@ class UImage;
 class UBorder;
 class UVerticalBox;
 
-class UUWProductSlot;
+class UUWListElementSlot;
 class UUWIngredientSlot;
 
 enum class ECharacterStatType : uint8;
@@ -31,9 +31,9 @@ private:
 	TArray<struct FItemProductData*> DataArray;
 	
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUWProductSlot> ProductSlotClass;
+	TSubclassOf<UUWListElementSlot> ProductSlotClass;
 	UPROPERTY()
-	TArray<TObjectPtr<UUWProductSlot>> ProductSlotInst;
+	TArray<TObjectPtr<UUWListElementSlot>> ProductSlotInst;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UVerticalBox> ProductSlotContainer;
 	

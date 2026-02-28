@@ -6,6 +6,10 @@
 #include "UI/UserWidget/PopUp/UWPopUp.h"
 #include "UWEquipmentUpgrade.generated.h"
 
+class UUWProductSlot;
+class UUWIngredientSlot;
+class UUWStatChangeCompare;
+
 /**
  * 
  */
@@ -15,5 +19,8 @@ class ARPG_HUNTER_API UUWEquipmentUpgrade : public UUWPopUp
 	GENERATED_BODY()
 	
 private:
+	TSubclassOf<UUWProductSlot> ListSlotClass;
+
+public:
 
 };

@@ -74,7 +74,10 @@ void UUWMaintenance::NativeOnInitialized()
 void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 {
 	for (const TPair<ECharacterStatType, uint32>& Pair : _param.PlayerStat)
-		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _param.EquipmentStat[Pair.Key]);
+	{
+		FString Fmt = FString::Printf(TEXT("%d + (%d) = %d"), Pair.Value, _param.EquipmentStat[Pair.Key], Pair.Value + _param.EquipmentStat[Pair.Key]);
+		MapStatInfo[Pair.Key]->SetStatValue(FText::FromString(Fmt));
+	}
 
 	for (const TPair<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Pair : _param.Equipment)
 		MapEquipmentSlot[Pair.Key]->SetSlot(Pair.Value);
@@ -86,7 +89,10 @@ void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
 {
 	for (const TPair<ECharacterStatType, uint32>& Pair : _playerStat)
-		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _equipmentStat[Pair.Key]);
+	{
+		FString Fmt = FString::Printf(TEXT("%d + (%d) = %d"), Pair.Value, _equipmentStat[Pair.Key], Pair.Value + _equipmentStat[Pair.Key]);
+		MapStatInfo[Pair.Key]->SetStatValue(FText::FromString(Fmt));
+	}
 }
 
 void UUWMaintenance::SetEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment)

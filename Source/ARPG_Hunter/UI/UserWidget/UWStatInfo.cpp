@@ -13,11 +13,15 @@ void UUWStatInfo::SetStatName(ECharacterStatType _type)
 
 void UUWStatInfo::SetStatValue(uint32 _value)
 {
-	ValueLabel->SetText(FText::FromString(FString::FromInt(_value)));
+	ValueLabel->SetText(FText::AsNumber(_value));
 }
 
-void UUWStatInfo::SetStatValue(uint32 _baseValue, uint32 _equipmentValue)
+void UUWStatInfo::SetStatValue(const FText& _text)
 {
-	FString str = FString::Printf(TEXT("%d + (%d) = %d"), _baseValue, _equipmentValue, (_baseValue + _equipmentValue));
-	ValueLabel->SetText(FText::FromString(str));
+	ValueLabel->SetText(_text);
+}
+
+void UUWStatChangeCompare::SetBeforeStatValue(uint32 _value)
+{
+	BeforeValueLabel->SetText(FText::AsNumber(_value));
 }
