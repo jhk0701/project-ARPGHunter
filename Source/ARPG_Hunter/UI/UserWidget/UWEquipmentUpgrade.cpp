@@ -3,6 +3,7 @@
 
 #include "UI/UserWidget/UWEquipmentUpgrade.h"
 #include "Components/ScrollBox.h"
+#include "Components/HorizontalBox.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
 
@@ -11,7 +12,9 @@
 #include "Player/Inventory.h"
 #include "Item/Item.h"
 
+#include "UI/ContentWidget/UWCheckBox.h"
 #include "UI/UserWidget/UWEquipmentUtilSlot.h"
+
 
 void UUWEquipmentUpgrade::NativeOnInitialized()
 {
@@ -31,6 +34,12 @@ void UUWEquipmentUpgrade::NativeOnInitialized()
 			EquipmentSlotContainer->AddChild(SlotInst);
 			SlotInst->SetVisibility(ESlateVisibility::Collapsed);
 		}
+	}
+
+	Category.SetNum(CategoryContainer->GetChildrenCount());
+	for (uint8 i = 0; i < CategoryContainer->GetChildrenCount(); ++i)
+	{
+		Category[i] = Cast<UUWCheckBox>(CategoryContainer->GetChildAt(i));
 	}
 }
 

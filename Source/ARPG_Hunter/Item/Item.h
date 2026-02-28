@@ -30,6 +30,7 @@ public:
 	void SetAmount(uint16 _amount) { Amount = _amount; }
 	void SetInventoryIndex(uint8 _index) { InventoryIndex = _index; }
 
+	virtual void GetItemName(FString& _outNameStr) const;
 	const FName& GetID() const { return ID; }
 	EItemType GetType() const { return Type; }
 	uint16 GetAmount() const { return Amount; }
@@ -59,10 +60,20 @@ class ARPG_HUNTER_API UEquipmentItem : public UItem
 private:
 	// 장착 시, 0 이상 값. EEquipmentType 의 값이 들어올 것
 	int32 EquipmentIndex{ -1 }; 
+	
+	// 강화 및 인챈트 데이터
 
-	// TODO: 강화 및 인챈트 데이터
+	// 강화 수치
+	uint8 Grade{ 0 };
+
+	// TODO: 인챈트 데이터
 public:
-	void Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config) override;
+	virtual void Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config) override;
+	virtual void GetItemName(FString& _outNameStr) const override;
+	
 	void SetEquipmentIndex(int32 _idx) { EquipmentIndex = _idx; }
 	int32 GetEquipmentIndex() const { return EquipmentIndex; }
+
+	uint8 Upgrade() { return ++Grade; }
+	uint8 GetGrade() const { return Grade; }
 };

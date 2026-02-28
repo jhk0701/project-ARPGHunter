@@ -9,6 +9,8 @@
 class UBorder;
 class UButton;
 class UScrollBox;
+class UHorizontalBox;
+class UUWCheckBox;
 
 class UUWListElementSlot;
 class UUWIngredientSlot;
@@ -34,6 +36,11 @@ private:
 	TArray<TObjectPtr<UUWListElementSlot>> EquipmentSlotInst;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UScrollBox> EquipmentSlotContainer;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UHorizontalBox> CategoryContainer;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWCheckBox>> Category;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Result;

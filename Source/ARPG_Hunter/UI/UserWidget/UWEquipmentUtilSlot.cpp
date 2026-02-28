@@ -14,9 +14,11 @@ void UUWEquipmentUtilSlot::SetSlot(const TWeakObjectPtr<UItem> _item, const TArr
 	if (_item.IsValid() == false)
 		return;
 
-	TObjectPtr<UItemConfig> Config = _item->GetConfig();
-	Thumbnail->SetBrushFromSoftTexture(Config->Thumbnail);
-	NameLabel->SetText(FText::FromString(Config->Name));
+	Thumbnail->SetBrushFromSoftTexture(_item->GetConfig()->Thumbnail);
+	
+	FString ItemName;
+	_item->GetItemName(ItemName);
+	NameLabel->SetText(FText::FromString(ItemName));
 }
 
 void UUWEquipmentUtilSlot::SetSlot(const FItemData* _itemData, const TArray<FText>* _addictiveText)

@@ -32,8 +32,11 @@ void UUWItemDetail::NativeOnInitialized()
 
 void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 {
+	FString ItemName;
+	_item->GetItemName(ItemName);
+
 	TObjectPtr<UItemConfig> Config = _item->GetConfig();
-	NameLabel->SetText(FText::FromString(Config->Name));
+	NameLabel->SetText(FText::FromString(ItemName));
 	DescLabel->SetText(FText::FromString(Config->Desc));
 
 	ConsumableInfo->SetVisibility(ESlateVisibility::Collapsed);

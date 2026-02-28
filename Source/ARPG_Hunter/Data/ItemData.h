@@ -50,6 +50,9 @@ class ARPG_HUNTER_API UEquipmentItemConfig : public UItemConfig
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
+	uint8 Rank;
+
+	UPROPERTY(EditAnywhere)
 	EEquipmentType Type;
 	UPROPERTY(EditAnywhere)
 	TMap<ECharacterStatType, uint16> Stat;
