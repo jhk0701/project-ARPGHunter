@@ -35,12 +35,6 @@ void UUWEquipmentUpgrade::NativeOnInitialized()
 			SlotInst->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
-
-	Category.SetNum(CategoryContainer->GetChildrenCount());
-	for (uint8 i = 0; i < CategoryContainer->GetChildrenCount(); ++i)
-	{
-		Category[i] = Cast<UUWCheckBox>(CategoryContainer->GetChildAt(i));
-	}
 }
 
 void UUWEquipmentUpgrade::ShowUI(bool _bIsSubUI)
@@ -52,7 +46,6 @@ void UUWEquipmentUpgrade::ShowUI(bool _bIsSubUI)
 void UUWEquipmentUpgrade::Init()
 {
 	// 플레이어 장비 출력
-	// TODO: 많은 장비를 보유했을때, 무한 스크롤이 필요
 	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 	
 	uint8 SlotIdx = 0;
