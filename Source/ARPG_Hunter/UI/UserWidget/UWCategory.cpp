@@ -13,7 +13,7 @@ void UUWCategoryElement::NativeOnInitialized()
 	CheckBox->OnCheckStateChanged.AddDynamic(this, &UUWCategoryElement::OnStateChanged);
 }
 
-void UUWCategoryElement::Init(uint32 _index, const FText& _text)
+void UUWCategoryElement::Init(uint8 _index, const FText& _text)
 {
 	Index = _index;
 	Label->SetText(_text);
@@ -59,7 +59,7 @@ void UUWCategory::NativeOnInitialized()
 	OnElementSelected(CategoryOptions[0].Value);
 }
 
-void UUWCategory::OnElementSelected(uint32 _value)
+void UUWCategory::OnElementSelected(uint8 _value)
 {
 	CurSelectedOption = _value;
 

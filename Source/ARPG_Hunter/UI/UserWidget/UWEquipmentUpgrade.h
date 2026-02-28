@@ -8,13 +8,16 @@
 
 class UBorder;
 class UButton;
+class UImage;
+class UTextBlock;
 class UScrollBox;
 class UHorizontalBox;
-class UUWCheckBox;
 
 class UUWListElementSlot;
 class UUWIngredientSlot;
 class UUWStatChangeCompare;
+
+enum class EItemType : uint8;
 
 /**
  * 
@@ -25,11 +28,15 @@ class ARPG_HUNTER_API UUWEquipmentUpgrade : public UUWPopUp
 	GENERATED_BODY()
 	
 private:
+	TWeakObjectPtr<class UInventory> Inventory;
+
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
 
-	UPROPERTY(EditAnywhere)
-	uint8 EquipmentSlotInitCount{ 100 };
+	EItemType CurItemType;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUWCategory> ItemCategory;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWListElementSlot> EquipmentSlotClass;
 	UPROPERTY()
@@ -38,7 +45,19 @@ private:
 	TObjectPtr<UScrollBox> EquipmentSlotContainer;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> ItemThumbnail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemNameLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> CurGradeLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> NextGradeLabel;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Result;
+
+	void SelectCategory(uint8 _option);
+	void SelectSlot(uint8 _index);
 
 protected:
 	virtual void NativeOnInitialized() override;

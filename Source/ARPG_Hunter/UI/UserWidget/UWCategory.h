@@ -7,8 +7,8 @@
 #include "UWCategory.generated.h"
 
 
-DECLARE_DELEGATE_OneParam(FOnOptionSelected, uint32);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnCategorySelected, uint32);
+DECLARE_DELEGATE_OneParam(FOnOptionSelected, uint8);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCategorySelected, uint8);
 
 UCLASS()
 class ARPG_HUNTER_API UUWCategoryElement : public UUserWidget 
@@ -16,7 +16,7 @@ class ARPG_HUNTER_API UUWCategoryElement : public UUserWidget
 	GENERATED_BODY()
 
 private:
-	uint32 Index;
+	uint8 Index;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<class UCheckBox> CheckBox;
@@ -31,7 +31,7 @@ protected:
 
 public:
 	FOnOptionSelected OnSelected;
-	void Init(uint32 _index, const FText& _text);
+	void Init(uint8 _index, const FText& _text);
 	
 	void SetSelectedManually(bool _bIsOn);
 };
@@ -53,7 +53,7 @@ class ARPG_HUNTER_API UUWCategory : public UUserWidget
 	GENERATED_BODY()
 
 private:
-	uint32 CurSelectedOption;
+	uint8 CurSelectedOption;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FCategoryOption> CategoryOptions;
@@ -66,12 +66,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UPanelWidget> Container;
 
-	void OnElementSelected(uint32 _value);
+	void OnElementSelected(uint8 _value);
 
 protected:
 	virtual void NativeOnInitialized() override;
 
 public:
 	FOnCategorySelected OnSelected;
-	uint32 GetSelectedOption() const { return CurSelectedOption; }
+	uint8 GetSelectedOption() const { return CurSelectedOption; }
 };

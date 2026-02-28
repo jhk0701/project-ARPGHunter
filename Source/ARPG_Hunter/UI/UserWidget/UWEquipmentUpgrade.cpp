@@ -1,18 +1,20 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/UserWidget/UWEquipmentUpgrade.h"
 #include "Components/ScrollBox.h"
 #include "Components/HorizontalBox.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 
 #include "Define/Enum.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Player/Inventory.h"
 #include "Item/Item.h"
+#include "Data/ItemData.h"
 
-#include "UI/ContentWidget/UWCheckBox.h"
+#include "UI/UserWidget/UWCategory.h"
 #include "UI/UserWidget/UWEquipmentUtilSlot.h"
 
 
@@ -20,19 +22,25 @@ void UUWEquipmentUpgrade::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::HideUI);
+	Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 
+	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::HideUI);
+	ItemCategory->OnSelected.AddUObject(this, &UUWEquipmentUpgrade::SelectCategory);
+	
 	if (EquipmentSlotClass) 
 	{
-		EquipmentSlotInst.SetNum(EquipmentSlotInitCount);
-		for (uint8 i = 0; i < EquipmentSlotInitCount; ++i)
+		uint8 Size = Inventory->GetContainerSize();
+		
+		EquipmentSlotInst.SetNum(Size);
+		for (uint8 i = 0; i < Size; ++i)
 		{
 			TObjectPtr<UUWListElementSlot> SlotInst = CreateWidget<UUWListElementSlot>(GetWorld(), EquipmentSlotClass);
-			
 			SlotInst->SetIndex(i);
+			SlotInst->OnSlotClicked.BindUObject(this, &UUWEquipmentUpgrade::SelectSlot);
+			SlotInst->SetVisibility(ESlateVisibility::Collapsed);
+
 			EquipmentSlotInst[i] = SlotInst;
 			EquipmentSlotContainer->AddChild(SlotInst);
-			SlotInst->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 }
@@ -46,30 +54,45 @@ void UUWEquipmentUpgrade::ShowUI(bool _bIsSubUI)
 void UUWEquipmentUpgrade::Init()
 {
 	// 플레이어 장비 출력
-	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
-	
-	uint8 SlotIdx = 0;
-	const TArray<TObjectPtr<UItem>>& Weapons = Inventory->GetContainer(EItemType::WEAPON);
-	for (uint8 i = 0; i < Weapons.Num(); ++i)
-	{
-		if (Weapons[i])
-		{
-			EquipmentSlotInst[SlotIdx]->SetSlot(Weapons[i]);
-			EquipmentSlotInst[SlotIdx]->SetVisibility(ESlateVisibility::Visible);
-			SlotIdx++;
-		}
-	}
-	
-	const TArray<TObjectPtr<UItem>>& Armors = Inventory->GetContainer(EItemType::ARMOR);
-	for (uint8 i = 0; i < Armors.Num(); ++i)
-	{
-		if (Armors[i])
-		{
-			EquipmentSlotInst[SlotIdx]->SetSlot(Armors[i]);
-			EquipmentSlotInst[SlotIdx]->SetVisibility(ESlateVisibility::Visible);
-			SlotIdx++;
-		}
-	}
+	SelectCategory(static_cast<uint32>(EItemType::WEAPON));
 
 	Result->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UUWEquipmentUpgrade::SelectCategory(uint8 _option)
+{
+	if (Inventory.IsValid() == false)
+		return;
+
+	CurItemType = static_cast<EItemType>(_option);
+
+	const TArray<TObjectPtr<UItem>>& Items = Inventory->GetContainer(CurItemType);
+
+	for (uint8 i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i])
+		{
+			EquipmentSlotInst[i]->SetSlot(Items[i]);
+			EquipmentSlotInst[i]->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+			EquipmentSlotInst[i]->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
+{
+	if (Inventory.IsValid() == false)
+		return;
+
+	const TArray<TObjectPtr<UItem>>& Items = Inventory->GetContainer(CurItemType);
+	TObjectPtr<UItemConfig> Config = Items[_index]->GetConfig();
+	ItemThumbnail->SetBrushFromTexture(Config->Thumbnail);
+	ItemNameLabel->SetText(FText::FromString(Config->Name));
+
+	TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Items[_index]);
+
+	// TODO : 최대 업그레이드인지 확인
+	CurGradeLabel->SetText(FText::FromString(FString::Printf(TEXT("+%d"), Equipment->GetGrade())));
+	NextGradeLabel->SetText(FText::FromString(FString::Printf(TEXT("+%d"), Equipment->GetGrade() + 1)));
 }
