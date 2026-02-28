@@ -16,35 +16,8 @@
 #include "Data/ItemData.h"
 #include "Data/ItemProductData.h"
 #include "UI/UserWidget/UWStatInfo.h"
+#include "UI/UserWidget/UWEquipmentUtilSlot.h"
 
-#pragma region Sub Slot
-
-void UUWProductSlot::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-	SlotButton->OnClicked.AddDynamic(this, &UUWProductSlot::ClickSlot);
-}
-
-void UUWProductSlot::SetSlot(const FText& _nameText, TObjectPtr<UTexture2D> _thumbnail)
-{
-	NameLabel->SetText(_nameText);
-	Thumbnail->SetBrushFromTexture(_thumbnail);
-}
-
-void UUWProductSlot::ClickSlot()
-{
-	OnProductSlotClicked.ExecuteIfBound(Index);
-}
-
-void UUWIngredientSlot::SetSlot(const FText& _nameText, const FText& _amountText, TObjectPtr<UTexture2D> _thumbnail)
-{
-	NameLabel->SetText(_nameText);
-	AmountLabel->SetText(_amountText);
-	Thumbnail->SetBrushFromTexture(_thumbnail);
-}
-
-#pragma endregion
 
 void UUWEquipmentProduct::NativeOnInitialized()
 {
@@ -66,7 +39,7 @@ void UUWEquipmentProduct::NativeOnInitialized()
 			TObjectPtr<UUWProductSlot> SlotInst = CreateWidget<UUWProductSlot>(GetWorld(), ProductSlotClass);
 
 			SlotInst->SetIndex(i);
-			SlotInst->SetSlot(FText::FromString(ItemData->Item->Name), ItemData->Item->Thumbnail);
+			SlotInst->SetSlot(ItemData);
 			SlotInst->OnProductSlotClicked.BindUObject(this, &UUWEquipmentProduct::ClickProductSlot);
 
 			ProductSlotInst[i] = SlotInst;
@@ -170,11 +143,8 @@ void UUWEquipmentProduct::UpdateDetail()
 			Amount = Inventory->GetItem(IngredientData->Type, Idx)->GetAmount();
 
 		FString StrAmount = FString::Printf(TEXT("%d / %d"), Amount, ProductData->Ingredients[i].RequireAmount);
-		IngredientSlotInst[i]->SetSlot(
-			FText::FromString(IngredientData->Item->Name), 
-			FText::FromString(StrAmount),
-			IngredientData->Item->Thumbnail
-		);
+		TArray<FText> AddictiveText = {FText::FromString(StrAmount)};
+		IngredientSlotInst[i]->SetSlot(IngredientData, &AddictiveText);
 
 		IngredientSlotInst[i]->SetVisibility(ESlateVisibility::Visible);
 

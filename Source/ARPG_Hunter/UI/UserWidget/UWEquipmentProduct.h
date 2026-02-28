@@ -9,61 +9,16 @@
 class UButton;
 class UTextBlock;
 class UImage;
-class UVerticalBox;
 class UBorder;
+class UVerticalBox;
+
+class UUWProductSlot;
+class UUWIngredientSlot;
 
 enum class ECharacterStatType : uint8;
 enum class EItemType : uint8;
 
-DECLARE_DELEGATE_OneParam(FOnProductSlotClicked, uint8)
 
-UCLASS()
-class ARPG_HUNTER_API UUWProductSlot : public UUserWidget
-{
-	GENERATED_BODY()
-private:
-	uint8 Index;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UButton> SlotButton;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> NameLabel;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> Thumbnail;
-
-protected:
-	void NativeOnInitialized() override;
-
-public:
-	FOnProductSlotClicked OnProductSlotClicked;
-
-	void SetIndex(uint8 _idx) { Index = _idx; }
-	void SetSlot(const FText& _nameText, TObjectPtr<UTexture2D> _thumbnail);
-
-	UFUNCTION()
-	void ClickSlot();
-};
-
-
-UCLASS()
-class ARPG_HUNTER_API UUWIngredientSlot : public UUserWidget
-{
-	GENERATED_BODY()
-private:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> NameLabel;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> AmountLabel;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> Thumbnail;
-
-public:
-	void SetSlot(const FText& _nameText, const FText& _amountText, TObjectPtr<UTexture2D> _thumbnail);
-};
-
-/**
- * 
- */
 UCLASS()
 class ARPG_HUNTER_API UUWEquipmentProduct : public UUWPopUp
 {

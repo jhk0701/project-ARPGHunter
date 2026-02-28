@@ -4,7 +4,7 @@
 #include "UI/UserWidget/UWQuickSlot.h"
 #include "Components/HorizontalBox.h"
 
-#include "UI/UserWidget/UWItemSlotIndicate.h"
+#include "UI/UserWidget/UWItemSlot.h"
 #include "Item/Item.h"
 
 void UUWQuickSlot::NativeOnInitialized()
@@ -25,10 +25,10 @@ void UUWQuickSlot::NativeOnInitialized()
 void UUWQuickSlot::Init(const TArray<TWeakObjectPtr<UConsumableItem>>& _container)
 {
 	for (uint8 i = 0; i < _container.Num(); ++i)
-		QuickSlots[i]->SetItem(_container[i]);
+		QuickSlots[i]->SetSlot(_container[i]);
 }
 
 void UUWQuickSlot::SetQuickSlot(uint8 _index, TWeakObjectPtr<UConsumableItem> _item)
 {
-	QuickSlots[_index]->SetItem(_item);
+	QuickSlots[_index]->SetSlot(_item);
 }

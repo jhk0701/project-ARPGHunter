@@ -77,10 +77,10 @@ void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 		MapStatInfo[Pair.Key]->SetStatValue(Pair.Value, _param.EquipmentStat[Pair.Key]);
 
 	for (const TPair<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Pair : _param.Equipment)
-		MapEquipmentSlot[Pair.Key]->SetItem(Pair.Value);
+		MapEquipmentSlot[Pair.Key]->SetSlot(Pair.Value);
 
 	for (uint8 i = 0; i < _param.QuickSlot.Num(); ++i)
-		ArrQuickSlot[i]->SetItem(_param.QuickSlot[i]);
+		ArrQuickSlot[i]->SetSlot(_param.QuickSlot[i]);
 }
 
 void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
@@ -91,12 +91,12 @@ void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _player
 
 void UUWMaintenance::SetEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment)
 {
-	MapEquipmentSlot[_type]->SetItem(_equipment);
+	MapEquipmentSlot[_type]->SetSlot(_equipment);
 }
 
 void UUWMaintenance::SetQuickSlot(uint8 _index, TWeakObjectPtr<UConsumableItem> _consumable)
 {
-	ArrQuickSlot[_index]->SetItem(_consumable);
+	ArrQuickSlot[_index]->SetSlot(_consumable);
 }
 
 void UUWMaintenance::ClickCloseButton()

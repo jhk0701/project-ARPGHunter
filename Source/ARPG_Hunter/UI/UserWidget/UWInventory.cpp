@@ -95,7 +95,7 @@ void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TO
 
 void UUWInventory::SetSlot(uint8 _idx, TWeakObjectPtr<UItem> _item)
 {
-	ItemSlots[_idx]->SetItem(_item);
+	ItemSlots[_idx]->SetSlot(_item);
 	ItemSlots[_idx]->MarkSelected(false);
 }
 
