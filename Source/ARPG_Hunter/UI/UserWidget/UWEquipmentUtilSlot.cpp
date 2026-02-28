@@ -7,6 +7,17 @@
 #include "Components/Button.h"
 
 #include "Data/ItemData.h"
+#include "Item/Item.h"
+
+void UUWEquipmentUtilSlot::SetSlot(const TWeakObjectPtr<UItem> _item, const TArray<FText>* _addictiveText)
+{
+	if (_item.IsValid() == false)
+		return;
+
+	TObjectPtr<UItemConfig> Config = _item->GetConfig();
+	Thumbnail->SetBrushFromSoftTexture(Config->Thumbnail);
+	NameLabel->SetText(FText::FromString(Config->Name));
+}
 
 void UUWEquipmentUtilSlot::SetSlot(const FItemData* _itemData, const TArray<FText>* _addictiveText)
 {

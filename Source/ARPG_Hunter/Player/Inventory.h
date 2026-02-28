@@ -6,7 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Inventory.generated.h"
 
-class UItem;
+class UItem;// : public UObject;
 class UItemConfig;
 struct FItemData;
 enum class EItemType : uint8;
@@ -58,6 +58,6 @@ public:
 	bool TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
 
 	uint8 GetContainerSize() const;
-	TWeakObjectPtr<UItem> GetItem(EItemType _type, uint8 _idx) const { return Container[_type].Array[_idx]; }
+	TWeakObjectPtr<UItem> GetItem(EItemType _type, uint8 _idx) const;
 	const TArray<TObjectPtr<UItem>>& GetContainer(EItemType _type) const { return Container[_type].Array; }
 };

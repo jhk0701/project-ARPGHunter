@@ -7,6 +7,7 @@
 class UButton;
 class UImage;
 class UTextBlock;
+class UItem;
 struct FItemData;
 
 DECLARE_DELEGATE_OneParam(FOnIndexedSlotClicked, uint8);
@@ -23,6 +24,7 @@ private:
 	TObjectPtr<UTextBlock> NameLabel;
 
 public:
+	virtual void SetSlot(const TWeakObjectPtr<UItem> _item, const TArray<FText>* _addictiveText = nullptr);
 	virtual void SetSlot(const FItemData* _itemData, const TArray<FText>* _addictiveText = nullptr);
 };
 

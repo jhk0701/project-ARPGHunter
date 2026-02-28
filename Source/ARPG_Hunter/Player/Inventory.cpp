@@ -167,3 +167,8 @@ uint8 UInventory::GetContainerSize() const
 {
 	return Container.begin()->Value.Array.Num();
 }
+
+TWeakObjectPtr<UItem> UInventory::GetItem(EItemType _type, uint8 _idx) const
+{
+	return Container[_type].Array[_idx];
+}

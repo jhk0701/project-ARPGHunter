@@ -11,6 +11,7 @@ class UTextBlock;
 class UImage;
 class UBorder;
 class UVerticalBox;
+class UScrollBox;
 
 class UUWListElementSlot;
 class UUWIngredientSlot;
@@ -35,7 +36,7 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<UUWListElementSlot>> ProductSlotInst;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UVerticalBox> ProductSlotContainer;
+	TObjectPtr<UScrollBox> ProductSlotContainer;
 	
 	uint8 CurIndex;
 	UPROPERTY(meta = (BindWidget))
@@ -58,7 +59,7 @@ private:
 	UPROPERTY()
 	TArray<TObjectPtr<UUWIngredientSlot>> IngredientSlotInst;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UScrollBox> IngredientSlotContainer;
+	TObjectPtr<UScrollBox> IngredientSlotContainer;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> GoldLabel;
 
@@ -85,7 +86,7 @@ private:
 	void ClickCompleteButton();
 
 protected:
-	void NativeOnInitialized() override;
+	virtual void NativeOnInitialized() override;
 
 public:
 	void ShowUI(bool _bIsSubUI) override;
