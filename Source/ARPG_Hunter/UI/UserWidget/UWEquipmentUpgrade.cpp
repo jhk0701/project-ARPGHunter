@@ -30,6 +30,7 @@ void UUWEquipmentUpgrade::NativeOnInitialized()
 	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 
 	UpgradeButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::Upgrade);
+	ConfirmButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::ConfirmResult);
 	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::HideUI);
 	ItemCategory->OnSelected.AddUObject(this, &UUWEquipmentUpgrade::SelectCategory);
 	
@@ -231,9 +232,28 @@ void UUWEquipmentUpgrade::Upgrade()
 	{
 		TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, CurItemIdx));
 		Equipment->Upgrade();
-
-		// TODO : 결과 UI 출력
 	}
 
+	ShowResult(bIsSuccess); // 결과 UI 출력
 	SelectSlot(CurItemIdx); // 재료 UI 갱신
+}
+
+void UUWEquipmentUpgrade::ShowResult(bool _bIsSuccess)
+{
+	Result->SetVisibility(ESlateVisibility::Visible);
+
+	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TWeakObjectPtr<UItem> TargetItem = Inventory->GetItem(CurItemType, CurItemIdx);
+
+	ResultLabel->SetText(_bIsSuccess ? TextOnSuccess : TextOnFail);
+	ThumbnailOnResult->SetBrushFromTexture(TargetItem->GetConfig()->Thumbnail);
+	
+	FString ItemName;
+	TargetItem->GetItemName(ItemName);
+	ItemLabelOnResult->SetText(FText::FromString(ItemName));
+}
+
+void UUWEquipmentUpgrade::ConfirmResult()
+{
+	Result->SetVisibility(ESlateVisibility::Hidden);
 }

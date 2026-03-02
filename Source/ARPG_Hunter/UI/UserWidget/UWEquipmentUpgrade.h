@@ -81,15 +81,33 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> UpgradeButton;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Result;
+
+	UPROPERTY(EditAnywhere)
+	FText TextOnSuccess;
+	UPROPERTY(EditAnywhere)
+	FText TextOnFail;
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UTextBlock> ResultLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> ThumbnailOnResult;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemLabelOnResult;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ConfirmButton;
 
 	void SelectCategory(uint8 _option);
 	void SelectSlot(uint8 _index);
 
 	UFUNCTION()
 	void Upgrade();
+	UFUNCTION()
+	void ConfirmResult();
+
+	void ShowResult(bool _bIsSuccess);
 
 protected:
 	virtual void NativeOnInitialized() override;
