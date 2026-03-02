@@ -8,6 +8,8 @@
 
 class UItemConfig;
 enum class EItemType : uint8;
+enum class ECharacterStatType : uint8;
+
 /**
  * 
  */
@@ -62,11 +64,11 @@ private:
 	int32 EquipmentIndex{ -1 }; 
 	
 	// 강화 및 인챈트 데이터
-
 	// 강화 수치
 	uint8 Grade{ 0 };
 
 	// TODO: 인챈트 데이터
+
 public:
 	virtual void Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config) override;
 	virtual void GetItemName(FString& _outNameStr) const override;
@@ -76,4 +78,6 @@ public:
 
 	uint8 Upgrade() { return ++Grade; }
 	uint8 GetGrade() const { return Grade; }
+
+	void GetUpgradeStat(UWorld* WorldContext, TMap<ECharacterStatType, uint16>& _outUpgradeStat);
 };

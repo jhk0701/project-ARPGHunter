@@ -49,6 +49,5 @@ public:
 	struct FItemProductData* GetItemProductData(const FName& _id) const;
 	void GetAllItemProduct(TArray<struct FItemProductData*>& _outArr) const;
 	struct FDialogData* GetDialogData(const FName& _id) const;
-
 	struct FEquipmentUpgradeData* GetUpgradeData(uint8 _rank, uint8 _grade, EEquipmentType _type);
 };

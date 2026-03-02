@@ -12,12 +12,16 @@ class UImage;
 class UTextBlock;
 class UScrollBox;
 class UHorizontalBox;
+class UVerticalBox;
+class UWrapBox;
 
 class UUWListElementSlot;
 class UUWIngredientSlot;
 class UUWStatChangeCompare;
 
 enum class EItemType : uint8;
+enum class EEquipmentType : uint8;
+enum class ECharacterStatType : uint8;
 
 /**
  * 
@@ -29,11 +33,11 @@ class ARPG_HUNTER_API UUWEquipmentUpgrade : public UUWPopUp
 	
 private:
 	TWeakObjectPtr<class UInventory> Inventory;
+	EItemType CurItemType;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
 
-	EItemType CurItemType;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UUWCategory> ItemCategory;
 
@@ -52,6 +56,30 @@ private:
 	TObjectPtr<UTextBlock> CurGradeLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> NextGradeLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> SucceessPercentLabel;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWStatChangeCompare> StatChangeClass;
+	UPROPERTY()
+	TMap<ECharacterStatType, TObjectPtr<UUWStatChangeCompare>> StatChangeInst;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> UpgradeStatContainer;
+
+	UPROPERTY(EditAnywhere)
+	uint8 InitIngredientSlotSize{ 10 };
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWIngredientSlot> IngredientSlotClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWIngredientSlot>> IngredientSlotInst;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWrapBox> IngredientInfo;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> GoldLabel;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> UpgradeButton;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UBorder> Result;

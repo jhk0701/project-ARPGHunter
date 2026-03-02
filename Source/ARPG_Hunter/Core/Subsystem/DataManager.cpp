@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Core/Subsystem/DataManager.h"
 #include "Engine/DataTable.h"
 
@@ -12,6 +11,8 @@
 #include "Data/ItemProductData.h"
 #include "Data/DialogData.h"
 #include "Data/EquipmentUpgradeData.h"
+
+#include "Define/Debug.h"
 
 UDataManager::UDataManager()
 {

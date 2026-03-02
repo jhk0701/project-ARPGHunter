@@ -40,7 +40,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FUpgradeIngredient> Ingredients;
 	UPROPERTY(EditAnywhere)
-	TMap<ECharacterStatType, uint32> StatPerStep;
+	TMap<ECharacterStatType, uint16> StatPerStep;
 public:
 	static FName GetUpgradeID(uint8 _rank, uint8 _grade, EEquipmentType _type);
 };
