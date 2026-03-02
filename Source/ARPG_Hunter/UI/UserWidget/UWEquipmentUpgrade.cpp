@@ -166,6 +166,7 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	}
 	
 	// 재료 출력
+	bool bIngredientIsEnough = true;
 	FText IngredientFormat = FText::FromString(TEXT("{0} / {1}"));
 	uint8 Idx = 0;
 	for (const FUpgradeIngredient& Ingredient : UpgradeData->Ingredients)
@@ -177,6 +178,8 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 		if (Inventory->TryFindItem(IngredientData->Type, Ingredient.ItemID, InvenIdx)) 
 			OwnAmount = Inventory->GetItem(IngredientData->Type, InvenIdx)->GetAmount();
 
+		bIngredientIsEnough &= (OwnAmount >= Ingredient.Amount);
+
 		TArray<FText> Addictive = { FText::Format(IngredientFormat, OwnAmount, Ingredient.Amount) };
 		IngredientSlotInst[Idx]->SetSlot(IngredientData, &Addictive);
 		IngredientSlotInst[Idx]->SetVisibility(ESlateVisibility::Visible);
@@ -187,6 +190,10 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 		IngredientSlotInst[Idx]->SetVisibility(ESlateVisibility::Collapsed);
 
 	// 골드 반영
+	bool bGoldIsEnough = PlayerManager->GetGold() >= UpgradeData->GoldCost;
+
 	FText GoldFormat = FText::FromString(TEXT("{0} / {1} G"));
-	GoldLabel->SetText(FText::Format(GoldFormat, PlayerManager->GetGold(), UpgradeData->GoldCost));
+	GoldSlot->SetAmountLabel(FText::Format(GoldFormat, PlayerManager->GetGold(), UpgradeData->GoldCost), bGoldIsEnough);
+
+	UpgradeButton->SetIsEnabled(bIngredientIsEnough && bGoldIsEnough);
 }

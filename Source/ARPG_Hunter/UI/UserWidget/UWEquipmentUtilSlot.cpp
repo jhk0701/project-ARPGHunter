@@ -9,6 +9,17 @@
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
+void UUWEquipmentUtilSlot::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+
+	if (AssignedThumbnail)
+		Thumbnail->SetBrushFromTexture(AssignedThumbnail);
+
+	if (AssignedName.IsEmpty() == false)
+		NameLabel->SetText(AssignedName);
+}
+
 void UUWEquipmentUtilSlot::SetSlot(const TWeakObjectPtr<UItem> _item, const TArray<FText>* _addictiveText)
 {
 	if (_item.IsValid() == false)
@@ -45,4 +56,10 @@ void UUWIngredientSlot::SetSlot(const FItemData* _itemData, const TArray<FText>*
 
 	if (_addictiveText && (*_addictiveText).Num() > 0)
 		AmountLabel->SetText((*_addictiveText)[0]);
+}
+
+void UUWIngredientSlot::SetAmountLabel(const FText& _text, bool _bIsSufficient)
+{
+	AmountLabel->SetColorAndOpacity(FSlateColor(_bIsSufficient ? ColorOnSufficient : ColorOnInsufficient));
+	AmountLabel->SetText(_text);
 }

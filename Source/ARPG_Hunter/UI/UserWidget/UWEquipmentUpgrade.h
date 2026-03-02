@@ -76,7 +76,7 @@ private:
 	TObjectPtr<UWrapBox> IngredientInfo;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> GoldLabel;
+	TObjectPtr<UUWIngredientSlot> GoldSlot;
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> UpgradeButton;
@@ -86,6 +86,7 @@ private:
 
 	void SelectCategory(uint8 _option);
 	void SelectSlot(uint8 _index);
+	
 
 protected:
 	virtual void NativeOnInitialized() override;
