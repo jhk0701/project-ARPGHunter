@@ -11,6 +11,7 @@
 #include "Data/ItemData.h"
 #include "Data/ItemProductData.h"
 #include "Data/DialogData.h"
+#include "Data/EquipmentUpgradeData.h"
 
 UDataManager::UDataManager()
 {
@@ -41,6 +42,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> DialogDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_DialogData.DT_DialogData'"));
 	if (DialogDataTableFinder.Succeeded())
 		DialogDataTable = DialogDataTableFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> EquipmentUpgradeTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_EquipmentUpgrade.DT_EquipmentUpgrade'"));
+	if (EquipmentUpgradeTableFinder.Succeeded())
+		EquipmentUpgradeTable = EquipmentUpgradeTableFinder.Object;
 }
 
 TObjectPtr<UWeaponConfig> UDataManager::GetWeaponConfig(EWeaponType _type) const
@@ -81,4 +86,10 @@ void UDataManager::GetAllItemProduct(TArray<struct FItemProductData*>& _outArr) 
 FDialogData* UDataManager::GetDialogData(const FName& _id) const
 {
 	return DialogDataTable->FindRow<FDialogData>(_id, TEXT("Dialog Data Table Search"));
+}
+
+FEquipmentUpgradeData* UDataManager::GetUpgradeData(uint8 _rank, uint8 _grade, EEquipmentType _type)
+{
+	FName ID = FEquipmentUpgradeData::GetUpgradeID(_rank, _grade, _type);
+	return EquipmentUpgradeTable->FindRow<FEquipmentUpgradeData>(ID, TEXT("Upgrade Data Table Search"));
 }
