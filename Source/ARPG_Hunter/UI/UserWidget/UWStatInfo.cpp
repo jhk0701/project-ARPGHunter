@@ -8,7 +8,7 @@
 
 void UUWStatInfo::SetStatName(ECharacterStatType _type)
 {
-	NameLabel->SetText(FText::FromName(EnumToName(_type)));
+	NameLabel->SetText(EnumToText(_type));
 }
 
 void UUWStatInfo::SetStatValue(uint32 _value)

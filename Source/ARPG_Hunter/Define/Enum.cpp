@@ -86,21 +86,44 @@ FName EnumToName(ECharacterStatType _type)
 	switch (_type)
 	{
 	case ECharacterStatType::HEALTH:
-		return FName(TEXT("Health"));
+		return FName(TEXT("Stat_Health"));
 	case ECharacterStatType::STAMINA:
-		return FName(TEXT("Stamina"));
+		return FName(TEXT("Stat_Stamina"));
 	case ECharacterStatType::SKILL:
-		return FName(TEXT("Skill"));
+		return FName(TEXT("Stat_Skill"));
 	case ECharacterStatType::ATTACK:
-		return FName(TEXT("Attack"));
+		return FName(TEXT("Stat_Attack"));
 	case ECharacterStatType::DEFENSE:
-		return FName(TEXT("Defense"));
+		return FName(TEXT("Stat_Defense"));
 	case ECharacterStatType::CRITICAL_PERCENT:
-		return FName(TEXT("Critical"));
+		return FName(TEXT("Stat_CriticalPer"));
 	case ECharacterStatType::CRITICAL_DAMAGE_PERCENT:
-		return FName(TEXT("Critical Damage"));
+		return FName(TEXT("Stat_CriticalDmg"));
 	default:
 		return NAME_None;
+	}
+}
+
+FText EnumToText(ECharacterStatType _type)
+{
+	switch (_type)
+	{
+	case ECharacterStatType::HEALTH:
+		return FText::FromString(TEXT("Health"));
+	case ECharacterStatType::STAMINA:
+		return FText::FromString(TEXT("Stamina"));
+	case ECharacterStatType::SKILL:
+		return FText::FromString(TEXT("Skill"));
+	case ECharacterStatType::ATTACK:
+		return FText::FromString(TEXT("Attack"));
+	case ECharacterStatType::DEFENSE:
+		return FText::FromString(TEXT("Defense"));
+	case ECharacterStatType::CRITICAL_PERCENT:
+		return FText::FromString(TEXT("Critical Percent"));
+	case ECharacterStatType::CRITICAL_DAMAGE_PERCENT:
+		return FText::FromString(TEXT("Critical Damage"));
+	default:
+		return FText();
 	}
 }
 

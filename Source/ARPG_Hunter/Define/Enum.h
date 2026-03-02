@@ -88,6 +88,7 @@ enum class ECharacterStatType : uint8
 	END							UMETA(Hidden),
 };
 FName EnumToName(ECharacterStatType _type);
+FText EnumToText(ECharacterStatType _type);
 
 UENUM()
 enum class ECharacterResourceType : uint8
