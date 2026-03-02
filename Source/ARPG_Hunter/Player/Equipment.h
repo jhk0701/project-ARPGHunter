@@ -15,7 +15,6 @@ enum class ECharacterStatType :uint8;
 using FEquipmentAliasMapStat = TMap<ECharacterStatType, uint32>;
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEquipmentChanged, EEquipmentType, TWeakObjectPtr<UEquipmentItem>);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEquipmentStatChanged, const FEquipmentAliasMapStat&);
-DECLARE_DELEGATE_RetVal_ThreeParams(struct FEquipmentUpgradeData*, FGetUpgradeDataFunc, uint8, uint8, EEquipmentType);
 
 /**
  * 
@@ -29,6 +28,8 @@ public:
 	UEquipment();
 
 private:
+	TWeakObjectPtr<UGameInstance> GI;
+
 	UPROPERTY()
 	TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>> Container; // 아이템 약참조. 실소유권은 인벤토리에게 있음
 	TMap<ECharacterStatType, uint32> EquipmentStat;
@@ -36,16 +37,12 @@ private:
 public:
 	FOnEquipmentChanged OnEquipmentChanged;
 	FOnEquipmentStatChanged OnStatValueChanged;
-	FGetUpgradeDataFunc GetUpgradeDataFunc;
 
-	void Init();
+	void Init(TWeakObjectPtr<UGameInstance> _instance);
 	void Equip(EEquipmentType _type, TWeakObjectPtr<UItem> _equipment);
 	TWeakObjectPtr<UEquipmentItem> Unequip(EEquipmentType _type);
 
 	const TWeakObjectPtr<UEquipmentItem> GetEquipment(EEquipmentType _type) const { return Container[_type]; }
 	const TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& GetContainer() const { return Container; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const { return EquipmentStat; }
-	bool IsValid() const { return GetUpgradeDataFunc.IsBound(); }
-
-	void GetStat(TWeakObjectPtr<UEquipmentItem> _equipment, TMap<ECharacterStatType, uint32>& _outEquipmentStat);
 };

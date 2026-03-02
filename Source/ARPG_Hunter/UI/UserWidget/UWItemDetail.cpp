@@ -7,6 +7,7 @@
 #include "Components/WrapBox.h"
 
 #include "Define/Enum.h"
+#include "Core/Subsystem/DataManager.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 #include "UI/UserWidget/UWStatInfo.h"
@@ -56,8 +57,11 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 		for (const TPair<ECharacterStatType, TObjectPtr<UUWStatInfo>>& Pair : MapStatInfo)
 			Pair.Value->SetVisibility(ESlateVisibility::Collapsed);
 
-		TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Config);
-		for (const TPair<ECharacterStatType, uint32>& Pair : EquipmentConfig->Stat)
+		TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(_item);
+		TMap<ECharacterStatType, uint32> Stat;
+		Equipment->GetStat(GetGameInstance()->GetSubsystem<UDataManager>(), Stat);
+
+		for (const TPair<ECharacterStatType, uint32>& Pair : Stat)
 		{
 			MapStatInfo[Pair.Key]->SetVisibility(ESlateVisibility::Visible);
 			MapStatInfo[Pair.Key]->SetStatValue(Pair.Value);

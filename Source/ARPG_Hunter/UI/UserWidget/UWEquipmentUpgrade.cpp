@@ -23,7 +23,6 @@
 #include "UI/UserWidget/UWEquipmentUtilSlot.h"
 #include "UI/UserWidget/UWStatInfo.h"
 
-
 void UUWEquipmentUpgrade::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -147,7 +146,7 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	// 강화 수치
 	// 기본 스탯 + 강화 스탯
 	TMap<ECharacterStatType, uint32> CurStat;
-	PlayerEquipment->GetStat(Equipment, CurStat);
+	Equipment->GetStat(DataManager, CurStat);
 
 	// 다음 강화 스탯 결과
 	FText StatChangeFormat = FText::FromString(TEXT("{0} (+{1})"));
