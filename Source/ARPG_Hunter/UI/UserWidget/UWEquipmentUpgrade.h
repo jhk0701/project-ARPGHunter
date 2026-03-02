@@ -32,8 +32,9 @@ class ARPG_HUNTER_API UUWEquipmentUpgrade : public UUWPopUp
 	GENERATED_BODY()
 	
 private:
-	TWeakObjectPtr<class UInventory> Inventory;
 	EItemType CurItemType;
+	uint8 CurItemIdx;
+	struct FEquipmentUpgradeData* UpgradeData;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
@@ -86,7 +87,9 @@ private:
 
 	void SelectCategory(uint8 _option);
 	void SelectSlot(uint8 _index);
-	
+
+	UFUNCTION()
+	void Upgrade();
 
 protected:
 	virtual void NativeOnInitialized() override;

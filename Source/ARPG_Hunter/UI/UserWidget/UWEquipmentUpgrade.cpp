@@ -27,8 +27,9 @@ void UUWEquipmentUpgrade::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 
+	UpgradeButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::Upgrade);
 	CloseButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::HideUI);
 	ItemCategory->OnSelected.AddUObject(this, &UUWEquipmentUpgrade::SelectCategory);
 	
@@ -92,9 +93,7 @@ void UUWEquipmentUpgrade::Init()
 
 void UUWEquipmentUpgrade::SelectCategory(uint8 _option)
 {
-	if (Inventory.IsValid() == false)
-		return;
-
+	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 	CurItemType = static_cast<EItemType>(_option);
 
 	const TArray<TObjectPtr<UItem>>& Items = Inventory->GetContainer(CurItemType);
@@ -113,22 +112,23 @@ void UUWEquipmentUpgrade::SelectCategory(uint8 _option)
 
 void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 {
-	if (Inventory.IsValid() == false)
-		return;
-
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 	TWeakObjectPtr<UItem> Items = Inventory->GetContainer(CurItemType)[_index];
 	if (Items.IsValid() == false)
 		return;
+	
+	CurItemIdx = _index;
 
 	TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Items);
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	
 
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
 	ItemThumbnail->SetBrushFromTexture(Config->Thumbnail);
 	ItemNameLabel->SetText(FText::FromString(Config->Name));
 
-	FEquipmentUpgradeData* UpgradeData = DataManager->GetUpgradeData(Config->Rank, Equipment->GetGrade(), Config->Type);
+	UpgradeData = DataManager->GetUpgradeData(Config->Rank, Equipment->GetGrade(), Config->Type);
 	FEquipmentUpgradeData* NextUpgradeData = DataManager->GetUpgradeData(Config->Rank, Equipment->GetGrade() + 1, Config->Type);
 
 	if (UpgradeData == nullptr || NextUpgradeData == nullptr)
@@ -196,4 +196,44 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	GoldSlot->SetAmountLabel(FText::Format(GoldFormat, PlayerManager->GetGold(), UpgradeData->GoldCost), bGoldIsEnough);
 
 	UpgradeButton->SetIsEnabled(bIngredientIsEnough && bGoldIsEnough);
+}
+
+void UUWEquipmentUpgrade::Upgrade()
+{
+	// 확률 기반 출력
+	if (UpgradeData == nullptr)
+		return;
+	
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+
+	// 재료 소모
+	for (const FUpgradeIngredient& Ingredient : UpgradeData->Ingredients)
+	{
+		FItemData* IngredientItem = DataManager->GetItemData(Ingredient.ItemID);
+		
+		uint8 Idx = 0;
+		if (Inventory->TryFindItem(IngredientItem->Type, Ingredient.ItemID, Idx) == false)
+			return;
+		
+		Inventory->TrySubItem(IngredientItem->Type, Idx, Ingredient.Amount);
+	}
+
+	if (PlayerManager->TrySubGold(UpgradeData->GoldCost) == false)
+		return;
+
+	// 확률 계산
+	float Rand = FMath::RandRange(0.0f, 99.9f);
+	bool bIsSuccess = Rand <= UpgradeData->SuccessPercent;
+
+	if (bIsSuccess) 
+	{
+		TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, CurItemIdx));
+		Equipment->Upgrade();
+
+		// TODO : 결과 UI 출력
+	}
+
+	SelectSlot(CurItemIdx); // 재료 UI 갱신
 }
