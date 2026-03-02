@@ -96,6 +96,8 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	
+	void Init();
+
 	void Dodge();
 	void Attack(EAttackType _eType);
 	void AttackEnd();

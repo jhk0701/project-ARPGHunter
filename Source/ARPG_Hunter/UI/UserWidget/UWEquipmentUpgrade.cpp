@@ -14,6 +14,7 @@
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/DataManager.h"
 #include "Player/Inventory.h"
+#include "Player/Equipment.h"
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 #include "Data/EquipmentUpgradeData.h"
@@ -115,6 +116,7 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 {
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+
 	TWeakObjectPtr<UItem> Items = Inventory->GetContainer(CurItemType)[_index];
 	if (Items.IsValid() == false)
 		return;
@@ -123,7 +125,7 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 
 	TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Items);
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-	
+	TObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
 
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
 	ItemThumbnail->SetBrushFromTexture(Config->Thumbnail);
@@ -144,15 +146,15 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 
 	// 강화 수치
 	// 기본 스탯 + 강화 스탯
-	TMap<ECharacterStatType, uint16> CurStat;
-	Equipment->GetUpgradeStat(GetWorld(), CurStat);
+	TMap<ECharacterStatType, uint32> CurStat;
+	PlayerEquipment->GetStat(Equipment, CurStat);
 
 	// 다음 강화 스탯 결과
 	FText StatChangeFormat = FText::FromString(TEXT("{0} (+{1})"));
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
 	{
 		ECharacterStatType Type = static_cast<ECharacterStatType>(i);
-		uint16* UpgradeStat = NextUpgradeData->StatPerStep.Find(Type);
+		uint32* UpgradeStat = NextUpgradeData->StatPerStep.Find(Type);
 		if (UpgradeStat == nullptr)
 		{
 			StatChangeInst[Type]->SetVisibility(ESlateVisibility::Collapsed);
@@ -231,7 +233,12 @@ void UUWEquipmentUpgrade::Upgrade()
 	if (bIsSuccess) 
 	{
 		TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, CurItemIdx));
+		TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
+
+		TObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
+		PlayerEquipment->Unequip(EquipConfig->Type);
 		Equipment->Upgrade();
+		PlayerEquipment->Equip(EquipConfig->Type, Equipment);
 	}
 
 	ShowResult(bIsSuccess); // 결과 UI 출력

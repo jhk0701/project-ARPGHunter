@@ -7,9 +7,6 @@
 #include "Interface/Effectable.h"
 #include "Data/EffectData.h"
 
-#include "Core/Subsystem/DataManager.h"
-#include "Data/EquipmentUpgradeData.h"
-
 void UItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
 	ID = _id;
@@ -70,29 +67,4 @@ void UEquipmentItem::GetItemName(FString& _outNameStr) const
 
 	if (Grade > 0)
 		_outNameStr.Append(FString::Printf(TEXT(" (+%d)"), Grade));
-}
-
-void UEquipmentItem::GetUpgradeStat(UWorld* WorldContext, TMap<ECharacterStatType, uint16>& _outUpgradeStat)
-{
-	TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(GetConfig());
-	_outUpgradeStat = EquipmentConfig->Stat;
-
-	TObjectPtr<UDataManager> DataManager = WorldContext->GetGameInstance()->GetSubsystem<UDataManager>();
-	
-	for (uint8 i = 0; i < GetGrade(); ++i)
-	{
-		FEquipmentUpgradeData* UpgradeData = DataManager->GetUpgradeData(EquipmentConfig->Rank, i, EquipmentConfig->Type);
-		for (const TPair<ECharacterStatType, uint16>& Pair : UpgradeData->StatPerStep)
-		{
-			uint16* Val = _outUpgradeStat.Find(Pair.Key);
-
-			if (Val == nullptr)
-			{
-				_outUpgradeStat.Add(Pair.Key, Pair.Value);
-				continue;
-			}
-			
-			(*Val) += Pair.Value;
-		}
-	}
 }

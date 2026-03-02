@@ -41,6 +41,9 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	QuickSlot->Init();
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
+	Equipment->GetUpgradeDataFunc.BindLambda(
+		[this](uint8 _rank, uint8 _grade, EEquipmentType _type) { return GetGameInstance()->GetSubsystem<UDataManager>()->GetUpgradeData(_rank, _grade, _type); }
+	);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
 
 	ProvideBasicProperty();

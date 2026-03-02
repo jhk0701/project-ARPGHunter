@@ -78,6 +78,4 @@ public:
 
 	uint8 Upgrade() { return ++Grade; }
 	uint8 GetGrade() const { return Grade; }
-
-	void GetUpgradeStat(UWorld* WorldContext, TMap<ECharacterStatType, uint16>& _outUpgradeStat);
 };

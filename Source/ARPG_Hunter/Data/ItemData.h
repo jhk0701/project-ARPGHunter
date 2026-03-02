@@ -55,7 +55,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	EEquipmentType Type;
 	UPROPERTY(EditAnywhere)
-	TMap<ECharacterStatType, uint16> Stat;
+	TMap<ECharacterStatType, uint32> Stat;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMesh> Mesh;
 };
