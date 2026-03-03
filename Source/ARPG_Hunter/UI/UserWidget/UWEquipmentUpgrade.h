@@ -23,6 +23,16 @@ enum class EItemType : uint8;
 enum class EEquipmentType : uint8;
 enum class ECharacterStatType : uint8;
 
+UENUM()
+enum class EDisableReason : uint8
+{
+	NO_UPGRADE_DATA,
+	IS_MAX_UPGRADE,
+	SELECT_ITEM,
+
+	NONE
+};
+
 /**
  * 
  */
@@ -49,6 +59,8 @@ private:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UScrollBox> EquipmentSlotContainer;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UVerticalBox> UpgradeBox;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> ItemThumbnail;
 	UPROPERTY(meta = (BindWidget))
@@ -95,18 +107,20 @@ private:
 	TObjectPtr<UImage> ThumbnailOnResult;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ItemLabelOnResult;
-	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ConfirmButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> DisableLabel;
+	UPROPERTY(EditAnywhere)
+	TMap<EDisableReason, FText> DisableReasonText;
 
 	void SelectCategory(uint8 _option);
 	void SelectSlot(uint8 _index);
-
+	void ShowUpgradeDetail(bool _bIsEnable, EDisableReason _reason = EDisableReason::NONE);
 	UFUNCTION()
 	void Upgrade();
 	UFUNCTION()
 	void ConfirmResult();
-
 	void ShowResult(bool _bIsSuccess);
 
 protected:

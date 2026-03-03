@@ -98,12 +98,12 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	Gold.Value = 5000;
+	Gold.Value = 50000;
 
-	AddItem(FName(TEXT("1001")), 50);
-	AddItem(FName(TEXT("1002")), 50);
-	AddItem(FName(TEXT("1003")), 50);
-	AddItem(FName(TEXT("1004")), 50);
+	AddItem(FName(TEXT("1001")), 900);
+	AddItem(FName(TEXT("1002")), 900);
+	AddItem(FName(TEXT("1003")), 900);
+	AddItem(FName(TEXT("1004")), 900);
 	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);

@@ -90,6 +90,7 @@ void UUWEquipmentUpgrade::Init()
 	SelectCategory(static_cast<uint32>(EItemType::WEAPON));
 
 	Result->SetVisibility(ESlateVisibility::Hidden);
+	ShowUpgradeDetail(false, EDisableReason::SELECT_ITEM);
 }
 
 void UUWEquipmentUpgrade::SelectCategory(uint8 _option)
@@ -118,7 +119,10 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 
 	TWeakObjectPtr<UItem> Items = Inventory->GetContainer(CurItemType)[_index];
 	if (Items.IsValid() == false)
+	{
+		ShowUpgradeDetail(false, EDisableReason::SELECT_ITEM);
 		return;
+	}
 	
 	CurItemIdx = _index;
 
@@ -133,8 +137,16 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	UpgradeData = DataManager->GetUpgradeData(Config->Rank, Equipment->GetGrade(), Config->Type);
 	FEquipmentUpgradeData* NextUpgradeData = DataManager->GetUpgradeData(Config->Rank, Equipment->GetGrade() + 1, Config->Type);
 
-	if (UpgradeData == nullptr || NextUpgradeData == nullptr)
+	if (UpgradeData == nullptr)
+	{
+		ShowUpgradeDetail(false, EDisableReason::NO_UPGRADE_DATA);
 		return;
+	}
+	else if (NextUpgradeData == nullptr)
+	{
+		ShowUpgradeDetail(false, EDisableReason::IS_MAX_UPGRADE);
+		return;
+	}
 
 	FText GradeFormat = FText::FromString(TEXT("+{0}"));
 	CurGradeLabel->SetText(FText::Format(GradeFormat, Equipment->GetGrade()));
@@ -198,6 +210,22 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	GoldSlot->SetAmountLabel(FText::Format(GoldFormat, PlayerManager->GetGold(), UpgradeData->GoldCost), bGoldIsEnough);
 
 	UpgradeButton->SetIsEnabled(bIngredientIsEnough && bGoldIsEnough);
+	ShowUpgradeDetail(true);
+}
+
+void UUWEquipmentUpgrade::ShowUpgradeDetail(bool _bIsEnable, EDisableReason _reason)
+{
+	if (_bIsEnable) 
+	{
+		UpgradeBox->SetVisibility(ESlateVisibility::Visible);
+		DisableLabel->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		UpgradeBox->SetVisibility(ESlateVisibility::Hidden);
+		DisableLabel->SetVisibility(ESlateVisibility::Visible);
+		DisableLabel->SetText(DisableReasonText[_reason]);
+	}
 }
 
 void UUWEquipmentUpgrade::Upgrade()
