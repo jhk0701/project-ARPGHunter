@@ -61,7 +61,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> IngredientSlotContainer;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> GoldLabel;
+	TObjectPtr<UUWIngredientSlot> GoldSlot;
 
 	bool bIngredientIsEnough;
 	bool bGoldIsEnough;

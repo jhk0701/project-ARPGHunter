@@ -15,6 +15,7 @@
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 #include "Data/ItemProductData.h"
+
 #include "UI/UserWidget/UWStatInfo.h"
 #include "UI/UserWidget/UWEquipmentUtilSlot.h"
 
@@ -156,7 +157,7 @@ void UUWEquipmentProduct::UpdateDetail()
 		IngredientSlotInst[i]->SetVisibility(ESlateVisibility::Collapsed);
 
 	FText GoldFormat = FText::FromString(TEXT("{0} / {1} G"));
-	GoldLabel->SetText(FText::Format(GoldFormat, PlayerManager->GetGold(), ProductData->GoldCost));
+	GoldSlot->SetAmountLabel(FText::Format(GoldFormat, PlayerManager->GetGold(), ProductData->GoldCost), PlayerManager->GetGold() >= ProductData->GoldCost);
 	
 	bGoldIsEnough = PlayerManager->GetGold() >= ProductData->GoldCost;
 

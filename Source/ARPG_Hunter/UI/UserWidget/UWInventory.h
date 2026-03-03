@@ -7,12 +7,12 @@
 #include "UWInventory.generated.h"
 
 class UItem;
-class UUWItemSlot;
-class UUWItemDetail;
 class UWrapBox;
 class UHorizontalBox;
 class UButton;
 
+class UUWItemSlot;
+class UUWItemDetail;
 enum class EItemType : uint8;
 
 DECLARE_DELEGATE_TwoParams(FOnItemOptionClicked, EItemType, uint8);
@@ -76,13 +76,13 @@ private:
 	void ClickUnequipItem();
 
 protected:
-	void NativeOnInitialized() override;
+	virtual void NativeOnInitialized() override;
 
 public:
-	void ShowUI(bool _bIsSubUI = false) override;
+	virtual void ShowUI(bool _bIsSubUI = false) override;
 	void SetSelectOption(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx);
 
-	void HideUI() override;
+	virtual void HideUI() override;
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }
