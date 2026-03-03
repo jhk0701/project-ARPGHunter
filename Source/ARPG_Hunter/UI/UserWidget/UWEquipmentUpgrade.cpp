@@ -254,18 +254,22 @@ void UUWEquipmentUpgrade::Upgrade()
 		return;
 
 	// 확률 계산
-	float Rand = FMath::RandRange(0.0f, 99.9f);
+	float Rand = FMath::RandRange(0.0f, 99.99f);
 	bool bIsSuccess = Rand <= UpgradeData->SuccessPercent;
 
 	if (bIsSuccess) 
 	{
 		TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, CurItemIdx));
-		TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
-
-		TObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
-		PlayerEquipment->Unequip(EquipConfig->Type);
-		Equipment->Upgrade();
-		PlayerEquipment->Equip(EquipConfig->Type, Equipment);
+		if (Equipment->IsEquiped() == false)
+			Equipment->Upgrade();
+		else
+		{
+			TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
+			TObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
+			PlayerEquipment->Unequip(EquipConfig->Type);
+			Equipment->Upgrade();
+			PlayerEquipment->Equip(EquipConfig->Type, Equipment);
+		}
 	}
 
 	ShowResult(bIsSuccess); // 결과 UI 출력

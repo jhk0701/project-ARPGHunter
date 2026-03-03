@@ -75,7 +75,8 @@ public:
 	
 	void SetEquipmentIndex(int32 _idx) { EquipmentIndex = _idx; }
 	int32 GetEquipmentIndex() const { return EquipmentIndex; }
-
+	bool IsEquiped() const { return EquipmentIndex >= 0; }
+	 
 	uint8 Upgrade() { return ++Grade; }
 	uint8 GetGrade() const { return Grade; }
 
