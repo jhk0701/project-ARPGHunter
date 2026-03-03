@@ -188,7 +188,7 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 		FItemData* IngredientData = DataManager->GetItemData(Ingredient.ItemID);
 
 		uint8 InvenIdx = 0;
-		uint32 OwnAmount = 0;
+		uint16 OwnAmount = 0;
 		if (Inventory->TryFindItem(IngredientData->Type, Ingredient.ItemID, InvenIdx)) 
 			OwnAmount = Inventory->GetItem(IngredientData->Type, InvenIdx)->GetAmount();
 

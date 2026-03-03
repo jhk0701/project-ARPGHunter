@@ -51,6 +51,11 @@ private:
 	float WalkSpeed{ 300.0f };
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float SprintSpeed{ 600.0f };
+
+	UPROPERTY(EditAnywhere, Category = "Setting|Interaction")
+	float InteractionRange{ 1000.0f };
+	UPROPERTY(EditAnywhere, Category = "Setting|Interaction")
+	float InteractionSize{ 100.0f };
 #pragma endregion
 
 #pragma region Sub Effect

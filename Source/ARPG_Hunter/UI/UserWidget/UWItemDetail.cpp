@@ -44,12 +44,12 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 	EquipmentInfo->SetVisibility(ESlateVisibility::Collapsed);
 
 	TypeLabel->SetText(EnumToText(_item->GetType()));
+	RankLabel->SetVisibility(_item->GetType() >= EItemType::EQUIPABLE ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
 	if (_item->GetType() == EItemType::CONSUMABLE)
 	{
 		TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Config);
 		AmountLabel->SetText(FText::AsNumber(ConsumableConfig->AllowCountOnCombat));
-
 		ConsumableInfo->SetVisibility(ESlateVisibility::Visible);
 	}
 	else if (_item->GetType() >= EItemType::EQUIPABLE)
@@ -66,8 +66,11 @@ void UUWItemDetail::SetDetail(TWeakObjectPtr<UItem> _item)
 			MapStatInfo[Pair.Key]->SetVisibility(ESlateVisibility::Visible);
 			MapStatInfo[Pair.Key]->SetStatValue(Pair.Value);
 		}
-
+		
 		EquipmentInfo->SetVisibility(ESlateVisibility::Visible);
+		
+		TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
+		RankLabel->SetText(FText::Format(FText::FromString(TEXT("Rank {0}")), EquipmentConfig->Rank));
 	}
 
 }

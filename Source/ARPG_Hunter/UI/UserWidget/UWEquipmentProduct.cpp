@@ -128,6 +128,7 @@ void UUWEquipmentProduct::UpdateDetail()
 
 	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 	uint8 i = 0;
+	FText IngredientFormat = FText::FromString(TEXT("{0} / {1}"));
 	for (; i < ProductData->Ingredients.Num(); ++i)
 	{
 		const FItemData* IngredientData = DataManager->GetItemData(ProductData->Ingredients[i].ID);
@@ -138,24 +139,24 @@ void UUWEquipmentProduct::UpdateDetail()
 		}
 
 		uint8 Idx = 0;
-		uint8 Amount = 0;
-		if(Inventory->TryFindItem(IngredientData->Type, ProductData->Ingredients[i].ID, Idx))
+		uint16 Amount = 0;
+		if (Inventory->TryFindItem(IngredientData->Type, ProductData->Ingredients[i].ID, Idx))
 			Amount = Inventory->GetItem(IngredientData->Type, Idx)->GetAmount();
+		
+		bool bIsEnough = Amount >= ProductData->Ingredients[i].RequireAmount;
 
-		FString StrAmount = FString::Printf(TEXT("%d / %d"), Amount, ProductData->Ingredients[i].RequireAmount);
-		TArray<FText> AddictiveText = {FText::FromString(StrAmount)};
-		IngredientSlotInst[i]->SetSlot(IngredientData, &AddictiveText);
-
+		IngredientSlotInst[i]->SetSlot(IngredientData);
+		IngredientSlotInst[i]->SetAmountLabel(FText::Format(IngredientFormat, Amount, ProductData->Ingredients[i].RequireAmount), bIsEnough);
 		IngredientSlotInst[i]->SetVisibility(ESlateVisibility::Visible);
 
-		bIngredientIsEnough = bIngredientIsEnough && Amount >= ProductData->Ingredients[i].RequireAmount;
+		bIngredientIsEnough &= bIsEnough;
 	}
 
 	for (; i < IngredientSlotInst.Num(); ++i)
 		IngredientSlotInst[i]->SetVisibility(ESlateVisibility::Collapsed);
 
-	FString StrGold = FString::Printf(TEXT("%d / %d"), PlayerManager->GetGold(), ProductData->GoldCost);
-	GoldLabel->SetText(FText::FromString(StrGold));
+	FText GoldFormat = FText::FromString(TEXT("{0} / {1} G"));
+	GoldLabel->SetText(FText::Format(GoldFormat, PlayerManager->GetGold(), ProductData->GoldCost));
 	
 	bGoldIsEnough = PlayerManager->GetGold() >= ProductData->GoldCost;
 

@@ -398,14 +398,14 @@ void APlayerCharacter::CheckInteractable()
 {
 	FHitResult HitResult;
 
-	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * 500.0f;
+	FVector Start = CameraComp->GetComponentLocation();
+	FVector End = Start + CameraComp->GetForwardVector() * InteractionRange;
 
 	bool IsHit = UKismetSystemLibrary::BoxTraceSingle(
 		GetWorld(),
 		Start, End,
-		FVector(20.0f, 20.0f, 20.0f),
-		GetActorForwardVector().Rotation(),
+		FVector(InteractionSize),
+		CameraComp->GetForwardVector().Rotation(),
 		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel6),
 		false,
 		{ this },

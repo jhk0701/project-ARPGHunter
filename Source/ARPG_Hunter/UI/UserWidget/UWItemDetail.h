@@ -24,6 +24,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TypeLabel;
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> RankLabel;
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> DescLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UVerticalBox> ConsumableInfo;
