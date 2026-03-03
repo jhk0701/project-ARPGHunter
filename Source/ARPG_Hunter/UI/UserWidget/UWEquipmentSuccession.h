@@ -11,6 +11,7 @@ class UScrollBox;
 
 class UUWEquipmentUtilSlot;
 class UUWListElementSlot;
+class UUWIngredientSlot;
 
 enum class EItemType : uint8;
 
@@ -26,6 +27,7 @@ private:
 	EItemType CurItemType;
 	uint8 EquipmentIdx;
 	uint8 IngredientIdx;
+	bool bSuccessionIsEnable;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> CloseButton;
@@ -49,13 +51,29 @@ private:
 	TObjectPtr<UUWEquipmentUtilSlot> SuccessedSlot;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUWEquipmentUtilSlot> IngredientSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWIngredientSlot> GoldSlot;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> SuccessButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UBorder> Result;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUWEquipmentUtilSlot> ResultSlot;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> ConfirmButton;
+
 	
 	void SelectCategory(uint8 _opt);
 
 	void ClickEquipmentSlot(uint8 _index);
 	void ClickIngredientSlot(uint8 _index);
+
+	UFUNCTION()
+	void ConfirmResult();
+	UFUNCTION()
+	void SucceessItem();
 
 protected:
 	virtual void NativeOnInitialized() override;

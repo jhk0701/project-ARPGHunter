@@ -18,7 +18,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint8 SubtractOnSuccession{ 2 };
 	UPROPERTY(EditAnywhere)
-	uint32 GoldCostl{ 500 };
+	uint32 GoldCost{ 500 };
 
 	// 계승에 필요한 최소 수치
 	uint8 GetRequiredGradeForSuccession() const { return SubtractOnSuccession + 1; } 

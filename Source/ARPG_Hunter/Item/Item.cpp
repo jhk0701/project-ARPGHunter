@@ -79,6 +79,8 @@ void UEquipmentItem::GetStat(TObjectPtr<UDataManager> _dataManager, TMap<ECharac
 	for (uint8 i = 1; i <= GetGrade(); ++i)
 	{
 		FEquipmentUpgradeData* UpgradeData = _dataManager->GetUpgradeData(EquipmentConfig->Rank, i, EquipmentConfig->Type);
+		ensure(UpgradeData);
+
 		for (const TPair<ECharacterStatType, uint16>& Pair : UpgradeData->StatPerStep)
 		{
 			uint32* Val = _outEquipmentStat.Find(Pair.Key);
