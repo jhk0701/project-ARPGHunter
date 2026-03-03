@@ -71,7 +71,7 @@ void UObjectPoolManager::Register(UClass* _class, TFunction<TObjectPtr<AActor>()
 		return;
 
 	TObjectPtr<UActorObjectPool>& Pool = MapObjectPool.Add(_class, NewObject<UActorObjectPool>(this));
-	Pool->Init(_createFunc, _initialSize);
+	Pool->Init(MoveTemp(_createFunc), _initialSize);
 }
 
 TObjectPtr<AActor> UObjectPoolManager::Get(UClass* _class)

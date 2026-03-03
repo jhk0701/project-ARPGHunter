@@ -164,7 +164,8 @@ void ACombatGameMode::RegisterObjectPool()
 				// 몬스터 액터 생성 람다식
 				FActorSpawnParameters SpawnParam;
 				SpawnParam.Owner = this;
-				AMonsterBase* Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
+				TObjectPtr<AMonsterBase> Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
+				check(Inst != nullptr);
 
 				// 몬스터 사망 시, 오브젝트 풀로 복귀하도록 이벤트에 바인딩
 				Inst->OnMonsterDead.BindUObject(this, &ACombatGameMode::ReleaseMonster);
