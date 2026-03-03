@@ -28,3 +28,4 @@ public:
 	UFUNCTION()
 	virtual void HideUI();
 };
+

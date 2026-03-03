@@ -56,6 +56,7 @@ public:
 	bool TryAddItem(TObjectPtr<UItem> _item, uint8& _outIndex);
 	bool TrySubItem(EItemType _type, uint8 _idx, uint16 _amount);
 	bool TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
+	void SearchItems(EItemType _type, TSet<uint8>& _outIdxSet, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;
 
 	uint8 GetContainerSize() const;
 	TWeakObjectPtr<UItem> GetItem(EItemType _type, uint8 _idx) const;

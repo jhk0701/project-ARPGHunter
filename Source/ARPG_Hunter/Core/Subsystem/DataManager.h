@@ -9,6 +9,7 @@
 class UDataTable;
 class UWeaponType;
 class UWeaponConfig;
+class UEquipmentSuccessData;
 enum class EWeaponType :uint8;
 enum class EEquipmentType : uint8;
 
@@ -23,6 +24,8 @@ class ARPG_HUNTER_API UDataManager : public UGameInstanceSubsystem
 private:
 	UPROPERTY()
 	TObjectPtr<UWeaponType> WeaponTypeData;
+	UPROPERTY()
+	TObjectPtr<UEquipmentSuccessData> SuccessData;
 	UPROPERTY()
 	TObjectPtr<UDataTable> MonsterDataTable;
 	UPROPERTY()
@@ -42,6 +45,7 @@ public:
 	UDataManager();
 	
 	TObjectPtr<UWeaponConfig> GetWeaponConfig(EWeaponType _type) const;
+	TObjectPtr<UEquipmentSuccessData> GetSuccessData() const { return SuccessData; }
 	struct FMonsterData* GetMonsterData(const FName& _id) const;
 	struct FRegionData* GetRegionData(const FName& _id) const;
 	struct FStageData* GetStageData(const FName& _id) const;

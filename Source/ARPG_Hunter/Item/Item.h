@@ -79,6 +79,7 @@ public:
 	 
 	uint8 Upgrade() { return ++Grade; }
 	uint8 GetGrade() const { return Grade; }
+	void SetGrade(uint8 _newGrade) { Grade = _newGrade; }
 
 	void GetStat(TObjectPtr<class UDataManager> _dataManager, TMap<ECharacterStatType, uint32>& _outEquipmentStat);
 };

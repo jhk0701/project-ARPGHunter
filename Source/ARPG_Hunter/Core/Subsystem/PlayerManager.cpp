@@ -116,13 +116,18 @@ void UPlayerManager::ProvideBasicProperty()
 	Equipment->Equip(EEquipmentType::BOTTOM, Inventory->GetItem(EItemType::ARMOR, Index));
 	
 	Index = AddItem(FName(TEXT("4001")), 1);
-	Equipment->Equip(EEquipmentType::WEAPON, Inventory->GetItem(EItemType::WEAPON, Index));
+	TWeakObjectPtr<UItem> Item = Inventory->GetItem(EItemType::WEAPON, Index);
+	TObjectPtr<UEquipmentItem> Weapon = Cast<UEquipmentItem>(Item);
+	Weapon->SetGrade(3);
+	Equipment->Equip(EEquipmentType::WEAPON, Item);
 
-	Index = AddItem(FName(TEXT("2001")), 3);
+	Index = AddItem(FName(TEXT("2001")), 10);
 	QuickSlot->Register(0, Inventory->GetItem(EItemType::CONSUMABLE, Index));
 
-	AddItem(FName(TEXT("2002")), 3);
-	AddItem(FName(TEXT("2003")), 3);
+	AddItem(FName(TEXT("2002")), 10);
+	AddItem(FName(TEXT("2003")), 10);
+
+	AddItem(FName(TEXT("4002")), 1);
 }
 
 TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) const

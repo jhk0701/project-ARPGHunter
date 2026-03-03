@@ -5,6 +5,7 @@
 
 #include "Define/Enum.h"
 #include "Data/WeaponConfig.h"
+#include "Data/EquipmentSuccessData.h"
 #include "Data/MonsterData.h"
 #include "Data/StageData.h"
 #include "Data/ItemData.h"
@@ -19,6 +20,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UWeaponType> WeaponTypeDataFinder(TEXT("/Script/ARPG_Hunter.WeaponType'/Game/03-Data/WeaponTypeData.WeaponTypeData'"));
 	if (WeaponTypeDataFinder.Succeeded())
 		WeaponTypeData = WeaponTypeDataFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UEquipmentSuccessData> SuccessDataFinder(TEXT("/Script/ARPG_Hunter.EquipmentSuccessData'/Game/03-Data/EquipmentSuccessData.EquipmentSuccessData'"));
+	if (SuccessDataFinder.Succeeded())
+		SuccessData = SuccessDataFinder.Object;
 
 	static ConstructorHelpers::FObjectFinder<UDataTable> MonsterDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_MonsterData.DT_MonsterData'"));
 	if (MonsterDataTableFinder.Succeeded())

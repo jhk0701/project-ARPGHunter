@@ -26,16 +26,28 @@ void UUWEquipmentUtilSlot::SetSlot(const TWeakObjectPtr<UItem> _item, const TArr
 		return;
 
 	Thumbnail->SetBrushFromSoftTexture(_item->GetConfig()->Thumbnail);
+	Thumbnail->SetVisibility(ESlateVisibility::Visible);
 	
 	FString ItemName;
 	_item->GetItemName(ItemName);
 	NameLabel->SetText(FText::FromString(ItemName));
+	NameLabel->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UUWEquipmentUtilSlot::SetSlot(const FItemData* _itemData, const TArray<FText>* _addictiveText)
 {
 	Thumbnail->SetBrushFromSoftTexture(_itemData->Item->Thumbnail);
+	Thumbnail->SetVisibility(ESlateVisibility::Visible);
+
 	NameLabel->SetText(FText::FromString(_itemData->Item->Name));
+	NameLabel->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UUWEquipmentUtilSlot::Clear()
+{
+	Thumbnail->SetBrushFromSoftTexture(nullptr);
+	Thumbnail->SetVisibility(ESlateVisibility::Hidden);
+	NameLabel->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UUWListElementSlot::NativeOnInitialized()

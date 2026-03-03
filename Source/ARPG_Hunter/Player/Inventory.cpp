@@ -149,6 +149,18 @@ bool UInventory::TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, 
 	return false;
 }
 
+void UInventory::SearchItems(EItemType _type, TSet<uint8>& _outIdxSet, TFunction<bool(TObjectPtr<UItem>)> _predicate) const
+{
+	for (uint8 i = 0; i < Container.Num(); ++i)
+	{
+		if (nullptr == Container[_type].Array[i] || 
+			(_predicate && _predicate(Container[_type].Array[i]) == false))
+			continue;
+
+		_outIdxSet.Add(i);
+	}
+}
+
 bool UInventory::TryFindEmpty(EItemType _type, uint8& _outIdx)
 {
 	for (uint8 i = 0; i < Container.Num(); ++i)

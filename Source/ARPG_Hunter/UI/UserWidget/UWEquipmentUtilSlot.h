@@ -30,9 +30,9 @@ private:
 
 public:
 	virtual void SynchronizeProperties() override;
-
 	virtual void SetSlot(const TWeakObjectPtr<UItem> _item, const TArray<FText>* _addictiveText = nullptr);
 	virtual void SetSlot(const FItemData* _itemData, const TArray<FText>* _addictiveText = nullptr);
+	virtual void Clear();
 };
 
 UCLASS()
