@@ -9,7 +9,6 @@
 class UItem;
 class UUWItemSlot;
 class UUWItemDetail;
-class UUWCheckBox;
 class UWrapBox;
 class UHorizontalBox;
 class UButton;
@@ -35,9 +34,7 @@ private:
 	FVector2D SlotSize{80.0f,80.0f};
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UHorizontalBox> CategoryContainer;
-	UPROPERTY()
-	TMap<EItemType, TObjectPtr<UUWCheckBox>> Category;
+	TObjectPtr<class UUWCategory> ItemCategory;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWItemSlot> ItemSlotClass;
@@ -67,6 +64,17 @@ private:
 	void OnSlotClicked(uint8 _index);
 	void ShowSelectedItemDetail(bool _bShow);
 
+	void ClickCategory(uint8 _opt);
+	void UpdateCategory(EItemType _category, bool _bUpdateSlot = true);
+	void UpdateSlot();
+
+	UFUNCTION()
+	void ClickThrowItem();
+	UFUNCTION()
+	void ClickEquipItem();
+	UFUNCTION()
+	void ClickUnequipItem();
+
 protected:
 	void NativeOnInitialized() override;
 
@@ -78,25 +86,11 @@ public:
 
 	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
 	bool IsValid() const { return GetItemArrFunc != nullptr; }
-
-	void UpdateSlot();
-
 	void SetSlot(uint8 _idx, TWeakObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
 	int8 GetOptionalIndex() const { return OptionalIndex; }
 
-	UFUNCTION()
-	void ClickCategoryCheckBox(bool _bIsChecked, uint8 _opt);
-	void UpdateCategory(EItemType _category, bool _bUpdateSlot = true);
-
 	FOnItemOptionClicked OnThrowButtonClicked;
 	FOnItemOptionClicked OnEquipButtonClicked;
 	FOnItemOptionClicked OnUnequipButtonClicked;
-
-	UFUNCTION()
-	void ClickThrowItem();
-	UFUNCTION()
-	void ClickEquipItem();
-	UFUNCTION()
-	void ClickUnequipItem();
 };
