@@ -23,6 +23,11 @@ void UUWItemSlotBase::SetSize(const FVector2D& _size)
 	Frame->SetHeightOverride(_size.Y);
 }
 
+void UUWItemSlotBase::SetAmount(uint32 _amount)
+{
+	AmountLabel->SetText(FText::AsNumber(_amount));
+}
+
 void UUWItemSlotBase::SetSlot(TWeakObjectPtr<UItem> _item)
 {
 	if (_item.IsValid() == false)

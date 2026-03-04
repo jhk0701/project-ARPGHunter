@@ -36,6 +36,7 @@ protected:
 public:
 	void Init(uint8 _idx);
 	void SetSize(const FVector2D& _size);
+	void SetAmount(uint32 _amount);
 
 	virtual void SetSlot(TWeakObjectPtr<UItem> _item);
 	virtual void SetSlotUsingID(const FName& _id, uint32 _amount);

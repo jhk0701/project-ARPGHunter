@@ -11,6 +11,7 @@ class UPanelWidget;
 
 class UUWItemDetail;
 class UUWItemTradeSlot;
+class UUWIngredientSlot;
 
 /**
  * 
@@ -22,7 +23,10 @@ class ARPG_HUNTER_API UUWItemTrade : public UUWPopUp
 
 private:
 	TArray<struct FItemTradeData*> ItemTradeDatas;
+	TArray<uint32> RemainAmount;
+
 	uint8 SelectedIndex{0};
+	uint32 InputAmount{0};
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
@@ -38,8 +42,46 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUWItemDetail> SelectedItemDetail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWIngredientSlot> PriceSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UEditableText> AmountInputField;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPanelWidget> Option;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> SubTenButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> SubOneButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> AddOneButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> AddTenButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> PurchaseButton;
 
 	void ClickSlot(uint8 _idx);
+	void UpdatePriceSlot();
+
+	UFUNCTION()
+	void Purchase();
+	UFUNCTION()
+	void HandleTextEditEvent(const FText& Text);
+	UFUNCTION()
+	void ClickSubOne();
+	UFUNCTION()
+	void ClickSubTen();
+	UFUNCTION()
+	void ClickAddOne();
+	UFUNCTION()
+	void ClickAddTen();
+
+	void InitOption();
+
+	void ChangeAmount(int32 _amount);
+	void SetAmount(uint32 _amount);
+	void SetTextWithoutEvent(const FText& _text);
 
 protected:
 	virtual void NativeOnInitialized() override;
