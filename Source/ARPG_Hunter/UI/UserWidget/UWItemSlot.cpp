@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWItemSlot.h"
@@ -43,7 +43,7 @@ void UUWItemSlotBase::SetSlot(TWeakObjectPtr<UItem> _item)
 		AmountLabel->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWItemSlotBase::SetSlotUsingID(const FName& _id, uint8 _amount)
+void UUWItemSlotBase::SetSlotUsingID(const FName& _id, uint32 _amount)
 {
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	FItemData* ItemData = DataManager->GetItemData(_id);
@@ -77,14 +77,19 @@ void UUWItemSlotBase::ClearSlot()
 	AmountLabel->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWItemSlot::NativeOnInitialized()
+void UUWSelectableItemSlot::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
 	MarkSelected(false);
-	MarkEquipped(false);
 }
 
-FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+void UUWSelectableItemSlot::MarkSelected(bool _bIsSelected)
+{
+	SelectedMark->SetVisibility(_bIsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+FReply UUWSelectableItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
@@ -95,6 +100,12 @@ FReply UUWItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 	}
 
 	return FReply::Unhandled();
+}
+
+void UUWItemSlot::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	MarkEquipped(false);
 }
 
 void UUWItemSlot::SetSlot(TWeakObjectPtr<UItem> _item)
@@ -131,10 +142,6 @@ void UUWItemSlot::ClearSlot()
 	MarkEquipped(false);
 }
 
-void UUWItemSlot::MarkSelected(bool _bIsSelected)
-{
-	SelectedMark->SetVisibility(_bIsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-}
 
 void UUWItemSlot::MarkEquipped(bool _bIsEquipped)
 {

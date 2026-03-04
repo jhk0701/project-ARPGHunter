@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -38,21 +38,18 @@ public:
 	void SetSize(const FVector2D& _size);
 
 	virtual void SetSlot(TWeakObjectPtr<UItem> _item);
-	virtual void SetSlotUsingID(const FName& _id, uint8 _amount);
+	virtual void SetSlotUsingID(const FName& _id, uint32 _amount);
 	virtual void SetThumbnailOnly(TObjectPtr<UTexture2D> _tex);
 	virtual void ClearSlot();
 };
 
-
 UCLASS()
-class ARPG_HUNTER_API UUWItemSlot : public UUWItemSlotBase
+class ARPG_HUNTER_API UUWSelectableItemSlot : public UUWItemSlotBase 
 {
 	GENERATED_BODY()
 private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> SelectedMark;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> EquippedMark;
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -61,14 +58,31 @@ protected:
 public:
 	FOnSlotClicked OnSlotClicked;
 
+	void MarkSelected(bool _bIsSelected);
+};
+
+
+UCLASS()
+class ARPG_HUNTER_API UUWItemSlot : public UUWSelectableItemSlot
+{
+	GENERATED_BODY()
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> EquippedMark;
+
+protected:
+	virtual void NativeOnInitialized() override;
+
+public:
 	virtual void SetSlot(TWeakObjectPtr<UItem> _item) override;
 	virtual void SetThumbnailOnly(TObjectPtr<UTexture2D> _tex) override;
 	virtual void ClearSlot() override;
 
-	void MarkSelected(bool _bIsSelected);
 	void MarkEquipped(bool _bIsEquipped);
 	bool IsEquipped() const;
 };
+
+
 
 UCLASS()
 class ARPG_HUNTER_API UUWItemSlotIndicate : public UUWItemSlotBase
@@ -81,4 +95,6 @@ private:
 public:
 	void SetMessage(const FText& _content);
 };
+
+
 

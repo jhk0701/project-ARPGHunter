@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/DataManager.h"
 #include "Engine/DataTable.h"
@@ -10,6 +10,7 @@
 #include "Data/StageData.h"
 #include "Data/ItemData.h"
 #include "Data/ItemProductData.h"
+#include "Data/ItemTradeData.h"
 #include "Data/DialogData.h"
 #include "Data/EquipmentUpgradeData.h"
 
@@ -44,6 +45,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> ItemProductDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_ItemProductData.DT_ItemProductData'"));
 	if (ItemProductDataTableFinder.Succeeded())
 		ItemProductDataTable = ItemProductDataTableFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UItemTradeConfig> ItemTradeConfigFinder(TEXT("/Script/ARPG_Hunter.ItemTradeConfig'/Game/03-Data/TradeData/TradeConfig.TradeConfig'"));
+	if (ItemTradeConfigFinder.Succeeded())
+		ItemTradeData = ItemTradeConfigFinder.Object;
 
 	static ConstructorHelpers::FObjectFinder<UDataTable> DialogDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_DialogData.DT_DialogData'"));
 	if (DialogDataTableFinder.Succeeded())
@@ -84,9 +89,14 @@ FItemProductData* UDataManager::GetItemProductData(const FName& _id) const
 	return ItemProductDataTable->FindRow<FItemProductData>(_id, TEXT("Item Product Data Table Search"));
 }
 
-void UDataManager::GetAllItemProduct(TArray<struct FItemProductData*>& _outArr) const
+void UDataManager::GetAllItemProduct(TArray<FItemProductData*>& _outArr) const
 {
 	ItemProductDataTable->GetAllRows(TEXT("Item Product Data Table Search"), _outArr);
+}
+
+void UDataManager::GetItemTradeTable(TArray<FItemTradeData*>& _outTradeData) const
+{
+	ItemTradeData->GetRandomTable()->GetAllRows<FItemTradeData>(TEXT("Item Trade Data Table Search"), _outTradeData);
 }
 
 FDialogData* UDataManager::GetDialogData(const FName& _id) const

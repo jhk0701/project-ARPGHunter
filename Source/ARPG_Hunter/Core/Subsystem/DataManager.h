@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,6 +9,7 @@
 class UDataTable;
 class UWeaponType;
 class UWeaponConfig;
+class UItemTradeConfig;
 class UEquipmentSuccessData;
 enum class EWeaponType :uint8;
 enum class EEquipmentType : uint8;
@@ -37,6 +38,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UDataTable> ItemProductDataTable;
 	UPROPERTY()
+	TObjectPtr<UItemTradeConfig> ItemTradeData;
+	UPROPERTY()
 	TObjectPtr<UDataTable> DialogDataTable;
 	UPROPERTY()
 	TObjectPtr<UDataTable> EquipmentUpgradeTable;
@@ -52,6 +55,8 @@ public:
 	struct FItemData* GetItemData(const FName& _id) const;
 	struct FItemProductData* GetItemProductData(const FName& _id) const;
 	void GetAllItemProduct(TArray<struct FItemProductData*>& _outArr) const;
+	void GetItemTradeTable(TArray<struct FItemTradeData*>& _outTradeData) const;
+
 	struct FDialogData* GetDialogData(const FName& _id) const;
 	struct FEquipmentUpgradeData* GetUpgradeData(uint8 _rank, uint8 _grade, EEquipmentType _type);
 };
