@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 
 #include "Define/Enum.h"
+#include "Core/Subsystem/DataManager.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
@@ -37,6 +38,25 @@ void UUWItemSlotBase::SetSlot(TWeakObjectPtr<UItem> _item)
 	{
 		AmountLabel->SetVisibility(ESlateVisibility::Visible);
 		AmountLabel->SetText(FText::AsNumber(_item->GetAmount()));
+	}
+	else
+		AmountLabel->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UUWItemSlotBase::SetSlotUsingID(const FName& _id, uint8 _amount)
+{
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	FItemData* ItemData = DataManager->GetItemData(_id);
+	if (ItemData == nullptr)
+		return;
+
+	Thumbnail->SetBrushFromTexture(ItemData->Item->Thumbnail);
+	Thumbnail->SetVisibility(ESlateVisibility::Visible);
+
+	if (_amount > 1)
+	{
+		AmountLabel->SetVisibility(ESlateVisibility::Visible);
+		AmountLabel->SetText(FText::AsNumber(_amount));
 	}
 	else
 		AmountLabel->SetVisibility(ESlateVisibility::Hidden);

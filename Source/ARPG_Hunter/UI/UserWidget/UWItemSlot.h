@@ -38,6 +38,7 @@ public:
 	void SetSize(const FVector2D& _size);
 
 	virtual void SetSlot(TWeakObjectPtr<UItem> _item);
+	virtual void SetSlotUsingID(const FName& _id, uint8 _amount);
 	virtual void SetThumbnailOnly(TObjectPtr<UTexture2D> _tex);
 	virtual void ClearSlot();
 };

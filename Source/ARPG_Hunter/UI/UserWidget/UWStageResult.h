@@ -27,19 +27,27 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ReturnButton;
 
+	UPROPERTY(EditAnywhere)
+	FVector2D SlotSize{ 60.0f, 60.0f };
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUWItemSlot> ItemSlotClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWItemSlot>> ItemSlotInst;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UWrapBox> RewardItemContainer;
+
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> OpenAnim;
+
+protected:
+	void NativeOnInitialized() override;
 
 public:
 	FOnClickReturnButton OnClickReturnButton;
 
-	void ShowUI(bool _bIsSubUI = false) override;
-
+	virtual void ShowUI(bool _bIsSubUI = false) override;
 	void Update(bool _bIsClear, const struct FStageData* _stageData);
 
 	UFUNCTION()
 	void ClickReturnButton();
-
-protected:
-	void NativeOnInitialized() override;
 };

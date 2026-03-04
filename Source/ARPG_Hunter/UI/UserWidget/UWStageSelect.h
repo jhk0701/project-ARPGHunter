@@ -67,18 +67,18 @@ private:
 	TObjectPtr<UTextBlock> GoldRewardLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UWrapBox> RewardItemContainer;
-	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWItemSlot> ItemSlotClass;
-	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
+	UPROPERTY(EditAnywhere)
 	uint8 InitRewardItemSlotSize = 24;
-	UPROPERTY(EditAnywhere, Category = "Slot|ItemSlot")
+	UPROPERTY(EditAnywhere)
 	FVector2D ItemSlotSize{ 50.0f, 50.0f };
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScrollBox> StageList;
-	UPROPERTY(EditAnywhere, Category = "Slot|StageSlot")
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWStageSlot> StageSlotClass;
-	UPROPERTY(EditAnywhere, Category = "Slot|StageSlot")
+	UPROPERTY(EditAnywhere)
 	uint8 InitStageSlotSize = 10;
 
 	// 직렬화하지 않고 휘발처리
