@@ -98,12 +98,12 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	Gold.Value = 50000;
+	Gold.Value = 1000;
 
-	AddItem(FName(TEXT("1001")), 900);
-	AddItem(FName(TEXT("1002")), 900);
-	AddItem(FName(TEXT("1003")), 900);
-	AddItem(FName(TEXT("1004")), 900);
+	AddItem(FName(TEXT("1001")), 10);
+	AddItem(FName(TEXT("1002")), 10);
+	AddItem(FName(TEXT("1003")), 5);
+	AddItem(FName(TEXT("1004")), 5);
 	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);
@@ -127,7 +127,7 @@ void UPlayerManager::ProvideBasicProperty()
 	AddItem(FName(TEXT("2002")), 10);
 	AddItem(FName(TEXT("2003")), 10);
 
-	AddItem(FName(TEXT("4002")), 1);
+	// AddItem(FName(TEXT("4002")), 1);
 }
 
 TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) const

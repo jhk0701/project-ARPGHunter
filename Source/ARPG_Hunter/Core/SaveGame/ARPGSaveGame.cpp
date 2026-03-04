@@ -5,5 +5,4 @@
 
 UARPGSaveGame::UARPGSaveGame()
 {
-
 }
