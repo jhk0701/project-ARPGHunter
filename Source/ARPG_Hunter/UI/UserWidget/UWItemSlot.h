@@ -61,7 +61,6 @@ public:
 	void MarkSelected(bool _bIsSelected);
 };
 
-
 UCLASS()
 class ARPG_HUNTER_API UUWItemSlot : public UUWSelectableItemSlot
 {
@@ -83,7 +82,6 @@ public:
 };
 
 
-
 UCLASS()
 class ARPG_HUNTER_API UUWItemSlotIndicate : public UUWItemSlotBase
 {
@@ -96,5 +94,14 @@ public:
 	void SetMessage(const FText& _content);
 };
 
+UCLASS()
+class ARPG_HUNTER_API UUWItemTradeSlot : public UUWSelectableItemSlot
+{
+	GENERATED_BODY()
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> PriceLabel;
 
-
+public:
+	void SetPrice(uint32 _price);
+};

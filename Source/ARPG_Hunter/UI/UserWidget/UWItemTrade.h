@@ -10,7 +10,7 @@ class UButton;
 class UPanelWidget;
 
 class UUWItemDetail;
-class UUWItemSlotIndicate;
+class UUWItemTradeSlot;
 
 /**
  * 
@@ -22,6 +22,7 @@ class ARPG_HUNTER_API UUWItemTrade : public UUWPopUp
 
 private:
 	TArray<struct FItemTradeData*> ItemTradeDatas;
+	uint8 SelectedIndex{0};
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
@@ -29,14 +30,16 @@ private:
 	UPROPERTY(EditAnywhere)
 	FVector2D SlotSize{ 150.0f, 150.0f };
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUWItemSlotIndicate> ItemSlotClass;
+	TSubclassOf<UUWItemTradeSlot> ItemSlotClass;
 	UPROPERTY()
-	TArray<TObjectPtr<UUWItemSlotIndicate>> ItemSlotInst;
+	TArray<TObjectPtr<UUWItemTradeSlot>> ItemSlotInst;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UPanelWidget> ItemContainer;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUWItemDetail> SelectedItemDetail;
+
+	void ClickSlot(uint8 _idx);
 
 protected:
 	virtual void NativeOnInitialized() override;

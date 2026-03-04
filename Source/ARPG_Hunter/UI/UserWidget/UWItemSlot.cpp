@@ -157,3 +157,8 @@ void UUWItemSlotIndicate::SetMessage(const FText& _content)
 {
 	MessageLabel->SetText(_content);
 }
+
+void UUWItemTradeSlot::SetPrice(uint32 _price)
+{
+	PriceLabel->SetText(FText::Format(FText::FromString(TEXT("{0} G")), _price));
+}

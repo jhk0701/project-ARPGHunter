@@ -26,9 +26,14 @@ void UUWItemTrade::NativeOnInitialized()
 	ItemSlotInst.SetNum(ItemTradeDatas.Num());
 	for (uint8 i = 0; i < ItemTradeDatas.Num(); i++)
 	{
-		TObjectPtr<UUWItemSlotIndicate> SlotInst = CreateWidget<UUWItemSlotIndicate>(this, ItemSlotClass);
-		SlotInst->SetSlotUsingID(ItemTradeDatas[i]->ItemID, ItemTradeDatas[i]->Amount);
+		TObjectPtr<UUWItemTradeSlot> SlotInst = CreateWidget<UUWItemTradeSlot>(this, ItemSlotClass);
+		SlotInst->Init(i);
 		SlotInst->SetSize(SlotSize);
+		SlotInst->SetSlotUsingID(ItemTradeDatas[i]->ItemID, ItemTradeDatas[i]->Amount);
+		SlotInst->SetPrice(ItemTradeDatas[i]->Price);
+		SlotInst->MarkSelected(false);
+		SlotInst->OnSlotClicked.BindUObject(this, &UUWItemTrade::ClickSlot);
+
 		ItemSlotInst[i] = SlotInst;
 		ItemContainer->AddChild(SlotInst);
 	}
@@ -43,4 +48,18 @@ void UUWItemTrade::ShowUI(bool _bIsSubUI)
 void UUWItemTrade::Init()
 {
 	SelectedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+
+	ItemSlotInst[SelectedIndex]->MarkSelected(false);
+}
+
+void UUWItemTrade::ClickSlot(uint8 _idx)
+{
+	ItemSlotInst[SelectedIndex]->MarkSelected(false);
+	SelectedIndex = _idx;
+	ItemSlotInst[SelectedIndex]->MarkSelected(true);
+
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+
+	SelectedItemDetail->SetDetail(DataManager->GetItemData(ItemTradeDatas[SelectedIndex]->ItemID));
+	SelectedItemDetail->SetVisibility(ESlateVisibility::Visible);
 }

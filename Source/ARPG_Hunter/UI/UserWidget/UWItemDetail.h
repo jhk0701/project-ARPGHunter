@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -46,4 +46,5 @@ protected:
 
 public:
 	void SetDetail(TWeakObjectPtr<class UItem> _item);
+	void SetDetail(struct FItemData* _data);
 };
