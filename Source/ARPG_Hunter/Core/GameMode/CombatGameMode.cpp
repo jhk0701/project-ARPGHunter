@@ -157,13 +157,14 @@ void ACombatGameMode::RegisterObjectPool()
 	for (const TPair<EMonsterType, uint8>& pair : MaxCountPerType)
 	{
 		EMonsterType Type = pair.Key;
-		ObjectPool->Register(
-			MonsterClass[pair.Key],
+		TFunction<TObjectPtr<AActor>()> CreateFunc = 
 			[this, Type]()
 			{
 				// 몬스터 액터 생성 람다식
 				FActorSpawnParameters SpawnParam;
 				SpawnParam.Owner = this;
+				SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 				TObjectPtr<AMonsterBase> Inst = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass[Type], SpawnParam);
 				check(Inst != nullptr);
 
@@ -171,7 +172,11 @@ void ACombatGameMode::RegisterObjectPool()
 				Inst->OnMonsterDead.BindUObject(this, &ACombatGameMode::ReleaseMonster);
 
 				return Inst;
-			},
+			};
+
+		ObjectPool->Register(
+			MonsterClass[pair.Key],
+			CreateFunc,
 			pair.Value);
 	}
 
