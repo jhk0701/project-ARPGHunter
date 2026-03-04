@@ -12,7 +12,7 @@ class UQuickSlot;
 enum class ECharacterStatType : uint8;
 enum class EEquipmentType : uint8;
 
-using FPMAliasMapStat = TMap<ECharacterStatType, uint32>;
+using FPMAliasMapStat = TMap<ECharacterStatType, uint32>; // 델리게이트 매개변수 선언용
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCurrencyChanged, uint32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, const FPMAliasMapStat&, const FPMAliasMapStat&);
@@ -42,8 +42,8 @@ public:
 private:
 	UPROPERTY()
 	TObjectPtr<class UPlayerConfig> PlayerDefault;
-	
 	TMap<ECharacterStatType, uint32> Stat;
+	
 	FCurrency Gold;
 	
 	UPROPERTY()

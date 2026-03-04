@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -63,11 +63,8 @@ private:
 	// 장착 시, 0 이상 값. EEquipmentType 의 값이 들어올 것
 	int32 EquipmentIndex{ -1 }; 
 	
-	// 강화 및 인챈트 데이터
 	// 강화 수치
 	uint8 Grade{ 0 };
-
-	// TODO: 인챈트 데이터
 
 public:
 	virtual void Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config) override;

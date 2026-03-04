@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,19 +6,12 @@
 #include "UObject/NoExportTypes.h"
 #include "Inventory.generated.h"
 
-class UItem;// : public UObject;
+class UItem;
 class UItemConfig;
 struct FItemData;
 enum class EItemType : uint8;
 
-struct FAddItemParam 
-{
-public:
-	FName ID;
-	uint16 Amount;
-	uint8 OutIndex;
-	FItemData* Data;
-};
+
 
 USTRUCT()
 struct FItemArray 
@@ -40,8 +33,18 @@ UCLASS()
 class ARPG_HUNTER_API UInventory : public UObject
 {
 	GENERATED_BODY()
+public:
+	struct FAddItemParam
+	{
+	public:
+		FName ID;
+		uint16 Amount;
+		uint8 OutIndex;
+		FItemData* Data;
+	};
+
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	TMap<EItemType, FItemArray> Container;
 
 	bool TryFindEmpty(EItemType _type, uint8& _outIdx);

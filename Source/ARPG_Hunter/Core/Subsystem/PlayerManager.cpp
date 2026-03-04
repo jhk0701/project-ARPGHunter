@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
 
@@ -72,7 +72,7 @@ bool UPlayerManager::TrySubGold(uint32 _amount)
 uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
 	//아이템 추가
-	FAddItemParam Param;
+	UInventory::FAddItemParam Param;
 	Param.ID = _itemID;
 	Param.Amount = _amount;
 	Param.Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_itemID);
