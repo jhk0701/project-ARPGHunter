@@ -127,7 +127,7 @@ void UUWEquipmentProduct::UpdateDetail()
 
 	bIngredientIsEnough = true;
 
-	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 	uint8 i = 0;
 	FText IngredientFormat = FText::FromString(TEXT("{0} / {1}"));
 	for (; i < ProductData->Ingredients.Num(); ++i)
@@ -177,7 +177,7 @@ void UUWEquipmentProduct::ClickProductButton()
 
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	TObjectPtr<UPlayerManager> Player = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	TObjectPtr<UInventory> Inventory = Player->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = Player->GetInventory();
 	
 	// 비용 지불
 	Player->TrySubGold(ProductData->GoldCost);

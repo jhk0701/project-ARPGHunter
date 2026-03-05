@@ -1,6 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "Core/SaveGame/ARPGSaveGame.h"
 
 #include "Core/Subsystem/DataManager.h"
 #include "Define/Enum.h"
@@ -29,11 +31,10 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	Stat = PlayerDefault->InitStat;
 	Inventory = NewObject<UInventory>(this);
 	Equipment = NewObject<UEquipment>(this);
 	QuickSlot = NewObject<UQuickSlot>(this);
-
-	Stat = PlayerDefault->InitStat;
 
 	// TODO : 플레이어 저장 데이터 적용하기
 	Inventory->Init();
@@ -46,10 +47,10 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	ProvideBasicProperty();
 }
 
-const TMap<ECharacterStatType, uint32>& UPlayerManager::GetEquipmentStat() const
-{
-	return Equipment->GetEquipmentStat();
-}
+TWeakObjectPtr<UInventory> UPlayerManager::GetInventory() const { return Inventory; }
+TWeakObjectPtr<UEquipment> UPlayerManager::GetEquipment() const { return Equipment; }
+TWeakObjectPtr<UQuickSlot> UPlayerManager::GetQuickSlot() const { return QuickSlot; }
+const TMap<ECharacterStatType, uint32>& UPlayerManager::GetEquipmentStat() const { return Equipment->GetEquipmentStat(); }
 
 void UPlayerManager::AddGold(uint32 _amount)
 {
@@ -96,6 +97,7 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 		QuickSlot->ClearSlot(_quickSlotIdx);
 }
 
+
 void UPlayerManager::ProvideBasicProperty()
 {
 	Gold.Value = 1000;
@@ -130,15 +132,8 @@ void UPlayerManager::ProvideBasicProperty()
 	// AddItem(FName(TEXT("4002")), 1);
 }
 
-TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) const
-{
-	return PlayerDefault->MapDefalutMesh[_type];
-}
-
-TWeakObjectPtr<UConsumableItem> UPlayerManager::GetQuickSlotItem(uint8 _idx) const
-{
-	return QuickSlot->GetItem(_idx);
-}
+TObjectPtr<USkeletalMesh> UPlayerManager::GetDefaultMesh(EEquipmentType _type) const { return PlayerDefault->MapDefalutMesh[_type]; }
+TWeakObjectPtr<UConsumableItem> UPlayerManager::GetQuickSlotItem(uint8 _idx) const { return QuickSlot->GetItem(_idx); }
 
 void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
 {

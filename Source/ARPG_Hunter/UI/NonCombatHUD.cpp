@@ -64,8 +64,8 @@ void ANonCombatHUD::BeginPlay()
 		MaintenanceUI = CreateWidget<UUWMaintenance>(GetWorld(), MaintenanceUIClass);
 		if (MaintenanceUI) 
 		{
-			TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-			TObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
+			TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+			TWeakObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
 
 			FUWMaintenanceInitParam InitParm
 			(
@@ -87,7 +87,7 @@ void ANonCombatHUD::BeginPlay()
 		InventoryUI = CreateWidget<UUWInventory>(GetWorld(), InventoryUIClass);
 		if (InventoryUI)
 		{
-			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+			TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 			
 			InventoryUI->Init(
 				Inventory->GetContainerSize(), 
@@ -146,7 +146,7 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 		[this](EItemType _type, uint8 _index)
 		{
 			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-			TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+			TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 			Inventory->TrySubItem(_type, _index, Inventory->GetItem(_type, _index)->GetAmount()); // 아이템 버리기
 		}
 	);

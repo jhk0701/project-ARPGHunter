@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWItemTrade.h"
@@ -179,7 +179,7 @@ void UUWItemTrade::Purchase()
 		return;
 
 	// 아이템 전달
-	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 	PlayerManager->AddItem(ItemTradeDatas[SelectedIndex]->ItemID, PurchaseAmount);
 
 	// 선택한 아이템 UI 변경

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -57,9 +57,9 @@ private:
 	void QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx);
 
 public:
-	const TObjectPtr<UInventory> GetInventory() const { return Inventory; }
-	const TObjectPtr<UEquipment> GetEquipment() const { return Equipment; }
-	const TObjectPtr<UQuickSlot> GetQuickSlot() const { return QuickSlot; }
+	TWeakObjectPtr<UInventory> GetInventory() const;
+	TWeakObjectPtr<UEquipment> GetEquipment() const;
+	TWeakObjectPtr<UQuickSlot> GetQuickSlot() const;
 
 	FOnStatValueChanged OnStatValueChanged;
 
@@ -80,4 +80,8 @@ public:
 
 	TWeakObjectPtr<class UConsumableItem> GetQuickSlotItem(uint8 _idx) const;
 	void UseQuickSlotItem(uint8 _index, class IEffectable* _target);
+
+	class UARPGSaveGame* CreateSaveGame();
+	void SaveGame();
+	void LoadGame();
 };

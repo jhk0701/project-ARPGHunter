@@ -85,7 +85,7 @@ void UUWEquipmentSuccession::SelectCategory(uint8 _opt)
 {
 	CurItemType = static_cast<EItemType>(_opt);
 
-	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 
 	TSet<uint8> IdxSet;
 	Inventory->SearchItems(CurItemType, IdxSet, 
@@ -114,7 +114,7 @@ void UUWEquipmentSuccession::ClickEquipmentSlot(uint8 _index)
 	EquipmentIdx = _index;
 
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 
 	TObjectPtr<UEquipmentSuccessData> SuccessionData = GetGameInstance()->GetSubsystem<UDataManager>()->GetSuccessData();
 	uint8 Requirement = SuccessionData->GetRequiredGradeForSuccession();
@@ -160,7 +160,7 @@ void UUWEquipmentSuccession::ClickIngredientSlot(uint8 _index)
 {
 	IngredientIdx = _index;
 
-	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 	IngredientSlot->SetSlot(Inventory->GetItem(CurItemType, IngredientIdx));
 
 	SuccessButton->SetIsEnabled(bSuccessionIsEnable);
@@ -179,8 +179,8 @@ void UUWEquipmentSuccession::SucceessItem()
 	if (PlayerManager->TrySubGold(SuccessionData->GoldCost) == false)
 		return;
 
-	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-	TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+	TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 
 	TObjectPtr<UEquipmentItem> Target = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, EquipmentIdx));
 	TObjectPtr<UEquipmentItemConfig> TargetConfig = Cast<UEquipmentItemConfig>(Target->GetConfig());

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/CombatHUD.h"
 
@@ -40,7 +40,7 @@ void ACombatHUD::BeginPlay()
 		{
 			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 			
-			TObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
+			TWeakObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
 			TObjectPtr<UUWQuickSlot> QuickSlotUI = PlayerUI->GetQuickSlot();
 			QuickSlotUI->Init(QuickSlot->GetContainer());
 

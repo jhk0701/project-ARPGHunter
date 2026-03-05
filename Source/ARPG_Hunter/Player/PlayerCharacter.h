@@ -81,7 +81,7 @@ public:
 	APlayerCharacter();
 
 private:
-	void InitEquipment(TObjectPtr<class UEquipment> _equipment);
+	void InitEquipment(TWeakObjectPtr<class UEquipment> _equipment);
 	void UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<class UEquipmentItem> _equipment);
 	
 	void SmoothRotateToInputDir(float DeltaTime);

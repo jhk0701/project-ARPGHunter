@@ -122,7 +122,7 @@ void APlayerCharacter::Init()
 	StatComp->StartStaminaRecovery();
 	StatComp->OnDead.AddUObject(this, &APlayerCharacter::OnDead);
 
-	TObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
+	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 	InitEquipment(Equipment);
 	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
 
@@ -151,8 +151,11 @@ void APlayerCharacter::Init()
 	InteractWidget->SetHiddenInGame(true);
 }
 
-void APlayerCharacter::InitEquipment(TObjectPtr<UEquipment> _equipment)
+void APlayerCharacter::InitEquipment(TWeakObjectPtr<UEquipment> _equipment)
 {
+	if (_equipment.IsValid() == false)
+		return;
+
 	for (uint8 i = 0; i < static_cast<uint8>(EEquipmentType::END); ++i)
 	{
 		EEquipmentType Type = static_cast<EEquipmentType>(i);

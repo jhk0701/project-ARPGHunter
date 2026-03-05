@@ -27,7 +27,7 @@ void UUWEquipmentUpgrade::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 
 	UpgradeButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::Upgrade);
 	ConfirmButton->OnClicked.AddDynamic(this, &UUWEquipmentUpgrade::ConfirmResult);
@@ -95,7 +95,7 @@ void UUWEquipmentUpgrade::Init()
 
 void UUWEquipmentUpgrade::SelectCategory(uint8 _option)
 {
-	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 	CurItemType = static_cast<EItemType>(_option);
 
 	const TArray<TObjectPtr<UItem>>& Items = Inventory->GetContainer(CurItemType);
@@ -115,7 +115,7 @@ void UUWEquipmentUpgrade::SelectCategory(uint8 _option)
 void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 {
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 
 	TWeakObjectPtr<UItem> Items = Inventory->GetContainer(CurItemType)[_index];
 	if (Items.IsValid() == false)
@@ -128,7 +128,7 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 
 	TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Items);
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
-	TObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
+	TWeakObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
 
 	TObjectPtr<UEquipmentItemConfig> Config = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
 	ItemThumbnail->SetBrushFromTexture(Config->Thumbnail);
@@ -236,7 +236,7 @@ void UUWEquipmentUpgrade::Upgrade()
 	
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	TObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
 
 	// 재료 소모
 	for (const FUpgradeIngredient& Ingredient : UpgradeData->Ingredients)
@@ -265,7 +265,7 @@ void UUWEquipmentUpgrade::Upgrade()
 		else
 		{
 			TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
-			TObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
+			TWeakObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
 			PlayerEquipment->Unequip(EquipConfig->Type);
 			Equipment->Upgrade();
 			PlayerEquipment->Equip(EquipConfig->Type, Equipment);
@@ -280,7 +280,7 @@ void UUWEquipmentUpgrade::ShowResult(bool _bIsSuccess)
 {
 	Result->SetVisibility(ESlateVisibility::Visible);
 
-	TObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
+	TWeakObjectPtr<UInventory> Inventory = GetGameInstance()->GetSubsystem<UPlayerManager>()->GetInventory();
 	TWeakObjectPtr<UItem> TargetItem = Inventory->GetItem(CurItemType, CurItemIdx);
 
 	ResultLabel->SetText(_bIsSuccess ? TextOnSuccess : TextOnFail);
