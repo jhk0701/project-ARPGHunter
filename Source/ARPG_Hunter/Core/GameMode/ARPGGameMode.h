@@ -11,10 +11,11 @@ class AAmbientSound;
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS()
 class ARPG_HUNTER_API AARPGGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
 public:
 	AARPGGameMode();
 
@@ -29,6 +30,8 @@ protected:
 	void BeginPlay() override;
 
 public:
+	virtual void ExitGame();
+
 	void OpenLevel(const FName& _stageID);
 	void BackToTown();
 };

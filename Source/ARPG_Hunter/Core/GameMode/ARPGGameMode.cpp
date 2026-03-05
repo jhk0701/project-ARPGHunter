@@ -44,6 +44,12 @@ void AARPGGameMode::BeginPlay()
 	}
 }
 
+void AARPGGameMode::ExitGame()
+{
+	UWorld* World = GetWorld();
+	UKismetSystemLibrary::QuitGame(World, World->GetFirstPlayerController(), EQuitPreference::Quit, true);
+}
+
 void AARPGGameMode::OpenLevel(const FName& _stageID)
 {
 	TObjectPtr<UARPGGameInstance> GI = GetGameInstance<UARPGGameInstance>();

@@ -46,19 +46,6 @@ private:
 public:
 	ACombatGameMode();
 
-	FOnGameEnd OnGameEnd;
-	TMap<EStageEvent, FStageEvent> StageEvent;
-
-	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
-
-	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
-
-protected:
-	virtual void PostInitializeComponents() override;
-	virtual void BeginPlay() override;
-	
-	void SetStageData(const FName& _stageID);
-
 private:
 	void RegisterObjectPool();
 	void ReleaseMonster(TObjectPtr<class AMonsterBase> _target);
@@ -66,4 +53,18 @@ private:
 
 	void GameClear();
 	void GameFail();
+
+protected:
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetStageData(const FName& _stageID);
+
+public:
+	TMap<EStageEvent, FStageEvent> StageEvent;
+	FOnGameEnd OnGameEnd;
+
+	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
+	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
 };
