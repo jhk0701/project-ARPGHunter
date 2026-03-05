@@ -42,46 +42,20 @@ public:
 /**
  * 
  */
-UCLASS(Abstract)
-class ARPG_HUNTER_API UARPGSaveGame : public USaveGame
+UCLASS()
+class ARPG_HUNTER_API UPlayerSaveData : public USaveGame
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere)
-	uint32 UserIndex{ 0 };
-	UPROPERTY(VisibleAnywhere)
-	FString Version;
-	UPROPERTY(VisibleAnywhere)
-	FString SaveSlotName;
-
-	void InitSaveGame(uint32 _userIdx, const FString& _ver, const FString& _slotName) 
-	{
-		UserIndex = _userIdx;
-		Version = _ver;
-		SaveSlotName = _slotName;
-	};
-};
-
-UCLASS()
-class ARPG_HUNTER_API UPlayerSaveData : public UARPGSaveGame
-{
-public:
+	static FString GetSlotName();
+	
 	UPROPERTY(VisibleAnywhere)
 	FString PlayerName;
 	UPROPERTY(VisibleAnywhere)
 	uint32 Gold{ 0 };
-};
-
-UCLASS()
-class ARPG_HUNTER_API UInventorySaveData : public UARPGSaveGame
-{
-public:
+	UPROPERTY()
 	TMap<uint8, FItemSaveDataArray> InventoryDataMap;
-	
-	void SetInventoryData(const TMap<EItemType, TArray<TObjectPtr<class UItem>>>& _container);
+
+	void SetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
 };
-
-/*
-
-*/

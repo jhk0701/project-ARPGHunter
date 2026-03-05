@@ -1,9 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
-#include "Kismet/GameplayStatics.h"
-#include "Core/SaveGame/ARPGSaveGame.h"
-
 #include "Core/Subsystem/DataManager.h"
 #include "Define/Enum.h"
 #include "Data/PlayerConfig.h"
@@ -11,6 +8,9 @@
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
 #include "Item/Item.h"
+
+#include "Core/SaveGame/ARPGSaveGame.h"
+#include "Core/Subsystem/SaveLoadManager.h"
 
 UPlayerManager::UPlayerManager()
 {
@@ -138,4 +138,42 @@ TWeakObjectPtr<UConsumableItem> UPlayerManager::GetQuickSlotItem(uint8 _idx) con
 void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
 {
 	QuickSlot->UseItem(_index, _target);
+}
+
+void UPlayerManager::Save()
+{
+	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
+	
+	USaveLoadManager::FPlayerDataParam Param;
+	Param.PlayerName = TEXT("Test Player");
+	Param.Gold = Gold.Value;
+	Param.Inventory = GetInventory();
+
+	FOnSaveComplete CompleteCallback;
+	CompleteCallback.BindWeakLambda(this, 
+		[this](bool _bIsIgnore) 
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Saved"));
+		}
+	);
+	SaveLoad->SavePlayerData(Param, CompleteCallback);
+}
+
+void UPlayerManager::Load()
+{
+	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
+	
+	FOnLoadComplete CompleteCallback;
+	CompleteCallback.BindWeakLambda(this,
+		[this](TObjectPtr<USaveGame> _saveData) 
+		{
+			TObjectPtr<UPlayerSaveData> PlayerSD = Cast<UPlayerSaveData>(_saveData);
+			// 
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Load Complete"));
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, FString::Printf(TEXT("PlayerName: %s"), *PlayerSD->PlayerName));
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, FString::Printf(TEXT("Gold: %d"), PlayerSD->Gold));
+		}
+	);
+
+	SaveLoad->LoadPlayerData(CompleteCallback);
 }

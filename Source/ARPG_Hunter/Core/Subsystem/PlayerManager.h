@@ -73,15 +73,17 @@ public:
 	bool TrySubGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
  
-	UFUNCTION(BlueprintCallable)
-	uint8 AddItem(const FName & _itemID, int32 _amount);
 	void ProvideBasicProperty();
+	
 	TObjectPtr<USkeletalMesh> GetDefaultMesh(EEquipmentType _type) const;
-
 	TWeakObjectPtr<class UConsumableItem> GetQuickSlotItem(uint8 _idx) const;
 	void UseQuickSlotItem(uint8 _index, class IEffectable* _target);
+	
+	UFUNCTION(BlueprintCallable)
+	uint8 AddItem(const FName& _itemID, int32 _amount);
 
-	class UARPGSaveGame* CreateSaveGame();
-	void SaveGame();
-	void LoadGame();
+	UFUNCTION(BlueprintCallable)
+	void Save();
+	UFUNCTION(BlueprintCallable)
+	void Load();
 };

@@ -4,22 +4,36 @@
 #include "Core/SaveGame/ARPGSaveGame.h"
 
 #include "Define/Enum.h"
+#include "Player/Inventory.h"
 #include "Item/Item.h"
 
-void UInventorySaveData::SetInventoryData(const TMap<EItemType, TArray<TObjectPtr<class UItem>>>& _container)
+FString UPlayerSaveData::GetSlotName()
 {
+	return TEXT("ARPG_PlayerData");
+}
+
+void UPlayerSaveData::SetInventoryData(TWeakObjectPtr<UInventory> _inventory)
+{
+	if (_inventory.IsValid() == false)
+		return;
+
 	for (uint8 i = 0; i < static_cast<uint8>(EItemType::END); ++i)
 	{
 		EItemType Type = static_cast<EItemType>(i);
+		const TArray<TObjectPtr<UItem>>& Container = _inventory->GetContainer(Type);
+
 		if (InventoryDataMap.Find(i) == nullptr)
 		{
 			FItemSaveDataArray& Array = InventoryDataMap.Add(i);
-			Array.ItemArray.Reserve(_container[Type].Num());
+			Array.ItemArray.Reserve(Container.Num());
 		}
 
-		for (uint8 j = 0; j < _container[Type].Num(); ++j)
+		for (uint8 j = 0; j < Container.Num(); ++j)
 		{
-			TObjectPtr<UItem> Item = _container[Type][j];
+			TObjectPtr<UItem> Item = Container[j];
+			if (Container[j] == nullptr)
+				continue;
+
 			FItemSaveData Save;
 
 			Save.ID = Item->GetID();
