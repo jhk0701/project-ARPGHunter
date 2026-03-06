@@ -60,6 +60,8 @@ void ATitleGameMode::ClickContinue()
 	Callback.BindWeakLambda(this, 
 		[this]() 
 		{
+			TObjectPtr<UUWTitleScreen> TitleUI = Cast<UUWTitleScreen>(TitleUIInst);
+			TitleUI->HideUI();
 			GoToTown();
 		}
 	);
