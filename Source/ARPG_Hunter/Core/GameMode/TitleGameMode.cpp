@@ -5,6 +5,8 @@
 #include "Controller/PlayerCharacterController.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/SaveLoadManager.h"
+#include "Core/SaveGame/PlayerSaveGame.h"
+
 #include "UI/UserWidget/UWTitleScreen.h"
 
 ATitleGameMode::ATitleGameMode()
@@ -34,7 +36,7 @@ void ATitleGameMode::BeginPlay()
 	TitleUI->OnClickContinue.BindUObject(this, &ATitleGameMode::ClickContinue);
 	TitleUI->OnClickExit.BindUObject(this, &ATitleGameMode::ExitGame);
 
-	TitleUI->ShowContinueButton(GetGameInstance()->GetSubsystem<USaveLoadManager>()->DoesPlayerDataExist());
+	TitleUI->ShowContinueButton(GetGameInstance()->GetSubsystem<USaveLoadManager>()->DoesDataExist<UPlayerSaveGame>());
 	TitleUI->ShowUI();
 }
 

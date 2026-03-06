@@ -6,57 +6,11 @@
 #include "GameFramework/SaveGame.h"
 #include "ARPGSaveGame.generated.h"
 
-
-enum class EItemType :uint8;
-
-USTRUCT()
-struct FItemSaveData 
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY()
-	FName ID;
-	UPROPERTY()
-	EItemType Type;
-	UPROPERTY()
-	uint16 Amount;
-	UPROPERTY()
-	uint8 InventoryIndex;
-	UPROPERTY()
-	int8 QuickSlotIndex;
-	UPROPERTY()
-	int8 EquipmentIndex;
-	UPROPERTY()
-	uint8 Grade;
-};
-
-USTRUCT()
-struct FItemSaveDataArray
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY()
-	TArray<FItemSaveData> ItemArray;
-};
-
-/**
- * 
- */
 UCLASS()
-class ARPG_HUNTER_API UPlayerSaveData : public USaveGame
+class ARPG_HUNTER_API UARPGSaveGame : public USaveGame
 {
 	GENERATED_BODY()
 
 public:
-	static FString GetSlotName();
-	
-	UPROPERTY(VisibleAnywhere)
-	FString PlayerName;
-	UPROPERTY(VisibleAnywhere)
-	uint32 Gold{ 0 };
-	UPROPERTY()
-	TMap<uint8, FItemSaveDataArray> InventoryDataMap;
-
-	void SetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
-	void GetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
+	static FString SlotName; // 간편하게 이름 찾기 용도
 };

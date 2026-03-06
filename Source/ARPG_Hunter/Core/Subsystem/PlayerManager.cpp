@@ -9,8 +9,8 @@
 #include "Player/QuickSlot.h"
 #include "Item/Item.h"
 
-#include "Core/SaveGame/ARPGSaveGame.h"
 #include "Core/Subsystem/SaveLoadManager.h"
+#include "Core/SaveGame/PlayerSaveGame.h"
 
 UPlayerManager::UPlayerManager()
 {
@@ -141,15 +141,15 @@ void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
 
 void UPlayerManager::Save()
 {
-	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
+	/*TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
 	FOnSaveComplete CompleteCallback;
 	CompleteCallback.BindWeakLambda(this, 
 		[this](bool _bIsIgnore) 
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Saved"));
 		}
-	);
-	SaveLoad->SavePlayerData(CompleteCallback);
+	);*/
+	// SaveLoad->SavePlayerData(CompleteCallback);
 }
 
 void UPlayerManager::Load()
@@ -160,12 +160,12 @@ void UPlayerManager::Load()
 	CompleteCallback.BindWeakLambda(this,
 		[this](TObjectPtr<USaveGame> _saveData) 
 		{
-			TObjectPtr<UPlayerSaveData> PlayerSaveData = Cast<UPlayerSaveData>(_saveData);
+			TObjectPtr<UPlayerSaveGame> PlayerSaveData = Cast<UPlayerSaveGame>(_saveData);
 			PlayerName = PlayerSaveData->PlayerName;
 			Gold.Value = PlayerSaveData->Gold;
 			PlayerSaveData->GetInventoryData(GetInventory());
 		}
 	);
 
-	SaveLoad->LoadPlayerData(CompleteCallback);
+	// SaveLoad->LoadPlayerData(CompleteCallback);
 }

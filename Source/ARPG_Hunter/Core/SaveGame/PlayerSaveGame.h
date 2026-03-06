@@ -1,0 +1,62 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Core/SaveGame/ARPGSaveGame.h"
+#include "PlayerSaveGame.generated.h"
+
+
+enum class EItemType :uint8;
+
+USTRUCT()
+struct FItemSaveData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	FName ID;
+	UPROPERTY()
+	EItemType Type;
+	UPROPERTY()
+	uint16 Amount;
+	UPROPERTY()
+	uint8 InventoryIndex;
+	UPROPERTY()
+	int8 QuickSlotIndex;
+	UPROPERTY()
+	int8 EquipmentIndex;
+	UPROPERTY()
+	uint8 Grade;
+};
+
+USTRUCT()
+struct FItemSaveDataArray
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	TArray<FItemSaveData> ItemArray;
+};
+
+/**
+ *
+ */
+UCLASS()
+class ARPG_HUNTER_API UPlayerSaveGame : public UARPGSaveGame
+{
+	GENERATED_BODY()
+
+public:
+	UPlayerSaveGame();
+
+	UPROPERTY(VisibleAnywhere)
+	FString PlayerName;
+	UPROPERTY(VisibleAnywhere)
+	uint32 Gold{ 0 };
+	UPROPERTY()
+	TMap<uint8, FItemSaveDataArray> InventoryDataMap;
+
+	void SetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
+	void GetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
+};
