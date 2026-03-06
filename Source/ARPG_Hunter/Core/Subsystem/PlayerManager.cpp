@@ -43,8 +43,6 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
-
-	ProvideBasicProperty();
 }
 
 TWeakObjectPtr<UInventory> UPlayerManager::GetInventory() const { return Inventory; }
@@ -68,7 +66,6 @@ bool UPlayerManager::TrySubGold(uint32 _amount)
 
 	return true;
 }
-
 
 uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
@@ -97,6 +94,12 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 		QuickSlot->ClearSlot(_quickSlotIdx);
 }
 
+
+void UPlayerManager::CreateNewPlayer(const FString& _playerName)
+{
+	PlayerName = _playerName;
+	ProvideBasicProperty();
+}
 
 void UPlayerManager::ProvideBasicProperty()
 {
@@ -145,7 +148,7 @@ void UPlayerManager::Save()
 	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
 	
 	USaveLoadManager::FPlayerDataParam Param;
-	Param.PlayerName = TEXT("Test Player");
+	Param.PlayerName = PlayerName;
 	Param.Gold = Gold.Value;
 	Param.Inventory = GetInventory();
 

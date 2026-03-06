@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -40,6 +40,9 @@ void APlayerCharacterController::BeginPlay()
 	if (nullptr == PlayerIMC)
 		return;
 
+	if (nullptr == GetPawn())
+		return;
+
 	ControlledCharacter = Cast<APlayerCharacter>(GetPawn());
 
 	if (UEnhancedInputLocalPlayerSubsystem* InputSubsytem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()) 
@@ -68,7 +71,7 @@ void APlayerCharacterController::SetupInputComponent()
 
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
-	if (ControlledCharacter->IsDead() || bCursorIsLocked)
+	if (!ControlledCharacter || ControlledCharacter->IsDead() || bCursorIsLocked)
 		return;
 
 	FVector2D Dir = _value.Get<FVector2D>();
@@ -86,6 +89,8 @@ void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 
 void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
 {
+	if (!ControlledCharacter) return;
+
 	ControlledCharacter->SetInputDirection(FVector2D::ZeroVector);
 }
 
@@ -98,21 +103,29 @@ void APlayerCharacterController::InputRotate(const FInputActionValue& _value)
 
 void APlayerCharacterController::InputSprintStart(const FInputActionValue& _value)
 {
+	if (!ControlledCharacter) return;
+
 	ControlledCharacter->SetIsSprint(true);
 }
 
 void APlayerCharacterController::InputSprintEnd(const FInputActionValue& _value)
 {
+	if (!ControlledCharacter) return;
+
 	ControlledCharacter->SetIsSprint(false);
 }
 
 void APlayerCharacterController::InputInteract(const FInputActionValue& _value)
 {
+	if (!ControlledCharacter) return;
+
 	ControlledCharacter->Interact();
 }
 
 void APlayerCharacterController::InputShortCut(const FInputActionValue& _value)
 {
+	if (!ControlledCharacter) return;
+
 	EShortCutType Type = static_cast<EShortCutType>(_value.Get<float>());
 	ShortCut(Type);
 }
@@ -120,7 +133,8 @@ void APlayerCharacterController::InputShortCut(const FInputActionValue& _value)
 
 void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
 {
-	ControlledCharacter->SetInputDirection(FVector2D::ZeroVector);
+	if(ControlledCharacter)
+		ControlledCharacter->SetInputDirection(FVector2D::ZeroVector);
 
 	bCursorIsLocked = true;
 	

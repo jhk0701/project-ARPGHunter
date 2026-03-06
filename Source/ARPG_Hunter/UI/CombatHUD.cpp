@@ -88,7 +88,7 @@ void ACombatHUD::ShowResultUI(bool _bOnCleared, const FStageData* _stageData)
 		[this]()
 		{
 			if (ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
-				GameMode->BackToTown();
+				GameMode->GoToTown();
 		}
 	);
 

@@ -34,4 +34,5 @@ private:
 public:
 	void SavePlayerData(FPlayerDataParam& _param, FOnSaveComplete _callback);
 	void LoadPlayerData(FOnLoadComplete _callback);
+	bool DoesPlayerDataExist() const;
 };

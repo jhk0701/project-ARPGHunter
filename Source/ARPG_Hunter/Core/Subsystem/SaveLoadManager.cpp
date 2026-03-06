@@ -36,3 +36,8 @@ void USaveLoadManager::LoadPlayerData(FOnLoadComplete _callback)
 
 	UGameplayStatics::AsyncLoadGameFromSlot(UPlayerSaveData::GetSlotName(), DEFAULT_SLOT_INDEX, Callback);
 }
+
+bool USaveLoadManager::DoesPlayerDataExist() const
+{
+	return UGameplayStatics::DoesSaveGameExist(UPlayerSaveData::GetSlotName(), DEFAULT_SLOT_INDEX);
+}

@@ -33,5 +33,5 @@ public:
 	virtual void ExitGame();
 
 	void OpenLevel(const FName& _stageID);
-	void BackToTown();
+	void GoToTown();
 };

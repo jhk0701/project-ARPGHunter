@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UI/UserWidget/PopUp/UWPopUp.h"
+#include "Types/SlateEnums.h"
 #include "UWTitleScreen.generated.h"
 
 class UButton;
-
 DECLARE_DELEGATE(FOnClickTitleMenuButton);
 
 /**
@@ -26,10 +26,42 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ExitButton;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UPanelWidget> NewGamePanel;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> StartGameButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UEditableText> NameInputField;
+	UPROPERTY(EditAnywhere)
+	uint8 MaxNameLength{ 20 };
+	FString InputName;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> BackToTitleButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> OverWriteWarningLabel;
+
+	UFUNCTION()
+	void ClickNewGame();
+	UFUNCTION()
+	void InputNameCommit(const FText& _text, ETextCommit::Type _commitMethod);
+	UFUNCTION()
+	void ClickStartGame();
+	UFUNCTION()
+	void ClickContinue();
+	UFUNCTION()
+	void CloseNewGamePanel();
+
+protected:
+	virtual void NativeOnInitialized() override;
+
 public:
 	FOnClickTitleMenuButton OnClickNewGame;
 	FOnClickTitleMenuButton OnClickContinue;
 	FOnClickTitleMenuButton OnClickExit;
 
+	virtual void ShowUI(bool _bIsSubUI = false) override;
+
 	void ShowContinueButton(bool _bIsShow);
+	const FString& GetInputName() const { return InputName; };
 };

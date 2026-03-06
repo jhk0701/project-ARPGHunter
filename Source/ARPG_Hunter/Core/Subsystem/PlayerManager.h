@@ -40,6 +40,8 @@ public:
 	UPlayerManager();
 
 private:
+	FString PlayerName;
+
 	UPROPERTY()
 	TObjectPtr<class UPlayerConfig> PlayerDefault;
 	TMap<ECharacterStatType, uint32> Stat;
@@ -56,6 +58,8 @@ private:
 	void EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx);
 
+	void ProvideBasicProperty();
+
 public:
 	TWeakObjectPtr<UInventory> GetInventory() const;
 	TWeakObjectPtr<UEquipment> GetEquipment() const;
@@ -65,16 +69,15 @@ public:
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	const FString& GetPlayerName() const { return PlayerName; }
 	const TMap<ECharacterStatType, uint32>& GetStat() const { return Stat; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const;
-
+	
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
 	bool TrySubGold(uint32 _amount);
 	FOnCurrencyChanged& GetGoldChangedEvent() { return Gold.OnValueChanged; }
  
-	void ProvideBasicProperty();
-	
 	TObjectPtr<USkeletalMesh> GetDefaultMesh(EEquipmentType _type) const;
 	TWeakObjectPtr<class UConsumableItem> GetQuickSlotItem(uint8 _idx) const;
 	void UseQuickSlotItem(uint8 _index, class IEffectable* _target);
@@ -86,4 +89,6 @@ public:
 	void Save();
 	UFUNCTION(BlueprintCallable)
 	void Load();
+
+	void CreateNewPlayer(const FString& _playerName);
 };

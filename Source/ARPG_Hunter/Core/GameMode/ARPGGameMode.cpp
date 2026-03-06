@@ -67,7 +67,7 @@ void AARPGGameMode::OpenLevel(const FName& _stageID)
 	UGameplayStatics::OpenLevel(GetWorld(), StageData->LevelToLoad);
 }
 
-void AARPGGameMode::BackToTown()
+void AARPGGameMode::GoToTown()
 {
 	OpenLevel(FName(TEXT("1")));
 }

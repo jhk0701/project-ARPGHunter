@@ -25,4 +25,10 @@ private:
 	
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	UFUNCTION()
+	void ClickNewGame();
+	UFUNCTION()
+	void ClickContinue();
 };
