@@ -8,6 +8,7 @@
 
 #include "Core/ARPGGameInstance.h"
 #include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/PlayerManager.h"
 #include "Data/StageData.h"
 #include "Player/PlayerCharacter.h"
 
@@ -42,6 +43,11 @@ void AARPGGameMode::BeginPlay()
 			Audio->Play();
 		}
 	}
+}
+
+void AARPGGameMode::SaveGame()
+{
+	GetGameInstance()->GetSubsystem<UPlayerManager>()->Save();
 }
 
 void AARPGGameMode::ExitGame()

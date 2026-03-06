@@ -20,19 +20,11 @@ UCLASS()
 class ARPG_HUNTER_API USaveLoadManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-public:
-	struct FPlayerDataParam 
-	{
-		FString PlayerName; 
-		uint32 Gold;
-		TWeakObjectPtr<class UInventory> Inventory;
-	};
-
 private:
 	const int32 DEFAULT_SLOT_INDEX = 0;
 
 public:
-	void SavePlayerData(FPlayerDataParam& _param, FOnSaveComplete _callback);
+	void SavePlayerData(FOnSaveComplete _callback);
 	void LoadPlayerData(FOnLoadComplete _callback);
 	bool DoesPlayerDataExist() const;
 };

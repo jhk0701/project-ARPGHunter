@@ -35,7 +35,6 @@ void ATitleGameMode::BeginPlay()
 	TitleUI->OnClickExit.BindUObject(this, &ATitleGameMode::ExitGame);
 
 	TitleUI->ShowContinueButton(GetGameInstance()->GetSubsystem<USaveLoadManager>()->DoesPlayerDataExist());
-
 	TitleUI->ShowUI();
 }
 
@@ -46,10 +45,12 @@ void ATitleGameMode::ClickNewGame()
 
 	// PlayerManager 초기화
 	PlayerManager->CreateNewPlayer(TitleUI->GetInputName());
+	
+	TitleUI->HideUI();
 	GoToTown();
 }
 
 void ATitleGameMode::ClickContinue()
 {
-
+	
 }

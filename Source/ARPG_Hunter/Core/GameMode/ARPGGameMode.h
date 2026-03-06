@@ -27,9 +27,10 @@ private:
 	TObjectPtr<AAmbientSound> BgmPlayer;
 
 protected:
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 public:
+	virtual void SaveGame();
 	virtual void ExitGame();
 
 	void OpenLevel(const FName& _stageID);

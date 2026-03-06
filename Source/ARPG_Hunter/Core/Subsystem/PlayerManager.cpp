@@ -146,12 +146,6 @@ void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
 void UPlayerManager::Save()
 {
 	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
-	
-	USaveLoadManager::FPlayerDataParam Param;
-	Param.PlayerName = PlayerName;
-	Param.Gold = Gold.Value;
-	Param.Inventory = GetInventory();
-
 	FOnSaveComplete CompleteCallback;
 	CompleteCallback.BindWeakLambda(this, 
 		[this](bool _bIsIgnore) 
@@ -159,7 +153,7 @@ void UPlayerManager::Save()
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Saved"));
 		}
 	);
-	SaveLoad->SavePlayerData(Param, CompleteCallback);
+	SaveLoad->SavePlayerData(CompleteCallback);
 }
 
 void UPlayerManager::Load()

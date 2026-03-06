@@ -17,4 +17,6 @@ class ARPG_HUNTER_API ANonCombatGameMode : public AARPGGameMode
 public:
 	ANonCombatGameMode();
 
+protected:
+	virtual void BeginPlay() override;
 };

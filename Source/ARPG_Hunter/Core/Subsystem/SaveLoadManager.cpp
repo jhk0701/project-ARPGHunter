@@ -5,13 +5,16 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Core/SaveGame/ARPGSaveGame.h"
+#include "Core/Subsystem/PlayerManager.h"
 
-void USaveLoadManager::SavePlayerData(FPlayerDataParam& _param, FOnSaveComplete _callback)
+void USaveLoadManager::SavePlayerData(FOnSaveComplete _callback)
 {
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
 	TObjectPtr<UPlayerSaveData> PlayerSave = Cast<UPlayerSaveData>(UGameplayStatics::CreateSaveGameObject(UPlayerSaveData::StaticClass()));
-	PlayerSave->PlayerName = _param.PlayerName;
-	PlayerSave->Gold = _param.Gold;
-	PlayerSave->SetInventoryData(_param.Inventory);
+	PlayerSave->PlayerName = PlayerManager->GetPlayerName();
+	PlayerSave->Gold = PlayerManager->GetGold();
+	PlayerSave->SetInventoryData(PlayerManager->GetInventory());
 
 	FAsyncSaveGameToSlotDelegate Callback;
 	Callback.BindWeakLambda(this,
