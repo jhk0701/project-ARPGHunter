@@ -69,6 +69,7 @@ public:
 	FOnStatValueChanged OnStatValueChanged;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void PostInit();
 
 	const FString& GetPlayerName() const { return PlayerName; }
 	const TMap<ECharacterStatType, uint32>& GetStat() const { return Stat; }
@@ -85,7 +86,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName& _itemID, int32 _amount);
-
 
 	void CreateNewPlayer(const FString& _playerName);
 	

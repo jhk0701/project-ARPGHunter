@@ -2,8 +2,11 @@
 
 
 #include "Core/ARPGGameInstance.h"
+#include "Core/Subsystem/PlayerManager.h"
 
-UARPGGameInstance::UARPGGameInstance()
+void UARPGGameInstance::OnStart()
 {
-	StageID = TEXT("1"); // TODO : 타이틀 씬 만들때 제거할 것
+	Super::OnStart();
+
+	GetSubsystem<UPlayerManager>()->PostInit();
 }

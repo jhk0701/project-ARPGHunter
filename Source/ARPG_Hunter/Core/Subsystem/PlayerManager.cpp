@@ -44,7 +44,10 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
+}
 
+void UPlayerManager::PostInit()
+{
 	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
 	SaveLoad->RegisterHandler<UPlayerSaveGame>(this);
 }
@@ -157,4 +160,8 @@ void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
 	PlayerName = PlayerSaveData->PlayerName;
 	Gold.Value = PlayerSaveData->Gold;
 	PlayerSaveData->GetInventoryData(GetInventory());
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Read Save Data"));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, FString::Printf(TEXT("PlayerName : %s"), *PlayerName));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, FString::Printf(TEXT("Gold : %d"), Gold.Value));
 }

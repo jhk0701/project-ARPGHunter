@@ -6,6 +6,11 @@
 
 #include "SaveGame/ARPGSaveGame.h"
 
+USaveLoadManager::USaveLoadManager()
+{
+	MapHandler.Empty();
+}
+
 UARPGSaveGame* USaveLoadManager::CreateGetSaveGameObject(UClass* _class)
 {
 	return Cast<UARPGSaveGame>(UGameplayStatics::CreateSaveGameObject(_class));
@@ -32,6 +37,7 @@ void USaveLoadManager::AsyncLoadGame(UClass* _key, const FString& _slotName, int
 		{
 			TObjectPtr<UARPGSaveGame> SaveGame = Cast<UARPGSaveGame>(_data);
 			MapHandler[_key]->ReadSaveData(SaveGame);
+
 			_callback.ExecuteIfBound();
 		}
 	);

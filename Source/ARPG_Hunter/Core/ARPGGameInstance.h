@@ -15,11 +15,12 @@ class ARPG_HUNTER_API UARPGGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 private:
-	FName StageID;
+	FName StageID; // 간단한 Stage ID 보관이라 GameInstance에서 바로 호출
+
+protected:
+	virtual void OnStart() override;
 
 public:
-	UARPGGameInstance();
-
 	void SetStageID(const FName& _id) { StageID = _id; }
 	const FName& GetStageID() const { return StageID; }
 };

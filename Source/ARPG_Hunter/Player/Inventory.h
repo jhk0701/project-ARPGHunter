@@ -39,8 +39,8 @@ public:
 	public:
 		FName ID;
 		uint16 Amount;
-		uint8 OutIndex;
-		FItemData* Data;
+		uint8 OutIndex{0};
+		FItemData* Data{nullptr};
 
 		FCreateItemParam(const FName& _id, uint16 _amount) : ID(_id), Amount(_amount) {};
 	};

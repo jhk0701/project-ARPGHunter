@@ -18,9 +18,12 @@ UCLASS()
 class ARPG_HUNTER_API USaveLoadManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+
+public:
+	USaveLoadManager();
+
 private:
 	const int32 DEFAULT_SLOT_INDEX = 0;
-	
 	TMap<TSubclassOf<UARPGSaveGame>, ISaveLoadHandler*> MapHandler;
 
 	UARPGSaveGame* CreateGetSaveGameObject(UClass* _class);
@@ -48,10 +51,10 @@ template<typename ARPGSaveGameType>
 inline void USaveLoadManager::RegisterHandler(ISaveLoadHandler* _handler)
 {
 	UClass* Key = ARPGSaveGameType::StaticClass();
-	if (MapHandler.Find(Key) == nullptr)
-		MapHandler.Add(Key, _handler);
-	else
+	if (MapHandler.Find(Key) != nullptr)
 		MapHandler[Key] = _handler;
+	else
+		MapHandler.Add(Key, _handler); 
 }
 
 template<typename ARPGSaveGameType>

@@ -54,6 +54,15 @@ void ATitleGameMode::ClickNewGame()
 
 void ATitleGameMode::ClickContinue()
 {
-	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	// PlayerManager->Load();
+	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
+
+	FOnSaveLoadComplete Callback;
+	Callback.BindWeakLambda(this, 
+		[this]() 
+		{
+			GoToTown();
+		}
+	);
+
+	SaveLoad->LoadGame<UPlayerSaveGame>(Callback);
 }

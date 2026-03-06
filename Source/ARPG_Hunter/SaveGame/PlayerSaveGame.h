@@ -19,15 +19,15 @@ public:
 	UPROPERTY()
 	EItemType Type;
 	UPROPERTY()
-	uint16 Amount;
+	uint16 Amount{0};
 	UPROPERTY()
-	uint8 InventoryIndex;
+	uint8 InventoryIndex{0};
 	UPROPERTY()
-	int8 QuickSlotIndex;
+	int8 QuickSlotIndex{-1};
 	UPROPERTY()
-	int8 EquipmentIndex;
+	int8 EquipmentIndex{-1};
 	UPROPERTY()
-	uint8 Grade;
+	uint8 Grade{0};
 };
 
 USTRUCT()
