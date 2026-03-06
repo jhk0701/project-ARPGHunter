@@ -10,7 +10,7 @@
 #include "Item/Item.h"
 
 #include "Core/Subsystem/SaveLoadManager.h"
-#include "Core/SaveGame/PlayerSaveGame.h"
+#include "SaveGame/PlayerSaveGame.h"
 
 UPlayerManager::UPlayerManager()
 {
@@ -44,6 +44,9 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
+
+	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
+	SaveLoad->RegisterHandler<UPlayerSaveGame>(this);
 }
 
 TWeakObjectPtr<UInventory> UPlayerManager::GetInventory() const { return Inventory; }
@@ -139,33 +142,19 @@ void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
 	QuickSlot->UseItem(_index, _target);
 }
 
-void UPlayerManager::Save()
+
+void UPlayerManager::WriteSaveData(UARPGSaveGame* _savegame)
 {
-	/*TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
-	FOnSaveComplete CompleteCallback;
-	CompleteCallback.BindWeakLambda(this, 
-		[this](bool _bIsIgnore) 
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Saved"));
-		}
-	);*/
-	// SaveLoad->SavePlayerData(CompleteCallback);
+	UPlayerSaveGame* PlayerSave = Cast<UPlayerSaveGame>(_savegame);
+	PlayerSave->PlayerName = PlayerName;
+	PlayerSave->Gold = Gold.Value;
+	PlayerSave->SetInventoryData(GetInventory());
 }
 
-void UPlayerManager::Load()
+void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
 {
-	TObjectPtr<USaveLoadManager> SaveLoad = GetGameInstance()->GetSubsystem<USaveLoadManager>();
-	
-	FOnLoadComplete CompleteCallback;
-	CompleteCallback.BindWeakLambda(this,
-		[this](TObjectPtr<USaveGame> _saveData) 
-		{
-			TObjectPtr<UPlayerSaveGame> PlayerSaveData = Cast<UPlayerSaveGame>(_saveData);
-			PlayerName = PlayerSaveData->PlayerName;
-			Gold.Value = PlayerSaveData->Gold;
-			PlayerSaveData->GetInventoryData(GetInventory());
-		}
-	);
-
-	// SaveLoad->LoadPlayerData(CompleteCallback);
+	TObjectPtr<UPlayerSaveGame> PlayerSaveData = Cast<UPlayerSaveGame>(_savegame);
+	PlayerName = PlayerSaveData->PlayerName;
+	Gold.Value = PlayerSaveData->Gold;
+	PlayerSaveData->GetInventoryData(GetInventory());
 }

@@ -1,17 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Core/SaveGame/PlayerSaveGame.h"
+#include "SaveGame/PlayerSaveGame.h"
 
 #include "Define/Enum.h"
 #include "Player/Inventory.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
-
-UPlayerSaveGame::UPlayerSaveGame()
-{
-	SlotName = TEXT("ARPG_PlayerData");
-}
 
 void UPlayerSaveGame::SetInventoryData(TWeakObjectPtr<UInventory> _inventory)
 {

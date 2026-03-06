@@ -26,4 +26,5 @@ class ARPG_HUNTER_API ISaveLoadHandler
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void WriteSaveData(UARPGSaveGame* _savegame) = 0;
+	virtual void ReadSaveData(UARPGSaveGame* _savegame) = 0;
 };

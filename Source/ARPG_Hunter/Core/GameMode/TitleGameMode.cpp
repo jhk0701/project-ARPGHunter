@@ -5,7 +5,7 @@
 #include "Controller/PlayerCharacterController.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/SaveLoadManager.h"
-#include "Core/SaveGame/PlayerSaveGame.h"
+#include "SaveGame/PlayerSaveGame.h"
 
 #include "UI/UserWidget/UWTitleScreen.h"
 
@@ -55,5 +55,5 @@ void ATitleGameMode::ClickNewGame()
 void ATitleGameMode::ClickContinue()
 {
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	PlayerManager->Load();
+	// PlayerManager->Load();
 }

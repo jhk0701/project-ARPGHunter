@@ -7,8 +7,8 @@
 #include "Components/AudioComponent.h"
 
 #include "Core/ARPGGameInstance.h"
+#include "Core/Subsystem/SaveLoadManager.h"
 #include "Core/Subsystem/DataManager.h"
-#include "Core/Subsystem/PlayerManager.h"
 #include "Data/StageData.h"
 #include "Player/PlayerCharacter.h"
 
@@ -47,7 +47,8 @@ void AARPGGameMode::BeginPlay()
 
 void AARPGGameMode::SaveGame()
 {
-	GetGameInstance()->GetSubsystem<UPlayerManager>()->Save();
+	FOnSaveLoadComplete CompleteCallback;
+	GetGameInstance()->GetSubsystem<USaveLoadManager>()->SaveAll(CompleteCallback);
 }
 
 void AARPGGameMode::ExitGame()

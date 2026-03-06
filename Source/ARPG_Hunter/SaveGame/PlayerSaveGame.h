@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SaveGame/ARPGSaveGame.h"
+#include "SaveGame/ARPGSaveGame.h"
 #include "PlayerSaveGame.generated.h"
 
 
@@ -48,7 +48,10 @@ class ARPG_HUNTER_API UPlayerSaveGame : public UARPGSaveGame
 	GENERATED_BODY()
 
 public:
-	UPlayerSaveGame();
+	UPlayerSaveGame()
+	{
+		SlotName = TEXT("ARPG_PlayerData");
+	}
 
 	UPROPERTY(VisibleAnywhere)
 	FString PlayerName;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Interface/SaveLoadHandler.h"
 #include "PlayerManager.generated.h"
 
 class UInventory;
@@ -32,7 +33,7 @@ public:
  * 
  */
 UCLASS()
-class ARPG_HUNTER_API UPlayerManager : public UGameInstanceSubsystem
+class ARPG_HUNTER_API UPlayerManager : public UGameInstanceSubsystem, public ISaveLoadHandler
 {
 	GENERATED_BODY()
 
@@ -87,8 +88,8 @@ public:
 
 
 	void CreateNewPlayer(const FString& _playerName);
-	UFUNCTION(BlueprintCallable)
-	void Save();
-	UFUNCTION(BlueprintCallable)
-	void Load();
+	
+	// Inherited via ISaveLoadHandler
+	virtual void WriteSaveData(UARPGSaveGame* _savegame) override;
+	virtual void ReadSaveData(UARPGSaveGame* _savegame) override;
 };
