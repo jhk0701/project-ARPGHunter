@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,8 +11,6 @@ class UItemConfig;
 struct FItemData;
 enum class EItemType : uint8;
 
-
-
 USTRUCT()
 struct FItemArray 
 {
@@ -22,6 +20,7 @@ public:
 	TArray<TObjectPtr<UItem>> Array;
 };
 
+DECLARE_DELEGATE_RetVal_OneParam(FItemData*, FGetItemDataFunc, const FName&);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnInventoryChanged, uint8, TWeakObjectPtr<UItem>);
 
 constexpr uint8 DEFAULT_INVENTORY_SIZE = 100;
@@ -34,28 +33,34 @@ class ARPG_HUNTER_API UInventory : public UObject
 {
 	GENERATED_BODY()
 public:
-	struct FAddItemParam
+	// 신규 아이템 생성시 사용
+	struct FCreateItemParam
 	{
 	public:
 		FName ID;
 		uint16 Amount;
 		uint8 OutIndex;
 		FItemData* Data;
+
+		FCreateItemParam(const FName& _id, uint16 _amount) : ID(_id), Amount(_amount) {};
 	};
 
 private:
+	FGetItemDataFunc GetItemDataFunc;
+
 	UPROPERTY()
 	TMap<EItemType, FItemArray> Container;
 
 	bool TryFindEmpty(EItemType _type, uint8& _outIdx);
-
 public:
 	FOnInventoryChanged OnInventoryChanged;
 
-	void Init(uint8 _size = DEFAULT_INVENTORY_SIZE);
+	void Init(const FGetItemDataFunc& _getItemDataFunc, uint8 _size = DEFAULT_INVENTORY_SIZE);
+	bool IsValid() const { return GetItemDataFunc.IsBound(); };
 
-	TObjectPtr<UItem> CreateItem(FAddItemParam& _param);
-	bool TryAddItem(FAddItemParam& _param);
+	void SetItem(EItemType _type, uint8 _idx, TObjectPtr<UItem> _itemInst);
+	TObjectPtr<UItem> CreateItem(FCreateItemParam& _param);
+	bool TryAddItem(FCreateItemParam& _param);
 	bool TryAddItem(TObjectPtr<UItem> _item, uint8& _outIndex);
 	bool TrySubItem(EItemType _type, uint8 _idx, uint16 _amount);
 	bool TryFindItem(EItemType _type, const FName& _id, uint8& _outIdx, TFunction<bool(TObjectPtr<UItem>)> _predicate = nullptr) const;

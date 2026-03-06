@@ -52,5 +52,6 @@ void ATitleGameMode::ClickNewGame()
 
 void ATitleGameMode::ClickContinue()
 {
-	
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+	PlayerManager->Load();
 }

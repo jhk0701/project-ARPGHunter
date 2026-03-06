@@ -58,4 +58,5 @@ public:
 	TMap<uint8, FItemSaveDataArray> InventoryDataMap;
 
 	void SetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
+	void GetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
 };

@@ -29,15 +29,16 @@ void USaveLoadManager::SavePlayerData(FOnSaveComplete _callback)
 
 void USaveLoadManager::LoadPlayerData(FOnLoadComplete _callback)
 {
-	FAsyncLoadGameFromSlotDelegate Callback;
+	/*FAsyncLoadGameFromSlotDelegate Callback;
 	Callback.BindWeakLambda(this,
 		[_callback](const FString& _slotName, int32 _userIndex, USaveGame* _data)
 		{
 			_callback.ExecuteIfBound(_data);
 		}
-	);
-
-	UGameplayStatics::AsyncLoadGameFromSlot(UPlayerSaveData::GetSlotName(), DEFAULT_SLOT_INDEX, Callback);
+	);*/
+	// UGameplayStatics::AsyncLoadGameFromSlot(UPlayerSaveData::GetSlotName(), DEFAULT_SLOT_INDEX, Callback);
+	USaveGame* Data = UGameplayStatics::LoadGameFromSlot(UPlayerSaveData::GetSlotName(), DEFAULT_SLOT_INDEX);
+	_callback.Execute(Data);
 }
 
 bool USaveLoadManager::DoesPlayerDataExist() const

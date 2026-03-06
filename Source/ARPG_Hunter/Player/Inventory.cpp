@@ -8,22 +8,25 @@
 #include "Item/Item.h"
 
 
-void UInventory::Init(uint8 _size)
+void UInventory::Init(const FGetItemDataFunc& _getItemDataFunc, uint8 _size)
 {
+	GetItemDataFunc = _getItemDataFunc;
+
 	for (uint8 i = 0; i < static_cast<uint8>(EItemType::END); ++i)
 	{
 		EItemType Type = static_cast<EItemType>(i);
 		FItemArray& ItemArr = Container.Add(Type);
 		ItemArr.Array.SetNum(_size);
 	}
-
-	// TODO: 저장 데이터 반영
 }
 
-TObjectPtr<UItem> UInventory::CreateItem(FAddItemParam& _param)
+TObjectPtr<UItem> UInventory::CreateItem(FCreateItemParam& _param)
 {
-	if (nullptr == _param.Data)
+	if (IsValid() == false)
 		return nullptr;
+
+	if (_param.Data == nullptr)
+		_param.Data = GetItemDataFunc.Execute(_param.ID);
 
 	TObjectPtr<UItem> Instance = nullptr;
 	switch (_param.Data->Type)
@@ -46,12 +49,17 @@ TObjectPtr<UItem> UInventory::CreateItem(FAddItemParam& _param)
 	return Instance;
 }
 
-bool UInventory::TryAddItem(FAddItemParam& _param)
+bool UInventory::TryAddItem(FCreateItemParam& _param)
 {
+	if (IsValid() == false)
+		return false;
+
 	uint8 Index = 0;
+	_param.Data = GetItemDataFunc.Execute(_param.ID);
+
 	EItemType Type = _param.Data->Type;
 	
-	if (TryFindItem(Type,_param.ID, Index, [](TObjectPtr<UItem> _existItem) { return _existItem->IsFull() == false; }))
+	if (TryFindItem(Type, _param.ID, Index, [](TObjectPtr<UItem> _existItem) { return _existItem->IsFull() == false; }))
 	{
 		// 기존 아이템 추가 획득
 		uint16 RemainAmount = 0;
@@ -178,6 +186,11 @@ bool UInventory::TryFindEmpty(EItemType _type, uint8& _outIdx)
 uint8 UInventory::GetContainerSize() const
 {
 	return Container.begin()->Value.Array.Num();
+}
+
+void UInventory::SetItem(EItemType _type, uint8 _idx, TObjectPtr<UItem> _itemInst)
+{
+	Container[_type].Array[_idx] = _itemInst;
 }
 
 TWeakObjectPtr<UItem> UInventory::GetItem(EItemType _type, uint8 _idx) const

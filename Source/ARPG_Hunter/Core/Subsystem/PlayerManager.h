@@ -85,10 +85,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName& _itemID, int32 _amount);
 
+
+	void CreateNewPlayer(const FString& _playerName);
 	UFUNCTION(BlueprintCallable)
 	void Save();
 	UFUNCTION(BlueprintCallable)
 	void Load();
-
-	void CreateNewPlayer(const FString& _playerName);
 };

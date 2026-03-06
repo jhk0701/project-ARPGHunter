@@ -36,8 +36,9 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Equipment = NewObject<UEquipment>(this);
 	QuickSlot = NewObject<UQuickSlot>(this);
 
-	// TODO : 플레이어 저장 데이터 적용하기
-	Inventory->Init();
+	FGetItemDataFunc GetItemDataFunc;
+	GetItemDataFunc.BindLambda([this](const FName& _id) { return GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_id); });
+	Inventory->Init(GetItemDataFunc);
 	Equipment->Init(GetGameInstance());
 	QuickSlot->Init();
 
@@ -70,13 +71,8 @@ bool UPlayerManager::TrySubGold(uint32 _amount)
 uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 {
 	//아이템 추가
-	UInventory::FAddItemParam Param;
-	Param.ID = _itemID;
-	Param.Amount = _amount;
-	Param.Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_itemID);
-
+	UInventory::FCreateItemParam Param(_itemID, _amount);
 	Inventory->TryAddItem(Param);
-
 	return Param.OutIndex;
 }
 
@@ -164,11 +160,10 @@ void UPlayerManager::Load()
 	CompleteCallback.BindWeakLambda(this,
 		[this](TObjectPtr<USaveGame> _saveData) 
 		{
-			TObjectPtr<UPlayerSaveData> PlayerSD = Cast<UPlayerSaveData>(_saveData);
-			// 
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Load Complete"));
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, FString::Printf(TEXT("PlayerName: %s"), *PlayerSD->PlayerName));
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Purple, FString::Printf(TEXT("Gold: %d"), PlayerSD->Gold));
+			TObjectPtr<UPlayerSaveData> PlayerSaveData = Cast<UPlayerSaveData>(_saveData);
+			PlayerName = PlayerSaveData->PlayerName;
+			Gold.Value = PlayerSaveData->Gold;
+			PlayerSaveData->GetInventoryData(GetInventory());
 		}
 	);
 

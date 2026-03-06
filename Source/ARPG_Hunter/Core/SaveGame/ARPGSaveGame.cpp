@@ -5,6 +5,7 @@
 
 #include "Define/Enum.h"
 #include "Player/Inventory.h"
+#include "Data/ItemData.h"
 #include "Item/Item.h"
 
 FString UPlayerSaveData::GetSlotName()
@@ -54,6 +55,42 @@ void UPlayerSaveData::SetInventoryData(TWeakObjectPtr<UInventory> _inventory)
 			}
 
 			InventoryDataMap[i].ItemArray.Add(Save);
+		}
+	}
+}
+
+void UPlayerSaveData::GetInventoryData(TWeakObjectPtr<UInventory> _inventory)
+{
+	if (_inventory.IsValid() == false)
+		return;
+
+	for (const TPair<uint8, FItemSaveDataArray>& Pair : InventoryDataMap)
+	{
+		EItemType Type = static_cast<EItemType>(Pair.Key);
+		for (const FItemSaveData& ItemSaveData : Pair.Value.ItemArray)
+		{
+			UInventory::FCreateItemParam Param(ItemSaveData.ID, ItemSaveData.Amount);
+			TObjectPtr<UItem> ItemInst = _inventory->CreateItem(Param);
+			ItemInst->SetInventoryIndex(ItemSaveData.InventoryIndex);
+
+			switch (Type)
+			{
+			case EItemType::CONSUMABLE:
+			{
+				TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(ItemInst);
+				Consumable->SetQuickSlotIndex(ItemSaveData.QuickSlotIndex);
+			}
+				break;
+			case EItemType::EQUIPABLE:
+			{
+				TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(ItemInst);
+				Equipment->SetEquipmentIndex(ItemSaveData.EquipmentIndex);
+				Equipment->SetGrade(ItemSaveData.Grade);
+			}
+				break;
+			}
+
+			_inventory->SetItem(Type, ItemInst->GetInventoryIndex(), ItemInst);
 		}
 	}
 }
