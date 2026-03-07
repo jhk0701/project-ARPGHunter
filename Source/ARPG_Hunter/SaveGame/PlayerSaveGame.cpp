@@ -54,7 +54,7 @@ void UPlayerSaveGame::SetInventoryData(TWeakObjectPtr<UInventory> _inventory)
 	}
 }
 
-void UPlayerSaveGame::GetInventoryData(TWeakObjectPtr<UInventory> _inventory)
+void UPlayerSaveGame::GetInventoryData(TWeakObjectPtr<UInventory> _inventory, TFunctionRef<void(EItemType, TObjectPtr<class UItem>)> _slotedItemProcess)
 {
 	if (_inventory.IsValid() == false)
 		return;
@@ -72,12 +72,18 @@ void UPlayerSaveGame::GetInventoryData(TWeakObjectPtr<UInventory> _inventory)
 			{
 				TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(ItemInst);
 				Consumable->SetQuickSlotIndex(ItemSaveData.QuickSlotIndex);
+
+				if (ItemSaveData.QuickSlotIndex >= 0)
+					_slotedItemProcess(Type, ItemInst);
 			}
 			else if (Type >= EItemType::EQUIPABLE) 
 			{
 				TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(ItemInst);
 				Equipment->SetEquipmentIndex(ItemSaveData.EquipmentIndex);
 				Equipment->SetGrade(ItemSaveData.Grade);
+
+				if (ItemSaveData.EquipmentIndex >= 0)
+					_slotedItemProcess(Type, ItemInst);
 			}
 
 			_inventory->SetItem(Type, ItemInst->GetInventoryIndex(), ItemInst);

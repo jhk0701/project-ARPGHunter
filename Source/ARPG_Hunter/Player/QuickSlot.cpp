@@ -67,3 +67,9 @@ void UQuickSlot::UseItem(uint8 _index, IEffectable* _target)
 	OnQuickSlotUsed.Broadcast(_index, InventoryIndex);
 	OnPostQuickSlotUsed.Broadcast(_index, InventoryIndex);
 }
+
+void UQuickSlot::LoadQuickSlot(TObjectPtr<UItem> _item)
+{
+	TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(_item);
+	Register(Consumable->GetQuickSlotIndex(), Consumable);
+}

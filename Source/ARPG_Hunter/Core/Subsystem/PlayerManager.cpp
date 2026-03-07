@@ -106,12 +106,12 @@ void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 void UPlayerManager::ProvideBasicProperty()
 {
 	Gold.Value = 1000;
-
+	/*
 	AddItem(FName(TEXT("1001")), 10);
 	AddItem(FName(TEXT("1002")), 10);
 	AddItem(FName(TEXT("1003")), 5);
 	AddItem(FName(TEXT("1004")), 5);
-	
+	*/
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);
 	Equipment->Equip(EEquipmentType::HEAD, Inventory->GetItem(EItemType::ARMOR, Index));
@@ -124,16 +124,15 @@ void UPlayerManager::ProvideBasicProperty()
 	
 	Index = AddItem(FName(TEXT("4001")), 1);
 	TWeakObjectPtr<UItem> Item = Inventory->GetItem(EItemType::WEAPON, Index);
-	TObjectPtr<UEquipmentItem> Weapon = Cast<UEquipmentItem>(Item);
-	Weapon->SetGrade(3);
+	// TObjectPtr<UEquipmentItem> Weapon = Cast<UEquipmentItem>(Item);
+	// Weapon->SetGrade(3);
 	Equipment->Equip(EEquipmentType::WEAPON, Item);
 
-	Index = AddItem(FName(TEXT("2001")), 10);
+	Index = AddItem(FName(TEXT("2001")), 5);
 	QuickSlot->Register(0, Inventory->GetItem(EItemType::CONSUMABLE, Index));
 
-	AddItem(FName(TEXT("2002")), 10);
-	AddItem(FName(TEXT("2003")), 10);
-
+	// AddItem(FName(TEXT("2002")), 10);
+	// AddItem(FName(TEXT("2003")), 10);
 	// AddItem(FName(TEXT("4002")), 1);
 }
 
@@ -159,9 +158,14 @@ void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
 	TObjectPtr<UPlayerSaveGame> PlayerSaveData = Cast<UPlayerSaveGame>(_savegame);
 	PlayerName = PlayerSaveData->PlayerName;
 	Gold.Value = PlayerSaveData->Gold;
-	PlayerSaveData->GetInventoryData(GetInventory());
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Read Save Data"));
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, FString::Printf(TEXT("PlayerName : %s"), *PlayerName));
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, FString::Printf(TEXT("Gold : %d"), Gold.Value));
+	PlayerSaveData->GetInventoryData(GetInventory(), 
+		[this](EItemType _type, TObjectPtr<UItem> _item) 
+		{
+			if (_type == EItemType::CONSUMABLE) 
+				QuickSlot->LoadQuickSlot(_item);
+			else if (_type >= EItemType::EQUIPABLE) 
+				Equipment->LoadEquipment(_item);
+		}
+	);
 }

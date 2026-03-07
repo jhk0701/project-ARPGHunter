@@ -46,4 +46,6 @@ public:
 	TWeakObjectPtr<UConsumableItem> GetItem(uint8 _index) const { return Container[_index]; }
 
 	void UseItem(uint8 _index, class IEffectable* _target);
+	
+	void LoadQuickSlot(TObjectPtr<UItem> _item);
 };

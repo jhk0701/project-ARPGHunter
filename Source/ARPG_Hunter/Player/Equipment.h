@@ -45,4 +45,6 @@ public:
 	const TWeakObjectPtr<UEquipmentItem> GetEquipment(EEquipmentType _type) const { return Container[_type]; }
 	const TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& GetContainer() const { return Container; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const { return EquipmentStat; }
+
+	void LoadEquipment(TObjectPtr<UItem> _item);
 };

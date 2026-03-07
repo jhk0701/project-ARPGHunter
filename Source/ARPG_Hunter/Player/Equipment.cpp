@@ -63,3 +63,10 @@ TWeakObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
 
 	return PrevItem;
 }
+
+void UEquipment::LoadEquipment(TObjectPtr<UItem> _item)
+{
+	TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(_item);
+	TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
+	Equip(EquipConfig->Type, Equipment);
+}

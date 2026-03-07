@@ -6,7 +6,6 @@
 #include "SaveGame/ARPGSaveGame.h"
 #include "PlayerSaveGame.generated.h"
 
-
 enum class EItemType :uint8;
 
 USTRUCT()
@@ -61,5 +60,5 @@ public:
 	TMap<uint8, FItemSaveDataArray> InventoryDataMap;
 
 	void SetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
-	void GetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
+	void GetInventoryData(TWeakObjectPtr<class UInventory> _inventory, TFunctionRef<void(EItemType, TObjectPtr<class UItem>)> _slotedItemProcess);
 };
