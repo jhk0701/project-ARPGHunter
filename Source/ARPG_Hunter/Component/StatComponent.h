@@ -15,12 +15,13 @@ struct FEffectParam;
 enum class EHitOption : uint8
 {
 	NONE,			// 옵션 없음
-	IMMUNE_STIFFEN,	// 경직 면역 : 피격 모션만 무효
-	IMMUNE_HIT		// 피격 면역 : 피격 모션 + 데미지 무효
+	IMMUNE_HIT		= 0b001,	// 피격 면역 : 피격 자체 무효
+	IMMUNE_STIFFEN	= 0b010,	// 경직 면역 : 피격 모션만 무효
+	IMMUNE_DEBUF	= 0b100,	// 디버프 면역 : 디버프 적용 무효
 };
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHitEvent, EHitOption&, uint32&)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHitEvent, uint8&, uint32&)
 DECLARE_MULTICAST_DELEGATE(FOnDead);
 
 USTRUCT()
@@ -152,4 +153,6 @@ public:
 		check(EffectedStat[_type] >= _amount);
 		EffectedStat[_type] -= _amount;
 	}
+
+	bool CheckHitOptionMask(uint8 _hitOpt, uint8 _mask) { return _hitOpt & _mask; }
 };

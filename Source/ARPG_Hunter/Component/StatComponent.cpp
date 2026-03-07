@@ -7,6 +7,13 @@
 
 #include "Define/Debug.h"
 
+
+void FCharacterResource::Init(uint32 _max, bool _bFull)
+{
+	MaxValue = _max;
+	Value = _bFull ? MaxValue : 0;
+}
+
 UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -120,13 +127,16 @@ bool UStatComponent::TakeDamage(uint32 _damage, TFunction<void()> _stiffAction)
 		return false;
 	
 	// 피격 발생
-	EHitOption HitOption = EHitOption::NONE;
-	OnHitEvent.Broadcast(HitOption, _damage); // 피격 시 이벤트 델리게이트 호출
+	uint8 HitBit = static_cast<uint8>(EHitOption::NONE);
+	OnHitEvent.Broadcast(HitBit, _damage); // 피격 시 이벤트 델리게이트 호출
 
-	if (HitOption == EHitOption::IMMUNE_HIT)
+	// 피격 면역 확인
+	if (CheckHitOptionMask(HitBit, static_cast<uint8>(EHitOption::IMMUNE_HIT)))
 		return false;	// 피격 무효 처리
-	else if (HitOption < EHitOption::IMMUNE_STIFFEN && 
-		_stiffAction != nullptr)
+	
+	// 경직 면역 확인
+	if (_stiffAction != nullptr && 
+		CheckHitOptionMask(HitBit, static_cast<uint8>(EHitOption::IMMUNE_STIFFEN)) == false)
 		_stiffAction();  // 경직 동작 수행
 
 	if (TryUseResource(ECharacterResourceType::HEALTH, _damage) == false)
@@ -181,6 +191,18 @@ void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bI
 
 void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
+	if(_effectData->bIsDebuff) // 디버프인 경우 확인
+	{
+		uint8 HitBit = static_cast<uint8>(EHitOption::NONE);
+		uint32 DummyDamage = 0;
+		OnHitEvent.Broadcast(HitBit, DummyDamage); // 피격 관련 이벤트 확인
+
+		// 피격 면역, 디버프 면역인 경우 return;
+		uint8 HitMask = static_cast<uint8>(EHitOption::IMMUNE_HIT) | static_cast<uint8>(EHitOption::IMMUNE_DEBUF);
+		if (CheckHitOptionMask(HitBit, HitMask))
+			return;
+	}
+
 	TObjectPtr<UEffect> EffectInst = NewObject<UEffect>(this, _effectData->Effect);
 
 	FEffectContext Context
@@ -240,10 +262,4 @@ void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 
 	_effect->Deactivate();
 	MapEffect.Remove(_effect->GetID());
-}
-
-void FCharacterResource::Init(uint32 _max, bool _bFull)
-{
-	MaxValue = _max;
-	Value = _bFull ? MaxValue : 0;
 }

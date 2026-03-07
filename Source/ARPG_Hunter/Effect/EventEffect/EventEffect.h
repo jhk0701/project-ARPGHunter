@@ -35,7 +35,7 @@ public:
 	/// 버프를 가진 대상이 피격시 호출될 메서드
 	/// </summary>
 	/// <param name="_outBool">true : 피격 무효, false : 피격 진행</param>
-	virtual void OnHitEvent(EHitOption& _hitOption, uint32& _damage) {};
+	virtual void OnHitEvent(uint8& _hitBit, uint32& _damage) {};
 };
 
 
@@ -44,7 +44,7 @@ class ARPG_HUNTER_API UInvincibleEffect : public UOnHitEffect
 {
 	GENERATED_BODY()
 public:
-	void OnHitEvent(EHitOption& _hitOption, uint32& _damage) override;
+	void OnHitEvent(uint8& _hitBit, uint32& _damage) override;
 };
 
 UCLASS()
@@ -52,7 +52,7 @@ class ARPG_HUNTER_API UJustDodgeEffect : public UOnHitEffect
 {
 	GENERATED_BODY()
 public:
-	void OnHitEvent(EHitOption& _hitOption, uint32& _damage) override;
+	void OnHitEvent(uint8& _hitBit, uint32& _damage) override;
 };
 
 UCLASS()
@@ -60,5 +60,5 @@ class ARPG_HUNTER_API USuperArmorEffect : public UOnHitEffect
 {
 	GENERATED_BODY()
 public:
-	void OnHitEvent(EHitOption& _hitOption, uint32& _damage) override;
+	void OnHitEvent(uint8& _hitBit, uint32& _damage) override;
 };

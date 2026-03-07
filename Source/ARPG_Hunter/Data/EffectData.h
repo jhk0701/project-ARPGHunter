@@ -31,6 +31,9 @@ class ARPG_HUNTER_API UEffectData : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere);
+	bool bIsDebuff;
+
+	UPROPERTY(EditAnywhere);
 	TObjectPtr<UTexture> Icon;
 
 	UPROPERTY(EditAnywhere);

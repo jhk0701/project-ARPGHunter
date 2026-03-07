@@ -16,9 +16,7 @@ void UTermEffect::Activate(UStatComponent* _target, FEffectContext* _context)
 	_target->RegisterEffect(this); 
 }
 
-void UTermEffect::Deactivate()
-{
-}
+void UTermEffect::Deactivate(){}
 
 void UAddAttack::Activate(UStatComponent* _target, FEffectContext* _context)
 {
