@@ -55,6 +55,8 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	FName LevelToLoad;
+	UPROPERTY(EditAnywhere)
+	FName StartPoint;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FSection> Sections;

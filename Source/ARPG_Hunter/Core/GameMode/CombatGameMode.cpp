@@ -3,7 +3,10 @@
 
 #include "Core/GameMode/CombatGameMode.h"
 #include "NavigationSystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/PlayerStart.h"
+#include "EngineUtils.h"
 
 #include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
@@ -62,6 +65,12 @@ void ACombatGameMode::PostInitializeComponents()
 	}
 
 	StageData = GI->GetSubsystem<UDataManager>()->GetStageData(GI->GetStageID());
+
+	for (TActorIterator<APlayerStart> ItPlayerStart(GetWorld()); ItPlayerStart; ++ItPlayerStart)
+	{
+		TObjectPtr<APlayerStart> PlayerStart = *ItPlayerStart;
+		MapPlayerStart.Add(PlayerStart->PlayerStartTag, PlayerStart);
+	}
 }
 
 void ACombatGameMode::BeginPlay()
@@ -72,7 +81,6 @@ void ACombatGameMode::BeginPlay()
 	if (ACombatGameState* CombatGameState = GetGameState<ACombatGameState>()) 
 	{
 		// TODO: 멀티 플레이 시, 현재 플레이어들의 인원수 전달
-		
 		CombatGameState->OnSectionCleared.BindLambda(
 			[this](bool _bIsCleared)
 			{
@@ -278,4 +286,12 @@ void ACombatGameMode::GameFail()
 	UE_LOG(LogARPG, Log, TEXT("Stage Failed"));
 
 	OnGameEnd.Broadcast(false, nullptr);
+}
+
+AActor* ACombatGameMode::ChoosePlayerStart_Implementation(AController* _player)
+{
+	if (MapPlayerStart.Find(StageData->StartPoint) != nullptr)
+		return MapPlayerStart[StageData->StartPoint];
+
+	return Super::ChoosePlayerStart_Implementation(_player);
 }

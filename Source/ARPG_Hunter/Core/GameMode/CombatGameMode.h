@@ -42,6 +42,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setting|Monster")
 	TMap<EMonsterType, TSubclassOf<class AMonsterBase>> MonsterClass;
+	UPROPERTY()
+	TMap<FName, TObjectPtr<class APlayerStart>> MapPlayerStart; // Tag - PlayerStart
 
 public:
 	ACombatGameMode();
@@ -64,6 +66,9 @@ protected:
 public:
 	TMap<EStageEvent, FStageEvent> StageEvent;
 	FOnGameEnd OnGameEnd;
+
+	// PlayerStart 중 하나에서 스폰하기 위해 Blueprint Native 함수 오버라이드
+	virtual AActor* ChoosePlayerStart_Implementation(AController* _player) override;
 
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
 	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
