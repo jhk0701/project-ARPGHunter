@@ -1,6 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
+
 #include "Core/Subsystem/DataManager.h"
 #include "Define/Enum.h"
 #include "Data/PlayerConfig.h"
@@ -39,6 +40,7 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	FGetItemDataFunc GetItemDataFunc;
 	GetItemDataFunc.BindLambda([this](const FName& _id) { return GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_id); });
 	Inventory->Init(GetItemDataFunc);
+
 	Equipment->Init(GetGameInstance());
 	QuickSlot->Init();
 
