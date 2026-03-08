@@ -25,6 +25,35 @@
 
 #include "Define/Debug.h"
 
+
+uint32 ACombatGameMode::CalculateAttack(uint32 _baseVal, uint32 _AddictivePercent)
+{
+	return _baseVal * _AddictivePercent * 0.01f;
+}
+
+bool ACombatGameMode::CalculateCritical(uint32 _critPer, uint32 _critDmg, uint32& _outDamage)
+{
+	uint32 Critical = FMath::Rand() % 100;
+
+	bool bIsCritical = Critical <= _critPer;
+	if (bIsCritical)
+		_outDamage *= (1.0f + _critDmg * 0.01f);
+
+	return bIsCritical;
+}
+
+uint32 ACombatGameMode::CalculateDefense(uint32 _damage, uint32 _defense)
+{
+	uint32 Defense = _defense / 3;
+
+	if (_damage >= Defense)
+		_damage -= Defense;
+	else
+		_damage = 0;
+
+	return _damage;
+}
+
 ACombatGameMode::ACombatGameMode()
 {
 	PlayerControllerClass = APlayerCombatController::StaticClass();

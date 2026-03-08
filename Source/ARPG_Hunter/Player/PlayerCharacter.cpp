@@ -261,9 +261,7 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 	if (StatComp->IsDead())
 		return;
 
-	uint32 Damage = _hitInfo.Damage;
-	AdjustDefense(Damage);
-
+	uint32 Damage = ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
 	StatComp->TakeDamage(Damage,
 		[this]() 
 		{
@@ -294,29 +292,36 @@ void APlayerCharacter::OnDead()
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
-	TWeakObjectPtr<UPlayerActionComponent> WeakActionComp(ActionComp);
 
 	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel4,
-		[WeakThis, WeakActionComp, _opt](TArray<FHitResult>& _hitResults)
+		[WeakThis, _opt](TArray<FHitResult>& _hitResults)
 		{
-			if (WeakThis.IsValid() == false || WeakActionComp.IsValid() == false)
+			if (WeakThis.IsValid() == false)
 				return;
 
-			uint32 Damage = WeakThis->CalculateBaseDamage();
-			bool bIsCritical = false;
+			UStatComponent* Stat = WeakThis->StatComp;
+			UPlayerActionComponent* Action = WeakThis->ActionComp;
 
+			bool bIsCritical = false;
 			for (FHitResult& Hit : _hitResults)
 			{
 				IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
 				if (Hitable == nullptr)
 					continue;
 
+				uint32 Damage = ACombatGameMode::CalculateAttack(
+					Stat->GetStat(ECharacterStatType::ATTACK),
+					Action->GetAttackActionDamagePer());
+
 				FHitInfo HitInfo;
-				HitInfo.bIsCriticalHit = WeakThis->CalculateCritical(Damage);
+				HitInfo.bIsCriticalHit = ACombatGameMode::CalculateCritical(
+					Stat->GetStat(ECharacterStatType::CRITICAL_PERCENT),
+					Stat->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT),
+					Damage);
 				HitInfo.Damage = Damage;
-				HitInfo.StaggerDamage = WeakActionComp->GetAttackActionStaggerDamage();
-				HitInfo.KnockBackStrength = WeakActionComp->GetAttackActionKnockBack(_opt);
-				HitInfo.AttackType = WeakActionComp->GetAttackActionType();
+				HitInfo.StaggerDamage = Action->GetAttackActionStaggerDamage();
+				HitInfo.KnockBackStrength = Action->GetAttackActionKnockBack(_opt);
+				HitInfo.AttackType = Action->GetAttackActionType();
 				HitInfo.Attacker = WeakThis;
 				HitInfo.HitResult = &Hit;
 
@@ -328,32 +333,6 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.5f);
 		}
 	);
-}
-
-uint32 APlayerCharacter::CalculateBaseDamage()
-{
-	return StatComp->GetStat(ECharacterStatType::ATTACK) * ActionComp->GetAttackActionDamagePer() * 0.01f;
-}
-
-bool APlayerCharacter::CalculateCritical(uint32& _outDamage)
-{
-	uint32 critial = FMath::Rand() % 100;
-
-	bool bIsCritical = critial <= StatComp->GetStat(ECharacterStatType::CRITICAL_PERCENT);
-	if (bIsCritical)
-		_outDamage *= (1.0f + StatComp->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT) * 0.01f);
-
-	return bIsCritical;
-}
-
-void APlayerCharacter::AdjustDefense(uint32& _outDamage)
-{
-	uint32 DefensedValue = StatComp->GetStat(ECharacterStatType::DEFENSE) / 3;
-	
-	if (_outDamage >= DefensedValue)
-		_outDamage -= DefensedValue;
-	else
-		_outDamage = 0;
 }
 
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)

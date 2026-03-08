@@ -64,6 +64,11 @@ protected:
 	void SetStageData(const FName& _stageID);
 
 public:
+	// 전투 관련 계산식
+	static uint32 CalculateAttack(uint32 _baseVal, uint32 _AddictivePercent);
+	static bool CalculateCritical(uint32 _critPer, uint32 _critDmg, uint32& _outDamage);
+	static uint32 CalculateDefense(uint32 _damage, uint32 _defense);
+
 	TMap<EStageEvent, FStageEvent> StageEvent;
 	FOnGameEnd OnGameEnd;
 

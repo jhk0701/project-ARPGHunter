@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -140,9 +140,11 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	// 피격 발생
-	StatComp->TakeDamage(_hitInfo.Damage);
+	uint32 Damage = ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
+
+	StatComp->TakeDamage(Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
-	ShowDamageUI(_hitInfo.bIsCriticalHit, _hitInfo.Damage);
+	ShowDamageUI(_hitInfo.bIsCriticalHit, Damage);
 
 	// 피격 시, 이펙트 출력
 	if (Data->Config->VFXOnHit)
@@ -200,7 +202,10 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 			if (WeakThis.IsValid() == false || WeakAction.IsValid() == false)
 				return;
 
-			uint16 Damage =	WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK) * WeakAction->AttackDamagePer * 0.01f;
+			uint16 Damage = ACombatGameMode::CalculateAttack(
+				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
+				WeakAction->AttackDamagePer);
+
 			for (FHitResult& hitResult : _hitResult)
 			{
 				IHitable* Hitable = Cast<IHitable>(hitResult.GetActor());
