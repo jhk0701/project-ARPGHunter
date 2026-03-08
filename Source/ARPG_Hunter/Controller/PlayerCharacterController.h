@@ -45,7 +45,7 @@ private:
 	TObjectPtr<UInputAction> ShortCutAction;
 
 protected:
-	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* _pawn) override;
 	virtual void SetupInputComponent() override;
 
 	TObjectPtr<UInputMappingContext> GetPlayerIMC() { return PlayerIMC; }

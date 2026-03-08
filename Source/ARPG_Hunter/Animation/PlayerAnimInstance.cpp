@@ -26,4 +26,5 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	IsMove = MoveSpeed.X > 0;
 	IsFalling = Owner->GetMovementComponent()->IsFalling();
 	IsDead = Owner->IsDead();
+	IsCombat = Owner->GetIsCombat();
 }

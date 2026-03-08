@@ -30,6 +30,8 @@
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	WeaponSocketOnCombat = FName(TEXT("socket_hand_r"));
+	WeaponSocketOnNonCombat = FName(TEXT("socket_weapon_container"));
 
 #pragma region Create Comp
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
@@ -46,7 +48,7 @@ APlayerCharacter::APlayerCharacter()
 		TObjectPtr<USkeletalMeshComponent>& MeshComp = MapEquipmentMeshComp.Add(Type, CreateDefaultSubobject<USkeletalMeshComponent>(*FString::Printf(TEXT("%sMesh"), *EnumToString(Type))));
 		
 		if (Type == EEquipmentType::WEAPON)
-			MeshComp->SetupAttachment(MapEquipmentMeshComp[EEquipmentType::TOP], FName(TEXT("socket_hand_r")));
+			MeshComp->SetupAttachment(MapEquipmentMeshComp[EEquipmentType::TOP], WeaponSocketOnCombat);
 		else
 		{
 			MeshComp->SetupAttachment(MapEquipmentMeshComp[EEquipmentType::TOP]);
@@ -114,7 +116,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::Init()
 {
 	// 플레이어 데이터 받아오기
-	// TODO : 플레이어 저장 데이터 기반으로 변경
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 
@@ -194,12 +195,24 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 void APlayerCharacter::SetIsSprint(bool _isSprint)
 {
 	if(StatComp->IsStaggering())
-		IsSprint = false;
+		bIsSprint = false;
 	else
-		IsSprint = _isSprint;
+		bIsSprint = _isSprint;
 
 	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
-		CharMove->MaxWalkSpeed = IsSprint ? SprintSpeed : WalkSpeed;
+		CharMove->MaxWalkSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
+}
+
+void APlayerCharacter::SetIsCombat(bool _bIsCombat)
+{
+	bIsCombat = _bIsCombat;
+
+	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+
+	MapEquipmentMeshComp[EEquipmentType::WEAPON]->AttachToComponent(
+		MapEquipmentMeshComp[EEquipmentType::TOP],
+		AttachmentRules,
+		bIsCombat ? WeaponSocketOnCombat : WeaponSocketOnNonCombat);
 }
 
 void APlayerCharacter::Dodge()

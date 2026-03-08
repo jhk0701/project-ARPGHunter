@@ -4,8 +4,16 @@
 #include "Controller/PlayerNonCombatController.h"
 
 #include "Define/Enum.h"
+#include "Player/PlayerCharacter.h"
 #include "UI/NonCombatHUD.h"
 
+
+void APlayerNonCombatController::OnPossess(APawn* _pawn)
+{
+	Super::OnPossess(_pawn);
+
+	GetControlledPlayer()->SetIsCombat(false);
+}
 
 void APlayerNonCombatController::ShortCut(EShortCutType _key)
 {

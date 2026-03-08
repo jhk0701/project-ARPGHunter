@@ -33,19 +33,16 @@ APlayerCharacterController::APlayerCharacterController()
 		ShortCutAction = ShortCurActionFinder.Object;
 }
 
-void APlayerCharacterController::BeginPlay()
+void APlayerCharacterController::OnPossess(APawn* _pawn)
 {
-	Super::BeginPlay();
+	Super::OnPossess(_pawn);
 
 	if (nullptr == PlayerIMC)
 		return;
 
-	if (nullptr == GetPawn())
-		return;
+	ControlledCharacter = Cast<APlayerCharacter>(_pawn);
 
-	ControlledCharacter = Cast<APlayerCharacter>(GetPawn());
-
-	if (UEnhancedInputLocalPlayerSubsystem* InputSubsytem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()) 
+	if (UEnhancedInputLocalPlayerSubsystem* InputSubsytem = GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 		InputSubsytem->AddMappingContext(PlayerIMC, 0);
 }
 

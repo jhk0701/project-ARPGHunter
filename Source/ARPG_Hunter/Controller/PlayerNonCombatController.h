@@ -15,5 +15,7 @@ class ARPG_HUNTER_API APlayerNonCombatController : public APlayerCharacterContro
 	GENERATED_BODY()
 
 protected:
-	void ShortCut(EShortCutType _key) override;
+	virtual void OnPossess(APawn* _pawn) override;
+
+	virtual void ShortCut(EShortCutType _key) override;
 };

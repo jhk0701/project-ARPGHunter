@@ -22,6 +22,12 @@ APlayerCombatController::APlayerCombatController()
 		QuickSlotAction = QuickSlotActionFinder.Object;
 }
 
+void APlayerCombatController::OnPossess(APawn* _pawn)
+{
+	Super::OnPossess(_pawn);
+	GetControlledPlayer()->SetIsCombat(true);
+}
+
 void APlayerCombatController::SetupInputComponent()
 {
 	Super::SetupInputComponent();

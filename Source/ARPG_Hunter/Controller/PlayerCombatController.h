@@ -30,6 +30,7 @@ private:
 	TObjectPtr<UInputAction> QuickSlotAction;
 
 protected:
+	virtual void OnPossess(APawn* _pawn) override;
 	virtual void SetupInputComponent() override;
 
 public:

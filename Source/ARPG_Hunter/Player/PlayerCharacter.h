@@ -28,6 +28,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TMap<EEquipmentType, TObjectPtr<USkeletalMeshComponent>> MapEquipmentMeshComp;
+	UPROPERTY(EditAnywhere, Category = "Mesh|Socket")
+	FName WeaponSocketOnCombat;
+	UPROPERTY(EditAnywhere, Category = "Mesh|Socket")
+	FName WeaponSocketOnNonCombat;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
@@ -45,7 +49,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Attribute|Rotate")
 	float RotateSpeedToInputDir{ 10.0f };
 
-	bool IsSprint{ false };
+	UPROPERTY(VisibleAnywhere, Category = "Attribute")
+	bool bIsSprint{ false };
+	UPROPERTY(VisibleAnywhere, Category = "Attribute")
+	bool bIsCombat{ false };
 
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float WalkSpeed{ 300.0f };
@@ -112,8 +119,10 @@ public:
 		InputDirection.Normalize(); 
 	}
 	const FVector2D& GetInputDirection() { return InputDirection; }
-	void SetIsSprint(bool _isSprint);
-	bool GetIsSprint() { return IsSprint; }
+	void SetIsSprint(bool _bisSprint);
+	bool GetIsSprint() const { return bIsSprint; }
+	void SetIsCombat(bool _bIsCombat);
+	bool GetIsCombat() const { return bIsCombat; }
 
 	void SetActionProcess(EActionProcess _eProcess);
 
