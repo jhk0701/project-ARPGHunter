@@ -62,7 +62,7 @@ void UStatComponent::Clear()
 	if (TimerManager.IsTimerActive(StaminaRecoveryTimer))
 		TimerManager.ClearTimer(StaminaRecoveryTimer);
 
-	for (TPair<UObject*, FAppliedEffect>& pair : MapEffect)
+	for (TPair<TObjectPtr<UObject>, FAppliedEffect>& pair : MapEffect)
 	{
 		if (TimerManager.IsTimerActive(pair.Value.Timer))
 			TimerManager.ClearTimer(pair.Value.Timer);
@@ -221,10 +221,9 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 	if (FAppliedEffect* Applied = MapEffect.Find(_effect->GetID())) 
 	{
 		// 스택 쌓기 불가능한 경우 중복 효과 획득 불가
-		if (Applied->Effect->GetMaxStack() <= 1 || 
-			Applied->Effect->IsStackFull())
+		if (Applied->Effect->GetMaxStack() <= 1 || Applied->Effect->IsStackFull())
 			return;
-		
+
 		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
 		AppliedEffect->AddStack(); // 스택 쌓기
 
@@ -241,12 +240,14 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 
 	// 신규 효과 추가
 	FAppliedEffect& AppliedEffect = MapEffect.Add(_effect->GetID(), FAppliedEffect(_effect));
-
 	GetWorld()->GetTimerManager().SetTimer(
 		AppliedEffect.Timer,
 		[this, _effect]() { RemoveEffect(_effect); },
 		_effect->GetDuration(),
 		false);
+
+	TObjectPtr<UEffectData> EffectData = Cast<UEffectData>(_effect->GetID());
+	OnEffectRegistered.Broadcast(_effect->GetID(), EffectData->Icon);
 }
 
 void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
@@ -262,4 +263,5 @@ void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 
 	_effect->Deactivate();
 	MapEffect.Remove(_effect->GetID());
+	OnEffectRemoved.Broadcast(_effect->GetID());
 }

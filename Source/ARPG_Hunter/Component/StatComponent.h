@@ -22,6 +22,8 @@ enum class EHitOption : uint8
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChanged, uint16, uint16)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHitEvent, uint8&, uint32&)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEffectRegistered, UObject*, UTexture2D*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnEffectRemoved, UObject*);
 DECLARE_MULTICAST_DELEGATE(FOnDead);
 
 USTRUCT()
@@ -68,9 +70,9 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterStatType, uint32> Stat;
-	UPROPERTY(VisibleAnywhere, Category = "Stat|Equiment", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterStatType, uint32> EquipmentStat;
-	UPROPERTY(VisibleAnywhere, Category = "Resource", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "Stat", meta = (AllowPrivateAccess = "true"))
 	TMap<ECharacterResourceType, FCharacterResource> Resource;
 
 	UPROPERTY(EditAnywhere, Category = "Stat|Stamina", meta = (AllowPrivateAccess = "true"))
@@ -88,7 +90,7 @@ private:
 
 	// 효과 관리용 컨테이너 : 이펙트 -> 타이머 핸들 찾기
 	UPROPERTY()
-	TMap<UObject*, FAppliedEffect> MapEffect;
+	TMap<TObjectPtr<UObject>, FAppliedEffect> MapEffect;
 
 	// 효과로 얻은 스탯
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
@@ -102,6 +104,8 @@ private:
 
 public:	
 	FOnHitEvent OnHitEvent; // 피격 이벤트
+	FOnEffectRegistered OnEffectRegistered; // 이펙트 등록 이벤트
+	FOnEffectRemoved OnEffectRemoved;		// 이펙트 제거 이벤트
 	FOnDead OnDead;
 
 	void Init(const TMap<ECharacterStatType, uint32>& _initStat);
@@ -111,12 +115,12 @@ public:
 	uint32 GetStat(ECharacterStatType _type, bool _bExceptEffect = false) const 
 	{ 
 		uint32 Result = Stat[_type];
-
 		Result += EquipmentStat[_type];
 
-		if(_bExceptEffect == false)
-			Result += EffectedStat[_type];
+		if (_bExceptEffect)
+			return Result;
 
+		Result += EffectedStat[_type];
 		return Result;
 	}
 	uint32 GetResourceValue(ECharacterResourceType _type) const { return Resource[_type].Value; }

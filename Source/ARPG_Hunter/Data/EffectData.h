@@ -34,7 +34,7 @@ public:
 	bool bIsDebuff;
 
 	UPROPERTY(EditAnywhere);
-	TObjectPtr<UTexture> Icon;
+	TObjectPtr<UTexture2D> Icon;
 
 	UPROPERTY(EditAnywhere);
 	TObjectPtr<class UParticleSystem> Particle;

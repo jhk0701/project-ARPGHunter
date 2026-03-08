@@ -147,6 +147,9 @@ void APlayerCharacter::Init()
 		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
 		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
+
+		StatComp->OnEffectRegistered.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RegisterStatEffect);
+		StatComp->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
 	}
 
 	InteractWidget->SetHiddenInGame(true);
