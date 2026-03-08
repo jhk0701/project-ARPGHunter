@@ -32,7 +32,7 @@ void UUWPlayerStatusBar::SetSkillBarPercent(uint16 _remain, uint16 _max)
 
 void UUWPlayerStatusBar::RegisterStatEffect(UObject* _effectID, UTexture2D* _tex)
 {
-	if (MapStatEffectSlot.Contains(_effectID))
+	if (MapStatEffectSlot.Contains(_effectID) || _tex == nullptr)
 		return;
 
 	TWeakObjectPtr<UUserWidget> SlotInst = StatEffectIndicator->GetSlot();
