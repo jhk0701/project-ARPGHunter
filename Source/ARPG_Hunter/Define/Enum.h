@@ -20,6 +20,7 @@ UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	SWORD		UMETA(DisplayName = "Sword"),
+	HAND_GUN	UMETA(DisplayName = "Hand Gun"),
 };
 FName EnumToName(EWeaponType _value);
 
