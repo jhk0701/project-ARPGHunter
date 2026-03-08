@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/DataManager.h"
 #include "Engine/DataTable.h"
+#include "Engine/CurveTable.h"
 
 #include "Define/Enum.h"
 #include "Data/WeaponConfig.h"
@@ -29,6 +30,10 @@ UDataManager::UDataManager()
 	static ConstructorHelpers::FObjectFinder<UDataTable> MonsterDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_MonsterData.DT_MonsterData'"));
 	if (MonsterDataTableFinder.Succeeded())
 		MonsterDataTable = MonsterDataTableFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UCurveTable> MonsterLvCurveFinder(TEXT("/Script/Engine.CurveTable'/Game/03-Data/CT_MonsterLevel.CT_MonsterLevel'"));
+	if (MonsterLvCurveFinder.Succeeded())
+		MonsterLvCurveTable = MonsterLvCurveFinder.Object;
 
 	static ConstructorHelpers::FObjectFinder<UDataTable> RegionDataTableFinder(TEXT("/Script/Engine.DataTable'/Game/03-Data/DT_RegionData.DT_RegionData'"));
 	if(RegionDataTableFinder.Succeeded())
@@ -67,6 +72,16 @@ TObjectPtr<UWeaponConfig> UDataManager::GetWeaponConfig(EWeaponType _type) const
 FMonsterData* UDataManager::GetMonsterData(const FName& _id) const
 {
 	return MonsterDataTable->FindRow<FMonsterData>(_id, TEXT("Monster Data Table Search"));
+}
+
+float UDataManager::GetMonsterLvCurve(uint32 _lv, const FName& _rowName)
+{
+	FSimpleCurve* Curve = MonsterLvCurveTable->FindSimpleCurve(_rowName, TEXT("Monster Lv Curve Search"), false);
+
+	if (Curve == nullptr)
+		return 0.0f;
+
+	return Curve->Eval(_lv);
 }
 
 FRegionData* UDataManager::GetRegionData(const FName& _id) const

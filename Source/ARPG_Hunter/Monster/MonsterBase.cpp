@@ -55,9 +55,11 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
 {
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+
 	ID = _param.ID;
 	SectionID = _param.SectionIndex;
-	Data = GetGameInstance()->GetSubsystem<UDataManager>()->GetMonsterData(ID);
+	Data = DataManager->GetMonsterData(ID);
 	CurState = EMonsterState::NORMAL;
 
 	// 메쉬 설정
@@ -85,12 +87,13 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		WeaponComp->SetHiddenInGame(true);
 
 	// Stat 설정
-	// TODO : 레벨 반영 스탯 계산
+	// 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
 	{
-		ECharacterStatType type = static_cast<ECharacterStatType>(i);
-		BaseStat.Add(type, Data->BaseStat[type]);
+		ECharacterStatType Type = static_cast<ECharacterStatType>(i);
+		float Val = DataManager->GetMonsterLvCurve(_param.Lv, EnumToName(Type));
+		BaseStat.Add(Type, Data->BaseStat[Type] + static_cast<uint32>(Val));
 	}
 
 	StatComp->Init(BaseStat);

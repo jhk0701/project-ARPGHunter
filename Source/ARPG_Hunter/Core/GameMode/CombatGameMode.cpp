@@ -273,7 +273,8 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 				Spawn.MonsterID,
 				_sectionID,
 				Loc.Location,
-				Rot
+				Rot,
+				Spawn.Level
 			};
 			Instance->Init(InitParam);
 

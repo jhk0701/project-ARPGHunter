@@ -43,6 +43,8 @@ FName EnumToName(EWeaponType _value)
 	{
 	case EWeaponType::SWORD:
 		return FName(TEXT("Sword"));
+	case EWeaponType::HAND_GUN:
+		return FName(TEXT("Hand Gun"));
 	default:
 		return FName(TEXT("None"));
 	}

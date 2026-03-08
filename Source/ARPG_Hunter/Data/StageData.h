@@ -16,6 +16,8 @@ public:
 	FName MonsterID;
 	UPROPERTY(EditAnywhere)
 	uint8 Count;
+	UPROPERTY(EditAnywhere)
+	uint32 Level{1};
 };
 
 USTRUCT()
@@ -37,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint8 Count; // 지급 갯수
 	UPROPERTY(EditAnywhere)
-	uint8 PercentWeight{ 1 }; // 확률 가중치
+	float PercentWeight{ 1.0f }; // 확률 가중치
 };
 
 /**

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,6 +30,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UDataTable> MonsterDataTable;
 	UPROPERTY()
+	TObjectPtr<UCurveTable> MonsterLvCurveTable;
+	UPROPERTY()
 	TObjectPtr<UDataTable> RegionDataTable;
 	UPROPERTY()
 	TObjectPtr<UDataTable> StageDataTable;
@@ -50,6 +52,7 @@ public:
 	TObjectPtr<UWeaponConfig> GetWeaponConfig(EWeaponType _type) const;
 	TObjectPtr<UEquipmentSuccessData> GetSuccessData() const { return SuccessData; }
 	struct FMonsterData* GetMonsterData(const FName& _id) const;
+	float GetMonsterLvCurve(uint32 _lv, const FName& _rowName);
 	struct FRegionData* GetRegionData(const FName& _id) const;
 	struct FStageData* GetStageData(const FName& _id) const;
 	struct FItemData* GetItemData(const FName& _id) const;
