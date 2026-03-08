@@ -16,6 +16,9 @@ public:
 	UActionComponent();
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Debug")
+	bool bShowTrace{false};
+	
 	TObjectPtr<UAnimInstance> OwnerAnimInstance{ nullptr };
 	TObjectPtr<UAction> CurrentAction{ nullptr };
 

@@ -96,6 +96,8 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 	FVector Start = GetOwner()->GetActorLocation() + Fwd * 50.0f;
 	FVector End = Start + Fwd * Option.Range;
 
+	EDrawDebugTrace::Type DrawDebug = bShowTrace ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
+
 	switch (Option.Detail)
 	{
 	case EAttackDetailType::MELEE_FRONT:
@@ -106,7 +108,7 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 			Fwd.Rotation(),
 			UEngineTypes::ConvertToTraceType(_traceChannel),
 			false, { GetOwner() },
-			EDrawDebugTrace::None,
+			DrawDebug,
 			_outResults,
 			true
 		);
@@ -118,7 +120,7 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 			Option.Range,
 			UEngineTypes::ConvertToTraceType(_traceChannel),
 			false, { GetOwner() },
-			EDrawDebugTrace::None,
+			DrawDebug,
 			_outResults,
 			true
 		);
