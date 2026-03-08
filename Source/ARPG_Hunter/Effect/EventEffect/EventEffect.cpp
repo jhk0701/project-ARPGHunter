@@ -5,14 +5,17 @@
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
-void UEventEffect::Activate(UStatComponent* _target, FEffectContext* _context)
+bool UEventEffect::Activate()
 {
-	Super::Activate(_target, _context); // 상위 TermEffect에서 타이머를 설정완료
-
 	if (!IsValid())
-		return;
+		return false;
+
+	if(!Super::Activate()) // 상위 TermEffect에서 타이머를 설정완료
+		return false;
 
 	EventHandle = Subscribe(); // 어디에 구독할지는 하위에서 결정
+
+	return true;
 }
 
 void UEventEffect::Deactivate()

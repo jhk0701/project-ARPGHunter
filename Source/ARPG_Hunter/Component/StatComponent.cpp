@@ -211,18 +211,20 @@ void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 		&_effectData->Param,
 		0.0f // TODO : 스킬 성장에 따른 효과 증가량 추가할 것
 	};
-	EffectInst->Activate(this, &Context);
+	EffectInst->Init(this, &Context);
+	EffectInst->Activate();
 }
 
-void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
+bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 {
 	// 이펙트 등록
 	// 동일 종류 중복 확인
 	if (FAppliedEffect* Applied = MapEffect.Find(_effect->GetID())) 
 	{
 		// 스택 쌓기 불가능한 경우 중복 효과 획득 불가
-		if (Applied->Effect->GetMaxStack() <= 1 || Applied->Effect->IsStackFull())
-			return;
+		if (Applied->Effect->GetMaxStack() <= 1 || 
+			Applied->Effect->IsStackFull())
+			return false;
 
 		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
 		AppliedEffect->AddStack(); // 스택 쌓기
@@ -235,7 +237,7 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 			AppliedEffect->GetDuration(),
 			false);
 
-		return;
+		return true;
 	}
 
 	// 신규 효과 추가
@@ -248,6 +250,8 @@ void UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 
 	TObjectPtr<UEffectData> EffectData = Cast<UEffectData>(_effect->GetID());
 	OnEffectRegistered.Broadcast(_effect->GetID(), EffectData->Icon);
+
+	return true;
 }
 
 void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)

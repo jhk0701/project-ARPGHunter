@@ -145,7 +145,7 @@ public:
 	void PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bIsLoop = true);
 
 	void ApplyEffect(TObjectPtr<UEffectData> _effectData);
-	void RegisterEffect(TObjectPtr<UEffect> _effect);
+	bool RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 
 	void AddStat(ECharacterStatType _type, uint32 _amount) 

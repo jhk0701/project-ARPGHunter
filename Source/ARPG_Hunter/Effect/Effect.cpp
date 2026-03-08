@@ -25,40 +25,56 @@ void UEffect::AddStack()
 	Stack = FMath::Min<uint8>(Stack + 1, BaseParam->MaxStack);
 }
 
-void URecoverHealth::Activate(UStatComponent* _target, FEffectContext* _context)
+bool URecoverHealth::Activate()
 {
-	Super::Activate(_target, _context);
+	if (Super::Activate() == false)
+		return false;
 
 	if (IsValid())
-		_target->RecoverResource(ECharacterResourceType::HEALTH, _context->Param->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::HEALTH, GetParam()->Value);
+
+	return true;
 }
 
-void URecoverSkill::Activate(UStatComponent* _target, FEffectContext* _context)
+bool URecoverSkill::Activate()
 {
-	Super::Activate(_target, _context);
+	if (Super::Activate() == false)
+		return false;
 	
 	if (IsValid())
-		_target->RecoverResource(ECharacterResourceType::SKILL, _context->Param->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::SKILL, GetParam()->Value);
+
+	return true;
 }
 
-void URecoverStamina::Activate(UStatComponent* _target, FEffectContext* _context)
+bool URecoverStamina::Activate()
 {
-	Super::Activate(_target, _context);
+	if (Super::Activate() == false)
+		return false;
 	
 	if (IsValid())
-		_target->RecoverResource(ECharacterResourceType::STAMINA, _context->Param->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::STAMINA, GetParam()->Value);
+
+	return true;
 }
 
-void UAddEffectUsingSkill::Activate(UStatComponent* _target, FEffectContext* _context)
+bool UAddEffectUsingSkill::Activate()
 {
-	Super::Activate(_target, _context);
+	if (Super::Activate() == false)
+		return false;
 
 	if (!IsValid()) 
-		return;
-	// 입력한 Value만큼 Skill 수치 소모
-	if (_target->TryUseResource(ECharacterResourceType::SKILL, _context->Param->Value) == false)
-		return;
+		return false;
 
-	for (TObjectPtr<UEffectData> data : _context->Param->EffectsOnEvent)
-		_target->ApplyEffect(data);
+	TWeakObjectPtr<UStatComponent> Target = GetTarget();
+	FEffectParam* Param = GetParam();
+
+	// 입력한 Value만큼 Skill 수치 소모
+	if (Target->TryUseResource(ECharacterResourceType::SKILL, Param->Value) == false)
+		return false;
+
+	for (TObjectPtr<UEffectData> data : Param->EffectsOnEvent)
+		Target->ApplyEffect(data);
+
+	return true;
 }

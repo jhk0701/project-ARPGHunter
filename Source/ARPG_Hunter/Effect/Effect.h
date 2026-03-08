@@ -35,14 +35,16 @@ protected:
 	FEffectParam* GetParam() { return BaseParam; }
 
 public:
-	virtual void Activate(UStatComponent* _target, FEffectContext* _context)
+	virtual void Init(UStatComponent* _target, FEffectContext* _context) 
 	{
 		TargetComp = _target;
 		DataPointer = _context->DataPointer;
 		BaseParam = _context->Param;
 		AddPercent = _context->AddPercent;
 		Stack = 1;
-	};
+	}
+	//하위 클래스에서 구체적 동작 구현
+	virtual bool Activate() { return true; }; // 활성화 시 결과 반환
 	virtual void Deactivate() {};
 	UObject* GetID() { return DataPointer; }
 	float GetDuration();
@@ -57,7 +59,7 @@ class ARPG_HUNTER_API URecoverHealth : public UEffect
 {
 	GENERATED_BODY()
 public:
-	void Activate(UStatComponent* _target, FEffectContext* _context) override;
+	virtual bool Activate() override;
 };
 
 UCLASS()
@@ -65,7 +67,7 @@ class ARPG_HUNTER_API URecoverSkill : public UEffect
 {
 	GENERATED_BODY()
 public:
-	void Activate(UStatComponent* _target, FEffectContext* _context) override;
+	virtual bool Activate() override;
 };
 
 UCLASS()
@@ -73,7 +75,7 @@ class ARPG_HUNTER_API URecoverStamina : public UEffect
 {
 	GENERATED_BODY()
 public:
-	void Activate(UStatComponent* _target, FEffectContext* _context) override;
+	virtual bool Activate() override;
 };
 
 UCLASS()
@@ -81,5 +83,5 @@ class ARPG_HUNTER_API UAddEffectUsingSkill : public UEffect
 {
 	GENERATED_BODY()
 public:
-	void Activate(UStatComponent* _target, FEffectContext* _context) override;
+	virtual bool Activate() override;
 };

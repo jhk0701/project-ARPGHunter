@@ -5,21 +5,24 @@
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
-void UPeriodicalEffect::Activate(UStatComponent* _target, FEffectContext* _context)
+bool UPeriodicalEffect::Activate()
 {
-	Super::Activate(_target, _context);
+	if (!IsValid())
+		return false;
 
-	if (_target == nullptr || _context == nullptr)
-		return;
+	if (!Super::Activate())
+		return false;
 
 	// 내부적 호출 사이클용 타이머 설정
-	_target->GetWorld()->GetTimerManager().SetTimer(
+	GetTarget()->GetWorld()->GetTimerManager().SetTimer(
 		RepeatTimer,
 		this,
 		&UPeriodicalEffect::RepeatedActivate,
-		_context->Param->RepeatInterval,
+		GetParam()->RepeatInterval,
 		true
 	);
+
+	return true;
 }
 
 void UPeriodicalEffect::Deactivate()

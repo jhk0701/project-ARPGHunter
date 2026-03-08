@@ -17,7 +17,7 @@ private:
 	FTimerHandle RepeatTimer;
 
 public:
-	void Activate(UStatComponent* _target, FEffectContext* _context) final;
+	virtual bool Activate() final;
 	virtual void Deactivate() override;
 
 	virtual void RepeatedActivate() {}; // 자식 클래스에서 구체적인 동작 위임
