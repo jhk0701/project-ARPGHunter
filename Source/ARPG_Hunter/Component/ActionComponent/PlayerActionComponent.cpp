@@ -36,7 +36,6 @@ void UPlayerActionComponent::ResetAction()
 	CurAttackActionID = 0;
 	CurActionProcess = EActionProcess::NONE;
 	CurActionInput = EActionInput::NORMAL;
-	
 	bIsInAttackCombo = false;
 	SetCurrentAction(nullptr);
 }
@@ -134,11 +133,11 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 		_predicate(Action->StaminaUsage) == false)
 		return false;
 
-	SetCurrentAction(Action);
 	CurAttackActionID = id;
 	CurActionProcess = EActionProcess::START;
 	CurActionInput = Action->InputType;
 	bIsInAttackCombo = true;
+	SetCurrentAction(Action);
 
 	if (CurActionInput == EActionInput::HOLD)
 		CurActionPredicate = _predicate;
@@ -222,6 +221,13 @@ void UPlayerActionComponent::ClearActionProgressTimer()
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	if (TimerManager.IsTimerActive(ActionProgressTimer))
 		TimerManager.ClearTimer(ActionProgressTimer);
+}
+
+void UPlayerActionComponent::SetCurrentAction(TObjectPtr<UAction> _action)
+{
+	Super::SetCurrentAction(_action);
+
+	OnActionUpdated.ExecuteIfBound(_action != nullptr, CurAttackActionID, CurWeapon->AttackCombo);
 }
 
 bool UPlayerActionComponent::IsInProgress() const

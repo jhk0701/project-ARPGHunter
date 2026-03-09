@@ -24,6 +24,7 @@
 #include "UI/CombatHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
+#include "UI/UserWidget/UWActionGuide.h"
 #include "Interface/Interactable.h"
 
 // Sets default values
@@ -150,6 +151,9 @@ void APlayerCharacter::Init()
 
 		StatComp->OnEffectRegistered.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RegisterStatEffect);
 		StatComp->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
+
+		TObjectPtr<UUWActionGuide> ActionGuideUI = CombatHUD->GetPlayerUI()->GetActionGuide();
+		ActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
 	}
 
 	InteractWidget->SetHiddenInGame(true);

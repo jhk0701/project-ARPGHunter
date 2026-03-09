@@ -67,6 +67,21 @@ FString EnumToString(EEquipmentType _type)
 	}
 }
 
+FString EnumToString(EAttackType _type)
+{
+	switch (_type)
+	{
+	case EAttackType::NORMAL:
+		return TEXT("Normal");
+	case EAttackType::SMASH:
+		return TEXT("Smash");
+	case EAttackType::SKILL:
+		return TEXT("Skill");
+	default:
+		return FString();
+	}
+}
+
 FName EnumToName(EActionProcess _value)
 {
 	switch (_value)

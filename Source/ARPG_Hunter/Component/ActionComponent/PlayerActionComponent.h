@@ -12,6 +12,8 @@ enum class EActionProcess : uint8;
 enum class EActionInput : uint8;
 enum class EAttackType : uint8;
 
+DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, uint8, TWeakObjectPtr<class UActionComboData>);
+
 /**
  * 
  */
@@ -42,7 +44,12 @@ private:
 
 	void ClearActionProgressTimer();
 
+protected:
+	virtual void SetCurrentAction(TObjectPtr<UAction> _action) override;
+
 public:
+	FOnActionUpdated OnActionUpdated;
+
 	void Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
 	void Clear() override;
 

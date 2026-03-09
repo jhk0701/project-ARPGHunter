@@ -1,0 +1,70 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "UI/UserWidget/UWActionGuide.h"
+#include "Components/PanelWidget.h"
+#include "Components/TextBlock.h"
+
+#include "Define/Enum.h"
+#include "Data/Action.h"
+#include "Data/ActionComboData.h"
+
+void UUWActionInfo::SetInfo(const FText& _input, const FText& _name)
+{
+	InputLabel->SetText(_input);
+	ActionNameLabel->SetText(_name);
+}
+
+void UUWActionGuide::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	if(ActionInfoClass)
+	{
+		uint8 Max = static_cast<uint8>(EAttackType::END);
+		NextActions.Reserve(Max);
+
+		for (uint8 i = 0; i < Max; ++i)
+		{
+			TObjectPtr<UUWActionInfo> Inst = CreateWidget<UUWActionInfo>(GetWorld(), ActionInfoClass);
+			NextActions.Add(Inst);
+		}
+	}
+
+	Clear();
+}
+
+void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<class UActionComboData> _comboData)
+{
+	if (_comboData.IsValid() == false || _bIsInit)
+	{
+		Clear();
+		return;
+	}
+
+	TObjectPtr<UAction> Action = _comboData->AttackAcionArray[_curIdx];
+	CurAction->SetInfo(FText::FromString(EnumToString(Action->Type)), Action->NameText);
+	CurAction->SetVisibility(ESlateVisibility::Visible);
+
+	const TMap<EAttackType, uint8>& Graph = _comboData->Graph[_curIdx].Edge;
+	for (uint8 i = 0; i < NextActions.Num(); ++i)
+	{
+		EAttackType Type = static_cast<EAttackType>(i);
+		if(Graph.Contains(Type)== false)
+		{
+			NextActions[i]->SetVisibility(ESlateVisibility::Collapsed);
+			continue;
+		}
+		
+		NextActions[i]->SetVisibility(ESlateVisibility::Visible);
+		NextActions[i]->SetInfo(FText::FromString(EnumToString(Type)), _comboData->AttackAcionArray[Graph[Type]]->NameText);
+	}
+}
+
+void UUWActionGuide::Clear()
+{
+	CurAction->SetVisibility(ESlateVisibility::Collapsed);
+
+	for (const TObjectPtr<UUWActionInfo> Inst : NextActions)
+		Inst->SetVisibility(ESlateVisibility::Collapsed);
+}

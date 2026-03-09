@@ -7,9 +7,6 @@
 #include "UWPlayerHUD.generated.h"
 
 class UButton;
-class UUWPlayerStatusBar;
-class UUWQuickSlot;
-
 enum class EShortCutType : uint8;
 
 DECLARE_DELEGATE_OneParam(FOnClickButton, EShortCutType)
@@ -29,13 +26,16 @@ class ARPG_HUNTER_API UUWCombatHUD : public UUWPlayerHUD
 	GENERATED_BODY()
 private:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWPlayerStatusBar> PlayerStatusBar;
+	TObjectPtr<class UUWPlayerStatusBar> PlayerStatusBar;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWQuickSlot> QuickSlot;
+	TObjectPtr<class UUWQuickSlot> QuickSlot;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUWActionGuide> ActionGuide;
 
 public:
 	TObjectPtr<UUWPlayerStatusBar> GetPlayerStatusBar() const { return PlayerStatusBar; }
 	TObjectPtr<UUWQuickSlot> GetQuickSlot() const { return QuickSlot; }
+	TObjectPtr<UUWActionGuide> GetActionGuide() const { return ActionGuide; }
 };
 
 UCLASS()

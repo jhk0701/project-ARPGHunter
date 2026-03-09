@@ -29,8 +29,7 @@ private:
 	
 protected:
 	void ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target);
-
-	void SetCurrentAction(TObjectPtr<UAction> _action) { CurrentAction = _action; }
+	virtual void SetCurrentAction(TObjectPtr<UAction> _action) { CurrentAction = _action; }
 
 	TObjectPtr<UAnimMontage> GetCurrentMontage();
 	TObjectPtr<UAnimInstance> GetAnimInstance() { return OwnerAnimInstance; }

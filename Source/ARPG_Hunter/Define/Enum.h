@@ -46,6 +46,7 @@ enum class EAttackType : uint8
 
 	END			UMETA(Hidden)
 };
+FString EnumToString(EAttackType _type);
 
 UENUM(BlueprintType)
 enum class EAttackDetailType : uint8

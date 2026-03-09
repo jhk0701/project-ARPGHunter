@@ -260,13 +260,14 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 
 		for (int i = 0; i < Spawn.Count; ++i)
 		{
+			TObjectPtr<AActor> Inst = ObjectPool->Get(MonsterClass[MonsterData->Config->Type]);
+			TObjectPtr<AMonsterBase> Instance = Cast<AMonsterBase>(Inst);
+
 			FNavLocation Loc;
 			FVector RandBoxPos = UKismetMathLibrary::RandomPointInBoundingBox(_point, _areaSize);
 			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 100.0f, Loc);
+			
 			FRotator Rot(0, FMath::Rand() % 360, 0);
-
-			TObjectPtr<AActor> Inst = ObjectPool->Get(MonsterClass[MonsterData->Config->Type]);
-			TObjectPtr<AMonsterBase> Instance = Cast<AMonsterBase>(Inst);
 
 			FMonsterInitParam InitParam
 			{

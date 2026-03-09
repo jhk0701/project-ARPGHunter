@@ -36,6 +36,9 @@ class ARPG_HUNTER_API UAction : public UDataAsset
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
+	FText NameText;
+
+	UPROPERTY(EditAnywhere)
 	EAttackType Type;
 	UPROPERTY(EditAnywhere)
 	uint16 AttackDamagePer{ 100 };
