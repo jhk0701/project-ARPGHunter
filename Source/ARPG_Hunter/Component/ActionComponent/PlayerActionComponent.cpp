@@ -191,12 +191,14 @@ void UPlayerActionComponent::ProcessAttackEnd()
 // 현재 받은 공격 입력이 유효한 입력인지 확인
 bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 {
+	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+
 	// 다음 공격이 가능한 상태인지 확인
 	// 스매시 공격 중 일반 공격으로 전환 불가
 	if (CurActionProcess < EActionProcess::COMPLETE ||
-		GetAnimInstance()->Montage_IsPlaying(CurWeapon->HitMontage) || 
-		GetAnimInstance()->Montage_IsPlaying(CurWeapon->ItemUsageMontage) ||
-		GetAnimInstance()->Montage_IsPlaying(CurWeapon->DodgeAction->Montage))
+		AnimInst->Montage_IsPlaying(CurWeapon->HitMontage) ||
+		AnimInst->Montage_IsPlaying(CurWeapon->ItemUsageMontage) ||
+		AnimInst->Montage_IsPlaying(CurWeapon->DodgeAction->Montage))
 		return false;
 
 	if (bIsInAttackCombo == false) // 첫 공격인 경우

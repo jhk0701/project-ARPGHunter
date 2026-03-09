@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,7 +9,7 @@
 class UItem;
 class UImage;
 
-DECLARE_DELEGATE_OneParam(FOnSlotClicked, uint8);
+DECLARE_DELEGATE_OneParam(FSlotEvent, uint8);
 
 /**
  *
@@ -55,9 +55,11 @@ private:
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 public:
-	FOnSlotClicked OnSlotClicked;
+	FSlotEvent OnSlotClicked;
+	FSlotEvent OnSlotHovered;
 
 	void MarkSelected(bool _bIsSelected);
 };

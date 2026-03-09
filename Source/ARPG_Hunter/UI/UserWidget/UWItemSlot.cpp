@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWItemSlot.h"
@@ -96,15 +96,17 @@ void UUWSelectableItemSlot::MarkSelected(bool _bIsSelected)
 
 FReply UUWSelectableItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
-	{
 		OnSlotClicked.ExecuteIfBound(GetIndex());
-		return FReply::Handled();
-	}
 
-	return FReply::Unhandled();
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+}
+
+void UUWSelectableItemSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	OnSlotHovered.ExecuteIfBound(GetIndex());
 }
 
 void UUWItemSlot::NativeOnInitialized()

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWActionGuide.h"
@@ -35,21 +35,27 @@ void UUWActionGuide::NativeOnInitialized()
 	Clear();
 }
 
-void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<class UActionComboData> _comboData)
+void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<UActionComboData> _comboData)
 {
 	if (_comboData.IsValid() == false ||
-		_comboData->Graph.Num() < _curIdx || 
-		_bIsInit )
+		_comboData->Graph.Num() < _curIdx)
 	{
 		Clear();
 		return;
 	}
 
-	TObjectPtr<UAction> Action = _comboData->AttackAcionArray[_curIdx];
-	CurAction->SetInfo(FText::FromString(EnumToString(Action->Type)), Action->NameText);
-	CurAction->SetVisibility(ESlateVisibility::Visible);
+	if (_bIsInit) 
+	{
+		CurAction->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		TObjectPtr<UAction> Action = _comboData->AttackAcionArray[_curIdx];
+		CurAction->SetInfo(FText::FromString(EnumToString(Action->Type)), Action->NameText);
+		CurAction->SetVisibility(ESlateVisibility::Visible);
+	}
 
-	const TMap<EAttackType, uint8>& Graph = _comboData->Graph[_curIdx].Edge;
+	const TMap<EAttackType, uint8>& Graph = _bIsInit ? _comboData->Start : _comboData->Graph[_curIdx].Edge;
 	for (uint8 i = 0; i < NextActions.Num(); ++i)
 	{
 		EAttackType Type = static_cast<EAttackType>(i);
