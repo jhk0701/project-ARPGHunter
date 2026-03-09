@@ -17,11 +17,16 @@ class ARPG_HUNTER_API UUWPopUp : public UUserWidget
 private:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsSubUI{ false };
-
+	UPROPERTY(VisibleAnywhere)
 	bool bIsShowing{ false };
+
+	UPROPERTY(EditAnywhere)
+	FKey CloseKey{ EKeys::Escape };
 
 protected:
 	bool IsSubUI() const { return bIsSubUI; }
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 public:
 	UFUNCTION()

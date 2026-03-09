@@ -140,9 +140,9 @@ void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
 
 	// 마우스 클릭 활성화
 	FInputModeUIOnly InputMode;
-	InputMode.SetWidgetToFocus(_uiToFocus);
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
-	
+	InputMode.SetWidgetToFocus(_uiToFocus);
+
 	SetInputMode(InputMode);
 }
 

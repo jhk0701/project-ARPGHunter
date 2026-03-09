@@ -2,8 +2,21 @@
 
 
 #include "UI/UserWidget/PopUp/UWPopUp.h"
-
 #include "Controller/PlayerCharacterController.h"
+
+FReply UUWPopUp::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (IsShowing()) 
+	{
+		if (InKeyEvent.GetKey() == EKeys::Escape ||
+			InKeyEvent.GetKey() == CloseKey)
+		{
+			HideUI();
+		}
+	}
+
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
+}
 
 void UUWPopUp::ShowUI(bool _bIsSubUI)
 {
@@ -16,6 +29,9 @@ void UUWPopUp::ShowUI(bool _bIsSubUI)
 
 	AddToViewport();
 	bIsShowing = true;
+
+	if (IsFocusable())
+		SetFocus();
 }
 
 void UUWPopUp::HideUI()
