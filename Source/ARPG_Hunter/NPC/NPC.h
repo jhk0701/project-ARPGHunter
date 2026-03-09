@@ -1,17 +1,16 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Interface/Interactable.h"
+#include "Interactable/InteractableActor.h"
 #include "NPC.generated.h"
 
 class UUWPopUp;
 class UUWNPCDialog;
 
 UCLASS()
-class ARPG_HUNTER_API ANPC : public AActor, public IInteractable
+class ARPG_HUNTER_API ANPC : public AInteractableActor
 {
 	GENERATED_BODY()
 	
@@ -50,5 +49,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	// IInteractable을(를) 통해 상속됨
-	void Interact() override;
+	virtual void Interact() override;
+
 };

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/GameMode/CombatGameMode.h"
@@ -265,8 +265,18 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 
 			FNavLocation Loc;
 			FVector RandBoxPos = UKismetMathLibrary::RandomPointInBoundingBox(_point, _areaSize);
-			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 100.0f, Loc);
-			
+			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 0.0f, Loc);
+
+			bool bIsValid = false;
+			for (int j = 0; j < 20; ++j)
+			{
+				bIsValid = NavSys->ProjectPointToNavigation(Loc.Location, Loc, FVector(50.0f));
+				if (bIsValid)
+					break;
+				else
+					NavSys->GetRandomReachablePointInRadius(RandBoxPos, 300.0f, Loc);
+			}
+						
 			FRotator Rot(0, FMath::Rand() % 360, 0);
 
 			FMonsterInitParam InitParam

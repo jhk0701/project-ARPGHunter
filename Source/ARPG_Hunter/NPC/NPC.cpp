@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "NPC/NPC.h"
@@ -28,7 +28,6 @@ ANPC::ANPC()
 	static ConstructorHelpers::FClassFinder<UUWNPCDialog> DialogUIFinder(TEXT("/Game/06-UI/WBP_NpcDialog.WBP_NpcDialog_C"));
 	if (DialogUIFinder.Succeeded())
 		DialogUIClass = DialogUIFinder.Class;
-
 }
 
 void ANPC::BeginPlay()

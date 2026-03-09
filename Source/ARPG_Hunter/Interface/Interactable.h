@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,4 +23,6 @@ class ARPG_HUNTER_API IInteractable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void Interact() = 0;
+	// virtual void ShowName(bool _bIsShow) = 0;
+	virtual const FText& GetInteractName() = 0;
 };

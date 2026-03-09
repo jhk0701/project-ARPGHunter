@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/ActionComponent/PlayerActionComponent.h"
@@ -227,7 +227,7 @@ void UPlayerActionComponent::SetCurrentAction(TObjectPtr<UAction> _action)
 {
 	Super::SetCurrentAction(_action);
 
-	OnActionUpdated.ExecuteIfBound(_action != nullptr, CurAttackActionID, CurWeapon->AttackCombo);
+	OnActionUpdated.ExecuteIfBound(_action == nullptr, CurAttackActionID, CurWeapon->AttackCombo);
 }
 
 bool UPlayerActionComponent::IsInProgress() const

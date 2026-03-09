@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/WidgetComponent.h"
 
+#include "Interface/Interactable.h"
 #include "Define/Enum.h"
 #include "Core/Subsystem/PlayerManager.h"
 #include "Core/Subsystem/DataManager.h"
@@ -25,7 +26,7 @@
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
 #include "UI/UserWidget/UWActionGuide.h"
-#include "Interface/Interactable.h"
+#include "UI/UserWidget/UWInteractionIndicator.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -454,6 +455,12 @@ void APlayerCharacter::CheckInteractable()
 	if (IInteractable* Interactable = Cast<IInteractable>(HitResult.GetActor()))
 	{
 		CurInteractable = Interactable;
+
+		if (UUWInteractionIndicator* Indicator = Cast<UUWInteractionIndicator>(InteractWidget->GetWidget()))
+		{
+			Indicator->SetText(CurInteractable->GetInteractName());
+		}
+
 		InteractWidget->SetHiddenInGame(false);
 		InteractWidget->SetWorldLocation(HitResult.GetActor()->GetActorLocation());
 	}

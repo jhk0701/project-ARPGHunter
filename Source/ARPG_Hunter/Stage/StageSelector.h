@@ -3,14 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Interface/Interactable.h"
+#include "Interactable/InteractableActor.h"
 #include "StageSelector.generated.h"
 
 class UUWStageSelect;
 
 UCLASS()
-class ARPG_HUNTER_API AStageSelector : public AActor, public IInteractable
+class ARPG_HUNTER_API AStageSelector : public AInteractableActor
 {
 	GENERATED_BODY()
 
@@ -27,10 +26,10 @@ private:
 public:	
 	AStageSelector();
 	// Inherited via IInteractable
-	void Interact() override;
+	virtual void Interact() override;
 
 protected:
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 private:
 	void StartGame(const FName& _selectedID);

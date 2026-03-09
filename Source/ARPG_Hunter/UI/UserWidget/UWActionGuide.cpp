@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWActionGuide.h"
@@ -27,6 +27,7 @@ void UUWActionGuide::NativeOnInitialized()
 		for (uint8 i = 0; i < Max; ++i)
 		{
 			TObjectPtr<UUWActionInfo> Inst = CreateWidget<UUWActionInfo>(GetWorld(), ActionInfoClass);
+			NextActionContainer->AddChild(Inst);//Inst
 			NextActions.Add(Inst);
 		}
 	}
@@ -36,7 +37,9 @@ void UUWActionGuide::NativeOnInitialized()
 
 void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<class UActionComboData> _comboData)
 {
-	if (_comboData.IsValid() == false || _bIsInit)
+	if (_comboData.IsValid() == false ||
+		_comboData->Graph.Num() < _curIdx || 
+		_bIsInit )
 	{
 		Clear();
 		return;
@@ -50,7 +53,7 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<
 	for (uint8 i = 0; i < NextActions.Num(); ++i)
 	{
 		EAttackType Type = static_cast<EAttackType>(i);
-		if(Graph.Contains(Type)== false)
+		if(Graph.Contains(Type) == false)
 		{
 			NextActions[i]->SetVisibility(ESlateVisibility::Collapsed);
 			continue;
