@@ -53,6 +53,8 @@ private:
 	float RotateSpeedToInputDir{ 10.0f };
 
 	UPROPERTY(VisibleAnywhere, Category = "Attribute")
+	bool bIgnoreMoveInput{ false };
+	UPROPERTY(VisibleAnywhere, Category = "Attribute")
 	bool bIsSprint{ false };
 	UPROPERTY(VisibleAnywhere, Category = "Attribute")
 	bool bIsCombat{ false };
@@ -142,4 +144,5 @@ public:
 	void Interact();
 
 	void SetCameraLag(bool _bIsEnable, float _speed = 0.0f);
+	void SetIgnoreInput(bool _bIgnoreMoveInput);
 };

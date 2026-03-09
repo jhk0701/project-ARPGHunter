@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -37,7 +37,6 @@ class ARPG_HUNTER_API UAction : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	FText NameText;
-
 	UPROPERTY(EditAnywhere)
 	EAttackType Type;
 	UPROPERTY(EditAnywhere)

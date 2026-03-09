@@ -191,7 +191,8 @@ void APlayerCharacter::UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<UEqu
 void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 {
 	// 카메라 정면을 기준으로 입력 방향으로 부드럽게 회전시키기
-	if (InputDirection.SizeSquared() <= 0)
+	// 이동 금지 상황일 땐, 돌리지 않음
+	if (InputDirection.SizeSquared() <= 0 || bIgnoreMoveInput)
 		return;
 
 	FRotator TargetRot = GetActorRotation();
@@ -225,7 +226,8 @@ void APlayerCharacter::SetIsCombat(bool _bIsCombat)
 
 void APlayerCharacter::Dodge()
 {
-	if (ActionComp->IsValid() == false || StatComp->IsDead())
+	if (ActionComp->IsValid() == false ||
+		StatComp->IsDead())
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
@@ -482,4 +484,10 @@ void APlayerCharacter::SetCameraLag(bool _bIsEnable, float _speed)
 {
 	SpringArmComp->bEnableCameraLag = _bIsEnable;
 	SpringArmComp->CameraLagSpeed = _speed;
+}
+
+void APlayerCharacter::SetIgnoreInput(bool _bIgnoreMoveInput)
+{
+	bIgnoreMoveInput = _bIgnoreMoveInput;
+	Controller->SetIgnoreMoveInput(bIgnoreMoveInput);
 }
