@@ -57,7 +57,7 @@ public:
 	void PlayDeadAction();
 	void PlayItemUsageAction();
 
-	void PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
+	bool PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
 	void ProcessAttackProgress();
 	void ProcessAttackEnd();
 

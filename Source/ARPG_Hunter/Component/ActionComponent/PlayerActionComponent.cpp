@@ -119,10 +119,10 @@ void UPlayerActionComponent::PlayItemUsageAction()
 	AnimInst->Montage_Play(CurWeapon->ItemUsageMontage);
 }
 
-void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
+bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
 {
 	if (IsValidAttackInput(_type) == false)
-		return;
+		return false;
 
 	uint8 id = !bIsInAttackCombo ?
 		*CurWeapon->AttackCombo->Start.Find(_type) :
@@ -132,7 +132,7 @@ void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 
 	if (_predicate &&
 		_predicate(Action->StaminaUsage) == false)
-		return;
+		return false;
 
 	SetCurrentAction(Action);
 	CurAttackActionID = id;
@@ -147,6 +147,7 @@ void UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 
 	// 액션 시작 시, 효과 발동
 	ActivateActionEffect(Action->EffectOnStart, GetOwner());
+	return true;
 }
 
 void UPlayerActionComponent::ProcessAttackProgress()

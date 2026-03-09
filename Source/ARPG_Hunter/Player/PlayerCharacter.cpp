@@ -234,9 +234,36 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	ActionComp->PlayAttackAction(_eType,
+	bool bIsValid = ActionComp->PlayAttackAction(_eType,
 		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
 	);
+
+	if (bIsValid == false || InputDirection.SquaredLength() > 0)
+		return;
+
+	// 주변 적 자동 조준
+	// 이동 입력이 없을 때, 조준
+	FHitResult HitResult;
+	FVector Start = GetActorLocation();
+	bool bIsHit = UKismetSystemLibrary::SphereTraceSingle(
+		GetWorld(),
+		Start, Start, AutoOrientToEnemyRadius,
+		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4), false,
+		{}, EDrawDebugTrace::None, 
+		HitResult, true);
+
+	if(bIsHit)
+	{
+		AActor* Target = HitResult.GetActor();
+		if(IHitable* Hitable = Cast<IHitable>(Target))
+		{
+			FVector Dir = Target->GetActorLocation() - GetActorLocation();
+			Dir.Z = 0;
+			Dir.Normalize();
+
+			SetActorRotation(Dir.ToOrientationQuat());
+		}
+	}
 }
 
 void APlayerCharacter::AttackEnd()
@@ -302,6 +329,10 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			UStatComponent* Stat = WeakThis->StatComp;
 			UPlayerActionComponent* Action = WeakThis->ActionComp;
 
+			uint32 BaseDamage = ACombatGameMode::CalculateAttack(
+				Stat->GetStat(ECharacterStatType::ATTACK),
+				Action->GetAttackActionDamagePer());
+
 			bool bIsCritical = false;
 			for (FHitResult& Hit : _hitResults)
 			{
@@ -309,9 +340,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 				if (Hitable == nullptr)
 					continue;
 
-				uint32 Damage = ACombatGameMode::CalculateAttack(
-					Stat->GetStat(ECharacterStatType::ATTACK),
-					Action->GetAttackActionDamagePer());
+				uint32 Damage = BaseDamage;
 
 				FHitInfo HitInfo;
 				HitInfo.bIsCriticalHit = ACombatGameMode::CalculateCritical(

@@ -54,6 +54,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Attribute")
 	bool bIsCombat{ false };
 
+	UPROPERTY(EditAnywhere, Category = "Attribute")
+	float AutoOrientToEnemyRadius{ 300.0f };
+
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
 	float WalkSpeed{ 300.0f };
 	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
@@ -92,11 +95,6 @@ private:
 	void UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<class UEquipmentItem> _equipment);
 	
 	void SmoothRotateToInputDir(float DeltaTime);
-
-	// 기본 데미지 계산
-	uint32 CalculateBaseDamage(); 
-	bool CalculateCritical(uint32& _outDamage);
-	void AdjustDefense(uint32& _outDamage);
 
 	void CheckInteractable();
 	void OnDead();
