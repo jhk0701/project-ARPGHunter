@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCombatController.h"
@@ -63,4 +63,11 @@ void APlayerCombatController::InputQuickSlot(const FInputActionValue& _value)
 {
 	uint8 Index = static_cast<uint8>(_value.Get<float>()) - 1;
 	GetControlledPlayer()->UseQuickSlot(Index);
+}
+
+void APlayerCombatController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
+{
+	Super::LockCursor(_uiToFocus);
+
+	GetControlledPlayer()->AttackEnd();
 }

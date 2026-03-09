@@ -226,8 +226,7 @@ void APlayerCharacter::SetIsCombat(bool _bIsCombat)
 
 void APlayerCharacter::Dodge()
 {
-	if (ActionComp->IsValid() == false ||
-		StatComp->IsDead())
+	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달

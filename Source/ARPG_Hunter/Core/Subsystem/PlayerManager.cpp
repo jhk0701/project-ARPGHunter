@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
 
@@ -107,13 +107,13 @@ void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	Gold.Value = 1000;
-	/*
-	AddItem(FName(TEXT("1001")), 10);
-	AddItem(FName(TEXT("1002")), 10);
-	AddItem(FName(TEXT("1003")), 5);
-	AddItem(FName(TEXT("1004")), 5);
-	*/
+	Gold.Value = 10000;
+	
+	AddItem(FName(TEXT("1001")), 100);
+	AddItem(FName(TEXT("1002")), 100);
+	AddItem(FName(TEXT("1003")), 100);
+	AddItem(FName(TEXT("1004")), 100);
+	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);
 	Equipment->Equip(EEquipmentType::HEAD, Inventory->GetItem(EItemType::ARMOR, Index));
