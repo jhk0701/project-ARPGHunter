@@ -99,7 +99,7 @@ private:
 
 	FTimerHandle CameraAnimTimer;
 	UPROPERTY(EditAnywhere, Category = "Effect|Camera|Anim")
-	float CameraAnimInterval{ 0.1f };
+	float CameraAnimInterval{ 0.05f };
 	UPROPERTY(VisibleAnywhere, Category = "Effect|Camera|Anim")
 	float CameraAnimElapsedTime{ 0.0f };
 	UPROPERTY(VisibleAnywhere, Category = "Effect|Camera|Anim")
