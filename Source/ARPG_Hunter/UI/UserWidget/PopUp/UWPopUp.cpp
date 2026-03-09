@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/PopUp/UWPopUp.h"
@@ -15,11 +15,13 @@ void UUWPopUp::ShowUI(bool _bIsSubUI)
 		PC->LockCursor(GetCachedWidget()); // 이 UI로 포커스
 
 	AddToViewport();
+	bIsShowing = true;
 }
 
 void UUWPopUp::HideUI()
 {
 	RemoveFromParent();
+	bIsShowing = false;
 
 	if (bIsSubUI)
 		return;

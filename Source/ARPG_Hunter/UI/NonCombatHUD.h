@@ -43,9 +43,6 @@ protected:
 	void BeginPlay() override;
 
 public:
-	void ShowMaintenanceUI();
-	void HideMaintenanceUI();
-
-	void ShowInventoryUI();
-	void HideInventoryUI();
+	void ToggleMaintenanceUI();
+	void ToggleInventoryUI();
 };

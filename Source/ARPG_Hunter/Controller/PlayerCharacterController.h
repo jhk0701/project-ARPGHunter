@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -69,7 +69,7 @@ public:
 	UFUNCTION()
 	void InputShortCut(const FInputActionValue& _value);
 
-	void LockCursor(TSharedPtr<SWidget> _uiToFocus);
+	virtual void LockCursor(TSharedPtr<SWidget> _uiToFocus);
 	void UnLockCursor();
 	bool CursorIsLocked() const { return bCursorIsLocked; }
 };

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,6 +18,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsSubUI{ false };
 
+	bool bIsShowing{ false };
+
 protected:
 	bool IsSubUI() const { return bIsSubUI; }
 
@@ -27,5 +29,7 @@ public:
 
 	UFUNCTION()
 	virtual void HideUI();
+
+	bool IsShowing() const { return bIsShowing; }
 };
 

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/NonCombatHUD.h"
@@ -46,10 +46,10 @@ void ANonCombatHUD::BeginPlay()
 						/*case EShortCutType::ESC:
 							break;*/
 					case EShortCutType::TAB:
-						ShowMaintenanceUI();
+						ToggleMaintenanceUI();
 						break;
 					case EShortCutType::INVENTORY:
-						ShowInventoryUI();
+						ToggleInventoryUI();
 						break;
 					}
 					
@@ -191,27 +191,23 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 
 }
 
-
-void ANonCombatHUD::ShowMaintenanceUI()
+void ANonCombatHUD::ToggleMaintenanceUI()
 {
-	if (MaintenanceUI)
+	if (MaintenanceUI == nullptr)
+		return;
+
+	if (MaintenanceUI->IsShowing())
+		MaintenanceUI->HideUI();
+	else
 		MaintenanceUI->ShowUI();
 }
-
-void ANonCombatHUD::HideMaintenanceUI()
+void ANonCombatHUD::ToggleInventoryUI()
 {
-	if (MaintenanceUI)
-		MaintenanceUI->HideUI();
-}
+	if (InventoryUI == nullptr)
+		return;
 
-void ANonCombatHUD::ShowInventoryUI()
-{
-	if (InventoryUI)
-		InventoryUI->ShowUI();
-}
-
-void ANonCombatHUD::HideInventoryUI()
-{
-	if (InventoryUI)
+	if (InventoryUI->IsShowing())
 		InventoryUI->HideUI();
+	else
+		InventoryUI->ShowUI();
 }
