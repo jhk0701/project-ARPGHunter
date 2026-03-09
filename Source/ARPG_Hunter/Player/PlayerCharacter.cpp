@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraShakeBase.h"
+#include "Curves/CurveVector.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/WidgetComponent.h"
@@ -105,6 +106,8 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	// 액터 제거 시, 컴포넌트도 정리
 	StatComp->Clear();
 	ActionComp->Clear();
+
+	GetWorld()->GetTimerManager().ClearTimer(CameraAnimTimer);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -304,24 +307,6 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 	);
 }
 
-bool APlayerCharacter::IsDead()
-{
-	return StatComp->IsDead();
-}
-
-void APlayerCharacter::OnDead()
-{
-	// 플레이어 사망 후 처리
-	// 플레이어 사망 이벤트 발행
-	FStageEventContext Context;
-	Context.Target = this;
-
-	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
-
-	ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
-}
-
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
@@ -370,6 +355,25 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	);
 }
 
+
+bool APlayerCharacter::IsDead()
+{
+	return StatComp->IsDead();
+}
+
+void APlayerCharacter::OnDead()
+{
+	// 플레이어 사망 후 처리
+	// 플레이어 사망 이벤트 발행
+	FStageEventContext Context;
+	Context.Target = this;
+
+	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
+
+	ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
+}
+
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	if (StatComp->IsDead())
@@ -409,20 +413,6 @@ void APlayerCharacter::HandleUseItemNotify()
 
 		PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
 	}
-}
-
-void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)
-{
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController == nullptr)
-		return;
-
-	PlayerController->ClientStartCameraShake(_shakeClass, _scale);
-}
-
-void APlayerCharacter::ShakeCameraOnAttack(float _scale)
-{
-	ShakeCamera(CameraShakeOnAttack, _scale);
 }
 
 #pragma region Interaction
@@ -478,12 +468,72 @@ void APlayerCharacter::Interact()
 
 #pragma endregion
 
+#pragma region Camera
+
+void APlayerCharacter::ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController == nullptr)
+		return;
+
+	PlayerController->ClientStartCameraShake(_shakeClass, _scale);
+}
+
+void APlayerCharacter::ShakeCameraOnAttack(float _scale)
+{
+	ShakeCamera(CameraShakeOnAttack, _scale);
+}
+
 
 void APlayerCharacter::SetCameraLag(bool _bIsEnable, float _speed)
 {
 	SpringArmComp->bEnableCameraLag = _bIsEnable;
 	SpringArmComp->CameraLagSpeed = _speed;
 }
+
+void APlayerCharacter::PlayCameraAnim(TObjectPtr<UCurveVector> _animCurve, float _duration)
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	// 중복 실행 확인
+	if (TimerManager.IsTimerActive(CameraAnimTimer))
+		TimerManager.ClearTimer(CameraAnimTimer);
+
+	// 카메라 애니메이션 시작
+	CameraAnimCurve = _animCurve;
+	CameraAnimElapsedTime = 0.0f;
+
+	TimerManager.SetTimer(
+		CameraAnimTimer, 
+		this, &APlayerCharacter::ProgressCameraCurve,
+		CameraAnimInterval, 
+		true
+	);
+}
+
+void APlayerCharacter::ProgressCameraCurve()
+{
+	if (nullptr == CameraAnimCurve || CameraAnimTimer.IsValid() == false)
+		return;
+
+	CameraAnimElapsedTime += CameraAnimInterval;
+
+	float Percent = FMath::Min(1.0f, CameraAnimElapsedTime / CameraAnimDuration);
+	FVector CamRelativeLoc = CameraAnimCurve->GetVectorValue(Percent);
+
+	// 카메라 애니메이션 적용
+	CameraComp->SetRelativeLocation(CamRelativeLoc);
+
+	// 완료
+	if (CameraAnimElapsedTime >= CameraAnimDuration)
+	{
+		// 반복 호출 종료
+		GetWorld()->GetTimerManager().ClearTimer(CameraAnimTimer);
+		CameraAnimCurve = nullptr;
+	}
+}
+
+#pragma endregion
 
 void APlayerCharacter::SetIgnoreInput(bool _bIgnoreMoveInput)
 {

@@ -2,7 +2,6 @@
 
 
 #include "Animation/AnimNotifyState/PlayerCameraLagNotifyState.h"
-
 #include "Player/PlayerCharacter.h"
 
 void UPlayerCameraLagNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)

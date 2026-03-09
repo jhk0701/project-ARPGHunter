@@ -73,13 +73,6 @@ private:
 	float InteractionSize{ 100.0f };
 #pragma endregion
 
-#pragma region Sub Effect
-	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
-	TSubclassOf<UCameraShakeBase> CameraShakeOnAttack;
-	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
-	TSubclassOf<UCameraShakeBase> CameraShakeOnHit;
-#pragma endregion
-
 #pragma region Interaction
 
 	class IInteractable* CurInteractable;
@@ -89,6 +82,28 @@ private:
 #pragma region QuickSlot
 
 	uint8 UsingQuickSlotIndex;
+
+#pragma endregion
+
+#pragma region Camera
+
+	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
+	TSubclassOf<UCameraShakeBase> CameraShakeOnAttack;
+	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
+	TSubclassOf<UCameraShakeBase> CameraShakeOnHit;
+
+	// AnimNotify의 인스턴스의 생명 주기보다 오래 사용할 수 있기 때문에
+	// CurveVector의 포인터를 넘겨 받을 것
+	UPROPERTY(VisibleAnywhere, Category = "Effect|Camera|Anim")
+	TObjectPtr<class UCurveVector> CameraAnimCurve;
+
+	FTimerHandle CameraAnimTimer;
+	UPROPERTY(EditAnywhere, Category = "Effect|Camera|Anim")
+	float CameraAnimInterval{ 0.1f };
+	UPROPERTY(VisibleAnywhere, Category = "Effect|Camera|Anim")
+	float CameraAnimElapsedTime{ 0.0f };
+	UPROPERTY(VisibleAnywhere, Category = "Effect|Camera|Anim")
+	float CameraAnimDuration{ 1.0f };
 
 #pragma endregion
 
@@ -141,8 +156,11 @@ public:
 
 	void ShakeCameraOnAttack(float _scale = 1.0f);
 	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
+	void SetCameraLag(bool _bIsEnable, float _speed = 0.0f);
+	void PlayCameraAnim(TObjectPtr<UCurveVector> _animCurve, float _duration = 1.0f);
+	void ProgressCameraCurve();
+
 	void Interact();
 
-	void SetCameraLag(bool _bIsEnable, float _speed = 0.0f);
 	void SetIgnoreInput(bool _bIgnoreMoveInput);
 };
