@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/ActionComponent/PlayerActionComponent.h"
@@ -195,7 +195,8 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 	// 스매시 공격 중 일반 공격으로 전환 불가
 	if (CurActionProcess < EActionProcess::COMPLETE ||
 		GetAnimInstance()->Montage_IsPlaying(CurWeapon->HitMontage) || 
-		GetAnimInstance()->Montage_IsPlaying(CurWeapon->ItemUsageMontage))
+		GetAnimInstance()->Montage_IsPlaying(CurWeapon->ItemUsageMontage) ||
+		GetAnimInstance()->Montage_IsPlaying(CurWeapon->DodgeAction->Montage))
 		return false;
 
 	if (bIsInAttackCombo == false) // 첫 공격인 경우
