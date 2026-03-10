@@ -8,6 +8,7 @@
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWStageResult.h"
 #include "UI/UserWidget/UWQuickSlot.h"
+#include "UI/UserWidget/UWGameMenu.h"
 
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "UI/Actor/DamageFont.h"
@@ -76,6 +77,19 @@ void ACombatHUD::BeginPlay()
 	{
 		TObjectPtr<UObjectPoolManager> ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 		ObjectPool->Register(ADamageFont::StaticClass(), [this]() { return GetWorld()->SpawnActor(DamageUIClass); }, 10);
+	}
+
+	TWeakObjectPtr<UUWPopUp> MenuUIInst = GetGameMenuUI();
+	if (MenuUIInst.IsValid())
+	{
+		TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
+		MenuUI->OnReturnClicked.BindLambda(
+			[this]() 
+			{
+				if (AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode())) 
+					GM->GoToTown();
+			}
+		);
 	}
 }
 

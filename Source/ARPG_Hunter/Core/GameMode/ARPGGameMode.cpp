@@ -45,9 +45,13 @@ void AARPGGameMode::BeginPlay()
 	}
 }
 
-void AARPGGameMode::SaveGame()
+void AARPGGameMode::SaveGame(TFunction<void()> _callback)
 {
 	FOnSaveLoadComplete CompleteCallback;
+
+	if (_callback)
+		CompleteCallback.BindLambda(_callback);
+
 	GetGameInstance()->GetSubsystem<USaveLoadManager>()->SaveAll(CompleteCallback);
 }
 

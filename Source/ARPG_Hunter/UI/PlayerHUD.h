@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "PlayerHUD.generated.h"
 
+class UUWPopUp;
+
 /**
  * 
  */
@@ -19,13 +21,21 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUWPopUp> InputGuideUIClass;
+	TSubclassOf<UUWPopUp> InputGuideUIClass;
 	UPROPERTY()
 	TObjectPtr<UUWPopUp> InputGuideUI;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWPopUp> GameMenuUIClass;
+	UPROPERTY()
+	TObjectPtr<UUWPopUp> GameMenuUI;
 
 protected:
 	void BeginPlay() override;
 
+	TWeakObjectPtr<UUWPopUp> GetGameMenuUI() const;
+
 public:
+	void ToggleGameMenuUI();
 	void ToggleInputGuideUI();
 };

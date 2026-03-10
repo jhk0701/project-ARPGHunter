@@ -147,6 +147,8 @@ FName EnumToName(EMonsterState _type);
 
 enum class EShortCutType : uint8
 {
+	NONE,
+
 	ESC,
 	TAB,
 	INVENTORY,

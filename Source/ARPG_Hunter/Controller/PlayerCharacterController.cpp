@@ -66,12 +66,13 @@ void APlayerCharacterController::SetupInputComponent()
 	}	
 }
 
-
 void APlayerCharacterController::ShortCut(EShortCutType _key)
 {
 	if(APlayerHUD* HUD = GetHUD<APlayerHUD>())
 	{
-		if (_key == EShortCutType::F1)
+		if (_key == EShortCutType::ESC)
+			HUD->ToggleGameMenuUI();
+		else if (_key == EShortCutType::F1)
 			HUD->ToggleInputGuideUI();
 	}
 }

@@ -30,7 +30,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void SaveGame();
+	virtual void SaveGame(TFunction<void()> _callback = nullptr);
 	virtual void ExitGame();
 
 	void OpenLevel(const FName& _stageID);

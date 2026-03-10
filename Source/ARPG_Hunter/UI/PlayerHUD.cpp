@@ -3,7 +3,9 @@
 
 #include "UI/PlayerHUD.h"
 #include "UI/UserWidget/PopUp/UWPopUp.h"
+#include "UI/UserWidget/UWGameMenu.h"
 
+#include "Core/GameMode/ARPGGameMode.h"
 
 APlayerHUD::APlayerHUD()
 {
@@ -12,6 +14,10 @@ APlayerHUD::APlayerHUD()
 	static ConstructorHelpers::FClassFinder<UUWPopUp> InputGuideClassFinder(TEXT("/Game/06-UI/WBP_InputGuide.WBP_InputGuide_C"));
 	if (InputGuideClassFinder.Succeeded())
 		InputGuideUIClass = InputGuideClassFinder.Class;
+
+	static ConstructorHelpers::FClassFinder<UUWPopUp> GameMenuClassFinder(TEXT("/Game/06-UI/WBP_GameMenu.WBP_GameMenu_C"));
+	if (GameMenuClassFinder.Succeeded())
+		GameMenuUIClass = GameMenuClassFinder.Class;
 }
 
 void APlayerHUD::BeginPlay()
@@ -19,9 +25,43 @@ void APlayerHUD::BeginPlay()
 	Super::BeginPlay();
 
 	if (InputGuideUIClass) 
-	{
 		InputGuideUI = CreateWidget<UUWPopUp>(GetWorld(), InputGuideUIClass);
+
+	if (GameMenuUIClass)
+	{
+		GameMenuUI = CreateWidget<UUWPopUp>(GetWorld(), GameMenuUIClass);
+
+		if (UUWGameMenu* MenuUI = Cast<UUWGameMenu>(GameMenuUI))
+		{
+			MenuUI->OnExitClicked.BindLambda(
+				[this]() 
+				{
+					AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode());
+					if (GM == nullptr)
+						return;
+
+					GM->SaveGame(
+						[this]()
+						{
+							AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode());
+							GM->ExitGame();
+						}
+					);
+				}
+			);
+		}
 	}
+}
+
+void APlayerHUD::ToggleGameMenuUI()
+{
+	if (nullptr == GameMenuUI)
+		return;
+
+	if (GameMenuUI->IsShowing())
+		GameMenuUI->HideUI();
+	else
+		GameMenuUI->ShowUI();
 }
 
 void APlayerHUD::ToggleInputGuideUI()
@@ -33,4 +73,9 @@ void APlayerHUD::ToggleInputGuideUI()
 		InputGuideUI->HideUI();
 	else 
 		InputGuideUI->ShowUI();
+}
+
+TWeakObjectPtr<UUWPopUp> APlayerHUD::GetGameMenuUI() const
+{
+	return GameMenuUI;
 }

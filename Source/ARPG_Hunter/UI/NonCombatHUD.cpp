@@ -11,6 +11,7 @@
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWMaintenance.h"
 #include "UI/UserWidget/UWInventory.h"
+#include "UI/UserWidget/UWGameMenu.h"
 
 #include "Item/Item.h"
 
@@ -103,6 +104,14 @@ void ANonCombatHUD::BeginPlay()
 	}
 
 	BindMainenanceAndInventory();
+
+	TWeakObjectPtr<UUWPopUp> MenuUIInst = GetGameMenuUI();
+	if (MenuUIInst.IsValid())
+	{
+		TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
+		MenuUI->ToggleOptionalButton(UUWGameMenu::RETURN, false);
+	}
+
 }
 
 void ANonCombatHUD::BindMainenanceAndInventory()
