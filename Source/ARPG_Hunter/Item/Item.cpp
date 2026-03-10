@@ -2,12 +2,14 @@
 
 
 #include "Item/Item.h"
-#include "Data/ItemData.h"
 
 #include "Interface/Effectable.h"
+#include "Define/Enum.h"
 #include "Core/Subsystem/DataManager.h"
+#include "Data/ItemData.h"
 #include "Data/EffectData.h"
 #include "Data/EquipmentUpgradeData.h"
+
 
 void UItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)
 {
@@ -94,4 +96,17 @@ void UEquipmentItem::GetStat(TObjectPtr<UDataManager> _dataManager, TMap<ECharac
 			(*Val) += Pair.Value;
 		}
 	}
+}
+
+EEquipmentType UEquipmentItem::GetEquipmentType() const
+{
+	return Cast<UEquipmentItemConfig>(GetConfig())->Type;
+}
+
+EWeaponType UEquipmentItem::GetWeaponType() const
+{
+	if (GetEquipmentType() != EEquipmentType::WEAPON)
+		return EWeaponType::END;
+
+	return Cast<UWeaponItemConfig>(GetConfig())->WeaponType;
 }

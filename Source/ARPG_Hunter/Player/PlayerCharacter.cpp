@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -132,7 +132,11 @@ void APlayerCharacter::Init()
 	InitEquipment(Equipment);
 	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
 
-	ActionComp->Init(DataManager->GetWeaponConfig(EWeaponType::SWORD), GetMesh()->GetAnimInstance(), MapEquipmentMeshComp[EEquipmentType::WEAPON]);
+	TWeakObjectPtr<UEquipmentItem> EquipedWeapon = Equipment->GetEquipment(EEquipmentType::WEAPON);
+	ActionComp->Init(
+		DataManager->GetWeaponConfig(EquipedWeapon->GetWeaponType()), 
+		GetMesh()->GetAnimInstance(), MapEquipmentMeshComp[EquipedWeapon->GetEquipmentType()]
+	);
 
 	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
@@ -158,6 +162,7 @@ void APlayerCharacter::Init()
 
 		TObjectPtr<UUWActionGuide> ActionGuideUI = CombatHUD->GetPlayerUI()->GetActionGuide();
 		ActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
+		ActionComp->ResetAction();
 	}
 
 	InteractWidget->SetHiddenInGame(true);

@@ -17,8 +17,6 @@ class ARPG_HUNTER_API UUWInputGuide : public UUWPopUp
 	GENERATED_BODY()
 
 private:
-	uint8 Index{0};
-
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
 	UPROPERTY(meta=(BindWidget))

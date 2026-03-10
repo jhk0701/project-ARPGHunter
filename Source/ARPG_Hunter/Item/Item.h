@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,6 +8,8 @@
 
 class UItemConfig;
 enum class EItemType : uint8;
+enum class EEquipmentType : uint8;
+enum class EWeaponType : uint8;
 enum class ECharacterStatType : uint8;
 
 /**
@@ -37,7 +39,7 @@ public:
 	EItemType GetType() const { return Type; }
 	uint16 GetAmount() const { return Amount; }
 	uint8 GetInventoryIndex() const { return InventoryIndex; }
-	const TObjectPtr<UItemConfig> GetConfig() { return Config; }
+	TObjectPtr<UItemConfig> GetConfig() const { return Config; }
 	
 	bool IsFull() const;
 };
@@ -79,4 +81,6 @@ public:
 	void SetGrade(uint8 _newGrade) { Grade = _newGrade; }
 
 	void GetStat(TObjectPtr<class UDataManager> _dataManager, TMap<ECharacterStatType, uint32>& _outEquipmentStat);
+	EEquipmentType GetEquipmentType() const;
+	EWeaponType GetWeaponType() const;
 };

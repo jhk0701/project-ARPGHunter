@@ -56,17 +56,17 @@ void UUWCategory::NativeOnInitialized()
 
 		TObjectPtr<UUWCategoryElement> Inst = CreateWidget<UUWCategoryElement>(GetWorld(), ElementClass);
 		Inst->Init(Option.Value, Option.Text);
-		Inst->OnSelected.BindUObject(this, &UUWCategory::SetElementSelected);
+		Inst->OnSelected.BindUObject(this, &UUWCategory::SetSelectedElement);
 
 		Container->AddChild(Inst);
 		ElementInst[i] = Inst;
 	}
 
-	SetElementSelected(CategoryOptions[0].Value);
+	SetSelectedElement(CategoryOptions[0].Value);
 }
 
 
-void UUWCategory::SetElementSelected(uint8 _value)
+void UUWCategory::SetSelectedElement(uint8 _value)
 {
 	CurSelectedOption = _value;
 
@@ -74,4 +74,28 @@ void UUWCategory::SetElementSelected(uint8 _value)
 		ElementInst[i]->SetSelectedManually(CurSelectedOption == CategoryOptions[i].Value);
 
 	OnSelected.Broadcast(CurSelectedOption);
+}
+
+void UUWCategory::SetSelectElementManually(uint8 _value)
+{
+	CurSelectedOption = _value;
+
+	for (uint8 i = 0; i < CategoryOptions.Num(); ++i)
+		ElementInst[i]->SetSelectedManually(CurSelectedOption == CategoryOptions[i].Value);
+}
+
+void UUWCategory::SetPrevElement()
+{
+	if (CurSelectedOption == (*CategoryOptions.begin()).Value)
+		return;
+
+	SetSelectedElement(CurSelectedOption - 1);
+}
+
+void UUWCategory::SetNextElement()
+{
+	if (CurSelectedOption == CategoryOptions.Last().Value)
+		return;
+
+	SetSelectedElement(CurSelectedOption + 1);
 }

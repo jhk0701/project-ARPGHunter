@@ -4,14 +4,15 @@
 #include "UI/UserWidget/UWActionGuide.h"
 #include "Components/PanelWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 #include "Define/Enum.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
 
-void UUWActionInfo::SetInfo(const FText& _input, const FText& _name)
+void UUWActionInfo::SetInfo(EAttackType _type, const FText& _name)
 {
-	InputLabel->SetText(_input);
+	InputKeyImage->SetBrushFromTexture(MapTypeInput[_type]);
 	ActionNameLabel->SetText(_name);
 }
 
@@ -35,7 +36,7 @@ void UUWActionGuide::NativeOnInitialized()
 	Clear();
 }
 
-void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<UActionComboData> _comboData)
+void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<class UActionComboData> _comboData)
 {
 	if (_comboData.IsValid() == false ||
 		_comboData->Graph.Num() < _curIdx)
@@ -46,12 +47,12 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<
 
 	if (_bIsInit) 
 	{
-		CurAction->SetVisibility(ESlateVisibility::Collapsed);
+		CurAction->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
 		TObjectPtr<UAction> Action = _comboData->AttackAcionArray[_curIdx];
-		CurAction->SetInfo(FText::FromString(EnumToString(Action->Type)), Action->NameText);
+		CurAction->SetInfo(Action->Type, Action->NameText);
 		CurAction->SetVisibility(ESlateVisibility::Visible);
 	}
 
@@ -66,13 +67,13 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<
 		}
 		
 		NextActions[i]->SetVisibility(ESlateVisibility::Visible);
-		NextActions[i]->SetInfo(FText::FromString(EnumToString(Type)), _comboData->AttackAcionArray[Graph[Type]]->NameText);
+		NextActions[i]->SetInfo(Type, _comboData->AttackAcionArray[Graph[Type]]->NameText);
 	}
 }
 
 void UUWActionGuide::Clear()
 {
-	CurAction->SetVisibility(ESlateVisibility::Collapsed);
+	CurAction->SetVisibility(ESlateVisibility::Hidden);
 
 	for (const TObjectPtr<UUWActionInfo> Inst : NextActions)
 		Inst->SetVisibility(ESlateVisibility::Collapsed);

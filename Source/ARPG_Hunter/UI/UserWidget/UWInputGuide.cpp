@@ -26,24 +26,17 @@ void UUWInputGuide::ShowUI(bool _bIsSubUI)
 
 void UUWInputGuide::ClickPageCategory(uint8 _idx)
 {
-	Index = _idx;
 	Pages->SetActiveWidgetIndex(_idx);
 }
 
 void UUWInputGuide::ClickPrev()
 {
-	if (Index == 0)
-		return;
-
-	ClickPageCategory(--Index);
-	PageCategory->SetElementSelected(Index);
+	PageCategory->SetPrevElement();
+	Pages->SetActiveWidgetIndex(PageCategory->GetSelectedOption());
 }
 
 void UUWInputGuide::ClickNext()
 {
-	if (Index == Pages->GetNumWidgets() - 1)
-		return;
-
-	ClickPageCategory(++Index);
-	PageCategory->SetElementSelected(Index);
+	PageCategory->SetNextElement();
+	Pages->SetActiveWidgetIndex(PageCategory->GetSelectedOption());
 }

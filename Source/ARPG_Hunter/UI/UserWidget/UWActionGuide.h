@@ -14,12 +14,18 @@ class ARPG_HUNTER_API UUWActionInfo : public UUserWidget
 {
 	GENERATED_BODY()
 private:
+	// UPROPERTY(meta=(BindWidget))
+	// TObjectPtr<UTextBlock> InputLabel;
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UTextBlock> InputLabel;
-	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> InputKeyImage;
+	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UTextBlock> ActionNameLabel;
+
+	UPROPERTY(EditAnywhere)
+	TMap<EAttackType, TObjectPtr<UTexture2D>> MapTypeInput;
+
 public:
-	void SetInfo(const FText& _input, const FText& _name);
+	void SetInfo(EAttackType _type, const FText& _name);
 };
 
 /**
@@ -29,10 +35,10 @@ UCLASS()
 class ARPG_HUNTER_API UUWActionGuide : public UUserWidget
 {
 	GENERATED_BODY()
+
 private:
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<class UPanelWidget> NextActionContainer;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWActionInfo> ActionInfoClass;
 	UPROPERTY(meta = (BindWidget))

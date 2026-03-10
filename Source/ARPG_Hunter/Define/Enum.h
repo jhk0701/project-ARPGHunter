@@ -21,6 +21,8 @@ enum class EWeaponType : uint8
 {
 	SWORD		UMETA(DisplayName = "Sword"),
 	HAND_GUN	UMETA(DisplayName = "Hand Gun"),
+
+	END			UMETA(Hidden)
 };
 FName EnumToName(EWeaponType _value);
 

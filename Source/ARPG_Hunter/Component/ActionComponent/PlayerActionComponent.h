@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -57,6 +57,7 @@ public:
 	void SetActionProcess(EActionProcess _eProcess);
 
 	bool IsValid() const { return CurWeapon != nullptr; }
+	TWeakObjectPtr<UWeaponConfig> GetWeaponConfig() const;
 	bool IsInProgress() const;
 
 	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);

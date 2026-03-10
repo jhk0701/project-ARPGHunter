@@ -83,5 +83,8 @@ protected:
 public:
 	FOnCategorySelected OnSelected;
 	uint8 GetSelectedOption() const { return CurSelectedOption; }
-	void SetElementSelected(uint8 _value);
+	void SetSelectedElement(uint8 _value);
+	void SetSelectElementManually(uint8 _value);
+	void SetPrevElement();
+	void SetNextElement();
 };

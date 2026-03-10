@@ -233,6 +233,11 @@ void UPlayerActionComponent::SetCurrentAction(TObjectPtr<UAction> _action)
 	OnActionUpdated.ExecuteIfBound(_action == nullptr, CurAttackActionID, CurWeapon->AttackCombo);
 }
 
+TWeakObjectPtr<UWeaponConfig> UPlayerActionComponent::GetWeaponConfig() const
+{ 
+	return CurWeapon; 
+}
+
 bool UPlayerActionComponent::IsInProgress() const
 {
 	return CurActionProcess == EActionProcess::IN_PROGRESS;
