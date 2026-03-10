@@ -17,12 +17,29 @@ class ARPG_HUNTER_API UUWInputGuide : public UUWPopUp
 	GENERATED_BODY()
 
 private:
+	uint8 Index{0};
+
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> CloseButton;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<class UWidgetSwitcher> Pages;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> PrevButton;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> NextButton;
 	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUWCategory> PageCategory;
+	
+	void ClickPageCategory(uint8 _idx);
+	UFUNCTION()
+	void ClickPrev();
+	UFUNCTION()
+	void ClickNext();
+
 protected:
 	virtual void NativeOnInitialized() override;
 
+public:
+	void ShowUI(bool _bIsSubUI) override;
 };

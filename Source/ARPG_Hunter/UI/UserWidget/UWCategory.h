@@ -77,12 +77,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UPanelWidget> Container;
 
-	void OnElementSelected(uint8 _value);
-
 protected:
 	virtual void NativeOnInitialized() override;
 
 public:
 	FOnCategorySelected OnSelected;
 	uint8 GetSelectedOption() const { return CurSelectedOption; }
+	void SetElementSelected(uint8 _value);
 };

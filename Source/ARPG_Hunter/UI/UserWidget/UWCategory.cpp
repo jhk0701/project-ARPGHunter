@@ -56,16 +56,17 @@ void UUWCategory::NativeOnInitialized()
 
 		TObjectPtr<UUWCategoryElement> Inst = CreateWidget<UUWCategoryElement>(GetWorld(), ElementClass);
 		Inst->Init(Option.Value, Option.Text);
-		Inst->OnSelected.BindUObject(this, &UUWCategory::OnElementSelected);
+		Inst->OnSelected.BindUObject(this, &UUWCategory::SetElementSelected);
 
 		Container->AddChild(Inst);
 		ElementInst[i] = Inst;
 	}
 
-	OnElementSelected(CategoryOptions[0].Value);
+	SetElementSelected(CategoryOptions[0].Value);
 }
 
-void UUWCategory::OnElementSelected(uint8 _value)
+
+void UUWCategory::SetElementSelected(uint8 _value)
 {
 	CurSelectedOption = _value;
 
