@@ -32,6 +32,10 @@ void UUWCategoryElement::SetSelectedManually(bool _bIsOn)
 	
 	CheckBox->SetIsChecked(_bIsOn);
 
+	// 이 체크박스가 선택되었다면, 다시 입력 못하게 막기
+	// 선택되지 않았다면 입력할 수 있도록 설정
+	CheckBox->SetVisibility(_bIsOn ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Visible);
+
 	CheckBox->OnCheckStateChanged = Tmp;
 }
 
@@ -65,9 +69,11 @@ void UUWCategory::NativeOnInitialized()
 	SetSelectedElement(CategoryOptions[0].Value);
 }
 
-
 void UUWCategory::SetSelectedElement(uint8 _value)
 {
+	if (CurSelectedOption == _value)
+		return;
+
 	CurSelectedOption = _value;
 
 	for (uint8 i = 0; i < CategoryOptions.Num(); ++i)

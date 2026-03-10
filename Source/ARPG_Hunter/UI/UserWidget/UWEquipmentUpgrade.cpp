@@ -264,11 +264,10 @@ void UUWEquipmentUpgrade::Upgrade()
 			Equipment->Upgrade();
 		else
 		{
-			TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
 			TWeakObjectPtr<UEquipment> PlayerEquipment = PlayerManager->GetEquipment();
-			PlayerEquipment->Unequip(EquipConfig->Type);
+			PlayerEquipment->Unequip(Equipment->GetEquipmentType());
 			Equipment->Upgrade();
-			PlayerEquipment->Equip(EquipConfig->Type, Equipment);
+			PlayerEquipment->Equip(Equipment->GetEquipmentType(), Equipment);
 		}
 	}
 

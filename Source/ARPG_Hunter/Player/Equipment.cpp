@@ -5,7 +5,6 @@
 
 #include "Define/Enum.h"
 #include "Core/Subsystem/DataManager.h"
-#include "Data/ItemData.h"
 #include "Item/Item.h"
 
 UEquipment::UEquipment()
@@ -20,7 +19,6 @@ UEquipment::UEquipment()
 void UEquipment::Init(TWeakObjectPtr<UGameInstance> _instance)
 {
 	GI = _instance;
-	// TODO: 저장 데이터 반영
 }
 
 void UEquipment::Equip(EEquipmentType _type, TWeakObjectPtr<UItem> _equipment)
@@ -67,6 +65,5 @@ TWeakObjectPtr<UEquipmentItem> UEquipment::Unequip(EEquipmentType _type)
 void UEquipment::LoadEquipment(TObjectPtr<UItem> _item)
 {
 	TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(_item);
-	TObjectPtr<UEquipmentItemConfig> EquipConfig = Cast<UEquipmentItemConfig>(Equipment->GetConfig());
-	Equip(EquipConfig->Type, Equipment);
+	Equip(Equipment->GetEquipmentType(), Equipment);
 }

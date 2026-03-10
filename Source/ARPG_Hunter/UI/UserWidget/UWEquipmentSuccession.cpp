@@ -183,19 +183,18 @@ void UUWEquipmentSuccession::SucceessItem()
 	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 
 	TObjectPtr<UEquipmentItem> Target = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, EquipmentIdx));
-	TObjectPtr<UEquipmentItemConfig> TargetConfig = Cast<UEquipmentItemConfig>(Target->GetConfig());
 	TObjectPtr<UEquipmentItem> Ingredient = Cast<UEquipmentItem>(Inventory->GetItem(CurItemType, IngredientIdx));
 	
 	// 장착 중이라면 먼저 일시 해제
 	TObjectPtr<UEquipmentItem> CurEquipped = nullptr;
 	if (Target->IsEquiped())
 	{
-		Equipment->Unequip(TargetConfig->Type);
+		Equipment->Unequip(Target->GetEquipmentType());
 		CurEquipped = Target;
 	}
 	else if (Ingredient->IsEquiped()) 
 	{
-		Equipment->Unequip(TargetConfig->Type);
+		Equipment->Unequip(Target->GetEquipmentType());
 		CurEquipped = Ingredient;
 	}
 
@@ -206,7 +205,7 @@ void UUWEquipmentSuccession::SucceessItem()
 
 	// 장착 중인 아이템 다시 장착
 	if (CurEquipped)
-		Equipment->Equip(TargetConfig->Type, CurEquipped);
+		Equipment->Equip(Target->GetEquipmentType(), CurEquipped);
 
 	ResultSlot->SetSlot(Target);
 	Result->SetVisibility(ESlateVisibility::Visible);

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/NonCombatHUD.h"
@@ -13,7 +13,6 @@
 #include "UI/UserWidget/UWInventory.h"
 
 #include "Item/Item.h"
-#include "Data/ItemData.h"
 
 ANonCombatHUD::ANonCombatHUD()
 {
@@ -159,12 +158,11 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 
 			if (_type >= EItemType::EQUIPABLE)
 			{
-				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
-				PlayerManager->GetEquipment()->Equip(EquipmentConfig->Type, Item); // 장착
+				TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Item);
+				PlayerManager->GetEquipment()->Equip(Equipment->GetEquipmentType(), Item); // 장착
 			}
 			else if (_type == EItemType::CONSUMABLE)
 			{
-				TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Item->GetConfig());
 				PlayerManager->GetQuickSlot()->Register(InventoryUI->GetOptionalIndex(), Item); // 퀵슬롯 등록
 			}
 		}
@@ -178,12 +176,11 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 
 			if (_type >= EItemType::EQUIPABLE)
 			{
-				TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(Item->GetConfig());
-				PlayerManager->GetEquipment()->Unequip(EquipmentConfig->Type); // 장착 해제
+				TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(Item);
+				PlayerManager->GetEquipment()->Unequip(Equipment->GetEquipmentType()); // 장착 해제
 			}
 			else if (_type == EItemType::CONSUMABLE)
 			{
-				TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(Item->GetConfig());
 				PlayerManager->GetQuickSlot()->Unregister(InventoryUI->GetOptionalIndex()); // 퀵슬롯 등록 해제
 			}
 		}

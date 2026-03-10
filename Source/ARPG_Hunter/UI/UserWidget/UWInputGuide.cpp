@@ -27,6 +27,7 @@ void UUWInputGuide::ShowUI(bool _bIsSubUI)
 void UUWInputGuide::ClickPageCategory(uint8 _idx)
 {
 	Pages->SetActiveWidgetIndex(_idx);
+	PageCategory->SetSelectElementManually(_idx);
 }
 
 void UUWInputGuide::ClickPrev()
