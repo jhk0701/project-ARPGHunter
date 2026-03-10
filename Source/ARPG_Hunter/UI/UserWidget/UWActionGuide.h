@@ -14,8 +14,6 @@ class ARPG_HUNTER_API UUWActionInfo : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	// UPROPERTY(meta=(BindWidget))
-	// TObjectPtr<UTextBlock> InputLabel;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<class UImage> InputKeyImage;
 	UPROPERTY(meta=(BindWidget))

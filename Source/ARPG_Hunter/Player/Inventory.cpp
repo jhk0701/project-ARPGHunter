@@ -171,9 +171,9 @@ void UInventory::SearchItems(EItemType _type, TSet<uint8>& _outIdxSet, TFunction
 
 bool UInventory::TryFindEmpty(EItemType _type, uint8& _outIdx)
 {
-	for (uint8 i = 0; i < Container.Num(); ++i)
+	for (uint8 i = 0; i < Container[_type].Array.Num(); ++i)
 	{
-		if (Container[_type].Array[i] == nullptr)
+		if (nullptr == Container[_type].Array[i])
 		{
 			_outIdx = i;
 			return true;
