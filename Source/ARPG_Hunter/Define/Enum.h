@@ -148,6 +148,7 @@ enum class EShortCutType : uint8
 	ESC,
 	TAB,
 	INVENTORY,
+	F1,
 
 	END
 };

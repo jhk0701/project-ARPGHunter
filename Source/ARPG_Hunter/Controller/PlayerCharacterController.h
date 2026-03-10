@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -51,7 +51,7 @@ protected:
 	TObjectPtr<UInputMappingContext> GetPlayerIMC() { return PlayerIMC; }
 	TObjectPtr<APlayerCharacter> GetControlledPlayer() { return ControlledCharacter; }
 
-	virtual void ShortCut(EShortCutType _key) {};
+	virtual void ShortCut(EShortCutType _key);
 
 public:
 	UFUNCTION()

@@ -20,8 +20,6 @@ private:
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<class UCheckBox> CheckBox;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UTextBlock> Label;
 
 	UFUNCTION()
 	void OnStateChanged(bool _bIsOn);
@@ -31,9 +29,22 @@ protected:
 
 public:
 	FOnOptionSelected OnSelected;
-	void Init(uint8 _index, const FText& _text);
+	virtual void Init(uint8 _index, const FText& _text);
 	
 	void SetSelectedManually(bool _bIsOn);
+};
+
+UCLASS()
+class ARPG_HUNTER_API UUWCategoryLabeledElement : public UUWCategoryElement
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> Label;
+
+public:
+	virtual void Init(uint8 _index, const FText& _text) override;
 };
 
 USTRUCT()

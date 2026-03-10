@@ -16,8 +16,16 @@ class ARPG_HUNTER_API APlayerHUD : public AHUD
 
 public:
 	APlayerHUD();
+
 private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUWPopUp> InputGuideUIClass;
+	UPROPERTY()
+	TObjectPtr<UUWPopUp> InputGuideUI;
 
 protected:
 	void BeginPlay() override;
+
+public:
+	void ToggleInputGuideUI();
 };

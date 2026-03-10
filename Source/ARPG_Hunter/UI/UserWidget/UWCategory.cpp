@@ -16,8 +16,14 @@ void UUWCategoryElement::NativeOnInitialized()
 void UUWCategoryElement::Init(uint8 _index, const FText& _text)
 {
 	Index = _index;
+}
+
+void UUWCategoryLabeledElement::Init(uint8 _index, const FText& _text)
+{
+	Super::Init(_index, _text);
 	Label->SetText(_text);
 }
+
 
 void UUWCategoryElement::SetSelectedManually(bool _bIsOn)
 {

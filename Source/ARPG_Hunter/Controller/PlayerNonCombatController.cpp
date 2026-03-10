@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerNonCombatController.h"
@@ -19,12 +19,11 @@ void APlayerNonCombatController::ShortCut(EShortCutType _key)
 {
 	Super::ShortCut(_key);
 
-	TObjectPtr<ANonCombatHUD> HUD = Cast<ANonCombatHUD>(GetHUD());
-	if (nullptr == HUD)
-		return;
-
-	if (_key == EShortCutType::TAB)
-		HUD->ToggleMaintenanceUI();
-	else if(_key == EShortCutType::INVENTORY)
-		HUD->ToggleInventoryUI();
+	if (TObjectPtr<ANonCombatHUD> HUD = Cast<ANonCombatHUD>(GetHUD()))
+	{
+		if (_key == EShortCutType::TAB)
+			HUD->ToggleMaintenanceUI();
+		else if (_key == EShortCutType::INVENTORY)
+			HUD->ToggleInventoryUI();
+	}
 }

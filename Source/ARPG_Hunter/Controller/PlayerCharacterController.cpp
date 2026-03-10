@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -9,6 +9,7 @@
 
 #include "Define/Enum.h"
 #include "Player/PlayerCharacter.h"
+#include "UI/PlayerHUD.h"
 
 APlayerCharacterController::APlayerCharacterController()
 {
@@ -65,6 +66,15 @@ void APlayerCharacterController::SetupInputComponent()
 	}	
 }
 
+
+void APlayerCharacterController::ShortCut(EShortCutType _key)
+{
+	if(APlayerHUD* HUD = GetHUD<APlayerHUD>())
+	{
+		if (_key == EShortCutType::F1)
+			HUD->ToggleInputGuideUI();
+	}
+}
 
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
