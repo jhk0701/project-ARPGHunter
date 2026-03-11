@@ -44,7 +44,7 @@ private:
 	UFUNCTION()
 	void ClickNewGame();
 	UFUNCTION()
-	void InputNameCommit(const FText& _text, ETextCommit::Type _commitMethod);
+	void InputNameChanged(const FText& _text);
 	UFUNCTION()
 	void ClickStartGame();
 	UFUNCTION()

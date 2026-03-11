@@ -9,7 +9,7 @@ void UPlayerCameraLagNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	if (TObjectPtr<APlayerCharacter> PlayerChar = Cast<APlayerCharacter>(MeshComp->GetOwner()))
-		PlayerChar->SetCameraLag(true, 1.0f);
+		PlayerChar->SetCameraLag(true, CameraLagSpeed);
 }
 
 void UPlayerCameraLagNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)

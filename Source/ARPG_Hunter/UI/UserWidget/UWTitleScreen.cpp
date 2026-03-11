@@ -13,7 +13,7 @@ void UUWTitleScreen::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	NewGameButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickNewGame);
-	NameInputField->OnTextCommitted.AddDynamic(this, &UUWTitleScreen::InputNameCommit);
+	NameInputField->OnTextChanged.AddDynamic(this, &UUWTitleScreen::InputNameChanged);
 
 	StartGameButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickStartGame);
 	ContinueButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickContinue);
@@ -49,7 +49,7 @@ void UUWTitleScreen::ClickNewGame()
 	NewGamePanel->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UUWTitleScreen::InputNameCommit(const FText& _text, ETextCommit::Type _commitMethod)
+void UUWTitleScreen::InputNameChanged(const FText& _text)
 {
 	InputName = _text.ToString();
 	if (InputName.Len() > MaxNameLength)
