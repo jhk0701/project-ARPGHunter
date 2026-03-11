@@ -1,4 +1,4 @@
-﻿
+
 #include "Component/ActionComponent/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "NiagaraFunctionLibrary.h"
@@ -139,7 +139,8 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 
 	// 투사체 발사
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-	TObjectPtr<ASubObject> SubObj = Cast<ASubObject>(ObjectPool->Get(SubObjectClass));
+	ASubObject* SubObj = Cast<ASubObject>(ObjectPool->Get(SubObjectClass));
+
 	SubObj->Init(CurrentAction->SubObjectConfig, MoveTemp(_onHitAction));
 	
 	FVector FireVector;
@@ -148,6 +149,7 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 	case EAttackDetailType::RANGED_DIRECTIONAL:
 		FireVector = GetOwner()->GetActorForwardVector();
 		break;
+	
 	}
 	
 	if (FirePointComp)
