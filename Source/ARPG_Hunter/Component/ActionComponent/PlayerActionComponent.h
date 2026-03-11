@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -40,6 +40,7 @@ private:
 	FTimerHandle ActionResetTimer;
 	
 	void SetActionResetTimer(float _second);
+	void ClearActionResetTimer();
 	bool IsValidAttackInput(EAttackType _type);
 
 	void ClearActionProgressTimer();

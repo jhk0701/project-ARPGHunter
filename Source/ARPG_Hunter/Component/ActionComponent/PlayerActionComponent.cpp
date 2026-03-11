@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/ActionComponent/PlayerActionComponent.h"
@@ -92,7 +92,7 @@ void UPlayerActionComponent::PlayHitAction()
 	AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), CurWeapon->HitMontage);
 
 	// 피격 모션 실행 시, 콤보 초기화
-	SetActionResetTimer(ActionResetSecond);
+	SetActionResetTimer(1.0f);
 }
 
 void UPlayerActionComponent::PlayDeadAction()
@@ -143,6 +143,8 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 		CurActionPredicate = _predicate;
 
 	GetAnimInstance()->Montage_Play(Action->Montage);
+	
+	ClearActionResetTimer(); // 이전 콤보에 대한 리셋 타이머 클리어
 
 	// 액션 시작 시, 효과 발동
 	ActivateActionEffect(Action->EffectOnStart, GetOwner());
@@ -217,6 +219,14 @@ void UPlayerActionComponent::SetActionResetTimer(float _second)
 		TimerManager.ClearTimer(ActionResetTimer);
 
 	TimerManager.SetTimer(ActionResetTimer, this, &UPlayerActionComponent::ResetAction, _second, false);
+}
+
+void UPlayerActionComponent::ClearActionResetTimer()
+{
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	if (TimerManager.IsTimerActive(ActionResetTimer))
+		TimerManager.ClearTimer(ActionResetTimer);
 }
 
 void UPlayerActionComponent::ClearActionProgressTimer()
