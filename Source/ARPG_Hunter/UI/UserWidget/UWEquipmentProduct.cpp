@@ -101,15 +101,17 @@ void UUWEquipmentProduct::UpdateDetail()
 	if (ItemData == nullptr)
 		return;
 
+	TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(ItemData->Item);
+
 	// 아이템 정보 UI 갱신
 	ItemNameLabel->SetText(FText::FromString(ItemData->Item->Name));
 	ItemTypeLabel->SetText(EnumToText(ItemData->Type));
+	ItemRankLabel->SetText(FText::Format(FText::FromString(TEXT("Rank {0}")), EquipmentConfig->Rank));
 
 	// 아이템 스펙 정보 기입
 	for (const TPair<ECharacterStatType, TObjectPtr<UUWStatInfo>>& Pair : MapStatInfo)
 		Pair.Value->SetVisibility(ESlateVisibility::Collapsed);
 
-	TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(ItemData->Item);
 	for (const TPair<ECharacterStatType, uint32>& Pair : EquipmentConfig->Stat)
 	{
 		MapStatInfo[Pair.Key]->SetVisibility(ESlateVisibility::Visible);

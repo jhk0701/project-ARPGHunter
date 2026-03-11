@@ -43,6 +43,9 @@ private:
 	TObjectPtr<UTextBlock> ItemNameLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ItemTypeLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemRankLabel;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUWStatInfo> StatInfoUIClass;
 	UPROPERTY(meta = (BindWidget))

@@ -45,8 +45,8 @@ void UUWItemTrade::NativeOnInitialized()
 		SlotInst->SetSlotUsingID(ItemTradeDatas[i]->ItemID, ItemTradeDatas[i]->Amount);
 		SlotInst->SetPrice(ItemTradeDatas[i]->Price);
 		SlotInst->MarkSelected(false);
-		// SlotInst->OnSlotClicked.BindUObject(this, &UUWItemTrade::ClickSlot);
-		SlotInst->OnSlotHovered.BindUObject(this, &UUWItemTrade::ClickSlot);
+		SlotInst->OnSlotClicked.BindUObject(this, &UUWItemTrade::ClickSlot);
+		// SlotInst->OnSlotHovered.BindUObject(this, &UUWItemTrade::ClickSlot);
 
 		ItemSlotInst[i] = SlotInst;
 		ItemContainer->AddChild(SlotInst);
