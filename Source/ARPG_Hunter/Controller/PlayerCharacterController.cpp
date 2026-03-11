@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -29,9 +29,19 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> InteractActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_Interact.IA_Interact'"));
 	if (InteractActionFinder.Succeeded())
 		InteractAction = InteractActionFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> ShortCurActionFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut.IA_ShortCut'"));
-	if (ShortCurActionFinder.Succeeded())
-		ShortCutAction = ShortCurActionFinder.Object;
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ESCFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_ESC.IA_ShortCut_ESC'"));
+	if (ESCFinder.Succeeded())
+		ShortCutAction_ESC = ESCFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> TabFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_TAB.IA_ShortCut_TAB'"));
+	if (TabFinder.Succeeded())
+		ShortCutAction_Tab = TabFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> InventoryFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_I.IA_ShortCut_I'"));
+	if (InventoryFinder.Succeeded())
+		ShortCutAction_Inventory = InventoryFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> F1Finder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_F1.IA_ShortCut_F1'"));
+	if (F1Finder.Succeeded())
+		ShortCutAction_F1 = F1Finder.Object;
 }
 
 void APlayerCharacterController::OnPossess(APawn* _pawn)
@@ -62,19 +72,12 @@ void APlayerCharacterController::SetupInputComponent()
 		InputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacterController::InputSprintEnd);
 
 		InputComp->BindAction(InteractAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputInteract);
-		InputComp->BindAction(ShortCutAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::InputShortCut);
+		
+		InputComp->BindAction(ShortCutAction_ESC, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutESC);
+		InputComp->BindAction(ShortCutAction_Tab, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutTAB);
+		InputComp->BindAction(ShortCutAction_Inventory, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutI);
+		InputComp->BindAction(ShortCutAction_F1, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutF1);
 	}	
-}
-
-void APlayerCharacterController::ShortCut(EShortCutType _key)
-{
-	if(APlayerHUD* HUD = GetHUD<APlayerHUD>())
-	{
-		if (_key == EShortCutType::ESC)
-			HUD->ToggleGameMenuUI();
-		else if (_key == EShortCutType::F1)
-			HUD->ToggleInputGuideUI();
-	}
 }
 
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
@@ -130,14 +133,29 @@ void APlayerCharacterController::InputInteract(const FInputActionValue& _value)
 	ControlledCharacter->Interact();
 }
 
-void APlayerCharacterController::InputShortCut(const FInputActionValue& _value)
+void APlayerCharacterController::InputShortCutESC(const FInputActionValue& _value)
 {
 	if (!ControlledCharacter) return;
-
-	EShortCutType Type = static_cast<EShortCutType>(_value.Get<float>());
-	ShortCut(Type);
+	ShortCut(EShortCutType::ESC);
 }
 
+void APlayerCharacterController::InputShortCutTAB(const FInputActionValue& _value)
+{
+	if (!ControlledCharacter) return;
+	ShortCut(EShortCutType::TAB);
+}
+
+void APlayerCharacterController::InputShortCutI(const FInputActionValue& _value)
+{
+	if (!ControlledCharacter) return;
+	ShortCut(EShortCutType::INVENTORY);
+}
+
+void APlayerCharacterController::InputShortCutF1(const FInputActionValue& _value)
+{
+	if (!ControlledCharacter) return;
+	ShortCut(EShortCutType::F1);
+}
 
 void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
 {
@@ -167,4 +185,15 @@ void APlayerCharacterController::UnLockCursor()
 	// 마우스 클릭 비활성화
 	FInputModeGameOnly InputMode;
 	SetInputMode(InputMode);
+}
+
+void APlayerCharacterController::ShortCut(EShortCutType _key)
+{
+	if (APlayerHUD* HUD = GetHUD<APlayerHUD>())
+	{
+		if (_key == EShortCutType::ESC)
+			HUD->ToggleGameMenuUI();
+		else if (_key == EShortCutType::F1)
+			HUD->ToggleInputGuideUI();
+	}
 }

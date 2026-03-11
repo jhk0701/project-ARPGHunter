@@ -27,7 +27,7 @@ protected:
 	bool IsSubUI() const { return bIsSubUI; }
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
-
+	virtual void NativeOnInitialized() override;
 public:
 	UFUNCTION()
 	virtual void ShowUI(bool _bIsSubUI = false);

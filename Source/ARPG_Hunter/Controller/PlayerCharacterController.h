@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -41,8 +41,16 @@ private:
 	TObjectPtr<UInputAction> SprintAction;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> InteractAction;
+
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> ShortCutAction;
+	TObjectPtr<UInputAction> ShortCutAction_ESC;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> ShortCutAction_Tab;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> ShortCutAction_Inventory;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> ShortCutAction_F1;
+	
 
 protected:
 	virtual void OnPossess(APawn* _pawn) override;
@@ -66,8 +74,15 @@ public:
 	void InputSprintEnd(const FInputActionValue& _value);
 	UFUNCTION()
 	void InputInteract(const FInputActionValue& _value);
+
 	UFUNCTION()
-	void InputShortCut(const FInputActionValue& _value);
+	void InputShortCutESC(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputShortCutTAB(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputShortCutI(const FInputActionValue& _value);
+	UFUNCTION()
+	void InputShortCutF1(const FInputActionValue& _value);
 
 	virtual void LockCursor(TSharedPtr<SWidget> _uiToFocus);
 	void UnLockCursor();

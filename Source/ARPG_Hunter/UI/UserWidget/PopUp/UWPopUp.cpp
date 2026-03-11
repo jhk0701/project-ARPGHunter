@@ -18,6 +18,13 @@ FReply UUWPopUp::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& I
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
+void UUWPopUp::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	SetIsFocusable(true);
+}
+
 void UUWPopUp::ShowUI(bool _bIsSubUI)
 {
 	bIsSubUI = _bIsSubUI;

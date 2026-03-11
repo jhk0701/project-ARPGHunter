@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -51,8 +51,8 @@ void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)
 
 void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
 {
-	Init(_initStat);
 	EquipmentStat = _equipmentStat;
+	Init(_initStat);
 }
 
 void UStatComponent::Clear()
