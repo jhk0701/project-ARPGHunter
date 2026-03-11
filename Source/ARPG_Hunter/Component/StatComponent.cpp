@@ -44,9 +44,9 @@ UStatComponent::UStatComponent()
 void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)
 {
 	Stat = _initStat;
-	GetResource(ECharacterResourceType::HEALTH).Init(Stat[ECharacterStatType::HEALTH]);
-	GetResource(ECharacterResourceType::STAMINA).Init(Stat[ECharacterStatType::STAMINA]);
-	GetResource(ECharacterResourceType::SKILL).Init(Stat[ECharacterStatType::SKILL], false);
+	GetResource(ECharacterResourceType::HEALTH).Init(GetStat(ECharacterStatType::HEALTH));
+	GetResource(ECharacterResourceType::STAMINA).Init(GetStat(ECharacterStatType::STAMINA));
+	GetResource(ECharacterResourceType::SKILL).Init(GetStat(ECharacterStatType::SKILL), false);
 }
 
 void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
