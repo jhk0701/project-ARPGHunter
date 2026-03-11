@@ -58,7 +58,7 @@ void AARPGGameMode::SaveGame(TFunction<void()> _callback)
 void AARPGGameMode::ExitGame()
 {
 	UWorld* World = GetWorld();
-	UKismetSystemLibrary::QuitGame(World, World->GetFirstPlayerController(), EQuitPreference::Quit, true);
+	UKismetSystemLibrary::QuitGame(World, World->GetFirstPlayerController(), EQuitPreference::Quit, false);
 }
 
 void AARPGGameMode::OpenLevel(const FName& _stageID)

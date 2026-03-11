@@ -18,6 +18,7 @@ void UUWTitleScreen::NativeOnInitialized()
 	StartGameButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickStartGame);
 	ContinueButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickContinue);
 	BackToTitleButton->OnClicked.AddDynamic(this, &UUWTitleScreen::CloseNewGamePanel);
+	ExitButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickExitGame);
 }
 
 void UUWTitleScreen::ShowUI(bool _bIsSubUI)
@@ -70,4 +71,9 @@ void UUWTitleScreen::ClickContinue()
 void UUWTitleScreen::CloseNewGamePanel()
 {
 	NewGamePanel->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UUWTitleScreen::ClickExitGame()
+{
+	OnClickExit.ExecuteIfBound();
 }

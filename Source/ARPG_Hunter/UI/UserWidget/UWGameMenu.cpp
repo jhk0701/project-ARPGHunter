@@ -18,11 +18,13 @@ void UUWGameMenu::NativeOnInitialized()
 
 void UUWGameMenu::ClickExit()
 {
+	HideUI();
 	OnExitClicked.ExecuteIfBound();
 }
 
 void UUWGameMenu::ClickReturn()
 {
+	HideUI();
 	OnReturnClicked.ExecuteIfBound();
 }
 

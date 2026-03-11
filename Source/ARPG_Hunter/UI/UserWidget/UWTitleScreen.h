@@ -51,6 +51,8 @@ private:
 	void ClickContinue();
 	UFUNCTION()
 	void CloseNewGamePanel();
+	UFUNCTION()
+	void ClickExitGame();
 
 protected:
 	virtual void NativeOnInitialized() override;

@@ -31,8 +31,11 @@ protected:
 
 public:
 	virtual void SaveGame(TFunction<void()> _callback = nullptr);
+	UFUNCTION()
 	virtual void ExitGame();
 
 	void OpenLevel(const FName& _stageID);
+
+	UFUNCTION()
 	void GoToTown();
 };

@@ -54,6 +54,6 @@ void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 
 void UUWStageResult::ClickReturnButton()
 {
-	OnClickReturnButton.ExecuteIfBound();
 	HideUI();
+	OnClickReturnButton.ExecuteIfBound();
 }
