@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -53,6 +53,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
+
+	UPROPERTY(EditAnywhere, Category = "Monster|Init")
+	float InitDelay{ 0.5f };
+	FTimerHandle InitTimer;
+
 	UPROPERTY(EditAnywhere, Category = "Monster|Dead")
 	float DeadDelay{ 3.0f };
 	FTimerHandle OnDeadTimer;
@@ -63,6 +68,8 @@ private:
 protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMonsterActionComponent> ActionComp;
+
+	void SetMovementMode(EMovementMode _mode);
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -82,8 +89,8 @@ protected:
 	uint8 GetSectionID() const { return SectionID; }
 	FMonsterData* GetData() const { return Data; }
 	
-	TObjectPtr<UStatComponent> GetStatComp() { return StatComp; }
-	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() { return WeaponComp; }
+	TObjectPtr<UStatComponent> GetStatComp() const { return StatComp; }
+	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() const { return WeaponComp; }
 
 public:
 	FOnAttackMontageEnded OnAttackMontageEnded;

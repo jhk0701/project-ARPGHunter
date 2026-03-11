@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster/MonsterBase.h"
@@ -35,6 +35,7 @@ AMonsterBase::AMonsterBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
+
 void AMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -51,6 +52,8 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	FTimerManager& Timer = GetWorld()->GetTimerManager();
 	if(Timer.IsTimerActive(OnDeadTimer))
 		Timer.ClearTimer(OnDeadTimer);
+	if (Timer.IsTimerActive(InitTimer))
+		Timer.ClearTimer(InitTimer);
 }
 
 void AMonsterBase::Init(const FMonsterInitParam& _param)
@@ -122,7 +125,25 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		MonsterAI->RestartBT();
 	}
 
-	SetMovable(true);
+	SetMovementMode(EMovementMode::MOVE_Flying);
+	AddActorWorldOffset(FVector(0,0, Capsule->GetUnscaledCapsuleHalfHeight()));
+
+	GetWorld()->GetTimerManager().SetTimer(
+		InitTimer, 
+		[this]() 
+		{
+			SetMovementMode(EMovementMode::MOVE_Walking);
+			SetMovable(true);
+		}, 
+		InitDelay, 
+		false 
+	);
+}
+
+void AMonsterBase::SetMovementMode(EMovementMode _mode)
+{
+	if (UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+		MoveComp->SetMovementMode(_mode);
 }
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
