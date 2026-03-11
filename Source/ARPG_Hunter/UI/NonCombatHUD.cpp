@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/NonCombatHUD.h"
@@ -134,7 +134,7 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 			}
 
 			InventoryUI->SetSelectOption(_type, ItemToCompare, _opt);
-			InventoryUI->ShowUI(true);
+			InventoryUI->ShowUI(true, MaintenanceUI);
 		}
 	);
 
@@ -146,7 +146,7 @@ void ANonCombatHUD::BindMainenanceAndInventory()
 
 			TWeakObjectPtr<UItem> ItemToCompare = PlayerManager->GetQuickSlot()->GetItem(_index);
 			InventoryUI->SetSelectOption(EItemType::CONSUMABLE, ItemToCompare, _index);
-			InventoryUI->ShowUI(true);
+			InventoryUI->ShowUI(true, MaintenanceUI);
 		}
 	);
 

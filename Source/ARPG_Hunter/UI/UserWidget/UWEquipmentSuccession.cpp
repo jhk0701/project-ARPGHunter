@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWEquipmentSuccession.h"
@@ -56,9 +56,9 @@ void UUWEquipmentSuccession::NativeOnInitialized()
 	}
 }
 
-void UUWEquipmentSuccession::ShowUI(bool _bIsSubUI)
+void UUWEquipmentSuccession::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 	Init();
 }
 

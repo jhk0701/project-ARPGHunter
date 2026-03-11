@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -45,7 +45,7 @@ protected:
 public:
 	FOnClickReturnButton OnClickReturnButton;
 
-	virtual void ShowUI(bool _bIsSubUI = false) override;
+	virtual void ShowUI(bool _bIsSubUI = false, TWeakObjectPtr<UUserWidget> _mainUI = nullptr)  override;
 	void Update(bool _bIsClear, const struct FStageData* _stageData);
 
 	UFUNCTION()

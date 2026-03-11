@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWInputGuide.h"
@@ -18,9 +18,9 @@ void UUWInputGuide::NativeOnInitialized()
 	NextButton->OnClicked.AddDynamic(this, &UUWInputGuide::ClickNext);
 }
 
-void UUWInputGuide::ShowUI(bool _bIsSubUI)
+void UUWInputGuide::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 	ClickPageCategory(0);
 }
 

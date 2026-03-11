@@ -17,11 +17,16 @@ class ARPG_HUNTER_API UUWPopUp : public UUserWidget
 private:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsSubUI{ false };
+	TWeakObjectPtr<UUserWidget> MainUI{ nullptr };
+
 	UPROPERTY(VisibleAnywhere)
 	bool bIsShowing{ false };
 
 	UPROPERTY(EditAnywhere)
 	FKey CloseKey{ EKeys::Escape };
+
+	UPROPERTY(EditAnywhere)
+	FKey AltCloseKey{ EKeys::Invalid };
 
 protected:
 	bool IsSubUI() const { return bIsSubUI; }
@@ -30,7 +35,7 @@ protected:
 	virtual void NativeOnInitialized() override;
 public:
 	UFUNCTION()
-	virtual void ShowUI(bool _bIsSubUI = false);
+	virtual void ShowUI(bool _bIsSubUI = false, TWeakObjectPtr<UUserWidget> _mainUI = nullptr);
 
 	UFUNCTION()
 	virtual void HideUI();

@@ -99,7 +99,7 @@ private:
 public:
 	FOnClickStartButton OnClickStartButton;
 
-	void ShowUI(bool _bIsSubUI = false) override;
+	virtual void ShowUI(bool _bIsSubUI = false, TWeakObjectPtr<UUserWidget> _mainUI = nullptr)  override;
 
 protected:
 	virtual void NativeOnInitialized() override;

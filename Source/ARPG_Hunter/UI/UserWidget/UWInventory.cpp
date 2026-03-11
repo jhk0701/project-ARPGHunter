@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWInventory.h"
@@ -29,9 +29,9 @@ void UUWInventory::NativeOnInitialized()
 	OptionalIndex = -1;
 }
 
-void UUWInventory::ShowUI(bool _bIsSubUI)
+void UUWInventory::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 
 	if (OptionalIndex < 0) // 일반 인벤토리 열기
 	{

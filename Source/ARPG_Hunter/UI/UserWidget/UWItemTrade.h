@@ -87,6 +87,6 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 public:
-	virtual void ShowUI(bool _bIsSubUI) override;
+	virtual void ShowUI(bool _bIsSubUI = false, TWeakObjectPtr<UUserWidget> _mainUI = nullptr) override;
 	void Init();
 };

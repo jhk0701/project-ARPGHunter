@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWTitleScreen.h"
@@ -21,9 +21,9 @@ void UUWTitleScreen::NativeOnInitialized()
 	ExitButton->OnClicked.AddDynamic(this, &UUWTitleScreen::ClickExitGame);
 }
 
-void UUWTitleScreen::ShowUI(bool _bIsSubUI)
+void UUWTitleScreen::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 
 	CloseNewGamePanel();
 }

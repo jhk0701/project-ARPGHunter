@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWItemTrade.h"
@@ -53,9 +53,9 @@ void UUWItemTrade::NativeOnInitialized()
 	}
 }
 
-void UUWItemTrade::ShowUI(bool _bIsSubUI)
+void UUWItemTrade::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 	Init();
 }
 

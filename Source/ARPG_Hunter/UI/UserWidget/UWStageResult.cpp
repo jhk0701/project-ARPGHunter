@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWStageResult.h"
@@ -16,14 +16,13 @@ void UUWStageResult::NativeOnInitialized()
 	ReturnButton->OnClicked.AddDynamic(this, &UUWStageResult::ClickReturnButton);
 }
 
-void UUWStageResult::ShowUI(bool _bIsSubUI)
+void UUWStageResult::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 
 	if (OpenAnim)
 		PlayAnimation(OpenAnim);
 }
-
 
 void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 {

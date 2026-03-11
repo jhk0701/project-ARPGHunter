@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/UserWidget/UWNPCDialog.h"
 #include "Components/TextBlock.h"
@@ -46,9 +46,10 @@ void UUWNPCDialog::Init(TArray<FNPCDialogOption>& _options)
 					return;
 
 				if (TObjectPtr<UUWPopUp> UIInst = GetUIFunc.Execute(pOpt->UIClass))
-					UIInst->ShowUI(true);
+					UIInst->ShowUI(true, this);
 			}
 		);
+
 		OptionInst->SetButtonLabel(FText::FromString(_options[i].DialogTitle));
 		DialogOptionContainer->AddChild(OptionInst);
 	}

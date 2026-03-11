@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -79,6 +79,6 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 public:
-	virtual void ShowUI(bool _bIsSubUI) override;
+	virtual void ShowUI(bool _bIsSubUI = false, TWeakObjectPtr<UUserWidget> _mainUI = nullptr) override;
 	void Init();
 };

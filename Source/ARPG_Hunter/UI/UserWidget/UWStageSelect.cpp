@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWStageSelect.h"
@@ -72,9 +72,9 @@ void UUWStageSelect::NativeOnInitialized()
 	Clear();
 }
 
-void UUWStageSelect::ShowUI(bool _bIsSubUI)
+void UUWStageSelect::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
-	Super::ShowUI(_bIsSubUI);
+	Super::ShowUI(_bIsSubUI, _mainUI);
 
 	CurRegionID = FName(TEXT("1"));
 	CurStageID = NAME_None;
@@ -84,7 +84,6 @@ void UUWStageSelect::ShowUI(bool _bIsSubUI)
 	if (OpenAnim)
 		PlayAnimation(OpenAnim);
 }
-
 
 void UUWStageSelect::ClickStartButton()
 {
