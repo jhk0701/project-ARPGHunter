@@ -43,8 +43,6 @@ void ANonCombatHUD::BeginPlay()
 				{
 					switch (_type)
 					{
-						/*case EShortCutType::ESC:
-							break;*/
 					case EShortCutType::TAB:
 						ToggleMaintenanceUI();
 						break;
@@ -79,6 +77,8 @@ void ANonCombatHUD::BeginPlay()
 			Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
 			PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
 			QuickSlot->OnQuickSlotChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetQuickSlot);
+
+			PlayerManager->GetInventory()->OnInventoryChanged.AddUObject(MaintenanceUI, &UUWMaintenance::OnInventoryChanged);
 		}
 	}
 

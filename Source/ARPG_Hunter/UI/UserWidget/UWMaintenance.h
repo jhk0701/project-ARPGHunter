@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,6 +9,7 @@
 class UWrapBox;
 class UUWItemSlot;
 class UUWStatInfo;
+class UItem;
 class UEquipmentItem;
 class UConsumableItem;
 enum class ECharacterStatType : uint8;
@@ -68,6 +69,7 @@ public:
 	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void SetEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment);
 	void SetQuickSlot(uint8 _index, TWeakObjectPtr<UConsumableItem> _consumable);
+	void OnInventoryChanged(uint8 _idx, TWeakObjectPtr<UItem> _item);
 
 	UFUNCTION()
 	void ClickCloseButton();

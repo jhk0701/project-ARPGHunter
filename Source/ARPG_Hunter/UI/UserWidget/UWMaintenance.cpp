@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWMaintenance.h"
@@ -12,6 +12,7 @@
 #include "Item/Item.h"
 #include "UI/UserWidget/UWItemSlot.h"
 #include "UI/UserWidget/UWStatInfo.h"
+
 
 void UUWMaintenance::NativeOnInitialized()
 {
@@ -84,6 +85,19 @@ void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 
 	for (uint8 i = 0; i < _param.QuickSlot.Num(); ++i)
 		ArrQuickSlot[i]->SetSlot(_param.QuickSlot[i]);
+}
+
+void UUWMaintenance::OnInventoryChanged(uint8 _idx, TWeakObjectPtr<UItem> _item)
+{
+	if (_item->GetType() == EItemType::CONSUMABLE) 
+	{
+		TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(_item);
+		if (Consumable->GetQuickSlotIndex() < 0)
+			return;
+
+		SetQuickSlot(Consumable->GetQuickSlotIndex(), Consumable);
+	}
+
 }
 
 void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
