@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -70,8 +70,8 @@ public:
 	void ProcessAttackProgress();
 	void ProcessAttackEnd();
 
-	uint16 GetAttackActionDamagePer();
-	uint16 GetAttackActionStaggerDamage();
+	uint16 GetAttackActionDamagePer(uint8 _opt);
+	uint16 GetAttackActionStaggerDamage(uint8 _opt);
 	float GetAttackActionKnockBack(uint8 _opt);
 	EAttackType GetAttackActionType();
 };

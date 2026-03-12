@@ -160,7 +160,6 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 		}
 		else
 			FireDir = GetOwner()->GetActorForwardVector();
-
 		break;
 	}
 

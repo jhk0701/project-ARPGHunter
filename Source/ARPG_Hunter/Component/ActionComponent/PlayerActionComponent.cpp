@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/ActionComponent/PlayerActionComponent.h"
@@ -253,14 +253,14 @@ bool UPlayerActionComponent::IsInProgress() const
 	return CurActionProcess == EActionProcess::IN_PROGRESS;
 }
 
-uint16 UPlayerActionComponent::GetAttackActionDamagePer()
+uint16 UPlayerActionComponent::GetAttackActionDamagePer(uint8 _opt)
 {
-	return GetCurrentAction()->AttackDamagePer;
+	return GetCurrentAction()->ArrOption[_opt].AttackDamagePer;
 }
 
-uint16 UPlayerActionComponent::GetAttackActionStaggerDamage()
+uint16 UPlayerActionComponent::GetAttackActionStaggerDamage(uint8 _opt)
 {
-	return GetCurrentAction()->StaggerDamage;
+	return GetCurrentAction()->ArrOption[_opt].StaggerDamage;
 }
 
 float UPlayerActionComponent::GetAttackActionKnockBack(uint8 _opt)

@@ -218,17 +218,18 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 		return;
 
 	TWeakObjectPtr<AMonsterBase> WeakThis(this);
-	TWeakObjectPtr<UAction> WeakAction(ActionComp->GetCurrentAction());
 
 	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel3,
-		[WeakThis, WeakAction](TArray<FHitResult>& _hitResult)
+		[WeakThis, _opt](TArray<FHitResult>& _hitResult)
 		{
-			if (WeakThis.IsValid() == false || WeakAction.IsValid() == false)
+			if (WeakThis.IsValid() == false)
 				return;
+
+			TObjectPtr<UAction> CurAction = WeakThis->ActionComp->GetCurrentAction();
 
 			uint16 Damage = ACombatGameMode::CalculateAttack(
 				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
-				WeakAction->AttackDamagePer);
+				CurAction->ArrOption[_opt].AttackDamagePer);
 
 			for (FHitResult& hitResult : _hitResult)
 			{

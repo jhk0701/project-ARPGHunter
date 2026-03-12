@@ -329,10 +329,9 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 
 			UStatComponent* Stat = WeakThis->StatComp;
 			UPlayerActionComponent* Action = WeakThis->ActionComp;
-
 			uint32 BaseDamage = ACombatGameMode::CalculateAttack(
 				Stat->GetStat(ECharacterStatType::ATTACK),
-				Action->GetAttackActionDamagePer());
+				Action->GetAttackActionDamagePer(_opt)); // 
 
 			bool bIsCritical = false;
 			for (FHitResult& Hit : _hitResults)
@@ -349,7 +348,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 					Stat->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT),
 					Damage);
 				HitInfo.Damage = Damage;
-				HitInfo.StaggerDamage = Action->GetAttackActionStaggerDamage();
+				HitInfo.StaggerDamage = Action->GetAttackActionStaggerDamage(_opt);
 				HitInfo.KnockBackStrength = Action->GetAttackActionKnockBack(_opt);
 				HitInfo.AttackType = Action->GetAttackActionType();
 				HitInfo.Attacker = WeakThis;

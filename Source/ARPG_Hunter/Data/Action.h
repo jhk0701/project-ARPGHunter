@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,6 +24,10 @@ public:
 	EAttackDetailType Detail;
 
 	UPROPERTY(EditAnywhere)
+	uint16 AttackDamagePer{ 100 };
+	UPROPERTY(EditAnywhere)
+	uint16 StaggerDamage{ 10 };
+	UPROPERTY(EditAnywhere)
 	float KnockBackStr{100.0f};
 };
 
@@ -39,10 +43,7 @@ public:
 	FText NameText;
 	UPROPERTY(EditAnywhere)
 	EAttackType Type;
-	UPROPERTY(EditAnywhere)
-	uint16 AttackDamagePer{ 100 };
-	UPROPERTY(EditAnywhere)
-	uint16 StaggerDamage{ 10 };
+	
 	UPROPERTY(EditAnywhere)
 	uint8 StaminaUsage{ 0 };
 
