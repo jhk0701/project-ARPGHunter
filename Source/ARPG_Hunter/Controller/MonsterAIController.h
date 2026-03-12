@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,11 +16,19 @@ class ARPG_HUNTER_API AMonsterAIController : public AAIController
 
 public:
 	AMonsterAIController();
+	static constexpr uint8 MAX_MOVETO_RETRY_CNT = 5; 
+
 private:
+	uint8 MoveToRetryCnt{0};
+
 	void PlayBT(APawn* _inPawn);
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
+
 public:
+	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
+
 	void StopBT();
 	void RestartBT();
 

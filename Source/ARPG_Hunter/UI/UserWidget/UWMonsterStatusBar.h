@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,7 +29,7 @@ private:
 public:
 	void SetHealthBarPercent(uint16 _remain, uint16 _max);
 
-	void PlayOpenAnim();
+	void PlayOpenAnim(bool _bIsReverse = false);
 };
 
 UCLASS()

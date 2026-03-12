@@ -159,7 +159,7 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 			FireDir = _target->GetActorLocation() - FireStart;
 			FireDir.Normalize();
 		
-			if(FVector::DotProduct(FireDir, GetOwner()->GetActorForwardVector()) < 0.5f)
+			if(FVector::DotProduct(FireDir, GetOwner()->GetActorForwardVector()) < 0.75f)
 				FireDir = GetOwner()->GetActorForwardVector();
 		}
 		else

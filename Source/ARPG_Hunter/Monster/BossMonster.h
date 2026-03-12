@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -47,4 +47,5 @@ public:
 	void HandleGimicNotify(EGimicType _type, uint16 _gimicValue) override;
 
 	void OnTargetFound() override;
+	void OnTargetLost() override;
 };

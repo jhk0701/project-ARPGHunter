@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWMonsterStatusBar.h"
@@ -13,10 +13,15 @@ void UUWMonsterStatusBar::SetHealthBarPercent(uint16 _remain, uint16 _max)
 	HealthLabel->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), _remain, _max)));
 }
 
-void UUWMonsterStatusBar::PlayOpenAnim()
+void UUWMonsterStatusBar::PlayOpenAnim(bool _bIsReverse/* = false*/)
 {
-	if (OpenAnim)
-		PlayAnimation(OpenAnim);
+	if (nullptr == OpenAnim)
+		return;
+
+	if (_bIsReverse)
+		PlayAnimationReverse(OpenAnim);
+	else
+		PlayAnimationForward(OpenAnim);
 }
 
 void UUWBossMonsterStatusBar::SetStaggerBarPercent(uint16 _remain, uint16 _max)

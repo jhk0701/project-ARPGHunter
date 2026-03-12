@@ -115,5 +115,7 @@ public:
 	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
 
 	TWeakObjectPtr<AActor> GetTarget() const;
+	// 하위 클래스에서 구체적인 동작을 구현해둘 것
 	virtual void OnTargetFound() {};
+	virtual void OnTargetLost() {};
 };
