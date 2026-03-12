@@ -17,18 +17,22 @@ struct FActionOption
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	FVector Size{32.0f, 32.0f, 32.0f};
+	FVector Size{100.0f};
 	UPROPERTY(EditAnywhere)
-	float Range;
+	float Range{100.0f};
 	UPROPERTY(EditAnywhere)
 	EAttackDetailType Detail;
 
 	UPROPERTY(EditAnywhere)
-	uint16 AttackDamagePer{ 100 };
+	uint16 AttackDamagePer{100};
 	UPROPERTY(EditAnywhere)
-	uint16 StaggerDamage{ 10 };
+	uint16 StaggerDamage{10};
 	UPROPERTY(EditAnywhere)
-	float KnockBackStr{100.0f};
+	float KnockBackStr{100};
+	UPROPERTY(EditAnywhere)
+	float HitRoll;
+	UPROPERTY(EditAnywhere)
+	float HitSize{1.0f};
 };
 
 /**

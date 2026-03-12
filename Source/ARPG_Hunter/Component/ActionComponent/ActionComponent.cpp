@@ -2,6 +2,7 @@
 #include "Component/ActionComponent/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 #include "Define/Enum.h"
 #include "Interface/Effectable.h"
@@ -55,16 +56,16 @@ void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel
 		// 피격 효과 출력
 		if (CurrentAction->VFXOnHit)
 		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 				GetWorld(),
 				CurrentAction->VFXOnHit,
 				Result.ImpactPoint,
-				Result.ImpactNormal.Rotation(),
-				FVector::OneVector,
-				true,
-				true,
+				FRotator::ZeroRotator, FVector::OneVector,
+				true, true,
 				ENCPoolMethod::AutoRelease
 			);
+			NiagaraComp->SetVariableFloat(FName(TEXT("User.HitRoll")), CurrentAction->ArrOption[_opt].HitRoll);
+			NiagaraComp->SetVariableFloat(FName(TEXT("User.HitSize")), CurrentAction->ArrOption[_opt].HitSize);
 		}
 	}
 }

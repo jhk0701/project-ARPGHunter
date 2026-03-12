@@ -331,7 +331,8 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			UPlayerActionComponent* Action = WeakThis->ActionComp;
 			uint32 BaseDamage = ACombatGameMode::CalculateAttack(
 				Stat->GetStat(ECharacterStatType::ATTACK),
-				Action->GetAttackActionDamagePer(_opt)); // 
+				Action->GetAttackActionDamagePer(_opt)
+			);
 
 			bool bIsCritical = false;
 			for (FHitResult& Hit : _hitResults)
