@@ -94,7 +94,7 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 	bool bIsHit = false;
 
 	FVector Fwd = GetOwner()->GetActorForwardVector();
-	FVector Start = GetOwner()->GetActorLocation() + Fwd * 50.0f;
+	FVector Start = GetOwner()->GetActorLocation() + Fwd * 10.0f;
 	FVector End = Start + Fwd * Option.Range;
 
 	EDrawDebugTrace::Type DrawDebug = bShowTrace ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
