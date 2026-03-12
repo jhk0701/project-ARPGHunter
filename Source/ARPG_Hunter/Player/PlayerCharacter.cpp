@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -132,10 +132,15 @@ void APlayerCharacter::Init()
 	InitEquipment(Equipment);
 	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
 
+	EWeaponType Type = EWeaponType::SWORD;
 	TWeakObjectPtr<UEquipmentItem> EquipedWeapon = Equipment->GetEquipment(EEquipmentType::WEAPON);
+	if (EquipedWeapon.IsValid())
+		Type = EquipedWeapon->GetWeaponType();
+
 	ActionComp->Init(
-		DataManager->GetWeaponConfig(EquipedWeapon->GetWeaponType()), 
-		GetMesh()->GetAnimInstance(), MapEquipmentMeshComp[EquipedWeapon->GetEquipmentType()]
+		DataManager->GetWeaponConfig(Type),
+		GetMesh()->GetAnimInstance(),
+		MapEquipmentMeshComp[EEquipmentType::WEAPON]
 	);
 
 	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))

@@ -35,14 +35,19 @@ protected:
 	TObjectPtr<UAnimInstance> GetAnimInstance() { return OwnerAnimInstance; }
 
 	bool Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
-	void Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction);
+	void Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
 
 public:	
 	void Init(TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
 	virtual void Clear() {};
 
 	// 실질적인 공격 수행
-	void ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction);
+	void ProcessAttack(
+		uint8 _opt, 
+		ECollisionChannel _traceChannel, 
+		TFunction<void(TArray<FHitResult>&)> _onHitAction,
+		TWeakObjectPtr<AActor> _target = nullptr
+	);
 
 	TObjectPtr<UAction> GetCurrentAction() { return CurrentAction; }
 	

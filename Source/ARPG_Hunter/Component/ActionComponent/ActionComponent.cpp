@@ -1,4 +1,4 @@
-
+﻿
 #include "Component/ActionComponent/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "NiagaraFunctionLibrary.h"
@@ -23,7 +23,7 @@ void UActionComponent::Init(TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjec
 	CurrentAction = nullptr;
 }
 
-void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction)
+void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target /*= nullptr*/)
 {
 	if (nullptr == CurrentAction || CurrentAction->ArrOption.Num() <= _opt)
 		return;
@@ -31,7 +31,7 @@ void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel
 	if (CurrentAction->ArrOption[_opt].Detail > EAttackDetailType::MELEE_END)
 	{
 		// 원거리 방식 처리
-		Deploy(_opt, _traceChannel, MoveTemp(_onHitAction)); // 기존에 받았던 람다는 Move로 이동 처리
+		Deploy(_opt, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
 		return;
 	}
 
@@ -130,7 +130,7 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 	return bIsHit;
 }
 
-void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction)
+void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target /*= nullptr*/)
 {
 	// 서브 오브젝트에게 공격 동작 위임
 	UClass* SubObjectClass = CurrentAction->SubObjectClass;
@@ -143,19 +143,27 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 
 	SubObj->Init(CurrentAction->SubObjectConfig, MoveTemp(_onHitAction));
 	
-	FVector FireVector;
+	FVector FireStart;
+	if (FirePointComp)
+		FireStart = FirePointComp->GetSocketLocation(FirePointSocketName);
+	else
+		FireStart = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 100.f;
+
+	FVector FireDir;
 	switch (CurrentAction->ArrOption[_opt].Detail)
 	{
 	case EAttackDetailType::RANGED_DIRECTIONAL:
-		FireVector = GetOwner()->GetActorForwardVector();
-		break;
-	
-	}
-	
-	if (FirePointComp)
-		SubObj->SetActorLocation(FirePointComp->GetSocketLocation(FirePointSocketName));
-	else
-		SubObj->SetActorLocation(GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 100.f);
+		if (_target.IsValid())
+		{
+			FireDir = _target->GetActorLocation() - FireStart;
+			FireDir.Normalize();
+		}
+		else
+			FireDir = GetOwner()->GetActorForwardVector();
 
-	SubObj->Fire(GetOwner(), FireVector);
+		break;
+	}
+
+	SubObj->SetActorLocation(FireStart);
+	SubObj->Fire(GetOwner(), FireDir);
 }
