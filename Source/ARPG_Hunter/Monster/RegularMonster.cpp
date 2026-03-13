@@ -85,7 +85,7 @@ void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)
 	Dir.Z = 0.0f;
 	Dir.Normalize();
 
-	LaunchCharacter(Dir * _hitInfo.KnockBackStrength, true, true);
+	LaunchCharacter(Dir * _hitInfo.KnockBackStrength * 10.0f, true, false);
 }
 
 void ARegularMonster::OnTargetFound()

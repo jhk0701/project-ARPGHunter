@@ -259,7 +259,7 @@ uint16 UPlayerActionComponent::GetAttackActionDamagePer(uint8 _opt)
 }
 
 uint16 UPlayerActionComponent::GetAttackActionStaggerDamage(uint8 _opt)
-{
+{	
 	return GetCurrentAction()->ArrOption[_opt].StaggerDamage;
 }
 

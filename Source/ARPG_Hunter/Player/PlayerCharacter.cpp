@@ -320,9 +320,10 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
-
+		
+	uint8 OptionIdx = _opt;
 	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel4,
-		[WeakThis, _opt](TArray<FHitResult>& _hitResults)
+		[WeakThis, OptionIdx](TArray<FHitResult>& _hitResults)
 		{
 			if (WeakThis.IsValid() == false)
 				return;
@@ -331,7 +332,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			UPlayerActionComponent* Action = WeakThis->ActionComp;
 			uint32 BaseDamage = ACombatGameMode::CalculateAttack(
 				Stat->GetStat(ECharacterStatType::ATTACK),
-				Action->GetAttackActionDamagePer(_opt)
+				Action->GetAttackActionDamagePer(OptionIdx)
 			);
 
 			bool bIsCritical = false;
@@ -349,8 +350,8 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 					Stat->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT),
 					Damage);
 				HitInfo.Damage = Damage;
-				HitInfo.StaggerDamage = Action->GetAttackActionStaggerDamage(_opt);
-				HitInfo.KnockBackStrength = Action->GetAttackActionKnockBack(_opt);
+				HitInfo.StaggerDamage = Action->GetAttackActionStaggerDamage(OptionIdx);
+				HitInfo.KnockBackStrength = Action->GetAttackActionKnockBack(OptionIdx);
 				HitInfo.AttackType = Action->GetAttackActionType();
 				HitInfo.Attacker = WeakThis;
 				HitInfo.HitResult = &Hit;
