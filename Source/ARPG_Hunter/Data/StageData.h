@@ -72,6 +72,10 @@ public:
 	// 스테이지에서 재생할 사운드
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USoundBase> BgmSource;
+	
+	// 스테이지에서 재생할 컷씬 LevelSequence
+	UPROPERTY(EditAnywhere)
+	TArray<TObjectPtr<class ULevelSequence>> CutSceneAssets;
 };
 
 USTRUCT(BlueprintType)

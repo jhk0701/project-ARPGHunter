@@ -45,7 +45,23 @@ void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 void AStageSection::BeginSection()
 {
 	State = EState::IN_PROGRESS;
+	SpawnMonster();
+}
 
+void AStageSection::EndSection()
+{
+	State = EState::CLEARED;
+
+	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+	GameMode->StageEvent[EStageEvent::HUNT].Remove(EventHandle);
+
+	FStageEventContext Context;
+	Context.SectionIndex = Index;
+	GameMode->PublishEvent(EStageEvent::SECTION_CLEAR, Context);
+}
+
+void AStageSection::SpawnMonster()
+{
 	// 게임모드에게 몬스터 스폰 요청
 	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	if (nullptr == GameMode)
@@ -60,18 +76,6 @@ void AStageSection::BeginSection()
 		EventHandle = GameMode->StageEvent[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
 	else
 		State = EState::CLEARED;
-}
-
-void AStageSection::EndSection()
-{
-	State = EState::CLEARED;
-
-	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-	GameMode->StageEvent[EStageEvent::HUNT].Remove(EventHandle);
-
-	FStageEventContext Context;
-	Context.SectionIndex = Index;
-	GameMode->PublishEvent(EStageEvent::SECTION_CLEAR, Context);
 }
 
 void AStageSection::OnMonsterDead(const FStageEventContext& _context)

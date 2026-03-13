@@ -77,4 +77,6 @@ public:
 
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
 	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
+
+	TObjectPtr<class ULevelSequence> GetCutSceneAsset(uint8 _idx) const;
 };

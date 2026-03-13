@@ -15,8 +15,8 @@ UCLASS()
 class ARPG_HUNTER_API AStageSection : public AActor
 {
 	GENERATED_BODY()
-	
-private:
+
+public:
 	enum EState : uint8
 	{
 		READY,
@@ -24,9 +24,12 @@ private:
 		CLEARED
 	};
 
-	UPROPERTY(EditAnywhere, Category = "Setting")
+	AStageSection();
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Section")
 	TObjectPtr<class UBoxComponent> BoxComp;
-	UPROPERTY(EditAnywhere, Category = "Setting")
+	UPROPERTY(EditAnywhere, Category = "Section|Setting")
 	uint8 Index{ 0 };
 
 	EState State{ EState::READY };
@@ -35,20 +38,17 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SpawnedCount{ 0 };
 
-public:	
-	// Sets default values for this actor's properties
-	AStageSection();
+protected:
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+	void SetState(EState _state) { State = _state; }
 
+public:
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	void OnMonsterDead(const FStageEventContext& _context);
 
-protected:
-	void PostInitializeComponents() override;
-	void BeginPlay() override;
-
-private:
-	void BeginSection();
-	void EndSection();
-
+	virtual void BeginSection();
+	virtual void EndSection();
+	void SpawnMonster();
 };
