@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/StatComponent.h"
@@ -221,13 +221,11 @@ bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 	// 동일 종류 중복 확인
 	if (FAppliedEffect* Applied = MapEffect.Find(_effect->GetID())) 
 	{
-		// 스택 쌓기 불가능한 경우 중복 효과 획득 불가
-		if (Applied->Effect->GetMaxStack() <= 1 || 
-			Applied->Effect->IsStackFull())
-			return false;
-
 		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
-		AppliedEffect->AddStack(); // 스택 쌓기
+		
+		// 스택 쌓기 가능한지 확인
+		if (Applied->Effect->GetMaxStack() > 1 && Applied->Effect->IsStackFull() == false)
+			AppliedEffect->AddStack(); // 스택 쌓기
 
 		// 지속 시간 갱신
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
