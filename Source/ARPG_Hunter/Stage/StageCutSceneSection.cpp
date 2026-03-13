@@ -11,15 +11,12 @@
 void AStageCutSceneSection::BeginSection()
 {
 	// 플레이어 입장하는 시점에 컷씬 재생
-	// 컷씬 데이터는 스테이지 데이터에 동봉
-	// 컷씬이 없다면 재생하지 않음
-	
 	TObjectPtr<UWorld> World = GetWorld();
-
 	TObjectPtr<ACombatGameMode> GM = World->GetAuthGameMode<ACombatGameMode>();
 	TObjectPtr<ULevelSequence> CutSceneAsset = GM->GetCutSceneAsset(CutSceneIndex);
 	if (nullptr == CutSceneAsset)
 	{
+		// 컷씬이 없다면 재생하지 않고, Section과 동일하게 처리
 		Super::BeginSection();
 		return;
 	}
@@ -32,17 +29,25 @@ void AStageCutSceneSection::BeginSection()
 	PlaySetting.bHideHud = true;
 	PlaySetting.bHidePlayer = true;
 
-	ULevelSequencePlayer* Player = ULevelSequencePlayer::CreateLevelSequencePlayer(
+	ULevelSequencePlayer* SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 		World,
 		CutSceneAsset,
 		PlaySetting,
 		CutScenePlayer
 	);
 
-	Player->OnFinished.AddDynamic(this, &AStageCutSceneSection::OnCutSceneEnd);
+	if (nullptr == SequencePlayer)
+	{
+		Super::BeginSection();
+		return;
+	}
+
+	SequencePlayer->OnFinished.AddDynamic(this, &AStageCutSceneSection::OnCutSceneEnd);
+	SequencePlayer->Play();
 }
 
 void AStageCutSceneSection::OnCutSceneEnd()
 {
+	// 완료 시, 몬스터 스폰
 	SpawnMonster();
 }

@@ -10,7 +10,14 @@ public class ARPG_Hunter : ModuleRules
 
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "NavigationSystem", "GameplayTasks", "Niagara", "Slate", "SlateCore", "LevelSequence" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+				"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", 
+				"UMG", 
+				"NavigationSystem", "GameplayTasks", 
+				"Niagara", 
+				"Slate", "SlateCore", 
+				"LevelSequence", "MovieScene"
+    });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
