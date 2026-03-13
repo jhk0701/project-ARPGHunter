@@ -39,7 +39,7 @@ void AStageCutSceneSection::BeginSection()
 		CutScenePlayer
 	);
 
-	Player->OnFinished.AddDynamic(this, AStageCutSceneSection::OnCutSceneEnd);
+	Player->OnFinished.AddDynamic(this, &AStageCutSceneSection::OnCutSceneEnd);
 }
 
 void AStageCutSceneSection::OnCutSceneEnd()
