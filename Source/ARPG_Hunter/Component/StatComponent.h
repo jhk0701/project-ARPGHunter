@@ -94,7 +94,7 @@ private:
 
 	// 효과로 얻은 스탯
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
-	TMap<ECharacterStatType, uint32> EffectedStat;
+	TMap<ECharacterStatType, int32> EffectedStat;
 
 	FCharacterResource& GetResource(ECharacterResourceType _type) 
 	{ 
@@ -148,13 +148,13 @@ public:
 	bool RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 
-	void AddStat(ECharacterStatType _type, uint32 _amount) 
+	void AddStat(ECharacterStatType _type, uint16 _amount) 
 	{ 
 		EffectedStat[_type] += _amount; 
 	}
-	void SubStat(ECharacterStatType _type, uint32 _amount) 
+	void SubStat(ECharacterStatType _type, uint16 _amount) 
 	{
-		check(EffectedStat[_type] >= _amount);
+		check(EffectedStat[_type] >= static_cast<int32>(_amount));
 		EffectedStat[_type] -= _amount;
 	}
 

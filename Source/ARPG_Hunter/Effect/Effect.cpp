@@ -17,7 +17,7 @@ uint8 UEffect::GetMaxStack()
 
 bool UEffect::IsStackFull()
 {
-	return Stack == BaseParam->MaxStack;
+	return Stack >= BaseParam->MaxStack;
 }
 
 void UEffect::AddStack()

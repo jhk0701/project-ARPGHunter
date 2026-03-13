@@ -217,14 +217,14 @@ void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 
 bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 {
-	// 이펙트 등록
+	// 기간형 이펙트 등록
 	// 동일 종류 중복 확인
 	if (FAppliedEffect* Applied = MapEffect.Find(_effect->GetID())) 
 	{
 		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
 		
 		// 스택 쌓기 가능한지 확인
-		if (Applied->Effect->GetMaxStack() > 1 && Applied->Effect->IsStackFull() == false)
+		if (Applied->Effect->IsStackFull() == false)
 			AppliedEffect->AddStack(); // 스택 쌓기
 
 		// 지속 시간 갱신
