@@ -61,7 +61,7 @@ public:
 	TWeakObjectPtr<UWeaponConfig> GetWeaponConfig() const;
 	bool IsInProgress() const;
 
-	void PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
+	bool PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
 	void PlayHitAction();
 	void PlayDeadAction();
 	void PlayItemUsageAction();
@@ -70,6 +70,8 @@ public:
 	void ProcessAttackProgress();
 	void ProcessAttackEnd();
 
+	UAnimMontage* GetDodgeMontage() const;
+	UAnimMontage* GetHitMontage() const;
 	uint16 GetAttackActionDamagePer(uint8 _opt);
 	uint16 GetAttackActionStaggerDamage(uint8 _opt);
 	float GetAttackActionKnockBack(uint8 _opt);

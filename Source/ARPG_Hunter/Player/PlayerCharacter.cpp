@@ -137,11 +137,15 @@ void APlayerCharacter::Init()
 	if (EquipedWeapon.IsValid())
 		Type = EquipedWeapon->GetWeaponType();
 
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
+
 	ActionComp->Init(
 		DataManager->GetWeaponConfig(Type),
-		GetMesh()->GetAnimInstance(),
+		AnimInst,
 		MapEquipmentMeshComp[EEquipmentType::WEAPON]
 	);
+
+	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
 
 	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
 		CharMove->MaxWalkSpeed = WalkSpeed;
@@ -243,9 +247,12 @@ void APlayerCharacter::Dodge()
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
-	ActionComp->PlayDodgeAction(InputDirection.SizeSquared() > 0,
-		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
+	bool bIsSuccess = ActionComp->PlayDodgeAction(InputDirection.SizeSquared() > 0,
+		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage);  }
 	);
+
+	if (bIsSuccess)
+		SetIgnoreInput(true);
 }
 
 void APlayerCharacter::Attack(EAttackType _eType)
@@ -385,6 +392,12 @@ void APlayerCharacter::OnDead()
 	ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
 }
 
+void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (ActionComp->GetDodgeMontage() == Montage || ActionComp->GetHitMontage() == Montage)
+		SetIgnoreInput(false);
+}
+
 void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 {
 	if (StatComp->IsDead())
@@ -468,7 +481,6 @@ void APlayerCharacter::CheckInteractable()
 	}
 }
 
-
 void APlayerCharacter::Interact()
 {
 	if (nullptr == CurInteractable)
@@ -494,7 +506,6 @@ void APlayerCharacter::ShakeCameraOnAttack(float _scale)
 {
 	ShakeCamera(CameraShakeOnAttack, _scale);
 }
-
 
 void APlayerCharacter::SetCameraLag(bool _bIsEnable, float _speed)
 {

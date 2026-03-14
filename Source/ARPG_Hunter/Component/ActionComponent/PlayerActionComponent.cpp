@@ -58,17 +58,17 @@ void UPlayerActionComponent::SetActionProcess(EActionProcess _eProcess)
 }
 
 
-void UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
+bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
 	TObjectPtr<UAction> DodgeAction = CurWeapon->DodgeAction;
 	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	if (IsInProgress() || DodgeAction->Montage == nullptr ||
 		AnimInst->Montage_IsPlaying(DodgeAction->Montage))
-		return;
+		return false;
 
 	if (_predicate && _predicate(DodgeAction->StaminaUsage) == false)
-		return;
+		return false;
 
 	AnimInst->Montage_Play(DodgeAction->Montage);
 
@@ -79,6 +79,8 @@ void UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(floa
 
 	ActivateActionEffect(DodgeAction->EffectOnStart, GetOwner());
 	ResetAction();
+
+	return true;
 }
 
 
@@ -188,6 +190,16 @@ void UPlayerActionComponent::ProcessAttackEnd()
 	GetAnimInstance()->Montage_JumpToSection(EnumToName(EActionProcess::COMPLETE), CurMontage);
 
 	ClearActionProgressTimer();
+}
+
+UAnimMontage* UPlayerActionComponent::GetDodgeMontage() const
+{
+	return CurWeapon->DodgeAction->Montage;
+}
+
+UAnimMontage* UPlayerActionComponent::GetHitMontage() const
+{
+	return CurWeapon->HitMontage;
 }
 
 // 현재 받은 공격 입력이 유효한 입력인지 확인
