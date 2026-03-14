@@ -19,7 +19,7 @@ private:
 	uint8 CutSceneIndex{0};
 
 	UPROPERTY()
-	class ALevelSequenceActor* CutScenePlayer; // TObjectPtr<>
+	class ALevelSequenceActor* CutScenePlayer;
 
 public:
 	virtual void BeginSection() override;

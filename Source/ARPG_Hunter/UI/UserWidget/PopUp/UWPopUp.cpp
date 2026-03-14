@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/PopUp/UWPopUp.h"
@@ -37,7 +37,10 @@ void UUWPopUp::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 	if (TObjectPtr<APlayerCharacterController> PC = Cast<APlayerCharacterController>(GetWorld()->GetFirstPlayerController()))
 		PC->LockCursor(GetCachedWidget()); // 이 UI로 포커스
 
-	AddToViewport();
+	if(IsInViewport() == false) 
+		AddToViewport();
+
+	SetVisibility(ESlateVisibility::Visible);
 	bIsShowing = true;
 
 	// if (IsFocusable())
@@ -46,7 +49,9 @@ void UUWPopUp::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 
 void UUWPopUp::HideUI()
 {
-	RemoveFromParent();
+	// RemoveFromParent();
+	SetVisibility(ESlateVisibility::Hidden);
+
 	bIsShowing = false;
 
 	if (bIsSubUI)
@@ -59,4 +64,10 @@ void UUWPopUp::HideUI()
 
 	if (TObjectPtr<APlayerCharacterController> PC = Cast<APlayerCharacterController>(GetWorld()->GetFirstPlayerController()))
 		PC->UnLockCursor();
+}
+
+void UUWPopUp::RemoveUI()
+{
+	if (IsInViewport())
+		RemoveFromParent();
 }

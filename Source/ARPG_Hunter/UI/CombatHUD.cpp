@@ -93,6 +93,16 @@ void ACombatHUD::BeginPlay()
 	}
 }
 
+void ACombatHUD::ShowPlayerUI(bool _bIsShow)
+{
+	if (nullptr == PlayerUI)
+		return;
+
+	// 플레이어 UI는 이미 ViewPort에 추가된 상태로 유지할 것이니
+	// SetVisibility로 제어할 것
+	PlayerUI->SetVisibility(_bIsShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
 void ACombatHUD::ShowResultUI(bool _bOnCleared, const FStageData* _stageData)
 {
 	TObjectPtr<UUWStageResult> ResultUI = Cast<UUWStageResult>(StageResultUI);

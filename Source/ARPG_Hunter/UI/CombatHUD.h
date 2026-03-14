@@ -38,5 +38,7 @@ protected:
 
 public:
 	TObjectPtr<UUWCombatHUD> GetPlayerUI() const { return PlayerUI; }
+
+	void ShowPlayerUI(bool _bIsShow);
 	void ShowResultUI(bool _bOnCleared, const struct FStageData* _stageData);
 };

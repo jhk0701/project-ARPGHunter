@@ -4,9 +4,12 @@
 #include "Stage/StageCutSceneSection.h"
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
 
 #include "Define/Debug.h"
 #include "Core/GameMode/CombatGameMode.h"
+#include "UI/CombatHUD.h"
+
 
 void AStageCutSceneSection::BeginSection()
 {
@@ -29,7 +32,7 @@ void AStageCutSceneSection::BeginSection()
 	PlaySetting.bHideHud = true;
 	PlaySetting.bHidePlayer = true;
 
-	ULevelSequencePlayer* SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
+	TObjectPtr<ULevelSequencePlayer> SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(
 		World,
 		CutSceneAsset,
 		PlaySetting,
@@ -42,12 +45,22 @@ void AStageCutSceneSection::BeginSection()
 		return;
 	}
 
+	// PlayerHUD 가리기
+	TObjectPtr<ACombatHUD> HUD = GetWorld()->GetFirstPlayerController()->GetHUD<ACombatHUD>();
+	HUD->ShowPlayerUI(false);
+
 	SequencePlayer->OnFinished.AddDynamic(this, &AStageCutSceneSection::OnCutSceneEnd);
 	SequencePlayer->Play();
 }
 
 void AStageCutSceneSection::OnCutSceneEnd()
 {
+	TObjectPtr<ACombatHUD> HUD = GetWorld()->GetFirstPlayerController()->GetHUD<ACombatHUD>();
+	HUD->ShowPlayerUI(true);
+
 	// 완료 시, 몬스터 스폰
 	SpawnMonster();
+
+	CutScenePlayer->Destroy();
+	CutScenePlayer = nullptr;
 }
