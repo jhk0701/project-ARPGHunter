@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
 
@@ -8,6 +8,7 @@
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
+#include "Player/SkillDevelop.h"
 #include "Item/Item.h"
 
 #include "Core/Subsystem/SaveLoadManager.h"
@@ -36,13 +37,14 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	Inventory = NewObject<UInventory>(this);
 	Equipment = NewObject<UEquipment>(this);
 	QuickSlot = NewObject<UQuickSlot>(this);
+	SkillTree = NewObject<USkillDevelop>(this);
 
 	FGetItemDataFunc GetItemDataFunc;
 	GetItemDataFunc.BindLambda([this](const FName& _id) { return GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_id); });
 	Inventory->Init(GetItemDataFunc);
-
 	Equipment->Init(GetGameInstance());
 	QuickSlot->Init();
+	SkillTree->Init();
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);

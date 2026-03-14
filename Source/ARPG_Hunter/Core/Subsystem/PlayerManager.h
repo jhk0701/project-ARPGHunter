@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,6 +10,7 @@
 class UInventory;
 class UEquipment;
 class UQuickSlot;
+class USkillDevelop;
 enum class ECharacterStatType : uint8;
 enum class EEquipmentType : uint8;
 
@@ -55,6 +56,8 @@ private:
 	TObjectPtr<UEquipment> Equipment;
 	UPROPERTY()
 	TObjectPtr<UQuickSlot> QuickSlot;
+	UPROPERTY()
+	TObjectPtr<USkillDevelop> SkillTree;
 
 	void EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx);
