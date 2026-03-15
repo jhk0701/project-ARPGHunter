@@ -125,9 +125,10 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 	if (IsValidAttackInput(_type) == false)
 		return false;
 
+	TObjectPtr<UActionComboData> Combo = CurWeapon->AttackCombo;
 	uint8 id = !bIsInAttackCombo ?
-		*CurWeapon->AttackCombo->Start.Find(_type) :
-		*CurWeapon->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type);
+		Combo->Start.Edge[_type].Index :
+		Combo->Graph[CurAttackActionID].Edge[_type].Index;
 
 	UAction* Action = CurWeapon->AttackCombo->AttackAcionArray[id];
 
@@ -216,7 +217,7 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 		return false;
 
 	if (bIsInAttackCombo == false) // 첫 공격인 경우
-		return CurWeapon->AttackCombo->Start.Find(_type) != nullptr;
+		return CurWeapon->AttackCombo->Start.Edge.Find(_type) != nullptr;
 
 	// 마지막 콤보였는지 확인
 	return CurWeapon->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;

@@ -56,18 +56,18 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<
 		CurAction->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	const TMap<EAttackType, uint8>& Graph = _bIsInit ? _comboData->Start : _comboData->Graph[_curIdx].Edge;
+	const FActionConnection& Graph = _bIsInit ? _comboData->Start : _comboData->Graph[_curIdx];
 	for (uint8 i = 0; i < NextActions.Num(); ++i)
 	{
 		EAttackType Type = static_cast<EAttackType>(i);
-		if(Graph.Contains(Type) == false)
+		if(Graph.Edge.Contains(Type) == false)
 		{
 			NextActions[i]->SetVisibility(ESlateVisibility::Collapsed);
 			continue;
 		}
 		
 		NextActions[i]->SetVisibility(ESlateVisibility::Visible);
-		NextActions[i]->SetInfo(Type, _comboData->AttackAcionArray[Graph[Type]]->NameText);
+		NextActions[i]->SetInfo(Type, _comboData->AttackAcionArray[Graph.Edge[Type].Index]->NameText);
 	}
 }
 

@@ -25,6 +25,8 @@ public:
 	TObjectPtr<class UAction> DodgeAction;
 	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
 	TObjectPtr<class UActionComboData> AttackCombo;
+
+	// Skill
 };
 
 UCLASS()

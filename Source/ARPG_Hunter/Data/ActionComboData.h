@@ -10,13 +10,24 @@
 class UAction;
 enum class EAttackType : uint8;
 
-USTRUCT(BlueprintType)
-struct FActionNode
+USTRUCT()
+struct FConnectInfo
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	TMap<EAttackType, uint8> Edge;
+	uint8 Index;
+	UPROPERTY(EditAnywhere)
+	bool bIsOptional; // 기본 연결 표시
+};
+
+USTRUCT()
+struct FActionConnection
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TMap<EAttackType, FConnectInfo> Edge;
 };
 
 /**
@@ -32,8 +43,8 @@ public:
 	TArray<TObjectPtr<UAction>> AttackAcionArray;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FActionNode> Graph;
+	FActionConnection Start;
 
 	UPROPERTY(EditAnywhere)
-	TMap<EAttackType, uint8> Start;
+	TArray<FActionConnection> Graph;
 };
