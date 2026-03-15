@@ -42,9 +42,11 @@ public:
 		AddictiveValue = _context->AddictiveValue;
 		Stack = 1;
 	}
+	
 	//하위 클래스에서 구체적 동작 구현
 	virtual bool Activate() { return true; }; // 활성화 시 결과 반환
 	virtual void Deactivate() {};
+
 	UObject* GetID() { return DataPointer; }
 	uint32 GetValue() const;
 	float GetDuration() const;

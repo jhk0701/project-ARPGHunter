@@ -35,12 +35,10 @@ public:
 	FText NameText;
 	UPROPERTY(EditAnywhere)
 	FText DescText;
-	UPROPERTY(EditAnywhere)
-	uint8 TargetIndex;
-	UPROPERTY(EditAnywhere)
-	uint8 Cost{ 1 };
+	// UPROPERTY(EditAnywhere)
+	// uint8 TargetIndex;
 
-	virtual void AdjustSkillNode(FAdjustParam& _param) {};
+	virtual void AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param) {};
 };
 
 // 잠겨있는 액션 해금
@@ -49,7 +47,7 @@ class ARPG_HUNTER_API USkillNodeUnlockAction : public USkillUpgrade
 {
 	GENERATED_BODY()
 public:
-	virtual void AdjustSkillNode(FAdjustParam& _param) override;
+	virtual void AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param) override;
 };
 
 // 액션에 있는 이펙트의 효과값 수정
@@ -63,7 +61,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint32 AddictiveValue{ 10 };
 
-	virtual void AdjustSkillNode(FAdjustParam& _param) override;
+	virtual void AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param) override;
 };
 
 // 기존 액션에 추가로 이펙트를 부여
@@ -75,7 +73,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TMap<EActionEvent, FActionEventEffect> ExtendEffects;
 
-	virtual void AdjustSkillNode(FAdjustParam& _param) override;
+	virtual void AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param) override;
 };
 
 // 액션의 공격력 등 수정
@@ -91,5 +89,5 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint8 ReduceStaminaUsage{ 1 };
 
-	virtual void AdjustSkillNode(FAdjustParam& _param) override;
+	virtual void AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param) override;
 };

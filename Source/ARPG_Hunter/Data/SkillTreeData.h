@@ -9,14 +9,26 @@
 class USkillUpgrade;
 
 USTRUCT()
+struct FUpgradeInfo
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USkillUpgrade> Upgrade;
+	UPROPERTY(EditAnywhere)
+	uint8 Cost;
+};
+
+USTRUCT()
 struct FSkillNode
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USkillUpgrade> Upgrade; // 이 노드가 나타내는 업그레이드 기능
-	UPROPERTY(EditAnywhere)
-	TArray<uint8> Children; // SkillTree의 배열에 할당된 노드들의 인덱스 사용
+	TArray<FUpgradeInfo> UpgradeInfos; // 이 노드가 나타내는 업그레이드 기능
+
+	UPROPERTY(EditAnywhere, Category = "Children")
+	TArray<uint8> ChildrenIdx; // SkillTree의 배열에 할당된 노드들의 인덱스 사용
 };
 
 USTRUCT()
@@ -47,9 +59,6 @@ public:
 	}
 };
 
-/**
- * 
- */
 UCLASS()
 class ARPG_HUNTER_API USkillTreeData : public UDataAsset
 {
@@ -58,6 +67,4 @@ public:
 	/// Key : ActionComboData 중, AttackAcionArray의 인덱스
 	UPROPERTY(EditAnywhere)
 	TMap<uint8, FSkillTree> SkillTrees;
-
-
 };

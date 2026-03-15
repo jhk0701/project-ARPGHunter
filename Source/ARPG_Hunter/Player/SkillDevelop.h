@@ -18,7 +18,7 @@ public:
 	USkillDevelop();
 
 private:
-	uint16 SkillPoint{0};
+	uint16 SkillPoint{ 0 };
 
 public:
 	void Init();

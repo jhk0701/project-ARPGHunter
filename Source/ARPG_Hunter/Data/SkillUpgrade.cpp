@@ -8,13 +8,13 @@
 #include "Data/EffectData.h"
 #include "Action/ActionInstance.h"
 
-void USkillNodeUnlockAction::AdjustSkillNode(FAdjustParam& _param)
+void USkillNodeUnlockAction::AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param)
 {
-	Super::AdjustSkillNode(_param);
+	Super::AdjustSkillNode(_targetIdx, _param);
 
 	for (TPair<EAttackType, FActionConnect>& Start : *_param.GraphStart)
 	{
-		if (Start.Value.Index != TargetIndex)
+		if (Start.Value.Index != _targetIdx)
 			continue;
 
 		Start.Value.bIsUnlocked = true;
@@ -24,7 +24,7 @@ void USkillNodeUnlockAction::AdjustSkillNode(FAdjustParam& _param)
 	{
 		for (TPair<EAttackType, FActionConnect>& Edge : Graph)
 		{
-			if (Edge.Value.Index != TargetIndex)
+			if (Edge.Value.Index != _targetIdx)
 				continue;
 
 			Edge.Value.bIsUnlocked = true;
@@ -32,18 +32,18 @@ void USkillNodeUnlockAction::AdjustSkillNode(FAdjustParam& _param)
 	}
 }
 
-void USkillNodeModifyEffect::AdjustSkillNode(FAdjustParam& _param)
+void USkillNodeModifyEffect::AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param)
 {
-	Super::AdjustSkillNode(_param);
+	Super::AdjustSkillNode(_targetIdx, _param);
 
-	(*_param.ActionArray)[TargetIndex]->AddEffectValue(TargetEffect->GetClass(), AddictiveValue);
+	(*_param.ActionArray)[_targetIdx]->AddEffectValue(TargetEffect->GetClass(), AddictiveValue);
 }
 
-void USkillNodeExtendEffect::AdjustSkillNode(FAdjustParam& _param)
+void USkillNodeExtendEffect::AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param)
 {
-	Super::AdjustSkillNode(_param);
+	Super::AdjustSkillNode(_targetIdx, _param);
 
-	TObjectPtr<UActionInstance> ActionInst = (*_param.ActionArray)[TargetIndex];
+	TObjectPtr<UActionInstance> ActionInst = (*_param.ActionArray)[_targetIdx];
 
 	for (const TPair<EActionEvent, FActionEventEffect>& Pair : ExtendEffects)
 	{
@@ -52,11 +52,11 @@ void USkillNodeExtendEffect::AdjustSkillNode(FAdjustParam& _param)
 	}
 }
 
-void USkillNodeModifySpec::AdjustSkillNode(FAdjustParam& _param)
+void USkillNodeModifySpec::AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param)
 {
-	Super::AdjustSkillNode(_param);
+	Super::AdjustSkillNode(_targetIdx, _param);
 
-	TObjectPtr<UActionInstance> ActionInst = (*_param.ActionArray)[TargetIndex];
+	TObjectPtr<UActionInstance> ActionInst = (*_param.ActionArray)[_targetIdx];
 	ActionInst->AddAttackDamagePer(AddictiveAttackDamagePer);
 	ActionInst->AddStaggerDamage(AddictiveStaggerDamage);
 	ActionInst->AddReduceStaminaUsage(ReduceStaminaUsage);
