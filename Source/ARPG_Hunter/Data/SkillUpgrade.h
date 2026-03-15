@@ -47,6 +47,7 @@ class ARPG_HUNTER_API USkillNodeOptionalEnabler : public USkillUpgrade
 	GENERATED_BODY()
 public:
 
+
 };
 
 UCLASS()

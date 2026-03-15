@@ -17,44 +17,6 @@ UActionComponent::UActionComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-//void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target /*= nullptr*/)
-//{
-//	/*if (nullptr == CurrentAction || CurrentAction->ArrOption.Num() <= _opt)
-//		return;*/
-//
-//	EAttackDetailType DetailType = CurrentAction->ArrOption[_opt].Detail;// GetDetailType(); //
-//
-//	if (DetailType > EAttackDetailType::MELEE_END)
-//	{
-//		// 원거리 방식 처리
-//		Deploy(_opt, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
-//		return;
-//	}
-//
-//	// 근거리 방식 처리
-//	TArray<FHitResult> HitResults;
-//	if (Trace(_opt, _traceChannel, HitResults) == false)
-//		return;
-//
-//	// 공격 히트 시, 효과 발동
-//	if (_onHitAction)
-//		_onHitAction(HitResults);
-//
-//	// 자기 버프 적용
-//	// GetActionEffectOnHit(); // 
-//	ActivateActionEffect(CurrentAction->EffectOnHit, GetOwner());
-//
-//	// 적에게 디버프 적용
-//	for (const FHitResult& Result : HitResults)
-//	{
-//		// GetActionEffectOnEnemyHit(); // 
-//		ActivateActionEffect(CurrentAction->EffectOnEnemyHit, Result.GetActor());
-//
-//		// 피격 효과 출력
-//		 // CurrentAction->VFXOnHit
-//	}
-//}
-
 void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
 {
 	IEffectable* Effectable = Cast<IEffectable>(_target);
@@ -120,13 +82,8 @@ bool UActionComponent::Trace(const FTraceParam& _param, ECollisionChannel _trace
 	return bIsHit;
 }
 
-void UActionComponent::DeploySubObject(
-	const FSubObjectDeployParam& _param, 
-	ECollisionChannel _traceChannel, 
-	TFunction<void(TArray<FHitResult>&)> _onHitAction, 
-	TWeakObjectPtr<AActor> _target)
+void UActionComponent::DeploySubObject(const FSubObjectDeployParam& _param, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
 {
-
 	// 서브 오브젝트에게 공격 동작 위임
 	UClass* SubObjectClass = _param.SubObjectClass;
 	if (nullptr == SubObjectClass)

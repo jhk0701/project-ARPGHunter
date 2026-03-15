@@ -45,7 +45,6 @@ private:
 	TMap<EAttackType, FActionConnect> GraphStart;
 	TArray<TMap<EAttackType, FActionConnect>> AppliedGraph;
 
-	bool bIsInAttackCombo{ false };
 	int16 CurAttackActionID{ -1 };
 	EActionProcess CurActionProcess;
 	EActionInput CurActionInput;
@@ -60,6 +59,7 @@ private:
 	FTimerHandle ActionResetTimer;
 
 	bool IsValidAttackInput(EAttackType _type);
+	bool IsInAttackCombo() const { return CurAttackActionID >= 0; } // bool bIsInAttackCombo{ false };
 	void SetActionResetTimer(float _second);
 	void ClearActionResetTimer();
 	void ClearActionProgressTimer();

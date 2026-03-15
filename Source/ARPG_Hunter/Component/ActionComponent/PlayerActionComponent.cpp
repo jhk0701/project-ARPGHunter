@@ -122,7 +122,7 @@ void UPlayerActionComponent::ResetAction()
 	CurAttackActionID = -1;
 	CurActionProcess = EActionProcess::NONE;
 	CurActionInput = EActionInput::NORMAL;
-	bIsInAttackCombo = false;
+	// bIsInAttackCombo = false;
 	BroadcastActionUpdated(); // SetCurrentAction(nullptr);
 }
 
@@ -206,7 +206,7 @@ void UPlayerActionComponent::PlayItemUsageAction()
 		AnimInst->Montage_IsPlaying(CurWeapon->ItemUsageMontage))
 		return;
 
-	if (bIsInAttackCombo)
+	if (IsInAttackCombo())
 		SetActionResetTimer(ActionResetSecond);
 
 	AnimInst->Montage_Play(CurWeapon->ItemUsageMontage);
@@ -217,7 +217,7 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 	if (IsValidAttackInput(_type) == false)
 		return false;
 
-	uint8 id = !bIsInAttackCombo ? 
+	uint8 id = !IsInAttackCombo() ?
 		GraphStart[_type].Index : 
 		AppliedGraph[CurAttackActionID][_type].Index;
 
@@ -229,7 +229,7 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 	CurAttackActionID = id;
 	CurActionProcess = EActionProcess::START;
 	CurActionInput = AppliedAction.Action->InputType;
-	bIsInAttackCombo = true;
+	// bIsInAttackCombo = true;
 	BroadcastActionUpdated(); // SetCurrentAction(Action);
 
 	if (CurActionInput == EActionInput::HOLD)
@@ -284,7 +284,7 @@ void UPlayerActionComponent::ProcessAttackEnd()
 }
 
 
-// 현재 받은 공격 입력이 유효한 입력인지 확인
+// 현재 공격 입력이 유효한지 확인
 bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 {
 	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
@@ -298,14 +298,14 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 		AnimInst->Montage_IsPlaying(CurWeapon->ItemUsageMontage) ||
 		AnimInst->Montage_IsPlaying(CurWeapon->DodgeAction->Montage))
 		return false;
+	
+	FActionConnect* ActionConnect = IsInAttackCombo() == false ? 
+		GraphStart.Find(_type) : 
+		AppliedGraph[CurAttackActionID].Find(_type);
 
-	if (bIsInAttackCombo == false) // 첫 공격인 경우
-		return GraphStart.Find(_type) != nullptr;
-
-	// 마지막 콤보였는지 확인
-	return AppliedGraph[CurAttackActionID].Find(_type) != nullptr;
+	// 할당된 공격이 있는지, 해당 공격이 해금되었는지 확인
+	return nullptr != ActionConnect && ActionConnect->bIsConnected;
 }
-
 
 void UPlayerActionComponent::SetActionResetTimer(float _second)
 {
