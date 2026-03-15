@@ -398,12 +398,12 @@ void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		SetIgnoreInput(false);
 }
 
-void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData)
+void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData, uint32 _addictiveValue)
 {
 	if (StatComp->IsDead())
 		return;
 
-	StatComp->ApplyEffect(_effectData);
+	StatComp->ApplyEffect(_effectData, _addictiveValue);
 }
 
 void APlayerCharacter::UseQuickSlot(uint8 _index)

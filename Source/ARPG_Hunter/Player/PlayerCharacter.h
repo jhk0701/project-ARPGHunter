@@ -152,7 +152,7 @@ public:
 	bool IsDead();
 
 	// IEffectable을(를) 통해 상속됨
-	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
+	void ApplyEffect(TObjectPtr<class UEffectData> _effectData, uint32 _addictiveValue = 0) override;
 	
 	void UseQuickSlot(uint8 _index);
 	void HandleUseItemNotify();

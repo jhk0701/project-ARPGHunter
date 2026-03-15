@@ -28,7 +28,7 @@ uint16 UActionInstance::GetStaggerDamage(uint8 _opt) const
 	return Action->ArrOption[_opt].StaggerDamage + AddictiveStaggerDamage;
 }
 
-uint16 UActionInstance::GetStaminaUsage() const
+uint8 UActionInstance::GetStaminaUsage() const
 {
 	if (Action->StaminaUsage <= ReduceStaminaUsage)
 		return 0;
@@ -40,6 +40,14 @@ void UActionInstance::AddEffectValue(UClass* _effectClass, uint32 _value)
 {
 	uint32& Value = AddictiveEffectValue.FindOrAdd(_effectClass);
 	Value += _value;
+}
+
+uint32 UActionInstance::GetAddictiveEffectValue(TObjectPtr<UEffectData> _effect)
+{
+	if (AddictiveEffectValue.Contains(_effect->GetClass()))
+		return AddictiveEffectValue[_effect->GetClass()];
+
+	return 0;
 }
 
 void UActionInstance::ExtendEventEffect(EActionEvent _eventType, TObjectPtr<UEffectData> _effect)

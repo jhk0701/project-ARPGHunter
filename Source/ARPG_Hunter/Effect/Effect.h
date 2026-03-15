@@ -11,7 +11,7 @@ struct FEffectContext
 {
 	UObject* DataPointer;	// 이펙트 식별용 UEffectData의 주소값
 	FEffectParam* Param;
-	float AddPercent;		// 스킬 성장 등에 따른 증가 퍼센트
+	uint32 AddictiveValue;
 };
 
 /**
@@ -26,13 +26,12 @@ private:
 	UObject* DataPointer;
 	TWeakObjectPtr<UStatComponent> TargetComp; // 효과 대상 : 약참조 소유
 	FEffectParam* BaseParam;
-	float AddPercent;
+	uint32 AddictiveValue;
 	uint8 Stack;
 
 protected:
 	bool IsValid() { return TargetComp.IsValid() && BaseParam != nullptr; }
 	TWeakObjectPtr<UStatComponent> GetTarget() { return TargetComp; }
-	FEffectParam* GetParam() { return BaseParam; }
 
 public:
 	virtual void Init(UStatComponent* _target, FEffectContext* _context) 
@@ -40,17 +39,21 @@ public:
 		TargetComp = _target;
 		DataPointer = _context->DataPointer;
 		BaseParam = _context->Param;
-		AddPercent = _context->AddPercent;
+		AddictiveValue = _context->AddictiveValue;
 		Stack = 1;
 	}
 	//하위 클래스에서 구체적 동작 구현
 	virtual bool Activate() { return true; }; // 활성화 시 결과 반환
 	virtual void Deactivate() {};
 	UObject* GetID() { return DataPointer; }
-	float GetDuration();
-	uint8 GetMaxStack();
-	uint8 GetStack() { return Stack; }
-	bool IsStackFull();
+	uint32 GetValue() const;
+	float GetDuration() const;
+	float GetRepeatInterval() const;
+	const TArray<TObjectPtr<class UEffectData>>& GetEffectOnEvent() const;
+	
+	uint8 GetMaxStack() const;
+	uint8 GetStack() const { return Stack; }
+	bool IsStackFull() const;
 	void AddStack();
 };
 

@@ -112,7 +112,7 @@ public:
 	EMonsterState GetState() const { return CurState; }
 
 	// IEffectable을(를) 통해 상속됨
-	void ApplyEffect(TObjectPtr<class UEffectData> _effectData) override;
+	virtual void ApplyEffect(TObjectPtr<class UEffectData> _effectData, uint32 _addictiveValue = 0) override;
 
 	TWeakObjectPtr<AActor> GetTarget() const;
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것

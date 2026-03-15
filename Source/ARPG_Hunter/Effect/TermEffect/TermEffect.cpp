@@ -24,7 +24,7 @@ bool UAddAttack::Activate()
 	if (!Super::Activate()) 
 		return false;
 
-	GetTarget()->AddStat(ECharacterStatType::ATTACK, GetParam()->Value);
+	GetTarget()->AddStat(ECharacterStatType::ATTACK, GetValue());
 	return true;
 }
 
@@ -32,7 +32,7 @@ void UAddAttack::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubStat(ECharacterStatType::ATTACK, GetParam()->Value * GetStack());
+	GetTarget()->SubStat(ECharacterStatType::ATTACK, GetValue() * GetStack());
 }
 
 bool UAddDefense::Activate()
@@ -40,7 +40,7 @@ bool UAddDefense::Activate()
 	if (!Super::Activate())
 		return false;
 
-	GetTarget()->AddStat(ECharacterStatType::DEFENSE, GetParam()->Value);
+	GetTarget()->AddStat(ECharacterStatType::DEFENSE, GetValue());
 	return true;
 }
 
@@ -48,7 +48,7 @@ void UAddDefense::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubStat(ECharacterStatType::DEFENSE, GetParam()->Value * GetStack());
+	GetTarget()->SubStat(ECharacterStatType::DEFENSE, GetValue() * GetStack());
 }
 
 bool UAddCriticalPercent::Activate()
@@ -56,7 +56,7 @@ bool UAddCriticalPercent::Activate()
 	if (!Super::Activate())
 		return false;
 
-	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, GetParam()->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, GetValue());
 	return true;
 }
 
@@ -64,7 +64,7 @@ void UAddCriticalPercent::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubStat(ECharacterStatType::CRITICAL_PERCENT, GetParam()->Value * GetStack());
+	GetTarget()->SubStat(ECharacterStatType::CRITICAL_PERCENT, GetValue() * GetStack());
 }
 
 bool UAddCriticalDamagePercent::Activate()
@@ -72,7 +72,7 @@ bool UAddCriticalDamagePercent::Activate()
 	if (!Super::Activate())
 		return false;
 
-	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetParam()->Value);
+	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetValue());
 	return true;
 }
 
@@ -80,7 +80,7 @@ void UAddCriticalDamagePercent::Deactivate()
 {
 	if (!IsValid()) return;
 
-	GetTarget()->SubStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetParam()->Value * GetStack());
+	GetTarget()->SubStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetValue() * GetStack());
 }
 
 bool UAddAttackPercent::Activate()
@@ -89,7 +89,7 @@ bool UAddAttackPercent::Activate()
 		return false;
 	
 	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
-	Attack = static_cast<uint32>(Attack * GetParam()->Value * 0.01f);
+	Attack = static_cast<uint32>(Attack * GetValue() * 0.01f);
 	
 	GetTarget()->AddStat(ECharacterStatType::ATTACK, Attack);
 	return true;
@@ -100,7 +100,7 @@ void UAddAttackPercent::Deactivate()
 	if (!IsValid()) return;
 
 	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
-	Attack = static_cast<uint32>(Attack * GetParam()->Value * 0.01f);
+	Attack = static_cast<uint32>(Attack * GetValue() * 0.01f);
 	Attack *= GetStack();
 
 	GetTarget()->SubStat(ECharacterStatType::ATTACK, Attack);

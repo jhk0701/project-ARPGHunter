@@ -18,7 +18,7 @@ bool UPeriodicalEffect::Activate()
 		RepeatTimer,
 		this,
 		&UPeriodicalEffect::RepeatedActivate,
-		GetParam()->RepeatInterval,
+		GetRepeatInterval(),
 		true
 	);
 
@@ -41,30 +41,30 @@ void UPeriodicalEffect::Deactivate()
 void URepeatlyRecoverHealth::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->RecoverResource(ECharacterResourceType::HEALTH, GetParam()->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::HEALTH, GetValue());
 }
 
 void URepeatlyRecoverStamina::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->RecoverResource(ECharacterResourceType::STAMINA, GetParam()->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::STAMINA, GetValue());
 }
 
 void URepeatlyRecoverSkill::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->RecoverResource(ECharacterResourceType::SKILL, GetParam()->Value);
+		GetTarget()->RecoverResource(ECharacterResourceType::SKILL, GetValue());
 }
 
 // 리소스 데미지
 void URepeatlyDamageHealth::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->TakeDamage(GetParam()->Value);
+		GetTarget()->TakeDamage(GetValue());
 }
 
 void URepeatlyDamageStamina::RepeatedActivate()
 {
 	if (IsValid())
-		GetTarget()->TakeStaminaDamage(GetParam()->Value);
+		GetTarget()->TakeStaminaDamage(GetValue());
 }

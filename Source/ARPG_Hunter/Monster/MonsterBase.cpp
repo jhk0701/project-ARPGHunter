@@ -276,9 +276,12 @@ EMonsterType AMonsterBase::GetType() const
 {
 	return Data->Config->Type;
 }
-void AMonsterBase::ApplyEffect(TObjectPtr<UEffectData> _effectData)
+void AMonsterBase::ApplyEffect(TObjectPtr<class UEffectData> _effectData, uint32 _addictiveValue)
 {
-	StatComp->ApplyEffect(_effectData);
+	if (StatComp->IsDead())
+		return;
+
+	StatComp->ApplyEffect(_effectData, _addictiveValue);
 }
 
 TWeakObjectPtr<AActor> AMonsterBase::GetTarget() const

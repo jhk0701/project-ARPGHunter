@@ -49,7 +49,7 @@ void UJustDodgeEffect::OnHitEvent(uint8& _hitBit, uint32& _damage)
 	if (!IsValid())
 		return;
 
-	for (TObjectPtr<UEffectData>& subEffect : GetParam()->EffectsOnEvent)
+	for (TObjectPtr<UEffectData> subEffect : GetEffectOnEvent())
 		GetTarget()->ApplyEffect(subEffect);
 
 	GetTarget()->RemoveEffect(this);

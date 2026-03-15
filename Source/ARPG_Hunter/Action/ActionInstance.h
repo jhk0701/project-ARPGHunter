@@ -34,11 +34,17 @@ public:
 	void SetAction(TObjectPtr<UAction> _action);
 	TObjectPtr<UAction> GetAction() const { return Action; }
 
+	void AddAttackDamagePer(uint16 _value) { AddictiveAttackDamagePer += _value; }
+	void AddStaggerDamage(uint16 _value) { AddictiveStaggerDamage += _value; }
+	void AddReduceStaminaUsage(uint8 _value) { ReduceStaminaUsage += _value; }
+
 	uint16 GetAttackDamagePer(uint8 _opt) const;
 	uint16 GetStaggerDamage(uint8 _opt) const;
-	uint16 GetStaminaUsage() const;
+	uint8 GetStaminaUsage() const;
 
 	void AddEffectValue(UClass* _effectClass, uint32 _value);
+	uint32 GetAddictiveEffectValue(TObjectPtr<UEffectData> _effect);
+
 	void ExtendEventEffect(EActionEvent _eventType, TObjectPtr<UEffectData> _effect);
 
 	bool IsContainEventEffect(EActionEvent _eventType) const { return EventEffect.Contains(_eventType); }

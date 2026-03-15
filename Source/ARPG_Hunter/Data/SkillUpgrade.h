@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Define/InnerTypes.h"
 #include "SkillUpgrade.generated.h"
 
 class UActionInstance;
@@ -38,8 +39,6 @@ public:
 	uint8 TargetIndex;
 	UPROPERTY(EditAnywhere)
 	uint8 Cost{ 1 };
-	UPROPERTY(EditAnywhere)
-	uint8 MaxUpgrade{ 1 };
 
 	virtual void AdjustSkillNode(FAdjustParam& _param) {};
 };
@@ -73,7 +72,10 @@ class ARPG_HUNTER_API USkillNodeExtendEffect : public USkillUpgrade
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	TMap<EActionEvent, FActionEventEffect> ExtendEffects;
 
+	virtual void AdjustSkillNode(FAdjustParam& _param) override;
 };
 
 // 액션의 공격력 등 수정
@@ -82,5 +84,12 @@ class ARPG_HUNTER_API USkillNodeModifySpec : public USkillUpgrade
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	uint16 AddictiveAttackDamagePer{ 10 };
+	UPROPERTY(EditAnywhere)
+	uint16 AddictiveStaggerDamage{ 10 };
+	UPROPERTY(EditAnywhere)
+	uint8 ReduceStaminaUsage{ 1 };
 
+	virtual void AdjustSkillNode(FAdjustParam& _param) override;
 };

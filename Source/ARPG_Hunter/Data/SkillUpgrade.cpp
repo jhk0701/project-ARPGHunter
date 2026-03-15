@@ -10,6 +10,8 @@
 
 void USkillNodeUnlockAction::AdjustSkillNode(FAdjustParam& _param)
 {
+	Super::AdjustSkillNode(_param);
+
 	for (TPair<EAttackType, FActionConnect>& Start : *_param.GraphStart)
 	{
 		if (Start.Value.Index != TargetIndex)
@@ -32,5 +34,30 @@ void USkillNodeUnlockAction::AdjustSkillNode(FAdjustParam& _param)
 
 void USkillNodeModifyEffect::AdjustSkillNode(FAdjustParam& _param)
 {
+	Super::AdjustSkillNode(_param);
+
 	(*_param.ActionArray)[TargetIndex]->AddEffectValue(TargetEffect->GetClass(), AddictiveValue);
+}
+
+void USkillNodeExtendEffect::AdjustSkillNode(FAdjustParam& _param)
+{
+	Super::AdjustSkillNode(_param);
+
+	TObjectPtr<UActionInstance> ActionInst = (*_param.ActionArray)[TargetIndex];
+
+	for (const TPair<EActionEvent, FActionEventEffect>& Pair : ExtendEffects)
+	{
+		for (TObjectPtr<UEffectData> EffectData : Pair.Value.Effects)
+			ActionInst->ExtendEventEffect(Pair.Key, EffectData);
+	}
+}
+
+void USkillNodeModifySpec::AdjustSkillNode(FAdjustParam& _param)
+{
+	Super::AdjustSkillNode(_param);
+
+	TObjectPtr<UActionInstance> ActionInst = (*_param.ActionArray)[TargetIndex];
+	ActionInst->AddAttackDamagePer(AddictiveAttackDamagePer);
+	ActionInst->AddStaggerDamage(AddictiveStaggerDamage);
+	ActionInst->AddReduceStaminaUsage(ReduceStaminaUsage);
 }

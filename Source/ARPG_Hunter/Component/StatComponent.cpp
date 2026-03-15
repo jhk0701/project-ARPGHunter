@@ -189,7 +189,7 @@ void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bI
 	);
 }
 
-void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
+void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData, uint32 _addictiveValue)
 {
 	if(_effectData->bIsDebuff) // 디버프인 경우 확인
 	{
@@ -209,7 +209,7 @@ void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData)
 	{
 		_effectData,
 		&_effectData->Param,
-		0.0f // TODO : 스킬 성장에 따른 효과 증가량 추가할 것
+		_addictiveValue // 스킬 성장에 따른 효과 증가량
 	};
 	EffectInst->Init(this, &Context);
 	EffectInst->Activate();
