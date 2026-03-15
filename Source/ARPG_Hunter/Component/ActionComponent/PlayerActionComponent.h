@@ -6,8 +6,8 @@
 #include "Component/ActionComponent/ActionComponent.h"
 #include "PlayerActionComponent.generated.h"
 
-class UAction;
 class UWeaponConfig;
+class UActionInstance;
 
 enum class EActionProcess : uint8;
 enum class EActionInput : uint8;
@@ -21,18 +21,8 @@ struct FActionConnect
 	GENERATED_BODY()
 public:
 	uint8 Index;
-	bool bIsConnected;
+	bool bIsUnlocked;
 };
-
-USTRUCT()
-struct FAppliedAction 
-{
-	GENERATED_BODY()
-public:
-	TObjectPtr<UAction> Action;
-	// 스킬 반영 수치
-};
-
 
 UCLASS()
 class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
@@ -41,9 +31,11 @@ class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
 
 private:
 	TObjectPtr<UWeaponConfig> CurWeapon;
-	TArray<FAppliedAction> AppliedActions;
-	TMap<EAttackType, FActionConnect> GraphStart;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UActionInstance>> AppliedActions;
 	TArray<TMap<EAttackType, FActionConnect>> AppliedGraph;
+	TMap<EAttackType, FActionConnect> AppliedGraphStart;
 
 	int16 CurAttackActionID{ -1 };
 	EActionProcess CurActionProcess;
@@ -77,14 +69,12 @@ public:
 	void SetActionProcess(EActionProcess _eProcess);
 
 	bool IsValid() const { return CurWeapon != nullptr; }
-	TWeakObjectPtr<UWeaponConfig> GetWeaponConfig() const;
 	bool IsInProgress() const;
 
 	bool PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
 	void PlayHitAction();
 	void PlayDeadAction();
 	void PlayItemUsageAction();
-
 	bool PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
 	void ProcessAttackProgress();
 	void ProcessAttackEnd();

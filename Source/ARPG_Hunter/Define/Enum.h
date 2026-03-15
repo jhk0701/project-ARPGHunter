@@ -78,6 +78,18 @@ enum class EActionInput : uint8
 	HOLD		UMETA(DisplayName = "Hold"),
 };
 
+UENUM(BlueprintType)
+enum class EActionEvent : uint8 
+{
+	ON_START			UMETA(DisplayName = "On Start"),
+	ON_PROGRESS			UMETA(DisplayName = "On Progress"),
+
+	// 적중 시, 공격 주체에게 부여할 효과
+	ON_HIT				UMETA(DisplayName = "On Hit"),	
+	// 적중 시, 적에게 부여할 효과
+	ON_ENEMY_HIT		UMETA(DisplayName = "On Enemy Hit"),
+};
+
 UENUM()
 enum class ECharacterStatType : uint8
 {

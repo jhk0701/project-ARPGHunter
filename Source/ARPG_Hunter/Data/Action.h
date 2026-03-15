@@ -10,6 +10,7 @@ class UEffectData;
 enum class EActionInput : uint8;
 enum class EAttackType : uint8;
 enum class EAttackDetailType : uint8;
+enum class EActionEvent : uint8;
 
 USTRUCT()
 struct FActionOption
@@ -35,9 +36,15 @@ public:
 	float HitSize{1.0f};
 };
 
-/**
- * 
- */
+USTRUCT()
+struct FActionEventEffect
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TArray<TObjectPtr<UEffectData>> Effects;
+};
+
 UCLASS()
 class ARPG_HUNTER_API UAction : public UDataAsset
 {
@@ -67,11 +74,5 @@ public:
 	TObjectPtr<class USubObjectConfig> SubObjectConfig;
 
 	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<TObjectPtr<UEffectData>> EffectOnStart;
-	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<TObjectPtr<UEffectData>> EffectOnProgress;
-	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<TObjectPtr<UEffectData>> EffectOnHit;
-	UPROPERTY(EditAnywhere, Category = "ActionEffect")
-	TArray<TObjectPtr<UEffectData>> EffectOnEnemyHit;
+	TMap<EActionEvent, FActionEventEffect> EventEffect;
 };

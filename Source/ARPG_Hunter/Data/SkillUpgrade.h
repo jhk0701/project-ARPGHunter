@@ -6,7 +6,8 @@
 #include "Engine/DataAsset.h"
 #include "SkillUpgrade.generated.h"
 
-struct FAppliedAction;
+class UActionInstance;
+class UEffectData;
 struct FActionConnect;
 enum class EAttackType : uint8;
 
@@ -14,8 +15,9 @@ struct FAdjustParam
 {
 public:
 	uint8 Index;
-	TArray<FAppliedAction>& ActionArray;
-	TArray<TMap<EAttackType, FActionConnect>>& Graph;
+	TArray<TObjectPtr<UActionInstance>>* ActionArray;
+	TArray<TMap<EAttackType, FActionConnect>>* Graph;
+	TMap<EAttackType, FActionConnect>* GraphStart;
 };
 
 /**
@@ -41,33 +43,42 @@ public:
 	virtual void AdjustSkillNode(FAdjustParam& _param) {};
 };
 
+// 잠겨있는 액션 해금
 UCLASS()
-class ARPG_HUNTER_API USkillNodeOptionalEnabler : public USkillUpgrade
+class ARPG_HUNTER_API USkillNodeUnlockAction : public USkillUpgrade
+{
+	GENERATED_BODY()
+public:
+	virtual void AdjustSkillNode(FAdjustParam& _param) override;
+};
+
+// 액션에 있는 이펙트의 효과값 수정
+UCLASS()
+class ARPG_HUNTER_API USkillNodeModifyEffect : public USkillUpgrade
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UEffectData> TargetEffect;
+	UPROPERTY(EditAnywhere)
+	uint32 AddictiveValue{ 10 };
+
+	virtual void AdjustSkillNode(FAdjustParam& _param) override;
+
+};
+
+// 기존 액션에 추가로 이펙트를 부여
+UCLASS()
+class ARPG_HUNTER_API USkillNodeExtendEffect : public USkillUpgrade
 {
 	GENERATED_BODY()
 public:
 
-
 };
 
+// 액션의 공격력 등 수정
 UCLASS()
-class ARPG_HUNTER_API USkillNodeEffectModifier : public USkillUpgrade
-{
-	GENERATED_BODY()
-public:
-
-};
-
-UCLASS()
-class ARPG_HUNTER_API USkillNodeEffectExtender : public USkillUpgrade
-{
-	GENERATED_BODY()
-public:
-
-};
-
-UCLASS()
-class ARPG_HUNTER_API USkillNodeSpecModifier : public USkillUpgrade
+class ARPG_HUNTER_API USkillNodeModifySpec : public USkillUpgrade
 {
 	GENERATED_BODY()
 public:

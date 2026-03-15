@@ -17,7 +17,7 @@ UActionComponent::UActionComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
+void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
 {
 	IEffectable* Effectable = Cast<IEffectable>(_target);
 	if (Effectable == nullptr)

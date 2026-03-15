@@ -51,13 +51,14 @@ void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _trace
 	if (_onHitAction)
 		_onHitAction(HitResults);
 
-	// 자기 버프 적용
-	ActivateActionEffect(CurAction.Action->EffectOnHit, GetOwner());
+	if (CurAction.Action->EventEffect.Contains(EActionEvent::ON_HIT))
+		ActivateActionEffect(CurAction.Action->EventEffect[EActionEvent::ON_HIT].Effects, GetOwner());
 
 	// 적에게 디버프 적용
 	for (const FHitResult& Result : HitResults)
 	{
-		ActivateActionEffect(CurAction.Action->EffectOnEnemyHit, Result.GetActor());
+		if (CurAction.Action->EventEffect.Contains(EActionEvent::ON_ENEMY_HIT))
+			ActivateActionEffect(CurAction.Action->EventEffect[EActionEvent::ON_ENEMY_HIT].Effects, Result.GetActor());
 
 		// 피격 효과 출력
 		if (CurAction.Action->VFXOnHit)
@@ -86,7 +87,8 @@ float UMonsterActionComponent::PlayAttackAction()
 	AnimInst->Montage_Play(AttackMontage);
 
 	// 공격 시 자기 버프 획득
-	ActivateActionEffect(MonsterAction.Action->EffectOnStart, GetOwner());
+	if (MonsterAction.Action->EventEffect.Contains(EActionEvent::ON_START))
+		ActivateActionEffect(MonsterAction.Action->EventEffect[EActionEvent::ON_START].Effects, GetOwner());
 
 	return MonsterAction.Interval;
 }
