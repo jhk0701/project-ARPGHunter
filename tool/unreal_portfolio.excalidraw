@@ -32434,7 +32434,7 @@
       "id": "VZfz8GlYpi_Kv4Za3nkoJ",
       "type": "rectangle",
       "x": -5612.224267009312,
-      "y": 3346.2199233366828,
+      "y": 3257.9727091160257,
       "width": 196.659552036596,
       "height": 43.23763221956074,
       "angle": 0,
@@ -32452,8 +32452,8 @@
         "type": 3
       },
       "seed": 940313069,
-      "version": 2283,
-      "versionNonce": 1040953709,
+      "version": 2317,
+      "versionNonce": 792581751,
       "isDeleted": false,
       "boundElements": [
         {
@@ -32465,7 +32465,7 @@
           "type": "arrow"
         }
       ],
-      "updated": 1773504016523,
+      "updated": 1773544024179,
       "link": null,
       "locked": false
     },
@@ -32473,7 +32473,7 @@
       "id": "3pFzzz2fyQMEXpx_Xyqws",
       "type": "text",
       "x": -5564.318456445116,
-      "y": 3357.838739446463,
+      "y": 3269.591525225806,
       "width": 100.84793090820312,
       "height": 20,
       "angle": 0,
@@ -32489,11 +32489,11 @@
       "index": "c0Hr",
       "roundness": null,
       "seed": 1596867661,
-      "version": 2435,
-      "versionNonce": 1707932621,
+      "version": 2469,
+      "versionNonce": 71954327,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1773504016523,
+      "updated": 1773544024179,
       "link": null,
       "locked": false,
       "text": "UActionComp",
@@ -32510,9 +32510,9 @@
       "id": "HFUgLKlqcdITAj3UmokJ9",
       "type": "arrow",
       "x": -5513.994490991014,
-      "y": 3340.7199233366828,
+      "y": 3252.4727091160257,
       "width": 174.46580026413812,
-      "height": 130.10892395990777,
+      "height": 41.86170973925073,
       "angle": 0,
       "strokeColor": "#868e96",
       "backgroundColor": "#b2f2bb",
@@ -32526,11 +32526,11 @@
       "index": "c0Hs",
       "roundness": null,
       "seed": 1044435907,
-      "version": 36,
-      "versionNonce": 1874197037,
+      "version": 70,
+      "versionNonce": 1320543415,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1773504016523,
+      "updated": 1773544024179,
       "link": null,
       "locked": false,
       "points": [
@@ -32540,11 +32540,11 @@
         ],
         [
           0,
-          -130.10892395990777
+          -41.86170973925073
         ],
         [
           -174.46580026413812,
-          -130.10892395990777
+          -41.86170973925073
         ]
       ],
       "startBinding": {
@@ -32574,9 +32574,9 @@
       "id": "e2CCFkI2gPIZSA4XAdW48",
       "type": "text",
       "x": -5604.096871943399,
-      "y": 3409.1958823036066,
+      "y": 3320.9486680829496,
       "width": 565.2154541015625,
-      "height": 100,
+      "height": 120,
       "angle": 0,
       "strokeColor": "#868e96",
       "backgroundColor": "#b2f2bb",
@@ -32590,20 +32590,20 @@
       "index": "c0Ht",
       "roundness": null,
       "seed": 771147373,
-      "version": 401,
-      "versionNonce": 1823152803,
+      "version": 643,
+      "versionNonce": 1309824343,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1773504308872,
+      "updated": 1773544069194,
       "link": null,
       "locked": false,
-      "text": "가장 큰 문제는 - 몬스터와 플레이어가 ActionComp를 공통적으로 쓴다는점\nAction에 직접 접근하지 않고 Interface로 ActionComp를 대신할 수 있는 용도가 필요\n\nUAction, UActionInst에 interface를 상속. 필요한 요소를 꺼내쓸 수 있도록 적용\n",
+      "text": "가장 큰 문제는 - 몬스터와 플레이어가 ActionComp를 공통적으로 쓴다는점\nAction에 직접 접근하지 않고 Interface로 ActionComp를 대신할 수 있는 용도가 필요\n\nUAction, UActionInst에 interface를 상속. 필요한 요소를 꺼내쓸 수 있도록 적용(?)\n-> UActionInst가 필요한 배경은 Player 때문\n-> PlayerActionComp에 대해서 특수 처리하면 되지 않나?",
       "fontSize": 16,
       "fontFamily": 6,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "가장 큰 문제는 - 몬스터와 플레이어가 ActionComp를 공통적으로 쓴다는점\nAction에 직접 접근하지 않고 Interface로 ActionComp를 대신할 수 있는 용도가 필요\n\nUAction, UActionInst에 interface를 상속. 필요한 요소를 꺼내쓸 수 있도록 적용\n",
+      "originalText": "가장 큰 문제는 - 몬스터와 플레이어가 ActionComp를 공통적으로 쓴다는점\nAction에 직접 접근하지 않고 Interface로 ActionComp를 대신할 수 있는 용도가 필요\n\nUAction, UActionInst에 interface를 상속. 필요한 요소를 꺼내쓸 수 있도록 적용(?)\n-> UActionInst가 필요한 배경은 Player 때문\n-> PlayerActionComp에 대해서 특수 처리하면 되지 않나?",
       "autoResize": true,
       "lineHeight": 1.25
     },

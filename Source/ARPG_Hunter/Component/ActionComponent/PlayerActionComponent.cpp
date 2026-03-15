@@ -14,6 +14,31 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UA
 
 	// 플레이어 데이터를 기반으로 장비 모션을 적용
 	CurWeapon = _data;
+	
+	const TArray<TObjectPtr<UAction>>& AttackActions = CurWeapon->AttackCombo->AttackAcionArray;
+	AppliedActions.Reserve(AttackActions.Num());
+	for (const TObjectPtr<UAction>& Action : AttackActions)
+	{
+		// 이 액션의 기본 행동 설정
+		FAppliedAction NewElement;
+		NewElement.Action = Action;
+		AppliedActions.Add(NewElement);
+		// TODO : 플레이어가 설정한 스킬 정보 반영
+	}
+
+	const TArray<FActionConnection>& Connections = CurWeapon->AttackCombo->Graph;
+	AppliedGraph.Reserve(Connections.Num());
+	for (const FActionConnection& Connection : Connections)
+	{
+		// 콤보 연결 정보 구성
+		TMap<EAttackType, FActionConnect> Edge;
+		for (const TPair<EAttackType, FConnectInfo>& Info : Connection.Edge)
+			Edge.Add(Info.Key, { Info.Value.Index, !Info.Value.bIsOptional });
+
+		AppliedGraph.Add(Edge);
+		// TODO : 플레이어 스킬 육성에 따라 스킬 해금 여부 확인
+	}
+
 	ResetAction();
 }
 

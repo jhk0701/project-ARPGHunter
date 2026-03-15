@@ -6,6 +6,18 @@
 #include "Engine/DataAsset.h"
 #include "SkillUpgrade.generated.h"
 
+struct FAppliedAction;
+struct FActionConnect;
+enum class EAttackType : uint8;
+
+struct FAdjustParam
+{
+public:
+	uint8 Index;
+	TArray<FAppliedAction>& ActionArray;
+	TArray<TMap<EAttackType, FActionConnect>>& Graph;
+};
+
 /**
  * 
  */
@@ -26,15 +38,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint8 MaxUpgrade{ 1 };
 
-	virtual void AdjustNode() {};
+	virtual void AdjustSkillNode(FAdjustParam& _param) {};
 };
 
 UCLASS()
-class ARPG_HUNTER_API USkillNodeEnabler : public USkillUpgrade
+class ARPG_HUNTER_API USkillNodeOptionalEnabler : public USkillUpgrade
 {
 	GENERATED_BODY()
 public:
-	
+
 };
 
 UCLASS()

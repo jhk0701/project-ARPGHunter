@@ -23,10 +23,11 @@ public:
 	TObjectPtr<UAnimMontage> ItemUsageMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	TObjectPtr<class UAction> DodgeAction;
-	UPROPERTY(EditAnywhere, Category = "Animation|Attack")
+	
+	UPROPERTY(EditAnywhere, Category = "Attack Combo")
 	TObjectPtr<class UActionComboData> AttackCombo;
-
-	// Skill
+	UPROPERTY(EditAnywhere, Category = "Skill Tree")
+	TObjectPtr<class USkillTreeData> SkillTree;
 };
 
 UCLASS()

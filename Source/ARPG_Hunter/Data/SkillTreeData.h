@@ -55,6 +55,9 @@ class ARPG_HUNTER_API USkillTreeData : public UDataAsset
 {
 	GENERATED_BODY()
 public:
+	/// Key : ActionComboData 중, AttackAcionArray의 인덱스
 	UPROPERTY(EditAnywhere)
 	TMap<uint8, FSkillTree> SkillTrees;
+
+
 };
