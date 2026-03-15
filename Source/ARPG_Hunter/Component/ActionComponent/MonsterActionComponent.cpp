@@ -9,28 +9,85 @@
 #include "Data/MonsterConfig.h"
 #include "Interface/Hitable.h"
 #include "Monster/BossMonster.h"
+#include "SubObject/SubObject.h"
 
-void UMonsterActionComponent::Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
+void UMonsterActionComponent::Init(FTableRowBase* _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
-	Super::Init(_ownerAnimInstance, _firePointComp);
+	SetAnimInstance(_ownerAnimInstance);
+	SetFirePointComp(_firePointComp);
 
 	Data = static_cast<FMonsterData*>(_data);
 }
 
+void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
+{
+	Super::ProcessAttack(_opt, _traceChannel, _onHitAction, _target);
+
+	const FMonsterAction& CurAction = GetCurrentAction();
+	EAttackDetailType DetailType = CurAction.Action->ArrOption[_opt].Detail;
+
+	if (DetailType > EAttackDetailType::MELEE_END)
+	{
+		// 원거리 방식 처리
+		FSubObjectDeployParam DeployParam;
+		DeployParam.DetailType = DetailType;
+		DeployParam.SubObjectClass = CurAction.Action->SubObjectClass;
+		DeployParam.SubObjectConfig = CurAction.Action->SubObjectConfig;
+		DeploySubObject(DeployParam, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
+		return;
+	}
+
+	// 근거리 방식 처리
+	TArray<FHitResult> HitResults;
+	FTraceParam TraceParam;
+	TraceParam.DetailType = DetailType;
+	TraceParam.Size = CurAction.Action->ArrOption[_opt].Size;
+	TraceParam.Range = CurAction.Action->ArrOption[_opt].Range;
+
+	bool bIsHit = Trace(TraceParam, _traceChannel, HitResults);
+	if (bIsHit == false)
+		return;
+
+	// 공격 히트 시, 효과 발동
+	if (_onHitAction)
+		_onHitAction(HitResults);
+
+	// 자기 버프 적용
+	ActivateActionEffect(CurAction.Action->EffectOnHit, GetOwner());
+
+	// 적에게 디버프 적용
+	for (const FHitResult& Result : HitResults)
+	{
+		ActivateActionEffect(CurAction.Action->EffectOnEnemyHit, Result.GetActor());
+
+		// 피격 효과 출력
+		if (CurAction.Action->VFXOnHit)
+		{
+			SpawnHitVFX(
+				CurAction.Action->VFXOnHit,
+				Result.ImpactPoint,
+				CurAction.Action->ArrOption[_opt].HitRoll,
+				CurAction.Action->ArrOption[_opt].HitSize
+			);
+		}
+	}
+}
+
 float UMonsterActionComponent::PlayAttackAction()
 {
-	const FMonsterAction& MonsterAction = Data->Config->AttackActions[GetCurAttackIdx()];
-	SetCurrentAction(MonsterAction.Action);
+	const FMonsterAction& MonsterAction = GetCurrentAction();
 
 	TObjectPtr<UAnimMontage> AttackMontage = MonsterAction.Action->Montage;
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	if (AttackMontage == nullptr ||
-		AnimInst->Montage_IsPlaying(CurAttackMontage))
+		AnimInst->Montage_IsPlaying(MonsterAction.Action->Montage))
 		return -1.0f;
 
 	AnimInst->Montage_Play(AttackMontage);
-	CurAttackMontage = AttackMontage;
+
+	// 공격 시 자기 버프 획득
+	ActivateActionEffect(MonsterAction.Action->EffectOnStart, GetOwner());
 
 	return MonsterAction.Interval;
 }
@@ -40,7 +97,7 @@ void UMonsterActionComponent::PlayHitAction(EMonsterState _state)
 	if (nullptr == Data->Config->HitMontage)
 		return;
 
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 	
 	AnimInst->Montage_Play(Data->Config->HitMontage);
 	if (_state == EMonsterState::DEAD)
@@ -49,13 +106,27 @@ void UMonsterActionComponent::PlayHitAction(EMonsterState _state)
 		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), Data->Config->HitMontage);
 }
 
+const FMonsterAction& UMonsterActionComponent::GetCurrentAction() const
+{
+	return Data->Config->AttackActions[GetCurAttackIdx()];
+}
+
+TObjectPtr<UAnimMontage> UMonsterActionComponent::GetCurrentMontage() const
+{
+	return GetCurrentAction().Action->Montage;
+}
+
+uint16 UMonsterActionComponent::GetAttackActionDamagePer(uint8 _opt)
+{
+	return GetCurrentAction().Action->ArrOption[_opt].AttackDamagePer;
+}
 
 void UBossActionComponent::PlayHitAction(EMonsterState _state)
 {
 	if (nullptr == GetData()->Config->HitMontage)
 		return;
 
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	AnimInst->Montage_Play(GetData()->Config->HitMontage);
 	if (_state == EMonsterState::DEAD || _state == EMonsterState::GROGGY)
@@ -76,10 +147,10 @@ bool UBossActionComponent::StartGimic(EGimicType _type, uint16 _gimicValue)
 
 void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
 {
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
-	TObjectPtr<UAnimMontage> Montage = GetCurrentMontage();
-
-	if (nullptr == AnimInst || nullptr == Montage)
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	const FMonsterAction& MonsterAction = GetData()->Config->AttackActions[GetCurAttackIdx()];
+	
+	if (nullptr == AnimInst || nullptr == MonsterAction.Action->Montage)
 		return;
 
 	bool bInterrupted = false;
@@ -95,7 +166,7 @@ void UBossActionComponent::InterruptGimic(const FHitInfo& _hitInfo)
 
 	if (bInterrupted)
 	{
-		GetAnimInstance()->Montage_JumpToSection(EnumToName(EGimicType::END), GetCurrentMontage());
+		GetAnimInstance()->Montage_JumpToSection(EnumToName(EGimicType::END), MonsterAction.Action->Montage);
 		EndGimic();
 	}
 }

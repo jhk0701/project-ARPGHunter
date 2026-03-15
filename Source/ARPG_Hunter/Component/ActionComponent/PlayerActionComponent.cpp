@@ -7,10 +7,12 @@
 #include "Data/WeaponConfig.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
+#include "SubObject/SubObject.h"
 
-void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
+void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
-	Super::Init(_ownerAnimInstance, _firePointComp);
+	SetAnimInstance(_ownerAnimInstance);
+	SetFirePointComp(_firePointComp);
 
 	// 플레이어 데이터를 기반으로 장비 모션을 적용
 	CurWeapon = _data;
@@ -26,6 +28,11 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UA
 		// TODO : 플레이어가 설정한 스킬 정보 반영
 	}
 
+	// 시작점 설정
+	for (const TPair<EAttackType, FConnectInfo>& Info : CurWeapon->AttackCombo->Start.Edge)
+		GraphStart.Add(Info.Key, { Info.Value.Index, !Info.Value.bIsOptional });
+
+	// 그래프 연결 
 	const TArray<FActionConnection>& Connections = CurWeapon->AttackCombo->Graph;
 	AppliedGraph.Reserve(Connections.Num());
 	for (const FActionConnection& Connection : Connections)
@@ -53,16 +60,70 @@ void UPlayerActionComponent::Clear()
 		TimerManager.ClearTimer(ActionProgressTimer);
 }
 
+void UPlayerActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
+{
+	Super::ProcessAttack(_opt, _traceChannel, _onHitAction, _target);
+
+	FAppliedAction& CurAction = AppliedActions[CurAttackActionID];
+	EAttackDetailType DetailType = CurAction.Action->ArrOption[_opt].Detail;
+
+	if (DetailType > EAttackDetailType::MELEE_END)
+	{
+		// 원거리 방식 처리
+		FSubObjectDeployParam DeployParam;
+		DeployParam.DetailType = DetailType;
+		DeployParam.SubObjectClass = CurAction.Action->SubObjectClass;
+		DeployParam.SubObjectConfig = CurAction.Action->SubObjectConfig;
+		DeploySubObject(DeployParam, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
+		return;
+	}
+
+	// 근거리 방식 처리
+	TArray<FHitResult> HitResults;
+	FTraceParam TraceParam;
+	TraceParam.DetailType = DetailType;
+	TraceParam.Size = CurAction.Action->ArrOption[_opt].Size;
+	TraceParam.Range = CurAction.Action->ArrOption[_opt].Range;
+
+	bool bIsHit = Trace(TraceParam, _traceChannel, HitResults);
+	if (bIsHit == false)
+		return;
+
+	// 공격 히트 시, 효과 발동
+	if (_onHitAction)
+		_onHitAction(HitResults);
+
+	// 자기 버프 적용
+	ActivateActionEffect(CurAction.Action->EffectOnHit, GetOwner());
+
+	// 적에게 디버프 적용
+	for (const FHitResult& Result : HitResults)
+	{
+		ActivateActionEffect(CurAction.Action->EffectOnEnemyHit, Result.GetActor());
+
+		// 피격 효과 출력
+		if (CurAction.Action->VFXOnHit)
+		{
+			SpawnHitVFX(
+				CurAction.Action->VFXOnHit,
+				Result.ImpactPoint,
+				CurAction.Action->ArrOption[_opt].HitRoll,
+				CurAction.Action->ArrOption[_opt].HitSize
+			);
+		}
+	}
+}
+
 void UPlayerActionComponent::ResetAction()
 {
 	if (CurActionInput == EActionInput::HOLD)
 		ClearActionProgressTimer();
 
-	CurAttackActionID = 0;
+	CurAttackActionID = -1;
 	CurActionProcess = EActionProcess::NONE;
 	CurActionInput = EActionInput::NORMAL;
 	bIsInAttackCombo = false;
-	SetCurrentAction(nullptr);
+	BroadcastActionUpdated(); // SetCurrentAction(nullptr);
 }
 
 void UPlayerActionComponent::SetActionProcess(EActionProcess _eProcess)
@@ -86,7 +147,7 @@ void UPlayerActionComponent::SetActionProcess(EActionProcess _eProcess)
 bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
 {
 	TObjectPtr<UAction> DodgeAction = CurWeapon->DodgeAction;
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	if (IsInProgress() || DodgeAction->Montage == nullptr ||
 		AnimInst->Montage_IsPlaying(DodgeAction->Montage))
@@ -114,7 +175,9 @@ void UPlayerActionComponent::PlayHitAction()
 	if (CurWeapon->HitMontage == nullptr)
 		return;
 
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (AnimInst.IsValid() == false) return;
+
 	AnimInst->Montage_Play(CurWeapon->HitMontage);
 	AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), CurWeapon->HitMontage);
 
@@ -127,14 +190,18 @@ void UPlayerActionComponent::PlayDeadAction()
 	if (CurWeapon->HitMontage == nullptr)
 		return;
 
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (AnimInst.IsValid() == false) return;
+
 	AnimInst->Montage_Play(CurWeapon->HitMontage);
 	AnimInst->Montage_JumpToSection(FName(TEXT("Dead")), CurWeapon->HitMontage);
 }
 
 void UPlayerActionComponent::PlayItemUsageAction()
 {
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (AnimInst.IsValid() == false) return;
+
 	if (CurWeapon->ItemUsageMontage == nullptr || 
 		AnimInst->Montage_IsPlaying(CurWeapon->ItemUsageMontage))
 		return;
@@ -150,48 +217,46 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 	if (IsValidAttackInput(_type) == false)
 		return false;
 
-	TObjectPtr<UActionComboData> Combo = CurWeapon->AttackCombo;
-	uint8 id = !bIsInAttackCombo ?
-		Combo->Start.Edge[_type].Index :
-		Combo->Graph[CurAttackActionID].Edge[_type].Index;
+	uint8 id = !bIsInAttackCombo ? 
+		GraphStart[_type].Index : 
+		AppliedGraph[CurAttackActionID][_type].Index;
 
-	UAction* Action = CurWeapon->AttackCombo->AttackAcionArray[id];
+	FAppliedAction& AppliedAction = AppliedActions[id];
 
-	if (_predicate &&
-		_predicate(Action->StaminaUsage) == false)
+	if (_predicate && _predicate(AppliedAction.Action->StaminaUsage) == false)
 		return false;
 
 	CurAttackActionID = id;
 	CurActionProcess = EActionProcess::START;
-	CurActionInput = Action->InputType;
+	CurActionInput = AppliedAction.Action->InputType;
 	bIsInAttackCombo = true;
-	SetCurrentAction(Action);
+	BroadcastActionUpdated(); // SetCurrentAction(Action);
 
 	if (CurActionInput == EActionInput::HOLD)
 		CurActionPredicate = _predicate;
 
-	GetAnimInstance()->Montage_Play(Action->Montage);
+	GetAnimInstance()->Montage_Play(AppliedAction.Action->Montage);
 	
 	ClearActionResetTimer(); // 이전 콤보에 대한 리셋 타이머 클리어
 
 	// 액션 시작 시, 효과 발동
-	ActivateActionEffect(Action->EffectOnStart, GetOwner());
+	ActivateActionEffect(AppliedAction.Action->EffectOnStart, GetOwner());
 	return true;
 }
 
 void UPlayerActionComponent::ProcessAttackProgress()
 {
-	UAction* Action = CurWeapon->AttackCombo->AttackAcionArray[CurAttackActionID];
+	FAppliedAction& AppliedAction = AppliedActions[CurAttackActionID];
 
 	// 공격 액션 지속 중, 스태미너 소모
 	// 스태미너 부족 시, 바로 Complete로 진행
-	if (CurActionPredicate(Action->StaminaUsage) == false)
+	if (CurActionPredicate(AppliedAction.Action->StaminaUsage) == false)
 	{
 		ProcessAttackEnd();
 		return;
 	}
 
-	ActivateActionEffect(Action->EffectOnProgress, GetOwner());
+	ActivateActionEffect(AppliedAction.Action->EffectOnProgress, GetOwner());
 }
 
 void UPlayerActionComponent::ProcessAttackEnd()
@@ -218,20 +283,13 @@ void UPlayerActionComponent::ProcessAttackEnd()
 	ClearActionProgressTimer();
 }
 
-UAnimMontage* UPlayerActionComponent::GetDodgeMontage() const
-{
-	return CurWeapon->DodgeAction->Montage;
-}
-
-UAnimMontage* UPlayerActionComponent::GetHitMontage() const
-{
-	return CurWeapon->HitMontage;
-}
 
 // 현재 받은 공격 입력이 유효한 입력인지 확인
 bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 {
-	TObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (AnimInst.IsValid() == false) 
+		return false;
 
 	// 다음 공격이 가능한 상태인지 확인
 	// 스매시 공격 중 일반 공격으로 전환 불가
@@ -242,10 +300,10 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 		return false;
 
 	if (bIsInAttackCombo == false) // 첫 공격인 경우
-		return CurWeapon->AttackCombo->Start.Edge.Find(_type) != nullptr;
+		return GraphStart.Find(_type) != nullptr;
 
 	// 마지막 콤보였는지 확인
-	return CurWeapon->AttackCombo->Graph[CurAttackActionID].Edge.Find(_type) != nullptr;
+	return AppliedGraph[CurAttackActionID].Find(_type) != nullptr;
 }
 
 
@@ -274,16 +332,32 @@ void UPlayerActionComponent::ClearActionProgressTimer()
 		TimerManager.ClearTimer(ActionProgressTimer);
 }
 
-void UPlayerActionComponent::SetCurrentAction(TObjectPtr<UAction> _action)
+TObjectPtr<UAnimMontage> UPlayerActionComponent::GetCurrentMontage()
 {
-	Super::SetCurrentAction(_action);
+	if (CurAttackActionID < 0)
+		return nullptr;
 
-	OnActionUpdated.ExecuteIfBound(_action == nullptr, CurAttackActionID, CurWeapon->AttackCombo);
+	return AppliedActions[CurAttackActionID].Action->Montage;
+}
+
+void UPlayerActionComponent::BroadcastActionUpdated()
+{
+	OnActionUpdated.ExecuteIfBound(CurAttackActionID == -1, CurAttackActionID, CurWeapon->AttackCombo);
 }
 
 TWeakObjectPtr<UWeaponConfig> UPlayerActionComponent::GetWeaponConfig() const
 { 
 	return CurWeapon; 
+}
+
+TObjectPtr<UAnimMontage> UPlayerActionComponent::GetDodgeMontage() const
+{
+	return CurWeapon->DodgeAction->Montage;
+}
+
+TObjectPtr<UAnimMontage> UPlayerActionComponent::GetHitMontage() const
+{
+	return CurWeapon->HitMontage;
 }
 
 bool UPlayerActionComponent::IsInProgress() const
@@ -293,20 +367,20 @@ bool UPlayerActionComponent::IsInProgress() const
 
 uint16 UPlayerActionComponent::GetAttackActionDamagePer(uint8 _opt)
 {
-	return GetCurrentAction()->ArrOption[_opt].AttackDamagePer;
+	return AppliedActions[CurAttackActionID].Action->ArrOption[_opt].AttackDamagePer;
 }
 
 uint16 UPlayerActionComponent::GetAttackActionStaggerDamage(uint8 _opt)
 {	
-	return GetCurrentAction()->ArrOption[_opt].StaggerDamage;
+	return AppliedActions[CurAttackActionID].Action->ArrOption[_opt].StaggerDamage;
 }
 
 float UPlayerActionComponent::GetAttackActionKnockBack(uint8 _opt)
 {
-	return GetCurrentAction()->ArrOption[_opt].KnockBackStr;
+	return AppliedActions[CurAttackActionID].Action->ArrOption[_opt].KnockBackStr;
 }
 
 EAttackType UPlayerActionComponent::GetAttackActionType()
 {
-	return GetCurrentAction()->Type;
+	return AppliedActions[CurAttackActionID].Action->Type;
 }

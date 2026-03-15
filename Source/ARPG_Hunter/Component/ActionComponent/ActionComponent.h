@@ -5,50 +5,61 @@
 #include "Components/ActorComponent.h"
 #include "ActionComponent.generated.h"
 
-class UAction;
+enum class EAttackDetailType : uint8;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+struct FTraceParam 
+{
+	EAttackDetailType DetailType;
+	float Range;
+	FVector Size;
+};
+
+struct FSubObjectDeployParam 
+{
+	EAttackDetailType DetailType;
+	UClass* SubObjectClass;
+	TObjectPtr<class USubObjectConfig> SubObjectConfig;
+};
+
+
+UCLASS(Abstract, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_HUNTER_API UActionComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
 public:
 	UActionComponent();
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	bool bShowTrace{false};
-	
-	TObjectPtr<UAnimInstance> OwnerAnimInstance{ nullptr };
-	TObjectPtr<UAction> CurrentAction{ nullptr };
 
-	UPROPERTY(VisibleAnywhere);
-	TObjectPtr<USkeletalMeshComponent> FirePointComp;
-	UPROPERTY(EditAnywhere);
+	UPROPERTY(VisibleAnywhere)
+	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance{ nullptr };
+	UPROPERTY(VisibleAnywhere)
+	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp{ nullptr };
+	UPROPERTY(EditAnywhere)
 	FName FirePointSocketName{TEXT("socket_firePoint")};
 	
 protected:
+	// bool Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
+	// void Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
+	bool Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
+	void DeploySubObject(const FSubObjectDeployParam& _param, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
 	void ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target);
-	virtual void SetCurrentAction(TObjectPtr<UAction> _action) { CurrentAction = _action; }
-
-	TObjectPtr<UAnimMontage> GetCurrentMontage();
-	TObjectPtr<UAnimInstance> GetAnimInstance() { return OwnerAnimInstance; }
-
-	bool Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
-	void Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
+	void SpawnHitVFX(class UNiagaraSystem* _vfx, const FVector& _location, float _roll, float _size);
+	
+	void SetAnimInstance(TWeakObjectPtr<UAnimInstance> _instance) { OwnerAnimInstance = _instance; }
+	void SetFirePointComp(TWeakObjectPtr<USkeletalMeshComponent> _comp) { FirePointComp = _comp; }
+	TWeakObjectPtr<UAnimInstance> GetAnimInstance() { return OwnerAnimInstance; }
+	TWeakObjectPtr<USkeletalMeshComponent> GetFirePointComp() { return FirePointComp; }
 
 public:	
-	void Init(TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
-	virtual void Clear() {};
-
 	// 실질적인 공격 수행
-	void ProcessAttack(
-		uint8 _opt, 
-		ECollisionChannel _traceChannel, 
+	virtual void ProcessAttack(
+		uint8 _opt,
+		ECollisionChannel _traceChannel,
 		TFunction<void(TArray<FHitResult>&)> _onHitAction,
 		TWeakObjectPtr<AActor> _target = nullptr
-	);
-
-	TObjectPtr<UAction> GetCurrentAction() { return CurrentAction; }
-	
+	) {};
+	virtual void Clear() {};
 };

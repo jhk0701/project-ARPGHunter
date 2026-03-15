@@ -15,7 +15,6 @@
 
 #include "Data/MonsterData.h"
 #include "Data/MonsterConfig.h"
-#include "Data/Action.h"
 #include "Data/EffectData.h"
 
 #include "Define/Debug.h"
@@ -201,13 +200,7 @@ float AMonsterBase::Attack(EMonsterAttackType _type)
 	// 공격
 	float Interval = ActionComp->PlayAttackAction();
 	if (Interval > 0)
-	{
 		SetMovable(false);
-
-		// 공격 시 자기 버프 획득
-		for (const TObjectPtr<UEffectData>& Effect : ActionComp->GetCurrentAction()->EffectOnStart)
-			StatComp->ApplyEffect(Effect);
-	}
 
 	return Interval;
 }
@@ -225,11 +218,9 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 			if (WeakThis.IsValid() == false)
 				return;
 
-			TObjectPtr<UAction> CurAction = WeakThis->ActionComp->GetCurrentAction();
-
 			uint16 Damage = ACombatGameMode::CalculateAttack(
 				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
-				CurAction->ArrOption[_opt].AttackDamagePer);
+				WeakThis->ActionComp->GetAttackActionDamagePer(_opt));
 
 			for (FHitResult& hitResult : _hitResult)
 			{

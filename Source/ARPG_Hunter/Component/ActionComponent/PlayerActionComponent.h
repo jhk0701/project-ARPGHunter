@@ -42,10 +42,11 @@ class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
 private:
 	TObjectPtr<UWeaponConfig> CurWeapon;
 	TArray<FAppliedAction> AppliedActions;
+	TMap<EAttackType, FActionConnect> GraphStart;
 	TArray<TMap<EAttackType, FActionConnect>> AppliedGraph;
 
 	bool bIsInAttackCombo{ false };
-	uint8 CurAttackActionID{ 0 };
+	int16 CurAttackActionID{ -1 };
 	EActionProcess CurActionProcess;
 	EActionInput CurActionInput;
 	TFunction<bool(float)> CurActionPredicate{ nullptr };
@@ -58,20 +59,19 @@ private:
 	float ActionResetSecond{ 1.5f };
 	FTimerHandle ActionResetTimer;
 
+	bool IsValidAttackInput(EAttackType _type);
 	void SetActionResetTimer(float _second);
 	void ClearActionResetTimer();
-	bool IsValidAttackInput(EAttackType _type);
-
 	void ClearActionProgressTimer();
-
-protected:
-	virtual void SetCurrentAction(TObjectPtr<UAction> _action) override;
+	void BroadcastActionUpdated();
+	TObjectPtr<UAnimMontage> GetCurrentMontage();
 
 public:
 	FOnActionUpdated OnActionUpdated;
 
-	void Init(TObjectPtr<UWeaponConfig> _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
-	void Clear() override;
+	void Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp);
+	virtual void Clear() override;
+	virtual void ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr) override;
 
 	void ResetAction();
 	void SetActionProcess(EActionProcess _eProcess);
@@ -89,8 +89,8 @@ public:
 	void ProcessAttackProgress();
 	void ProcessAttackEnd();
 
-	UAnimMontage* GetDodgeMontage() const;
-	UAnimMontage* GetHitMontage() const;
+	TObjectPtr<UAnimMontage> GetDodgeMontage() const;
+	TObjectPtr<UAnimMontage> GetHitMontage() const;
 	uint16 GetAttackActionDamagePer(uint8 _opt);
 	uint16 GetAttackActionStaggerDamage(uint8 _opt);
 	float GetAttackActionKnockBack(uint8 _opt);

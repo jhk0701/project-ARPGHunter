@@ -5,70 +5,55 @@
 #include "NiagaraComponent.h"
 
 #include "Define/Enum.h"
-#include "Interface/Effectable.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "SubObject/SubObject.h"
 #include "Data/Action.h"
-#include "Data/EffectData.h"
 
+#include "Interface/Effectable.h"
+#include "Data/EffectData.h"
 
 UActionComponent::UActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UActionComponent::Init(TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp)
-{
-	OwnerAnimInstance = _ownerAnimInstance;
-	FirePointComp = _firePointComp;
-	CurrentAction = nullptr;
-}
-
-void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target /*= nullptr*/)
-{
-	if (nullptr == CurrentAction || CurrentAction->ArrOption.Num() <= _opt)
-		return;
-
-	if (CurrentAction->ArrOption[_opt].Detail > EAttackDetailType::MELEE_END)
-	{
-		// 원거리 방식 처리
-		Deploy(_opt, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
-		return;
-	}
-
-	// 근거리 방식 처리
-	TArray<FHitResult> HitResults;
-	if (Trace(_opt, _traceChannel, HitResults) == false)
-		return;
-
-	// 공격 히트 시, 효과 발동
-	if (_onHitAction)
-		_onHitAction(HitResults);
-
-	// 자기 버프 적용
-	ActivateActionEffect(CurrentAction->EffectOnHit, GetOwner());
-
-	// 적에게 디버프 적용
-	for (const FHitResult& Result : HitResults)
-	{
-		ActivateActionEffect(CurrentAction->EffectOnEnemyHit, Result.GetActor());
-
-		// 피격 효과 출력
-		if (CurrentAction->VFXOnHit)
-		{
-			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-				GetWorld(),
-				CurrentAction->VFXOnHit,
-				Result.ImpactPoint,
-				FRotator::ZeroRotator, FVector::OneVector,
-				true, true,
-				ENCPoolMethod::AutoRelease
-			);
-			NiagaraComp->SetVariableFloat(FName(TEXT("User.HitRoll")), CurrentAction->ArrOption[_opt].HitRoll);
-			NiagaraComp->SetVariableFloat(FName(TEXT("User.HitSize")), CurrentAction->ArrOption[_opt].HitSize);
-		}
-	}
-}
+//void UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target /*= nullptr*/)
+//{
+//	/*if (nullptr == CurrentAction || CurrentAction->ArrOption.Num() <= _opt)
+//		return;*/
+//
+//	EAttackDetailType DetailType = CurrentAction->ArrOption[_opt].Detail;// GetDetailType(); //
+//
+//	if (DetailType > EAttackDetailType::MELEE_END)
+//	{
+//		// 원거리 방식 처리
+//		Deploy(_opt, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
+//		return;
+//	}
+//
+//	// 근거리 방식 처리
+//	TArray<FHitResult> HitResults;
+//	if (Trace(_opt, _traceChannel, HitResults) == false)
+//		return;
+//
+//	// 공격 히트 시, 효과 발동
+//	if (_onHitAction)
+//		_onHitAction(HitResults);
+//
+//	// 자기 버프 적용
+//	// GetActionEffectOnHit(); // 
+//	ActivateActionEffect(CurrentAction->EffectOnHit, GetOwner());
+//
+//	// 적에게 디버프 적용
+//	for (const FHitResult& Result : HitResults)
+//	{
+//		// GetActionEffectOnEnemyHit(); // 
+//		ActivateActionEffect(CurrentAction->EffectOnEnemyHit, Result.GetActor());
+//
+//		// 피격 효과 출력
+//		 // CurrentAction->VFXOnHit
+//	}
+//}
 
 void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
 {
@@ -80,32 +65,36 @@ void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<class UEffec
 		Effectable->ApplyEffect(effectData);
 }
 
-TObjectPtr<UAnimMontage> UActionComponent::GetCurrentMontage()
+void UActionComponent::SpawnHitVFX(UNiagaraSystem* _vfx, const FVector& _location, float _roll, float _size)
 {
-	if (CurrentAction)
-		return CurrentAction->Montage;
-
-	return nullptr;
+	UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		_vfx,
+		_location, FRotator::ZeroRotator, FVector::OneVector,
+		true, true,
+		ENCPoolMethod::AutoRelease
+	);
+	NiagaraComp->SetVariableFloat(FName(TEXT("User.HitRoll")), _roll);
+	NiagaraComp->SetVariableFloat(FName(TEXT("User.HitSize")), _size);
 }
 
-bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults)
+bool UActionComponent::Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults)
 {
-	const FActionOption& Option = CurrentAction->ArrOption[_opt];
 	bool bIsHit = false;
 
 	FVector Fwd = GetOwner()->GetActorForwardVector();
 	FVector Start = GetOwner()->GetActorLocation() + Fwd * 10.0f;
-	FVector End = Start + Fwd * Option.Range;
+	FVector End = Start + Fwd * _param.Range;
 
 	EDrawDebugTrace::Type DrawDebug = bShowTrace ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None;
 
-	switch (Option.Detail)
+	switch (_param.DetailType)
 	{
 	case EAttackDetailType::MELEE_FRONT:
 		bIsHit = UKismetSystemLibrary::BoxTraceMulti(
-			GetWorld(), 
+			GetWorld(),
 			Start, End,
-			Option.Size,
+			_param.Size,
 			Fwd.Rotation(),
 			UEngineTypes::ConvertToTraceType(_traceChannel),
 			false, { GetOwner() },
@@ -118,7 +107,7 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 		bIsHit = UKismetSystemLibrary::SphereTraceMulti(
 			GetWorld(),
 			Start, Start,
-			Option.Range,
+			_param.Range,
 			UEngineTypes::ConvertToTraceType(_traceChannel),
 			false, { GetOwner() },
 			DrawDebug,
@@ -131,10 +120,15 @@ bool UActionComponent::Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray
 	return bIsHit;
 }
 
-void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target /*= nullptr*/)
+void UActionComponent::DeploySubObject(
+	const FSubObjectDeployParam& _param, 
+	ECollisionChannel _traceChannel, 
+	TFunction<void(TArray<FHitResult>&)> _onHitAction, 
+	TWeakObjectPtr<AActor> _target)
 {
+
 	// 서브 오브젝트에게 공격 동작 위임
-	UClass* SubObjectClass = CurrentAction->SubObjectClass;
+	UClass* SubObjectClass = _param.SubObjectClass;
 	if (nullptr == SubObjectClass)
 		return;
 
@@ -142,24 +136,24 @@ void UActionComponent::Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunc
 	UObjectPoolManager* ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
 	ASubObject* SubObj = Cast<ASubObject>(ObjectPool->Get(SubObjectClass));
 
-	SubObj->Init(CurrentAction->SubObjectConfig, MoveTemp(_onHitAction));
-	
+	SubObj->Init(_param.SubObjectConfig, MoveTemp(_onHitAction));
+
 	FVector FireStart;
-	if (FirePointComp)
+	if (FirePointComp.IsValid())
 		FireStart = FirePointComp->GetSocketLocation(FirePointSocketName);
 	else
 		FireStart = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 100.f;
 
 	FVector FireDir;
-	switch (CurrentAction->ArrOption[_opt].Detail)
+	switch (_param.DetailType)
 	{
 	case EAttackDetailType::RANGED_DIRECTIONAL:
 		if (_target.IsValid())
 		{
 			FireDir = _target->GetActorLocation() - FireStart;
 			FireDir.Normalize();
-		
-			if(FVector::DotProduct(FireDir, GetOwner()->GetActorForwardVector()) < 0.75f)
+
+			if (FVector::DotProduct(FireDir, GetOwner()->GetActorForwardVector()) < 0.75f)
 				FireDir = GetOwner()->GetActorForwardVector();
 		}
 		else

@@ -7,6 +7,7 @@
 #include "MonsterActionComponent.generated.h"
 
 struct FMonsterData;
+struct FMonsterAction;
 struct FHitInfo;
 
 enum class EGimicType : uint8;
@@ -25,24 +26,29 @@ class ARPG_HUNTER_API UMonsterActionComponent : public UActionComponent
 
 private:
 	FMonsterData* Data;
-
 	uint8 CurAttackIdx{ 0 };
-	TObjectPtr<UAnimMontage> CurAttackMontage{ nullptr };
 
 protected:
 	FMonsterData* GetData() const { return Data; }
 
 public:
-	virtual void Init(FTableRowBase* _data, TObjectPtr<UAnimInstance> _ownerAnimInstance, TObjectPtr<USkeletalMeshComponent> _firePointComp);
-	
+	virtual void Init(FTableRowBase* _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp);
+	virtual void ProcessAttack(
+		uint8 _opt,
+		ECollisionChannel _traceChannel,
+		TFunction<void(TArray<FHitResult>&)> _onHitAction,
+		TWeakObjectPtr<AActor> _target = nullptr
+	) override;
+
 	float PlayAttackAction();
 	virtual void PlayHitAction(EMonsterState _state);
-
-	TObjectPtr<UAnimMontage> GetCurrentMontage() const { return CurAttackMontage; }
-
+	
 	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
 	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
-	
+
+	const FMonsterAction& GetCurrentAction() const;
+	TObjectPtr<UAnimMontage> GetCurrentMontage() const;
+	uint16 GetAttackActionDamagePer(uint8 _opt);
 };
 
 
