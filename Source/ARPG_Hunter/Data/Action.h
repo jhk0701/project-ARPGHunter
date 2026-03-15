@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Define/InnerTypes.h"
 #include "Action.generated.h"
 
 class UEffectData;
@@ -36,14 +37,6 @@ public:
 	float HitSize{1.0f};
 };
 
-USTRUCT()
-struct FActionEventEffect
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	TArray<TObjectPtr<UEffectData>> Effects;
-};
 
 UCLASS()
 class ARPG_HUNTER_API UAction : public UDataAsset

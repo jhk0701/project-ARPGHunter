@@ -13,7 +13,7 @@ void UActionInstance::SetAction(TObjectPtr<UAction> _action)
 	
 	for (const TPair<EActionEvent, FActionEventEffect>& Pair : Action->EventEffect)
 	{
-		FEffectArray& Array = EventEffect.Add(Pair.Key);
+		FActionEventEffect& Array = EventEffect.Add(Pair.Key);
 		Array.Effects = Pair.Value.Effects;
 	}
 }
@@ -47,5 +47,5 @@ void UActionInstance::ExtendEventEffect(EActionEvent _eventType, TObjectPtr<UEff
 	if (EventEffect.Contains(_eventType))
 		EventEffect[_eventType].Effects.Add(_effect);
 	else
-		EventEffect.Add(_eventType, FEffectArray({ _effect }));
+		EventEffect.Add(_eventType, FActionEventEffect({ _effect }));
 }

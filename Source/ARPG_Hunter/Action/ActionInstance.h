@@ -4,19 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Define/InnerTypes.h"
 #include "ActionInstance.generated.h"
 
 class UAction;
 class UEffectData;
 enum class EActionEvent : uint8;
-
-USTRUCT()
-struct FEffectArray
-{
-	GENERATED_BODY()
-public:
-	TArray<TObjectPtr<UEffectData>> Effects;
-};
 
 /**
  * 
@@ -35,7 +28,7 @@ private:
 
 	TMap<UClass*, uint32> AddictiveEffectValue;
 	UPROPERTY()
-	TMap<EActionEvent, FEffectArray> EventEffect;
+	TMap<EActionEvent, FActionEventEffect> EventEffect;
 	
 public:
 	void SetAction(TObjectPtr<UAction> _action);

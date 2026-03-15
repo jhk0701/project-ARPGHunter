@@ -10,6 +10,7 @@ class UActionInstance;
 class UEffectData;
 struct FActionConnect;
 enum class EAttackType : uint8;
+enum class EActionEvent : uint8;
 
 struct FAdjustParam
 {
@@ -64,7 +65,6 @@ public:
 	uint32 AddictiveValue{ 10 };
 
 	virtual void AdjustSkillNode(FAdjustParam& _param) override;
-
 };
 
 // 기존 액션에 추가로 이펙트를 부여
