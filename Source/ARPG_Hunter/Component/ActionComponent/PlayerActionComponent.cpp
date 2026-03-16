@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/ActionComponent/PlayerActionComponent.h"
@@ -30,7 +30,7 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPt
 
 	// 시작점 설정
 	for (const TPair<EAttackType, FConnectInfo>& Info : CurWeapon->AttackCombo->Start.Edge)
-		AppliedGraph.GraphStart.Add(Info.Key, { Info.Value.Index, true /*!Info.Value.bIsOptional*/ });
+		AppliedGraph.GraphStart.Add(Info.Key, { Info.Value.Index, !Info.Value.bIsOptional });
 
 	// 그래프 연결 
 	const TArray<FActionConnection>& Connections = CurWeapon->AttackCombo->Graph;
@@ -40,7 +40,7 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPt
 		// 콤보 연결 정보 구성
 		TMap<EAttackType, FActionConnect> Edge;
 		for (const TPair<EAttackType, FConnectInfo>& Info : Connection.Edge)
-			Edge.Add(Info.Key, { Info.Value.Index, true /*!Info.Value.bIsOptional*/ });
+			Edge.Add(Info.Key, { Info.Value.Index, !Info.Value.bIsOptional });
 
 		AppliedGraph.Graph.Add(Edge);
 	}
