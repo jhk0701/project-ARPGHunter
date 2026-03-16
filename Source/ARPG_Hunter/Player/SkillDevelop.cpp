@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/SkillDevelop.h"
@@ -9,6 +9,7 @@ USkillDevelop::USkillDevelop()
 
 void USkillDevelop::Init()
 {
+	SkillPoint = 30;
 }
 
 void USkillDevelop::AddPoint(uint16 _point)
@@ -20,4 +21,21 @@ void USkillDevelop::SubPoint(uint16 _point)
 {
 	check(SkillPoint >= _point);
 	SkillPoint -= _point;
+}
+
+void USkillDevelop::AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx)
+{
+	TMap<uint8, int8>& Selections = SkillSelectMap.FindOrAdd(_skillTree);
+ 	int8& Upgrade = Selections.FindOrAdd(_nodeIdx);
+	Upgrade = _upgradeIdx;
+}
+
+void USkillDevelop::TestSetting()
+{
+	AddSkill(9, 0, 0);		// 9 - 0 - 0 Skill Charge
+	AddSkill(10, 0, 0);		// 10 - 0 - 0 Dodge Slash 1
+	AddSkill(10, 2, 0);		// 10 - 2 - 0 Dodge Slash 2
+	AddSkill(8, 2, 0);		// 8 - 2 - 0 Smash 4 - 2
+	AddSkill(6, 3, 0);		// 6 - 3 - 0 Smash 3 - 2
+	AddSkill(5, 1, 0);		// 5 - 1 - 0 Smash 2 - 2
 }

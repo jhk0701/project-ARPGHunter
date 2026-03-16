@@ -48,6 +48,8 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
+
+	SkillDevelop->TestSetting(); // 테스트용 세팅
 }
 
 void UPlayerManager::PostInit()
@@ -59,6 +61,7 @@ void UPlayerManager::PostInit()
 TWeakObjectPtr<UInventory> UPlayerManager::GetInventory() const { return Inventory; }
 TWeakObjectPtr<UEquipment> UPlayerManager::GetEquipment() const { return Equipment; }
 TWeakObjectPtr<UQuickSlot> UPlayerManager::GetQuickSlot() const { return QuickSlot; }
+TWeakObjectPtr<USkillDevelop> UPlayerManager::GetSkillDevelop() const { return SkillDevelop; }
 const TMap<ECharacterStatType, uint32>& UPlayerManager::GetEquipmentStat() const { return Equipment->GetEquipmentStat(); }
 
 void UPlayerManager::AddGold(uint32 _amount)

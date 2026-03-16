@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,6 +12,17 @@ class UActionInstance;
 enum class EActionProcess : uint8;
 enum class EActionInput : uint8;
 enum class EAttackType : uint8;
+
+USTRUCT()
+struct FPlayerActionInitParam 
+{
+	GENERATED_BODY()
+public:
+	TObjectPtr<UWeaponConfig> WeaonConfig;
+	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance;
+	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp;
+	const TMap<uint8, TMap<uint8, int8>>* SkillDevelop;
+};
 
 USTRUCT()
 struct FActionConnect
@@ -70,7 +81,7 @@ private:
 public:
 	FOnActionUpdated OnActionUpdated;
 
-	void Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp);
+	void Init(const FPlayerActionInitParam& _param);
 	virtual void Clear() override;
 	virtual void ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr) override;
 

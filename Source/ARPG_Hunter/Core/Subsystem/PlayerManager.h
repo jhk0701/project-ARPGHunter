@@ -68,6 +68,7 @@ public:
 	TWeakObjectPtr<UInventory> GetInventory() const;
 	TWeakObjectPtr<UEquipment> GetEquipment() const;
 	TWeakObjectPtr<UQuickSlot> GetQuickSlot() const;
+	TWeakObjectPtr<USkillDevelop> GetSkillDevelop() const;
 
 	FOnStatValueChanged OnStatValueChanged;
 

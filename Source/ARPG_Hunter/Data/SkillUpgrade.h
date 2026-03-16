@@ -16,7 +16,7 @@ enum class EActionEvent : uint8;
 struct FAdjustParam
 {
 public:
-	uint8 Index;
+	// uint8 Index;
 	TArray<TObjectPtr<UActionInstance>>* ActionArray;
 	TArray<TMap<EAttackType, FActionConnect>>* Graph;
 	TMap<EAttackType, FActionConnect>* GraphStart;

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -19,6 +19,7 @@
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Player/Equipment.h"
+#include "Player/SkillDevelop.h"
 #include "Data/WeaponConfig.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
@@ -124,10 +125,12 @@ void APlayerCharacter::Init()
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 
+	// 스탯 초기화
 	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
 	StatComp->StartStaminaRecovery();
 	StatComp->OnDead.AddUObject(this, &APlayerCharacter::OnDead);
 
+	// 장비 초기화
 	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
 	InitEquipment(Equipment);
 	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
@@ -137,19 +140,19 @@ void APlayerCharacter::Init()
 	if (EquipedWeapon.IsValid())
 		Type = EquipedWeapon->GetWeaponType();
 
+	// 무기에 따른 애니메이션 및 액션 초기화
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 
-	ActionComp->Init(
-		DataManager->GetWeaponConfig(Type),
-		AnimInst,
-		MapEquipmentMeshComp[EEquipmentType::WEAPON]
-	);
+	ActionComp->Init({
+			DataManager->GetWeaponConfig(Type),
+			AnimInst,
+			MapEquipmentMeshComp[EEquipmentType::WEAPON],
+			PlayerManager->GetSkillDevelop()->GetSkillSelectPtr()
+		});
 
 	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
 
-	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
-		CharMove->MaxWalkSpeed = WalkSpeed;
-
+	// UI 초기화
 	if (TObjectPtr<APlayerCombatController> CombatController = Cast<APlayerCombatController>(GetController()))
 	{
 		TObjectPtr<ACombatHUD> CombatHUD = CombatController->GetHUD<ACombatHUD>();
@@ -175,6 +178,10 @@ void APlayerCharacter::Init()
 	}
 
 	InteractWidget->SetHiddenInGame(true);
+
+	// 기타 수치 조절
+	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+		CharMove->MaxWalkSpeed = WalkSpeed;
 }
 
 void APlayerCharacter::InitEquipment(TWeakObjectPtr<UEquipment> _equipment)

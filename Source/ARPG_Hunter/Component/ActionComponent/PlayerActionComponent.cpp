@@ -5,19 +5,21 @@
 
 #include "Define/Enum.h"
 #include "Data/WeaponConfig.h"
-#include "Action/ActionInstance.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
+#include "Data/SkillTreeData.h"
+#include "Data/SkillUpgrade.h"
+#include "Action/ActionInstance.h"
 #include "SubObject/SubObject.h"
 
-void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp)
+void UPlayerActionComponent::Init(const FPlayerActionInitParam& _param)
 {
-	SetAnimInstance(_ownerAnimInstance);
-	SetFirePointComp(_firePointComp);
+	SetAnimInstance(_param.OwnerAnimInstance);
+	SetFirePointComp(_param.FirePointComp);
 
 	// 플레이어 데이터를 기반으로 장비 모션을 적용
-	CurWeapon = _data;
-	
+	CurWeapon = _param.WeaonConfig;
+
 	const TArray<TObjectPtr<UAction>>& AttackActions = CurWeapon->AttackCombo->AttackAcionArray;
 	AppliedGraph.Actions.Reserve(AttackActions.Num());
 	for (const TObjectPtr<UAction>& Action : AttackActions)
@@ -45,8 +47,34 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPt
 		AppliedGraph.Graph.Add(Edge);
 	}
 
-	// TODO : 플레이어가 설정한 스킬 정보 반영
-	// TODO : 플레이어 스킬 육성에 따라 스킬 해금 여부 확인
+	// 플레이어가 설정한 스킬 정보 반영
+	FAdjustParam SkillAdjustParam;
+	SkillAdjustParam.ActionArray = &AppliedGraph.Actions;
+	SkillAdjustParam.Graph = &AppliedGraph.Graph;
+	SkillAdjustParam.GraphStart = &AppliedGraph.GraphStart;
+
+	TObjectPtr<USkillTreeData> SkillTree = CurWeapon->SkillTree;
+	if (nullptr == SkillTree)
+	{
+		ResetAction();
+		return;
+	}
+
+	for (const TPair<uint8, TMap<uint8, int8>>& TreePair : (*_param.SkillDevelop))
+	{
+		for (const TPair<uint8, int8>& NodePair : TreePair.Value)
+		{
+			if (NodePair.Value < 0)
+				continue;
+
+			const FSkillNode* SkillNode = SkillTree->SkillTrees[TreePair.Key].GetNode(NodePair.Key);
+			if (SkillNode->UpgradeInfos.Num() <= NodePair.Value)
+				continue;
+
+			const FUpgradeInfo& UpgradeInfo = SkillNode->UpgradeInfos[NodePair.Value];
+			UpgradeInfo.Upgrade->AdjustSkillNode(UpgradeInfo.TargetIndex, SkillAdjustParam);
+		}
+	}
 
 	ResetAction();
 }
