@@ -9,7 +9,26 @@
 #include "Define/Debug.h"
 #include "Core/GameMode/CombatGameMode.h"
 #include "UI/CombatHUD.h"
+#include "UI/UserWidget/UWCutScene.h"
 
+
+AStageCutSceneSection::AStageCutSceneSection()
+{
+	static ConstructorHelpers::FClassFinder<UUWCutScene> CutSceneUIFinder(TEXT("/Game/06-UI/WBP_CutScene.WBP_CutScene_C"));
+	if (CutSceneUIFinder.Succeeded())
+		CutSceneUIClass = CutSceneUIFinder.Class;
+}
+
+void AStageCutSceneSection::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (CutSceneUIClass)
+	{
+		CutSceneUI = CreateWidget<UUWCutScene>(GetWorld(), CutSceneUIClass);
+		CutSceneUI->OnSkipClicked.BindUObject(this, &AStageCutSceneSection::SkipCutScene);
+	}
+}
 
 void AStageCutSceneSection::BeginSection()
 {
@@ -49,12 +68,18 @@ void AStageCutSceneSection::BeginSection()
 	TObjectPtr<ACombatHUD> HUD = GetWorld()->GetFirstPlayerController()->GetHUD<ACombatHUD>();
 	HUD->ShowPlayerUI(false);
 
+	if (CutSceneUI)
+		CutSceneUI->ShowUI();
+
 	SequencePlayer->OnFinished.AddDynamic(this, &AStageCutSceneSection::OnCutSceneEnd);
 	SequencePlayer->Play();
 }
 
 void AStageCutSceneSection::OnCutSceneEnd()
 {
+	if (CutSceneUI->IsShowing())
+		CutSceneUI->HideUI();
+
 	TObjectPtr<ACombatHUD> HUD = GetWorld()->GetFirstPlayerController()->GetHUD<ACombatHUD>();
 	HUD->ShowPlayerUI(true);
 
@@ -63,4 +88,11 @@ void AStageCutSceneSection::OnCutSceneEnd()
 
 	CutScenePlayer->Destroy();
 	CutScenePlayer = nullptr;
+}
+
+void AStageCutSceneSection::SkipCutScene()
+{
+	TObjectPtr<ULevelSequencePlayer> SequencePlayer = CutScenePlayer->GetSequencePlayer();
+	SequencePlayer->Stop();
+	SequencePlayer->OnFinished.Broadcast();
 }
