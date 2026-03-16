@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Effect/TermEffect/TermEffect.h"
@@ -104,4 +104,27 @@ void UAddAttackPercent::Deactivate()
 	Attack *= GetStack();
 
 	GetTarget()->SubStat(ECharacterStatType::ATTACK, Attack);
+}
+
+bool USubDefensePercent::Activate()
+{
+	if (!Super::Activate())
+		return false;
+
+	uint32 Defense = GetTarget()->GetStat(ECharacterStatType::DEFENSE, true);
+	Defense = static_cast<uint32>(Defense * GetValue() * 0.01f);
+
+	GetTarget()->SubStat(ECharacterStatType::DEFENSE, Defense);
+	return true;
+}
+
+void USubDefensePercent::Deactivate()
+{
+	if (!IsValid()) return;
+
+	uint32 Defense = GetTarget()->GetStat(ECharacterStatType::DEFENSE, true);
+	Defense = static_cast<uint32>(Defense * GetValue() * 0.01f);
+	Defense *= GetStack();
+
+	GetTarget()->AddStat(ECharacterStatType::DEFENSE, Defense);
 }

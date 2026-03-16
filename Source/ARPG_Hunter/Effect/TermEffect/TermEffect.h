@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -61,6 +61,17 @@ public:
 
 UCLASS()
 class ARPG_HUNTER_API UAddCriticalDamagePercent : public UTermEffect
+{
+	GENERATED_BODY()
+
+public:
+	virtual bool Activate() override;
+	virtual void Deactivate() override;
+};
+
+
+UCLASS()
+class ARPG_HUNTER_API USubDefensePercent : public UTermEffect
 {
 	GENERATED_BODY()
 

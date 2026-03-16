@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/GameMode/CombatGameMode.h"
@@ -270,7 +270,7 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 			bool bIsValid = false;
 			for (int j = 0; j < 20; ++j) // 재시도 횟수 20번으로 고정
 			{
-				bIsValid = NavSys->ProjectPointToNavigation(Loc.Location, Loc, FVector(50.0f));
+				bIsValid = NavSys->ProjectPointToNavigation(Loc.Location, Loc, FVector(80.0f));
 				if (bIsValid)
 					break;
 				else

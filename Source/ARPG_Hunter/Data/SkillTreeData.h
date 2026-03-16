@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,6 +17,9 @@ public:
 	TObjectPtr<USkillUpgrade> Upgrade;
 	UPROPERTY(EditAnywhere)
 	uint8 Cost;
+	/// 업그레이드를 반영할 액션의 인덱스
+	UPROPERTY(EditAnywhere)
+	uint8 TargetIndex;
 };
 
 USTRUCT()

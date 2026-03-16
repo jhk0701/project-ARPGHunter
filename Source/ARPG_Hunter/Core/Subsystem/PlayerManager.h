@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -57,7 +57,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<UQuickSlot> QuickSlot;
 	UPROPERTY()
-	TObjectPtr<USkillDevelop> SkillTree;
+	TObjectPtr<USkillDevelop> SkillDevelop;
 
 	void EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx);

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWActionGuide.h"
@@ -41,7 +41,7 @@ void UUWActionGuide::NativeOnInitialized()
 
 void UUWActionGuide::SetActionInfo(bool _bIsInit, int8 _curIdx, const FAppliedGraph* _comboData)
 {
-	if (_comboData->Graph.Num() < _curIdx)
+	if (_comboData->Graph.Num() <= _curIdx)
 	{
 		Clear();
 		return;

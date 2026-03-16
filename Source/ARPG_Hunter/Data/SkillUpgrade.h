@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -35,8 +35,6 @@ public:
 	FText NameText;
 	UPROPERTY(EditAnywhere)
 	FText DescText;
-	// UPROPERTY(EditAnywhere)
-	// uint8 TargetIndex;
 
 	virtual void AdjustSkillNode(uint8 _targetIdx, FAdjustParam& _param) {};
 };
