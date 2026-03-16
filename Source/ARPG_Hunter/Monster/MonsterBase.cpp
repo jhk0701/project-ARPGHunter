@@ -170,7 +170,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	ShowDamageUI(_hitInfo.bIsCriticalHit, Damage);
 
 	// 피격 시, 이펙트 출력
-	if (Data->Config->VFXOnHit)
+	if (_hitInfo.HitResult && Data->Config->VFXOnHit)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
 			Data->Config->VFXOnHit,
@@ -276,12 +276,13 @@ EMonsterType AMonsterBase::GetType() const
 {
 	return Data->Config->Type;
 }
-void AMonsterBase::ApplyEffect(TObjectPtr<class UEffectData> _effectData, uint32 _addictiveValue)
+
+void AMonsterBase::ApplyEffect(const FApplyEffectParam& _param)
 {
 	if (StatComp->IsDead())
 		return;
 
-	StatComp->ApplyEffect(_effectData, _addictiveValue);
+	StatComp->ApplyEffect(_param);
 }
 
 TWeakObjectPtr<AActor> AMonsterBase::GetTarget() const

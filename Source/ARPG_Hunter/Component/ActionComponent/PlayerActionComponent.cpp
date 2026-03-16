@@ -1,7 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Component/ActionComponent/PlayerActionComponent.h"
+
+#include "Interface/Effectable.h"
 
 #include "Define/Enum.h"
 #include "Data/WeaponConfig.h"
@@ -126,13 +128,13 @@ void UPlayerActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceC
 
 	// 자기 버프 적용
 	if (CurAction->IsContainEventEffect(EActionEvent::ON_HIT))
-		ActivateActionEffect(CurAction->GetEventEffect(EActionEvent::ON_HIT), GetOwner());
+		ActivateActionInstanceEffect(EActionEvent::ON_HIT, GetOwner(), CurAction);
 
 	// 적에게 디버프 적용
 	for (const FHitResult& Result : HitResults)
 	{
 		if (CurAction->IsContainEventEffect(EActionEvent::ON_ENEMY_HIT))
-			ActivateActionEffect(CurAction->GetEventEffect(EActionEvent::ON_ENEMY_HIT), Result.GetActor());
+			ActivateActionInstanceEffect(EActionEvent::ON_ENEMY_HIT, Result.GetActor(), CurAction);
 
 		// 피격 효과 출력
 		if (ActionData->VFXOnHit)
@@ -197,7 +199,7 @@ bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(floa
 		AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeAction->Montage);
 
 	if (DodgeAction->EventEffect.Contains(EActionEvent::ON_START))
-		ActivateActionEffect(DodgeAction->EventEffect[EActionEvent::ON_START].Effects, GetOwner());
+		ActivateActionEffect(GetOwner(), DodgeAction->EventEffect[EActionEvent::ON_START].Effects);
 
 	ResetAction();
 
@@ -276,7 +278,7 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 
 	// 액션 시작 시, 효과 발동
 	if (AppliedGraph.Actions[id]->IsContainEventEffect(EActionEvent::ON_START))
-		ActivateActionEffect(AppliedGraph.Actions[id]->GetEventEffect(EActionEvent::ON_START), GetOwner());
+		ActivateActionInstanceEffect(EActionEvent::ON_START, GetOwner(), AppliedGraph.Actions[id]);
 
 	return true;
 }
@@ -292,7 +294,7 @@ void UPlayerActionComponent::ProcessAttackProgress()
 	}
 
 	if (AppliedGraph.Actions[CurAttackActionID]->IsContainEventEffect(EActionEvent::ON_PROGRESS))
-		ActivateActionEffect(AppliedGraph.Actions[CurAttackActionID]->GetEventEffect(EActionEvent::ON_PROGRESS), GetOwner());
+		ActivateActionInstanceEffect(EActionEvent::ON_PROGRESS, GetOwner(), AppliedGraph.Actions[CurAttackActionID]);
 }
 
 void UPlayerActionComponent::ProcessAttackEnd()
@@ -414,4 +416,21 @@ float UPlayerActionComponent::GetAttackActionKnockBack(uint8 _opt)
 EAttackType UPlayerActionComponent::GetAttackActionType()
 {
 	return  AppliedGraph.Actions[CurAttackActionID]->GetAction()->Type;
+}
+
+void UPlayerActionComponent::ActivateActionInstanceEffect(EActionEvent _type, TObjectPtr<AActor> _target, TWeakObjectPtr<UActionInstance> _actionInst)
+{
+	IEffectable* Effectable = Cast<IEffectable>(_target);
+	if (Effectable == nullptr)
+		return;
+
+	for (const TObjectPtr<class UEffectData>& effectData : _actionInst->GetEventEffect(_type))
+	{
+		FApplyEffectParam Param;
+		Param.Subject = GetOwner();
+		Param.EffectData = effectData;
+		Param.AddictiveValue = _actionInst->GetAddictiveEffectValue(effectData);
+
+		Effectable->ApplyEffect(Param);
+	}
 }

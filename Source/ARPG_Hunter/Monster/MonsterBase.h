@@ -89,7 +89,7 @@ protected:
 	uint8 GetSectionID() const { return SectionID; }
 	FMonsterData* GetData() const { return Data; }
 	
-	TObjectPtr<UStatComponent> GetStatComp() const { return StatComp; }
+	const TObjectPtr<class UStatComponent> GetStatComp() override { return StatComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() const { return WeaponComp; }
 
 public:
@@ -112,7 +112,7 @@ public:
 	EMonsterState GetState() const { return CurState; }
 
 	// IEffectable을(를) 통해 상속됨
-	virtual void ApplyEffect(TObjectPtr<class UEffectData> _effectData, uint32 _addictiveValue = 0) override;
+	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
 
 	TWeakObjectPtr<AActor> GetTarget() const;
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것

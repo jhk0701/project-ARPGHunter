@@ -24,6 +24,7 @@ class ARPG_HUNTER_API UEffect : public UObject
 
 private:
 	UObject* DataPointer;
+	TWeakObjectPtr<AActor> Subject; // 효과 부여 주체 : 약참조 소유
 	TWeakObjectPtr<UStatComponent> TargetComp; // 효과 대상 : 약참조 소유
 	FEffectParam* BaseParam;
 	uint32 AddictiveValue;
@@ -31,11 +32,13 @@ private:
 
 protected:
 	bool IsValid() { return TargetComp.IsValid() && BaseParam != nullptr; }
+	TWeakObjectPtr<AActor> GetSubject() { return Subject; }
 	TWeakObjectPtr<UStatComponent> GetTarget() { return TargetComp; }
 
 public:
-	virtual void Init(UStatComponent* _target, FEffectContext* _context) 
+	virtual void Init(TWeakObjectPtr<AActor> _subject, TWeakObjectPtr<UStatComponent> _target, FEffectContext* _context)
 	{
+		Subject = _subject;
 		TargetComp = _target;
 		DataPointer = _context->DataPointer;
 		BaseParam = _context->Param;
@@ -51,7 +54,7 @@ public:
 	uint32 GetValue() const;
 	float GetDuration() const;
 	float GetRepeatInterval() const;
-	const TArray<TObjectPtr<class UEffectData>>& GetEffectOnEvent() const;
+	const TArray<TObjectPtr<class UEffectData>>& GetTargetEffect() const;
 	
 	uint8 GetMaxStack() const;
 	uint8 GetStack() const { return Stack; }
@@ -85,6 +88,14 @@ public:
 
 UCLASS()
 class ARPG_HUNTER_API UAddEffectUsingSkill : public UEffect
+{
+	GENERATED_BODY()
+public:
+	virtual bool Activate() override;
+};
+
+UCLASS()
+class ARPG_HUNTER_API UDamageUsingEffect : public UEffect
 {
 	GENERATED_BODY()
 public:

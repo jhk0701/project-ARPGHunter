@@ -55,7 +55,12 @@ void UConsumableItem::Consume(IEffectable* _target)
 {
 	TObjectPtr<UConsumableItemConfig> ConsumableConfig = Cast<UConsumableItemConfig>(GetConfig());
 	for (const TObjectPtr<UEffectData> Effect : ConsumableConfig->Effects)
-		_target->ApplyEffect(Effect);
+	{
+		FApplyEffectParam Param;
+		Param.EffectData = Effect;
+
+		_target->ApplyEffect(Param);
+	}
 }
 
 void UEquipmentItem::Init(const FName& _id, EItemType _type, uint16 _amount, TObjectPtr<UItemConfig> _config)

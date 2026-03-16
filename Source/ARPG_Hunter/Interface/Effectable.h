@@ -13,6 +13,13 @@ class UEffectable : public UInterface
 	GENERATED_BODY()
 };
 
+struct FApplyEffectParam
+{
+public:
+	TWeakObjectPtr<AActor> Subject;
+	TObjectPtr<class UEffectData> EffectData;
+	uint32 AddictiveValue{0};
+};
 /**
  * 
  */
@@ -22,5 +29,6 @@ class ARPG_HUNTER_API IEffectable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	 virtual void ApplyEffect(TObjectPtr<class UEffectData> _effectData, uint32 _addictiveValue = 0) = 0;
+	virtual const TObjectPtr<class UStatComponent> GetStatComp() = 0;
+	virtual void ApplyEffect(const FApplyEffectParam& _param) = 0;
 };

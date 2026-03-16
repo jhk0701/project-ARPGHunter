@@ -7,24 +7,12 @@
 #include "Define/Enum.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "SubObject/SubObject.h"
-#include "Data/Action.h"
-
 #include "Interface/Effectable.h"
 #include "Data/EffectData.h"
 
 UActionComponent::UActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-}
-
-void UActionComponent::ActivateActionEffect(const TArray<TObjectPtr<UEffectData>>& _effectArray, TObjectPtr<AActor> _target)
-{
-	IEffectable* Effectable = Cast<IEffectable>(_target);
-	if (Effectable == nullptr)
-		return;
-
-	for (const TObjectPtr<class UEffectData>& effectData : _effectArray)
-		Effectable->ApplyEffect(effectData);
 }
 
 void UActionComponent::SpawnHitVFX(UNiagaraSystem* _vfx, const FVector& _location, float _roll, float _size)
@@ -38,6 +26,22 @@ void UActionComponent::SpawnHitVFX(UNiagaraSystem* _vfx, const FVector& _locatio
 	);
 	NiagaraComp->SetVariableFloat(FName(TEXT("User.HitRoll")), _roll);
 	NiagaraComp->SetVariableFloat(FName(TEXT("User.HitSize")), _size);
+}
+
+void UActionComponent::ActivateActionEffect(TObjectPtr<AActor> _target, const TArray<TObjectPtr<class UEffectData>>& _effectArray)
+{
+	IEffectable* Effectable = Cast<IEffectable>(_target);
+	if (Effectable == nullptr)
+		return;
+
+	for (const TObjectPtr<class UEffectData>& effectData : _effectArray)
+	{
+		FApplyEffectParam Param;
+		Param.Subject = GetOwner();
+		Param.EffectData = effectData;
+
+		Effectable->ApplyEffect(Param);
+	}
 }
 
 bool UActionComponent::Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults)

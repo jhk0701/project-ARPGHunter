@@ -2,11 +2,11 @@
 
 #include "Component/ActionComponent/MonsterActionComponent.h"
 
+#include "Interface/Hitable.h"
 #include "Define/Enum.h"
 #include "Data/Action.h"
 #include "Data/MonsterData.h"
 #include "Data/MonsterConfig.h"
-#include "Interface/Hitable.h"
 #include "Monster/BossMonster.h"
 #include "SubObject/SubObject.h"
 
@@ -52,13 +52,13 @@ void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _trace
 		_onHitAction(HitResults);
 
 	if (CurAction.Action->EventEffect.Contains(EActionEvent::ON_HIT))
-		ActivateActionEffect(CurAction.Action->EventEffect[EActionEvent::ON_HIT].Effects, GetOwner());
+		ActivateActionEffect(GetOwner(), CurAction.Action->EventEffect[EActionEvent::ON_HIT].Effects);
 
 	// 적에게 디버프 적용
 	for (const FHitResult& Result : HitResults)
 	{
 		if (CurAction.Action->EventEffect.Contains(EActionEvent::ON_ENEMY_HIT))
-			ActivateActionEffect(CurAction.Action->EventEffect[EActionEvent::ON_ENEMY_HIT].Effects, Result.GetActor());
+			ActivateActionEffect(Result.GetActor(), CurAction.Action->EventEffect[EActionEvent::ON_ENEMY_HIT].Effects);
 
 		// 피격 효과 출력
 		if (CurAction.Action->VFXOnHit)
@@ -88,7 +88,7 @@ float UMonsterActionComponent::PlayAttackAction()
 
 	// 공격 시 자기 버프 획득
 	if (MonsterAction.Action->EventEffect.Contains(EActionEvent::ON_START))
-		ActivateActionEffect(MonsterAction.Action->EventEffect[EActionEvent::ON_START].Effects, GetOwner());
+		ActivateActionEffect(GetOwner(), MonsterAction.Action->EventEffect[EActionEvent::ON_START].Effects);
 
 	return MonsterAction.Interval;
 }
@@ -121,6 +121,7 @@ uint16 UMonsterActionComponent::GetAttackActionDamagePer(uint8 _opt)
 {
 	return GetCurrentAction().Action->ArrOption[_opt].AttackDamagePer;
 }
+
 
 void UBossActionComponent::PlayHitAction(EMonsterState _state)
 {

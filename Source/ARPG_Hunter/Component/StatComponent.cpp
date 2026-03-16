@@ -2,6 +2,8 @@
 
 
 #include "Component/StatComponent.h"
+
+#include "Interface/Effectable.h"
 #include "Data/EffectData.h"
 #include "Effect/Effect.h"
 
@@ -189,9 +191,9 @@ void UStatComponent::PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bI
 	);
 }
 
-void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData, uint32 _addictiveValue)
+void UStatComponent::ApplyEffect(const FApplyEffectParam& _param)
 {
-	if(_effectData->bIsDebuff) // 디버프인 경우 확인
+	if(_param.EffectData->bIsDebuff) // 디버프인 경우 확인
 	{
 		uint8 HitBit = static_cast<uint8>(EHitOption::NONE);
 		uint32 DummyDamage = 0;
@@ -203,15 +205,15 @@ void UStatComponent::ApplyEffect(TObjectPtr<UEffectData> _effectData, uint32 _ad
 			return;
 	}
 
-	TObjectPtr<UEffect> EffectInst = NewObject<UEffect>(this, _effectData->Effect);
+	TObjectPtr<UEffect> EffectInst = NewObject<UEffect>(this, _param.EffectData->Effect);
 
 	FEffectContext Context
 	{
-		_effectData,
-		&_effectData->Param,
-		_addictiveValue // 스킬 성장에 따른 효과 증가량
+		_param.EffectData,
+		& _param.EffectData->Param,
+		_param.AddictiveValue // 스킬 성장에 따른 효과 증가량
 	};
-	EffectInst->Init(this, &Context);
+	EffectInst->Init(_param.Subject, this, &Context);
 	EffectInst->Activate();
 }
 
@@ -266,4 +268,14 @@ void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 	_effect->Deactivate();
 	MapEffect.Remove(_effect->GetID());
 	OnEffectRemoved.Broadcast(_effect->GetID());
+}
+
+TWeakObjectPtr<UEffect> UStatComponent::GetAppliedEffect(TObjectPtr<UObject> _key)
+{
+	FAppliedEffect* Applied = MapEffect.Find(_key);
+
+	if (nullptr == Applied)
+		return nullptr;
+
+	return Applied->Effect;
 }

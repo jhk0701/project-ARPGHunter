@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -405,12 +405,12 @@ void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		SetIgnoreInput(false);
 }
 
-void APlayerCharacter::ApplyEffect(TObjectPtr<UEffectData> _effectData, uint32 _addictiveValue)
+void APlayerCharacter::ApplyEffect(const FApplyEffectParam& _param)
 {
 	if (StatComp->IsDead())
 		return;
 
-	StatComp->ApplyEffect(_effectData, _addictiveValue);
+	StatComp->ApplyEffect(_param);
 }
 
 void APlayerCharacter::UseQuickSlot(uint8 _index)

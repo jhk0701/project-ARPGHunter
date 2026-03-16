@@ -45,13 +45,14 @@ protected:
 	// void Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
 	bool Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
 	void DeploySubObject(const FSubObjectDeployParam& _param, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
-	void ActivateActionEffect(const TArray<TObjectPtr<class UEffectData>>& _effectArray, TObjectPtr<AActor> _target);
 	void SpawnHitVFX(class UNiagaraSystem* _vfx, const FVector& _location, float _roll, float _size);
 	
 	void SetAnimInstance(TWeakObjectPtr<UAnimInstance> _instance) { OwnerAnimInstance = _instance; }
 	void SetFirePointComp(TWeakObjectPtr<USkeletalMeshComponent> _comp) { FirePointComp = _comp; }
 	TWeakObjectPtr<UAnimInstance> GetAnimInstance() { return OwnerAnimInstance; }
 	TWeakObjectPtr<USkeletalMeshComponent> GetFirePointComp() { return FirePointComp; }
+
+	void ActivateActionEffect(TObjectPtr<AActor> _target, const TArray<TObjectPtr<class UEffectData>>& _effectArray);
 
 public:	
 	// 실질적인 공격 수행

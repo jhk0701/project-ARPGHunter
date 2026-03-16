@@ -20,8 +20,8 @@ public:
 	uint8 MaxStack{ 1 };
 	UPROPERTY(EditAnywhere, Category = "Repeated")
 	float RepeatInterval{ 1.0f };
-	UPROPERTY(EditAnywhere, Category = "Event")
-	TArray<TObjectPtr<class UEffectData>> EffectsOnEvent;
+	UPROPERTY(EditAnywhere, Category = "Target")
+	TArray<TObjectPtr<class UEffectData>> TargetEffects;
 };
 
 UCLASS()

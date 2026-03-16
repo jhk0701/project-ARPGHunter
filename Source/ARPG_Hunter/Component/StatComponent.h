@@ -10,7 +10,6 @@
 
 class UEffectData;
 class UEffect;
-struct FEffectParam;
 
 enum class EHitOption : uint8
 {
@@ -144,9 +143,10 @@ public:
 	void StartStaminaRecovery();
 	void PauseAndRestartStaminaRecovery(float _pauseSecond, bool _bIsLoop = true);
 
-	void ApplyEffect(TObjectPtr<UEffectData> _effectData, uint32 _addictiveValue = 0);
+	void ApplyEffect(const struct FApplyEffectParam& _param);
 	bool RegisterEffect(TObjectPtr<UEffect> _effect);
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
+	TWeakObjectPtr<UEffect> GetAppliedEffect(TObjectPtr<UObject> _key);
 
 	void AddStat(ECharacterStatType _type, uint16 _amount) 
 	{ 

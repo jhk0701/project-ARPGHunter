@@ -2,6 +2,8 @@
 
 
 #include "Effect/EventEffect/EventEffect.h"
+
+#include "Interface/Effectable.h"
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
@@ -49,8 +51,14 @@ void UJustDodgeEffect::OnHitEvent(uint8& _hitBit, uint32& _damage)
 	if (!IsValid())
 		return;
 
-	for (TObjectPtr<UEffectData> subEffect : GetEffectOnEvent())
-		GetTarget()->ApplyEffect(subEffect);
+	for (TObjectPtr<UEffectData> subEffect : GetTargetEffect())
+	{
+		FApplyEffectParam Param;
+		Param.Subject = GetSubject();
+		Param.EffectData = subEffect;
+
+		GetTarget()->ApplyEffect(Param);
+	}
 
 	GetTarget()->RemoveEffect(this);
 }

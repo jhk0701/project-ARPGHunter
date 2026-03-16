@@ -2,6 +2,9 @@
 
 
 #include "Effect/Effect.h"
+
+#include "Interface/Effectable.h"
+#include "Interface/Hitable.h"
 #include "Data/EffectData.h"
 #include "Component/StatComponent.h"
 
@@ -20,9 +23,9 @@ float UEffect::GetRepeatInterval() const
 	return BaseParam->RepeatInterval;
 }
 
-const TArray<TObjectPtr<class UEffectData>>& UEffect::GetEffectOnEvent() const
+const TArray<TObjectPtr<class UEffectData>>& UEffect::GetTargetEffect() const
 {
-	return BaseParam->EffectsOnEvent;
+	return BaseParam->TargetEffects;
 }
 
 uint8 UEffect::GetMaxStack() const
@@ -75,10 +78,7 @@ bool URecoverStamina::Activate()
 
 bool UAddEffectUsingSkill::Activate()
 {
-	if (Super::Activate() == false)
-		return false;
-
-	if (!IsValid()) 
+	if (Super::Activate() == false || !IsValid())
 		return false;
 
 	TWeakObjectPtr<UStatComponent> Target = GetTarget();
@@ -87,8 +87,41 @@ bool UAddEffectUsingSkill::Activate()
 	if (Target->TryUseResource(ECharacterResourceType::SKILL, GetValue()) == false)
 		return false;
 
-	for (TObjectPtr<UEffectData> data : GetEffectOnEvent())
-		Target->ApplyEffect(data);
+	for (TObjectPtr<UEffectData> data : GetTargetEffect())
+	{
+		FApplyEffectParam Param;
+		Param.Subject = GetSubject();
+		Param.EffectData = data;
+
+		Target->ApplyEffect(Param);
+	}
+
+	return true;
+}
+
+bool UDamageUsingEffect::Activate()
+{
+	if (Super::Activate() == false || !IsValid())
+		return false;
+	
+	TWeakObjectPtr<UEffect> Effect = GetTarget()->GetAppliedEffect(GetID());
+	if (nullptr == Effect)
+		return false;
+
+	uint32 SubjectAttack = 0;
+	if (IEffectable* Effectable = Cast<IEffectable>(GetSubject())) 
+		SubjectAttack = Effectable->GetStatComp()->GetStat(ECharacterStatType::ATTACK);
+
+	uint32 Damage = SubjectAttack * GetValue() * 0.01f;
+	Damage *= Effect->GetStack();
+
+	if (IHitable* Hitable = Cast<IHitable>(GetTarget()->GetOwner()))
+	{
+		FHitInfo HitInfo;
+		HitInfo.Attacker = GetSubject();
+		HitInfo.Damage = Damage;
+		Hitable->HitBy(HitInfo);
+	}
 
 	return true;
 }

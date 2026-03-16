@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,6 +12,7 @@ class UActionInstance;
 enum class EActionProcess : uint8;
 enum class EActionInput : uint8;
 enum class EAttackType : uint8;
+enum class EActionEvent : uint8;
 
 USTRUCT()
 struct FPlayerActionInitParam 
@@ -105,4 +106,6 @@ public:
 	uint16 GetAttackActionStaggerDamage(uint8 _opt);
 	float GetAttackActionKnockBack(uint8 _opt);
 	EAttackType GetAttackActionType();
+
+	void ActivateActionInstanceEffect(EActionEvent _type, TObjectPtr<AActor> _target, TWeakObjectPtr<UActionInstance> _actionInst);
 };
