@@ -9,6 +9,9 @@
 #include "Define/Enum.h"
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
+#include "Action/ActionInstance.h"
+#include "Component/ActionComponent/PlayerActionComponent.h"
+
 
 void UUWActionInfo::SetInfo(EAttackType _type, const FText& _name)
 {
@@ -36,10 +39,9 @@ void UUWActionGuide::NativeOnInitialized()
 	Clear();
 }
 
-void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<class UActionComboData> _comboData)
+void UUWActionGuide::SetActionInfo(bool _bIsInit, int8 _curIdx, const FAppliedGraph* _comboData)
 {
-	if (_comboData.IsValid() == false ||
-		_comboData->Graph.Num() < _curIdx)
+	if (_comboData->Graph.Num() < _curIdx)
 	{
 		Clear();
 		return;
@@ -51,23 +53,24 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<
 	}
 	else
 	{
-		TObjectPtr<UAction> Action = _comboData->AttackAcionArray[_curIdx];
+		TObjectPtr<UAction> Action = _comboData->Actions[_curIdx]->GetAction();
+		
 		CurAction->SetInfo(Action->Type, Action->NameText);
 		CurAction->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	const FActionConnection& Graph = _bIsInit ? _comboData->Start : _comboData->Graph[_curIdx];
+	const TMap<EAttackType, FActionConnect>& Graph = _bIsInit ? _comboData->GraphStart : _comboData->Graph[_curIdx];
 	for (uint8 i = 0; i < NextActions.Num(); ++i)
 	{
 		EAttackType Type = static_cast<EAttackType>(i);
-		if(Graph.Edge.Contains(Type) == false)
+		if(Graph.Contains(Type) == false || Graph[Type].bIsUnlocked == false)
 		{
 			NextActions[i]->SetVisibility(ESlateVisibility::Collapsed);
 			continue;
 		}
 		
 		NextActions[i]->SetVisibility(ESlateVisibility::Visible);
-		NextActions[i]->SetInfo(Type, _comboData->AttackAcionArray[Graph.Edge[Type].Index]->NameText);
+		NextActions[i]->SetInfo(Type, _comboData->Actions[Graph[Type].Index]->GetAction()->NameText);
 	}
 }
 

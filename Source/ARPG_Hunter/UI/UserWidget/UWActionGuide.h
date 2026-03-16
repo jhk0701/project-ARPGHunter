@@ -48,6 +48,6 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 public:
-	void SetActionInfo(bool _bIsInit, uint8 _curIdx, TWeakObjectPtr<class UActionComboData> _comboData);
+	void SetActionInfo(bool _bIsInit, int8 _curIdx, const struct FAppliedGraph*);
 	void Clear();
 };

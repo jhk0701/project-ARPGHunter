@@ -19,22 +19,22 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPt
 	CurWeapon = _data;
 	
 	const TArray<TObjectPtr<UAction>>& AttackActions = CurWeapon->AttackCombo->AttackAcionArray;
-	AppliedActions.Reserve(AttackActions.Num());
+	AppliedGraph.Actions.Reserve(AttackActions.Num());
 	for (const TObjectPtr<UAction>& Action : AttackActions)
 	{
 		// 이 액션의 기본 행동 설정
 		TObjectPtr<UActionInstance> ActionInst = NewObject<UActionInstance>();
 		ActionInst->SetAction(Action);
-		AppliedActions.Add(ActionInst);
+		AppliedGraph.Actions.Add(ActionInst);
 	}
 
 	// 시작점 설정
 	for (const TPair<EAttackType, FConnectInfo>& Info : CurWeapon->AttackCombo->Start.Edge)
-		AppliedGraphStart.Add(Info.Key, { Info.Value.Index, true /*!Info.Value.bIsOptional*/ });
+		AppliedGraph.GraphStart.Add(Info.Key, { Info.Value.Index, true /*!Info.Value.bIsOptional*/ });
 
 	// 그래프 연결 
 	const TArray<FActionConnection>& Connections = CurWeapon->AttackCombo->Graph;
-	AppliedGraph.Reserve(Connections.Num());
+	AppliedGraph.Graph.Reserve(Connections.Num());
 	for (const FActionConnection& Connection : Connections)
 	{
 		// 콤보 연결 정보 구성
@@ -42,7 +42,7 @@ void UPlayerActionComponent::Init(TObjectPtr<UWeaponConfig> _data, TWeakObjectPt
 		for (const TPair<EAttackType, FConnectInfo>& Info : Connection.Edge)
 			Edge.Add(Info.Key, { Info.Value.Index, true /*!Info.Value.bIsOptional*/ });
 
-		AppliedGraph.Add(Edge);
+		AppliedGraph.Graph.Add(Edge);
 	}
 
 	// TODO : 플레이어가 설정한 스킬 정보 반영
@@ -66,7 +66,7 @@ void UPlayerActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceC
 {
 	Super::ProcessAttack(_opt, _traceChannel, _onHitAction, _target);
 
-	TObjectPtr<UActionInstance> CurAction = AppliedActions[CurAttackActionID];
+	TObjectPtr<UActionInstance> CurAction = AppliedGraph.Actions[CurAttackActionID];
 	TWeakObjectPtr<UAction> ActionData = CurAction->GetAction();
 	EAttackDetailType DetailType = ActionData->ArrOption[_opt].Detail;
 
@@ -225,12 +225,12 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 		return false;
 
 	uint8 id = !IsInAttackCombo() ?
-		AppliedGraphStart[_type].Index :
-		AppliedGraph[CurAttackActionID][_type].Index;
+		AppliedGraph.GraphStart[_type].Index :
+		AppliedGraph.Graph[CurAttackActionID][_type].Index;
 
-	TWeakObjectPtr<UAction> ActionData = AppliedActions[id]->GetAction();
+	TWeakObjectPtr<UAction> ActionData = AppliedGraph.Actions[id]->GetAction();
 
-	if (_predicate && _predicate(AppliedActions[id]->GetStaminaUsage()) == false)
+	if (_predicate && _predicate(AppliedGraph.Actions[id]->GetStaminaUsage()) == false)
 		return false;
 
 	CurAttackActionID = id;
@@ -247,8 +247,8 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 	ClearActionResetTimer(); // 이전 콤보에 대한 리셋 타이머 클리어
 
 	// 액션 시작 시, 효과 발동
-	if (AppliedActions[id]->IsContainEventEffect(EActionEvent::ON_START))
-		ActivateActionEffect(AppliedActions[id]->GetEventEffect(EActionEvent::ON_START), GetOwner());
+	if (AppliedGraph.Actions[id]->IsContainEventEffect(EActionEvent::ON_START))
+		ActivateActionEffect(AppliedGraph.Actions[id]->GetEventEffect(EActionEvent::ON_START), GetOwner());
 
 	return true;
 }
@@ -257,14 +257,14 @@ void UPlayerActionComponent::ProcessAttackProgress()
 {
 	// 공격 액션 지속 중, 스태미너 소모
 	// 스태미너 부족 시, 바로 Complete로 진행
-	if (CurActionPredicate(AppliedActions[CurAttackActionID]->GetStaminaUsage()) == false)
+	if (CurActionPredicate(AppliedGraph.Actions[CurAttackActionID]->GetStaminaUsage()) == false)
 	{
 		ProcessAttackEnd();
 		return;
 	}
 
-	if (AppliedActions[CurAttackActionID]->IsContainEventEffect(EActionEvent::ON_PROGRESS))
-		ActivateActionEffect(AppliedActions[CurAttackActionID]->GetEventEffect(EActionEvent::ON_PROGRESS), GetOwner());
+	if (AppliedGraph.Actions[CurAttackActionID]->IsContainEventEffect(EActionEvent::ON_PROGRESS))
+		ActivateActionEffect(AppliedGraph.Actions[CurAttackActionID]->GetEventEffect(EActionEvent::ON_PROGRESS), GetOwner());
 }
 
 void UPlayerActionComponent::ProcessAttackEnd()
@@ -308,8 +308,8 @@ bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)
 		return false;
 	
 	FActionConnect* ActionConnect = IsInAttackCombo() == false ? 
-		AppliedGraphStart.Find(_type) :
-		AppliedGraph[CurAttackActionID].Find(_type);
+		AppliedGraph.GraphStart.Find(_type) :
+		AppliedGraph.Graph[CurAttackActionID].Find(_type);
 
 	// 할당된 공격이 있는지, 해당 공격이 해금되었는지 확인
 	return nullptr != ActionConnect && ActionConnect->bIsUnlocked;
@@ -345,12 +345,12 @@ TObjectPtr<UAnimMontage> UPlayerActionComponent::GetCurrentMontage()
 	if (CurAttackActionID < 0)
 		return nullptr;
 
-	return AppliedActions[CurAttackActionID]->GetAction()->Montage;
+	return AppliedGraph.Actions[CurAttackActionID]->GetAction()->Montage;
 }
 
 void UPlayerActionComponent::BroadcastActionUpdated()
 {
-	OnActionUpdated.ExecuteIfBound(CurAttackActionID == -1, CurAttackActionID, CurWeapon->AttackCombo);
+	OnActionUpdated.ExecuteIfBound(CurAttackActionID == -1, CurAttackActionID, &AppliedGraph);
 }
 
 TObjectPtr<UAnimMontage> UPlayerActionComponent::GetDodgeMontage() const
@@ -370,20 +370,20 @@ bool UPlayerActionComponent::IsInProgress() const
 
 uint16 UPlayerActionComponent::GetAttackActionDamagePer(uint8 _opt)
 {
-	return AppliedActions[CurAttackActionID]->GetAttackDamagePer(_opt);
+	return AppliedGraph.Actions[CurAttackActionID]->GetAttackDamagePer(_opt);
 }
 
 uint16 UPlayerActionComponent::GetAttackActionStaggerDamage(uint8 _opt)
 {	
-	return AppliedActions[CurAttackActionID]->GetStaggerDamage(_opt);
+	return AppliedGraph.Actions[CurAttackActionID]->GetStaggerDamage(_opt);
 }
 
 float UPlayerActionComponent::GetAttackActionKnockBack(uint8 _opt)
 {
-	return AppliedActions[CurAttackActionID]->GetAction()->ArrOption[_opt].KnockBackStr;
+	return AppliedGraph.Actions[CurAttackActionID]->GetAction()->ArrOption[_opt].KnockBackStr;
 }
 
 EAttackType UPlayerActionComponent::GetAttackActionType()
 {
-	return  AppliedActions[CurAttackActionID]->GetAction()->Type;
+	return  AppliedGraph.Actions[CurAttackActionID]->GetAction()->Type;
 }

@@ -13,8 +13,6 @@ enum class EActionProcess : uint8;
 enum class EActionInput : uint8;
 enum class EAttackType : uint8;
 
-DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, uint8, TWeakObjectPtr<class UActionComboData>);
-
 USTRUCT()
 struct FActionConnect
 {
@@ -24,6 +22,19 @@ public:
 	bool bIsUnlocked;
 };
 
+USTRUCT()
+struct FAppliedGraph 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	TArray<TObjectPtr<UActionInstance>> Actions;
+	TArray<TMap<EAttackType, FActionConnect>> Graph;
+	TMap<EAttackType, FActionConnect> GraphStart;
+};
+
+DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, int8, const FAppliedGraph*);
+
 UCLASS()
 class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
 {
@@ -32,12 +43,10 @@ class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
 private:
 	TObjectPtr<UWeaponConfig> CurWeapon;
 
-	UPROPERTY()
-	TArray<TObjectPtr<UActionInstance>> AppliedActions;
-	TArray<TMap<EAttackType, FActionConnect>> AppliedGraph;
-	TMap<EAttackType, FActionConnect> AppliedGraphStart;
+	UPROPERTY(VisibleAnywhere)
+	FAppliedGraph AppliedGraph;
 
-	int16 CurAttackActionID{ -1 };
+	int8 CurAttackActionID{ -1 };
 	EActionProcess CurActionProcess;
 	EActionInput CurActionInput;
 	TFunction<bool(float)> CurActionPredicate{ nullptr };
