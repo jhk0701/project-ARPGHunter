@@ -32,9 +32,9 @@ void USkillDevelop::AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx
 
 void USkillDevelop::TestSetting()
 {
-	AddSkill(9, 0, 0);		// 9 - 0 - 0 Skill Charge
+	// AddSkill(9, 0, 0);		// 9 - 0 - 0 Skill Charge
 	AddSkill(10, 0, 0);		// 10 - 0 - 0 Dodge Slash 1
-	AddSkill(10, 2, 0);		// 10 - 2 - 0 Dodge Slash 2
+	// AddSkill(10, 2, 0);		// 10 - 2 - 0 Dodge Slash 2
 	AddSkill(8, 2, 0);		// 8 - 2 - 0 Smash 4 - 2
 	AddSkill(6, 3, 0);		// 6 - 3 - 0 Smash 3 - 2
 	AddSkill(5, 1, 0);		// 5 - 1 - 0 Smash 2 - 2

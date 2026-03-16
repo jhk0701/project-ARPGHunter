@@ -16,7 +16,15 @@
 void UUWActionInfo::SetInfo(EAttackType _type, const FText& _name)
 {
 	InputKeyImage->SetBrushFromTexture(MapTypeInput[_type]);
+	InputKeyImage->SetBrushTintColor(ColorOnUnlock);
 	ActionNameLabel->SetText(_name);
+}
+
+void UUWActionInfo::SetLocked(EAttackType _type)
+{
+	InputKeyImage->SetBrushFromTexture(MapTypeInput[_type]);
+	InputKeyImage->SetBrushTintColor(ColorOnLock);
+	ActionNameLabel->SetText(LockText);
 }
 
 void UUWActionGuide::NativeOnInitialized()
@@ -63,9 +71,15 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, int8 _curIdx, const FAppliedGr
 	for (uint8 i = 0; i < NextActions.Num(); ++i)
 	{
 		EAttackType Type = static_cast<EAttackType>(i);
-		if(Graph.Contains(Type) == false || Graph[Type].bIsUnlocked == false)
+		if(Graph.Contains(Type) == false)
 		{
 			NextActions[i]->SetVisibility(ESlateVisibility::Collapsed);
+			continue;
+		}
+
+		if (Graph[Type].bIsUnlocked == false)
+		{
+			NextActions[i]->SetLocked(Type);
 			continue;
 		}
 		

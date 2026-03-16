@@ -62,11 +62,11 @@ private:
 	EActionInput CurActionInput;
 	TFunction<bool(float)> CurActionPredicate{ nullptr };
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere)
 	float ActionProgressRate{ 0.1f };
 	FTimerHandle ActionProgressTimer;
 	
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere)
 	float ActionResetSecond{ 1.5f };
 	FTimerHandle ActionResetTimer;
 

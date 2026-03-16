@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,8 +22,16 @@ private:
 	UPROPERTY(EditAnywhere)
 	TMap<EAttackType, TObjectPtr<UTexture2D>> MapTypeInput;
 
+	UPROPERTY(EditAnywhere)
+	FText LockText;
+	UPROPERTY(EditAnywhere)
+	FSlateColor ColorOnLock;
+	UPROPERTY(EditAnywhere)
+	FSlateColor ColorOnUnlock;
+
 public:
 	void SetInfo(EAttackType _type, const FText& _name);
+	void SetLocked(EAttackType _type);
 };
 
 /**
