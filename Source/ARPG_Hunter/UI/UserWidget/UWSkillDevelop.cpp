@@ -13,6 +13,7 @@
 #include "Data/Action.h"
 #include "Data/SkillTreeData.h"
 #include "Data/SkillUpgrade.h"
+#include "UI/UserWidget/UWEquipmentUtilSlot.h"
 
 
 void UUWSkillNode::NativeOnInitialized()
@@ -79,6 +80,7 @@ void UUWSkillDevelop::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	CloseButton->OnClicked.AddDynamic(this, &UUWSkillDevelop::HideUI);
+	UpgradeButton->OnClicked.AddDynamic(this, &UUWSkillDevelop::ClickUpgrade);
 }
 
 void UUWSkillDevelop::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
@@ -87,20 +89,20 @@ void UUWSkillDevelop::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI
 	HideDetail();
 }
 
-void UUWSkillDevelop::Init(TWeakObjectPtr<UWeaponConfig> _curWeaponConfig, FGetSkillUpgradeInfoFunc& _func)
+void UUWSkillDevelop::Init(TWeakObjectPtr<UWeaponConfig> _curWeaponConfig, FGetSkillUpgradeInfoFunc& _upgradeInfofunc, FGetUsableSkillPointFunc& _usableSkillPointFunc)
 {
 	ActionComboData = _curWeaponConfig->AttackCombo;
 	SkillTreeData = _curWeaponConfig->SkillTree;
-	GetSkillUpgradeInfoFunc = _func;
+	GetSkillUpgradeInfoFunc = _upgradeInfofunc;
+	GetUsableSkillPointFunc = _usableSkillPointFunc;
 
 	SetSkillTree();
 }
 
 bool UUWSkillDevelop::IsValid() const
 {
-	return ActionComboData.IsValid() &&
-		SkillTreeData.IsValid() &&
-		GetSkillUpgradeInfoFunc.IsBound();
+	return ActionComboData.IsValid() && SkillTreeData.IsValid() &&
+		GetSkillUpgradeInfoFunc.IsBound() && GetUsableSkillPointFunc.IsBound();
 }
 
 void UUWSkillDevelop::SetSkillTree()
@@ -165,9 +167,19 @@ void UUWSkillDevelop::ShowDetail()
 	
 	NodeNameLabel->SetText(UpgradeInfo.Upgrade->NameText);
 	NodeDescLabel->SetText(UpgradeInfo.Upgrade->DescText);
+
+	FText FormatText = FText::FromString(TEXT("{0} / {1}"));
+	uint16 UsageSkillPoint = GetUsableSkillPointFunc.Execute();
+	bool bIsEnable = UpgradeInfo.Cost <= UsageSkillPoint;
+	SkillPoint->SetAmountLabel(FText::Format(FormatText, UpgradeInfo.Cost, UsageSkillPoint), bIsEnable);
+	UpgradeButton->SetIsEnabled(bIsEnable);
 }
 
 void UUWSkillDevelop::HideDetail()
 {
 	SkillNodeDetail->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UUWSkillDevelop::ClickUpgrade()
+{
 }

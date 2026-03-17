@@ -9,7 +9,7 @@ USkillDevelop::USkillDevelop()
 
 void USkillDevelop::Init()
 {
-	SkillPoint = 30;
+	SkillPoint = 1;
 }
 
 bool USkillDevelop::TryUseSkillPoint(uint16 _point)
@@ -56,7 +56,7 @@ void USkillDevelop::TestSetting()
 	AddSkill(6, 2, 0);
 	AddSkill(6, 4, 0);
 	AddSkill(8, 1, 0);
-
+	
 	// Wound Burst
 	AddSkill(8, 4, 0);
 	AddSkill(9, 2, 0);

@@ -115,10 +115,13 @@ void ANonCombatHUD::BeginPlay()
 		SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
 		
 		TWeakObjectPtr<USkillDevelop> SkillDevelop = PlayerManager->GetSkillDevelop();
+		
 		FGetSkillUpgradeInfoFunc SkillDevelopUIInitDelegate;
 		SkillDevelopUIInitDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade);
+		FGetUsableSkillPointFunc UsableSkillPointDelegate;
+		UsableSkillPointDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetUsableSkillPoint);
 		
-		SkillDevelopUI->Init(PlayerManager->GetWeaponConfig(), SkillDevelopUIInitDelegate);
+		SkillDevelopUI->Init(PlayerManager->GetWeaponConfig(), SkillDevelopUIInitDelegate, UsableSkillPointDelegate);
 	}
 
 	BindMainenanceAndInventory();

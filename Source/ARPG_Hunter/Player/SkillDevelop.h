@@ -34,6 +34,7 @@ public:
 
 	uint16 GetSkillPoint() const { return SkillPoint; }
 	uint16 GetUsingSkillPoint() const { return UsingSkillPoint; }
+	uint16 GetUsableSkillPoint() const { return SkillPoint - UsingSkillPoint; }
 
 	void AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx);
 	int8 GetSpecificSkillUpgrade(uint8 _skillTree, uint8 _nodeIdx) const;
