@@ -2,15 +2,35 @@
 
 
 #include "UI/UserWidget/UWSkillDevelop.h"
-#include "Components/Button.h"
 #include "Components/PanelWidget.h"
-#include "Blueprint/WidgetTree.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Components/Border.h"
 
 #include "Data/WeaponConfig.h"
 #include "Data/ActionComboData.h"
 #include "Data/Action.h"
 #include "Data/SkillTreeData.h"
 #include "Data/SkillUpgrade.h"
+
+
+void UUWSkillNode::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	SkillButton->OnClicked.AddDynamic(this, &UUWSkillNode::ClickButton);
+}
+
+void UUWSkillNode::ClickButton()
+{
+	OnClickSkillNode.ExecuteIfBound(Index);
+}
+
+void UUWSkillNode::SetSkillThumbnail(TObjectPtr<UTexture2D> _tex)
+{
+	SkillThumbnail->SetBrushFromTexture(_tex);
+}
 
 
 void UUWSkillTree::NativeOnInitialized()
@@ -23,18 +43,34 @@ void UUWSkillTree::NativeOnInitialized()
 		LevelContainer.Add(Cast<UPanelWidget>(TreeContainer->GetChildAt(i)));
 }
 
-void UUWSkillTree::Construct(const FSkillTree* _tree, const TArray<uint8>& _level, const uint8 _height)
+void UUWSkillTree::SetSkillLabel(const FText& _name)
 {
-	if (nullptr == SkillNodeClass)
+	SkillLabel->SetText(_name);
+}
+
+void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<uint8>& _level, const uint8 _height)
+{
+	if (nullptr == _tree || nullptr == SkillNodeClass)
 		return;
 
-	SkillNodes.Reserve(_tree->Tree.Num());
-	for (uint8 i = 0; i < _tree->Tree.Num(); ++i)
+	SkillTree = _tree;
+	SkillNodes.Reserve(SkillTree->Tree.Num());
+	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
 	{
 		TObjectPtr<UUWSkillNode> NodeInst = CreateWidget<UUWSkillNode>(GetWorld(), SkillNodeClass);
+
+		NodeInst->SetIndex(i);
+		NodeInst->SetSkillThumbnail((*SkillTree->Tree[i].UpgradeInfos.begin()).Upgrade->Thumbnail);
+		NodeInst->OnClickSkillNode.BindUObject(this, &UUWSkillTree::OnClickNode);
+		
 		LevelContainer[_level[i]]->AddChild(NodeInst);
 		SkillNodes.Add(NodeInst);
 	}
+}
+
+void UUWSkillTree::OnClickNode(uint8 _idx)
+{
+	OnSkillNodeSelected.ExecuteIfBound(Index, _idx);
 }
 
 
@@ -43,6 +79,12 @@ void UUWSkillDevelop::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	CloseButton->OnClicked.AddDynamic(this, &UUWSkillDevelop::HideUI);
+}
+
+void UUWSkillDevelop::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
+{
+	Super::ShowUI(_bIsSubUI, _mainUI);
+	HideDetail();
 }
 
 void UUWSkillDevelop::Init(TWeakObjectPtr<UWeaponConfig> _curWeaponConfig, FGetSkillUpgradeInfoFunc& _func)
@@ -61,11 +103,6 @@ bool UUWSkillDevelop::IsValid() const
 		GetSkillUpgradeInfoFunc.IsBound();
 }
 
-void UUWSkillDevelop::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
-{
-	Super::ShowUI(_bIsSubUI, _mainUI);
-}
-
 void UUWSkillDevelop::SetSkillTree()
 {
 	if (false == IsValid() ||
@@ -74,7 +111,7 @@ void UUWSkillDevelop::SetSkillTree()
 
 	SkillTreeUIs.Reserve(SkillTreeData->SkillTrees.Num());
 
-	for (const TPair<uint8, FSkillTree>& SkillTree : SkillTreeData->SkillTrees)
+	for (TPair<uint8, FSkillTree>& SkillTree : SkillTreeData->SkillTrees)
 	{
 		TArray<uint8> TreeLevel;
 		TreeLevel.SetNum(SkillTree.Value.Tree.Num());
@@ -92,9 +129,45 @@ void UUWSkillDevelop::SetSkillTree()
 		}
 
 		TObjectPtr<UUWSkillTree> UIInst = CreateWidget<UUWSkillTree>(GetWorld(), SkillTreeUIClass);
-		SkillTreeUIs.Add(UIInst);
+		UIInst->SetIndex(SkillTree.Key);
+		UIInst->SetSkillLabel(ActionComboData->AttackAcionArray[SkillTree.Key]->NameText);
 		UIInst->Construct(&SkillTree.Value, TreeLevel, Height + 1);
-
+		UIInst->OnSkillNodeSelected.BindUObject(this, &UUWSkillDevelop::SelectSkillNode);
+		
+		SkillTreeUIs.Add(UIInst);
 		SkillTreeContainer->AddChild(UIInst);
 	}
+}
+
+void UUWSkillDevelop::SelectSkillNode(uint8 _key, uint8 _nodeIdx)
+{
+	CurKey = _key;
+	CurNodeIdx = _nodeIdx;
+
+	ShowDetail();
+}
+
+void UUWSkillDevelop::ShowDetail()
+{
+	SkillNodeDetail->SetVisibility(ESlateVisibility::Visible);
+
+	if (false == IsValid())
+	{
+		HideDetail();
+		return;
+	}
+
+	int8 UpgradeIdx = GetSkillUpgradeInfoFunc.Execute(CurKey, CurNodeIdx);
+
+	FUpgradeInfo& UpgradeInfo = UpgradeIdx < 0 ? 
+		*SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx].UpgradeInfos.begin() :
+		SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx].UpgradeInfos[UpgradeIdx];
+	
+	NodeNameLabel->SetText(UpgradeInfo.Upgrade->NameText);
+	NodeDescLabel->SetText(UpgradeInfo.Upgrade->DescText);
+}
+
+void UUWSkillDevelop::HideDetail()
+{
+	SkillNodeDetail->SetVisibility(ESlateVisibility::Hidden);
 }
