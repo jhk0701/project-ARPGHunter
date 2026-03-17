@@ -321,7 +321,10 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 	if (StatComp->IsDead())
 		return;
 
-	uint32 Damage = ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
+	uint32 Damage = _hitInfo.bIgnoreDefense ? 
+		_hitInfo.Damage : 
+		ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
+
 	StatComp->TakeDamage(Damage,
 		[this]() 
 		{
@@ -375,7 +378,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 				Hitable->HitBy(HitInfo);
 			}
 
-			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.5f);
+			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.75f);
 		}
 	);
 }

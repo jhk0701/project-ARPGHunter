@@ -163,7 +163,9 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	// 피격 발생
-	uint32 Damage = ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
+	uint32 Damage = _hitInfo.bIgnoreDefense ? 
+		_hitInfo.Damage :
+		ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
 
 	StatComp->TakeDamage(Damage);
 	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);

@@ -19,28 +19,24 @@ void FCharacterResource::Init(uint32 _max, bool _bFull)
 UStatComponent::UStatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
+
+	const uint8 STAT_SIZE = static_cast<uint8>(ECharacterStatType::END);
+	BuffedStat.Reserve(STAT_SIZE);
+	DebuffedStat.Reserve(STAT_SIZE);
+	EquipmentStat.Reserve(STAT_SIZE);
+	for (uint8 i = 0; i < STAT_SIZE; ++i)
 	{
 		ECharacterStatType type = static_cast<ECharacterStatType>(i);
 
-		if(!EffectedStat.Find(type))
-			EffectedStat.Add(type);
-
-		EffectedStat[type] = 0;
-
-		if (!EquipmentStat.Find(type))
-			EquipmentStat.Add(type);
-
-		EquipmentStat[type] = 0;
+		BuffedStat.Add(type) = 0;
+		DebuffedStat.Add(type) = 0;
+		EquipmentStat.Add(type) = 0;
 	}
 
-	for (uint8 i = 0; i < static_cast<uint8>(ECharacterResourceType::END); ++i)
-	{
-		ECharacterResourceType type = static_cast<ECharacterResourceType>(i);
-
-		if (!Resource.Find(type))
-			Resource.Add(type, FCharacterResource());
-	}
+	const uint8 RESRC_SIZE = static_cast<uint8>(ECharacterResourceType::END);
+	Resource.Reserve(RESRC_SIZE);
+	for (uint8 i = 0; i < RESRC_SIZE; ++i)
+		Resource.Add(static_cast<ECharacterResourceType>(i)) = FCharacterResource();
 }
 
 void UStatComponent::Init(const TMap<ECharacterStatType, uint32>& _initStat)

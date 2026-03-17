@@ -78,7 +78,7 @@ bool URecoverStamina::Activate()
 
 bool UAddEffectUsingSkill::Activate()
 {
-	if (Super::Activate() == false || !IsValid())
+	if (false == Super::Activate() || false == IsValid())
 		return false;
 
 	TWeakObjectPtr<UStatComponent> Target = GetTarget();
@@ -101,25 +101,42 @@ bool UAddEffectUsingSkill::Activate()
 
 bool UDamageUsingEffect::Activate()
 {
-	if (Super::Activate() == false || !IsValid())
-		return false;
-	
-	TWeakObjectPtr<UEffect> Effect = GetTarget()->GetAppliedEffect(GetID());
-	if (nullptr == Effect)
+	if (false == Super::Activate() || false == IsValid())
 		return false;
 
+	TWeakObjectPtr<AActor> SubjectActor = GetSubject();
+	if (false == SubjectActor.IsValid())
+		return false;
+
+	const TArray<TObjectPtr<UEffectData>>& TargetEffects = GetTargetEffect();
+
+	uint8 TotalStack = 0;
+	for (TObjectPtr<UEffectData> TargetEffect : TargetEffects)
+	{
+		TWeakObjectPtr<UEffect> Effect = GetTarget()->GetAppliedEffect(TargetEffect);
+		if (false == Effect.IsValid())
+			continue;
+
+		TotalStack += Effect->GetStack();
+
+		// 타겟 효과 제거
+		GetTarget()->RemoveEffect(Effect.Get());
+	}
+
 	uint32 SubjectAttack = 0;
-	if (IEffectable* Effectable = Cast<IEffectable>(GetSubject())) 
+	if (IEffectable* Effectable = Cast<IEffectable>(SubjectActor))
 		SubjectAttack = Effectable->GetStatComp()->GetStat(ECharacterStatType::ATTACK);
 
 	uint32 Damage = SubjectAttack * GetValue() * 0.01f;
-	Damage *= Effect->GetStack();
+	Damage *= TotalStack;
 
 	if (IHitable* Hitable = Cast<IHitable>(GetTarget()->GetOwner()))
 	{
 		FHitInfo HitInfo;
-		HitInfo.Attacker = GetSubject();
+		HitInfo.Attacker = SubjectActor;
 		HitInfo.Damage = Damage;
+		HitInfo.bIgnoreDefense = true; // 효과 데미지는 방어력 무시
+
 		Hitable->HitBy(HitInfo);
 	}
 

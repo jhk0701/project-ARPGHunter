@@ -93,7 +93,9 @@ private:
 
 	// 효과로 얻은 스탯
 	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
-	TMap<ECharacterStatType, int32> EffectedStat;
+	TMap<ECharacterStatType, uint32> BuffedStat;
+	UPROPERTY(VisibleAnywhere, Category = "Stat|Effect", meta = (AllowPrivateAccess = "true"))
+	TMap<ECharacterStatType, uint32> DebuffedStat;
 
 	FCharacterResource& GetResource(ECharacterResourceType _type) 
 	{ 
@@ -119,7 +121,12 @@ public:
 		if (_bExceptEffect)
 			return Result;
 
-		Result += EffectedStat[_type];
+		Result += BuffedStat[_type];
+		
+		if (Result <= DebuffedStat[_type])
+			return 0;
+		
+		Result -= DebuffedStat[_type];
 		return Result;
 	}
 	uint32 GetResourceValue(ECharacterResourceType _type) const { return Resource[_type].Value; }
@@ -148,14 +155,18 @@ public:
 	void RemoveEffect(TObjectPtr<UEffect> _effect);
 	TWeakObjectPtr<UEffect> GetAppliedEffect(TObjectPtr<UObject> _key);
 
-	void AddStat(ECharacterStatType _type, uint16 _amount) 
-	{ 
-		EffectedStat[_type] += _amount; 
-	}
-	void SubStat(ECharacterStatType _type, uint16 _amount) 
+	void AddStat(ECharacterStatType _type, uint32 _amount) { BuffedStat[_type] += _amount; }
+	void SubStat(ECharacterStatType _type, uint32 _amount) 
 	{
-		check(EffectedStat[_type] >= static_cast<int32>(_amount));
-		EffectedStat[_type] -= _amount;
+		check(BuffedStat[_type] >= _amount);
+		BuffedStat[_type] -= _amount;
+	}
+
+	void DebuffStat(ECharacterStatType _type, uint32 _amount) { DebuffedStat[_type] += _amount; }
+	void RemoveDebuffStat(ECharacterStatType _type, uint32 _amount) 
+	{
+		check(DebuffedStat[_type] >= _amount);
+		DebuffedStat[_type] -= _amount; 
 	}
 
 	bool CheckHitOptionMask(uint8 _hitOpt, uint8 _mask) { return _hitOpt & _mask; }

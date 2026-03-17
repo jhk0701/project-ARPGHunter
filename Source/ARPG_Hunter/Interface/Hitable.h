@@ -11,11 +11,11 @@ enum class EAttackType : uint8;
 struct FHitInfo
 {
 	EAttackType AttackType;
-	uint32 Damage;
-	uint32 StaggerDamage;
-	float KnockBackStrength;
 	bool bIsCriticalHit{ false };
-
+	bool bIgnoreDefense{ false };
+	uint32 Damage{0};
+	uint32 StaggerDamage{0};
+	float KnockBackStrength{0.0f};
 	TWeakObjectPtr<AActor> Attacker; // 공격자 약참조로 전달
 	FHitResult* HitResult;
 };
