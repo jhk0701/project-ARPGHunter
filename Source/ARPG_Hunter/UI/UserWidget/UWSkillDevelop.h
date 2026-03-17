@@ -26,6 +26,14 @@ UCLASS()
 class ARPG_HUNTER_API UUWSkillNode : public UUserWidget 
 {
 	GENERATED_BODY()
+public:
+	enum EState : uint8
+	{
+		NONE,
+		IN_PROGRESS,
+		DONE
+	};
+
 private:
 	uint8 Index;
 	
@@ -33,6 +41,11 @@ private:
 	TObjectPtr<UButton> SkillButton;
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UImage> SkillThumbnail;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> SelectedMark;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FSlateColor> ColorOnState;
 	
 	UFUNCTION()
 	void ClickButton();
@@ -45,12 +58,20 @@ public:
 
 	void SetSkillThumbnail(TObjectPtr<UTexture2D> _tex);
 	void SetIndex(uint8 _idx) { Index = _idx; };
+	void SetState(EState _state);
 };
 
 UCLASS()
 class ARPG_HUNTER_API UUWSkillTree : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	struct FSkillNodeState 
+	{
+		uint8 Level;
+		UUWSkillNode::EState State;
+	};
 private:
 	uint8 Index;
 	struct FSkillTree* SkillTree;
@@ -73,8 +94,9 @@ public:
 	FOnSkillNodeSelected OnSkillNodeSelected;
 	void SetIndex(uint8 _idx) { Index = _idx; }
 	void SetSkillLabel(const FText& _name);
-	void Construct(struct FSkillTree* _tree, const TArray<uint8>& _level, const uint8 _height);
+	void Construct(struct FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height);
 	void OnClickNode(uint8 _idx);
+	void UpdateNode(uint8 _idx, UUWSkillNode::EState _state);
 };
 
 UCLASS()
@@ -97,7 +119,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWSkillTree> SkillTreeUIClass;
 	UPROPERTY()
-	TArray<TObjectPtr<UUWSkillTree>> SkillTreeUIs;
+	TMap<uint8, TObjectPtr<UUWSkillTree>> SkillTreeUIs;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UPanelWidget> SkillTreeContainer;
 	UPROPERTY(meta = (BindWidget))
@@ -137,4 +159,6 @@ public:
 	void SetSkillTree();
 	void UpdateSkillTree();
 	void SelectSkillNode(uint8 _key, uint8 _nodeIdx);
+
+	UUWSkillNode::EState GetNodeState(uint8 _key, uint8 _nodeIdx, int8 _upgradeLv);
 };

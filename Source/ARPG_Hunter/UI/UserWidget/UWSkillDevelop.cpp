@@ -15,6 +15,7 @@
 #include "Data/SkillUpgrade.h"
 #include "UI/UserWidget/UWEquipmentUtilSlot.h"
 
+#include "Define/Debug.h"
 
 void UUWSkillNode::NativeOnInitialized()
 {
@@ -33,6 +34,11 @@ void UUWSkillNode::SetSkillThumbnail(TObjectPtr<UTexture2D> _tex)
 	SkillThumbnail->SetBrushFromTexture(_tex);
 }
 
+void UUWSkillNode::SetState(EState _state)
+{
+	SelectedMark->SetBrushTintColor(ColorOnState[static_cast<uint8>(_state)]);
+}
+
 
 void UUWSkillTree::NativeOnInitialized()
 {
@@ -49,7 +55,7 @@ void UUWSkillTree::SetSkillLabel(const FText& _name)
 	SkillLabel->SetText(_name);
 }
 
-void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<uint8>& _level, const uint8 _height)
+void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height)
 {
 	if (nullptr == _tree || nullptr == SkillNodeClass)
 		return;
@@ -62,9 +68,10 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<uint8>& _level, con
 
 		NodeInst->SetIndex(i);
 		NodeInst->SetSkillThumbnail((*SkillTree->Tree[i].UpgradeInfos.begin()).Upgrade->Thumbnail);
+		NodeInst->SetState(_treeNodeStates[i].State);
 		NodeInst->OnClickSkillNode.BindUObject(this, &UUWSkillTree::OnClickNode);
 		
-		LevelContainer[_level[i]]->AddChild(NodeInst);
+		LevelContainer[_treeNodeStates[i].Level]->AddChild(NodeInst);
 		SkillNodes.Add(NodeInst);
 	}
 }
@@ -72,6 +79,11 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<uint8>& _level, con
 void UUWSkillTree::OnClickNode(uint8 _idx)
 {
 	OnSkillNodeSelected.ExecuteIfBound(Index, _idx);
+}
+
+void UUWSkillTree::UpdateNode(uint8 _idx, UUWSkillNode::EState _state)
+{
+	SkillNodes[_idx]->SetState(_state);
 }
 
 
@@ -115,9 +127,9 @@ void UUWSkillDevelop::SetSkillTree()
 
 	for (TPair<uint8, FSkillTree>& SkillTree : SkillTreeData->SkillTrees)
 	{
-		TArray<uint8> TreeLevel;
-		TreeLevel.SetNum(SkillTree.Value.Tree.Num());
-		TreeLevel[0] = 0;
+		TArray<UUWSkillTree::FSkillNodeState> TreeNodeState;
+		TreeNodeState.SetNum(SkillTree.Value.Tree.Num());
+		TreeNodeState[0].Level = 0;
 		uint8 Height = 0;
 
 		for (uint8 i = 0; i < SkillTree.Value.Tree.Num(); ++i)
@@ -125,18 +137,21 @@ void UUWSkillDevelop::SetSkillTree()
 			const FSkillNode& Node = SkillTree.Value.Tree[i];
 			for (uint8 Idx : Node.ChildrenIdx)
 			{
-				TreeLevel[Idx] = TreeLevel[i] + 1;
-				Height = FMath::Max(Height, TreeLevel[Idx]);
+				TreeNodeState[Idx].Level = TreeNodeState[i].Level + 1;
+				Height = FMath::Max(Height, TreeNodeState[Idx].Level);
 			}
+
+			int8 UpgradeLv = GetSkillUpgradeInfoFunc.Execute(SkillTree.Key, i);
+			TreeNodeState[i].State = GetNodeState(SkillTree.Key, i, UpgradeLv);
 		}
 
 		TObjectPtr<UUWSkillTree> UIInst = CreateWidget<UUWSkillTree>(GetWorld(), SkillTreeUIClass);
 		UIInst->SetIndex(SkillTree.Key);
 		UIInst->SetSkillLabel(ActionComboData->AttackAcionArray[SkillTree.Key]->NameText);
-		UIInst->Construct(&SkillTree.Value, TreeLevel, Height + 1);
+		UIInst->Construct(&SkillTree.Value, TreeNodeState, Height + 1);
 		UIInst->OnSkillNodeSelected.BindUObject(this, &UUWSkillDevelop::SelectSkillNode);
 		
-		SkillTreeUIs.Add(UIInst);
+		SkillTreeUIs.Add(SkillTree.Key, UIInst);
 		SkillTreeContainer->AddChild(UIInst);
 	}
 }
@@ -150,9 +165,27 @@ void UUWSkillDevelop::SelectSkillNode(uint8 _key, uint8 _nodeIdx)
 	ShowDetail();
 }
 
+UUWSkillNode::EState UUWSkillDevelop::GetNodeState(uint8 _key, uint8 _nodeIdx, int8 _upgradeLv)
+{
+	if (false == IsValid())
+		return UUWSkillNode::NONE;
+
+	const FSkillNode* Node = SkillTreeData->SkillTrees[_key].GetNode(_nodeIdx);
+	if (nullptr == Node)
+		return UUWSkillNode::NONE;
+
+	if (_upgradeLv < 0)
+		return UUWSkillNode::NONE;
+	else if (_upgradeLv == Node->UpgradeInfos.Num() - 1)
+		return UUWSkillNode::DONE;
+	else
+		return UUWSkillNode::IN_PROGRESS;
+}
+
 void UUWSkillDevelop::UpdateSkillTree()
 {
 	CurUpgrade = GetSkillUpgradeInfoFunc.Execute(CurKey, CurNodeIdx);
+	SkillTreeUIs[CurKey]->UpdateNode(CurNodeIdx, GetNodeState(CurKey, CurNodeIdx, CurUpgrade));
 
 	ShowDetail();
 }

@@ -49,6 +49,8 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
+
+	SkillDevelop->TestSetting();
 }
 
 void UPlayerManager::PostInit()
