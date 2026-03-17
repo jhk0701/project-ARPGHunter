@@ -122,6 +122,17 @@ void ANonCombatHUD::BeginPlay()
 		UsableSkillPointDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetUsableSkillPoint);
 		
 		SkillDevelopUI->Init(PlayerManager->GetWeaponConfig(), SkillDevelopUIInitDelegate, UsableSkillPointDelegate);
+		SkillDevelopUI->OnUpgradeClicked.BindWeakLambda(this,
+			[SkillDevelop](uint8 _key, uint8 _nodeIdx, uint8 _upgradeIdx, uint8 _cost)
+			{
+				if (false == SkillDevelop.IsValid())
+					return;
+				
+				if (SkillDevelop->TryUseSkillPoint(_cost))
+					SkillDevelop->AddSkill(_key, _nodeIdx, _upgradeIdx);
+			}
+		);
+		//BindUObject(SkillDevelop.Get(), &USkillDevelop::AddSkill);
 	}
 
 	BindMainenanceAndInventory();

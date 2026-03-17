@@ -20,6 +20,7 @@ DECLARE_DELEGATE_OneParam(FOnClickSkillNode, uint8);
 DECLARE_DELEGATE_TwoParams(FOnSkillNodeSelected, uint8, uint8);
 DECLARE_DELEGATE_RetVal_TwoParams(int8, FGetSkillUpgradeInfoFunc, uint8, uint8);
 DECLARE_DELEGATE_RetVal(uint16, FGetUsableSkillPointFunc);
+DECLARE_DELEGATE_FourParams(FOnUpgradeClicked, uint8, uint8, uint8, uint8);
 
 UCLASS()
 class ARPG_HUNTER_API UUWSkillNode : public UUserWidget 
@@ -88,6 +89,7 @@ private:
 
 	uint8 CurKey;
 	uint8 CurNodeIdx;
+	int8 CurUpgrade;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> CloseButton;
@@ -109,6 +111,13 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> UpgradeButton;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> UpgradeLabel;
+	UPROPERTY(EditAnywhere)
+	FText FullUpgradeText;
+	UPROPERTY(EditAnywhere)
+	FText UpgradableText;
+
 	void ShowDetail();
 	void HideDetail();
 
@@ -119,10 +128,13 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 public:
+	FOnUpgradeClicked OnUpgradeClicked;
+
 	void ShowUI(bool _bIsSubUI = false, TWeakObjectPtr<UUserWidget> _mainUI = nullptr) override;
 
 	void Init(TWeakObjectPtr<class UWeaponConfig> _curWeaponConfig, FGetSkillUpgradeInfoFunc& _upgradeInfofunc, FGetUsableSkillPointFunc& _usableSkillPointFunc);
 	bool IsValid() const;
 	void SetSkillTree();
+	void UpdateSkillTree();
 	void SelectSkillNode(uint8 _key, uint8 _nodeIdx);
 };

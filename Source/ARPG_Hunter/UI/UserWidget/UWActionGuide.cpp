@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWActionGuide.h"
@@ -56,9 +56,7 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, int8 _curIdx, const FAppliedGr
 	}
 
 	if (_bIsInit) 
-	{
 		CurAction->SetVisibility(ESlateVisibility::Hidden);
-	}
 	else
 	{
 		TObjectPtr<UAction> Action = _comboData->Actions[_curIdx]->GetAction();
@@ -71,20 +69,21 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, int8 _curIdx, const FAppliedGr
 	for (uint8 i = 0; i < NextActions.Num(); ++i)
 	{
 		EAttackType Type = static_cast<EAttackType>(i);
-		if(Graph.Contains(Type) == false)
+		const FActionConnect* Connect = Graph.Find(Type);
+		if (nullptr == Connect)
 		{
 			NextActions[i]->SetVisibility(ESlateVisibility::Collapsed);
 			continue;
 		}
 
-		if (Graph[Type].bIsUnlocked == false)
+		if (false == Connect->bIsUnlocked)
 		{
 			NextActions[i]->SetLocked(Type);
 			continue;
 		}
 		
 		NextActions[i]->SetVisibility(ESlateVisibility::Visible);
-		NextActions[i]->SetInfo(Type, _comboData->Actions[Graph[Type].Index]->GetAction()->NameText);
+		NextActions[i]->SetInfo(Type, _comboData->Actions[Connect->Index]->GetAction()->NameText);
 	}
 }
 

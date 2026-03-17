@@ -145,6 +145,14 @@ void UUWSkillDevelop::SelectSkillNode(uint8 _key, uint8 _nodeIdx)
 {
 	CurKey = _key;
 	CurNodeIdx = _nodeIdx;
+	CurUpgrade = GetSkillUpgradeInfoFunc.Execute(_key, _nodeIdx);
+
+	ShowDetail();
+}
+
+void UUWSkillDevelop::UpdateSkillTree()
+{
+	CurUpgrade = GetSkillUpgradeInfoFunc.Execute(CurKey, CurNodeIdx);
 
 	ShowDetail();
 }
@@ -159,17 +167,27 @@ void UUWSkillDevelop::ShowDetail()
 		return;
 	}
 
-	int8 UpgradeIdx = GetSkillUpgradeInfoFunc.Execute(CurKey, CurNodeIdx);
+	const FSkillNode& CurSkillNode = SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx];
+	bool bIsFullUpgrade = CurSkillNode.UpgradeInfos.Num() - 1 == CurUpgrade;
 
-	FUpgradeInfo& UpgradeInfo = UpgradeIdx < 0 ? 
-		*SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx].UpgradeInfos.begin() :
-		SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx].UpgradeInfos[UpgradeIdx];
+	const FUpgradeInfo& UpgradeInfo = bIsFullUpgrade ? CurSkillNode.UpgradeInfos.Last() : CurSkillNode.UpgradeInfos[CurUpgrade + 1];
 	
 	NodeNameLabel->SetText(UpgradeInfo.Upgrade->NameText);
 	NodeDescLabel->SetText(UpgradeInfo.Upgrade->DescText);
 
-	FText FormatText = FText::FromString(TEXT("{0} / {1}"));
+	if (bIsFullUpgrade)
+	{
+		// 최대 강화
+		UpgradeButton->SetIsEnabled(false);
+		UpgradeLabel->SetText(FullUpgradeText);
+		SkillPoint->SetAmountLabel(FText::FromString(TEXT("-")), true);
+		return;
+	}
+	else
+		UpgradeLabel->SetText(UpgradableText);
+
 	uint16 UsageSkillPoint = GetUsableSkillPointFunc.Execute();
+	FText FormatText = FText::FromString(TEXT("{0} / {1}"));
 	bool bIsEnable = UpgradeInfo.Cost <= UsageSkillPoint;
 	SkillPoint->SetAmountLabel(FText::Format(FormatText, UpgradeInfo.Cost, UsageSkillPoint), bIsEnable);
 	UpgradeButton->SetIsEnabled(bIsEnable);
@@ -182,4 +200,8 @@ void UUWSkillDevelop::HideDetail()
 
 void UUWSkillDevelop::ClickUpgrade()
 {
+	uint8 Cost = SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx].UpgradeInfos[CurUpgrade + 1].Cost;
+	OnUpgradeClicked.ExecuteIfBound(CurKey, CurNodeIdx, CurUpgrade + 1, Cost);
+
+	UpdateSkillTree();
 }
