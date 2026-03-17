@@ -55,10 +55,10 @@ protected:
 
 public:
 	FOnClickSkillNode OnClickSkillNode;
-
 	void SetSkillThumbnail(TObjectPtr<UTexture2D> _tex);
 	void SetIndex(uint8 _idx) { Index = _idx; };
 	void SetState(EState _state);
+	void SetButtonEnable(bool _bIsEnable);
 };
 
 UCLASS()
@@ -69,7 +69,7 @@ class ARPG_HUNTER_API UUWSkillTree : public UUserWidget
 public:
 	struct FSkillNodeState 
 	{
-		uint8 Level;
+		uint8 Level; // TreeLevel
 		UUWSkillNode::EState State;
 	};
 private:

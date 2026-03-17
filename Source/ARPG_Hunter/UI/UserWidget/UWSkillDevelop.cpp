@@ -39,6 +39,11 @@ void UUWSkillNode::SetState(EState _state)
 	SelectedMark->SetBrushTintColor(ColorOnState[static_cast<uint8>(_state)]);
 }
 
+void UUWSkillNode::SetButtonEnable(bool _bIsEnable)
+{
+	SkillButton->SetIsEnabled(_bIsEnable);
+}
+
 
 void UUWSkillTree::NativeOnInitialized()
 {
@@ -69,10 +74,23 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 		NodeInst->SetIndex(i);
 		NodeInst->SetSkillThumbnail((*SkillTree->Tree[i].UpgradeInfos.begin()).Upgrade->Thumbnail);
 		NodeInst->SetState(_treeNodeStates[i].State);
+		NodeInst->SetButtonEnable(false);
 		NodeInst->OnClickSkillNode.BindUObject(this, &UUWSkillTree::OnClickNode);
 		
 		LevelContainer[_treeNodeStates[i].Level]->AddChild(NodeInst);
 		SkillNodes.Add(NodeInst);
+	}
+
+	// 노드 상태에 따른 자식 노드 상호작용 설정
+	SkillNodes[0]->SetButtonEnable(true);
+	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i) 
+	{
+		if (_treeNodeStates[i].State == UUWSkillNode::NONE)
+			continue;
+
+		const FSkillNode* Node = SkillTree->GetNode(i);
+		for (uint8 ChildIdx : Node->ChildrenIdx)
+			SkillNodes[ChildIdx]->SetButtonEnable(true);
 	}
 }
 
@@ -84,8 +102,14 @@ void UUWSkillTree::OnClickNode(uint8 _idx)
 void UUWSkillTree::UpdateNode(uint8 _idx, UUWSkillNode::EState _state)
 {
 	SkillNodes[_idx]->SetState(_state);
-}
 
+	if (_state != UUWSkillNode::NONE) 
+	{
+		const FSkillNode* Node = SkillTree->GetNode(_idx);
+		for (uint8 ChildIdx : Node->ChildrenIdx)
+			SkillNodes[ChildIdx]->SetButtonEnable(true);
+	}
+}
 
 void UUWSkillDevelop::NativeOnInitialized()
 {
@@ -107,7 +131,6 @@ void UUWSkillDevelop::Init(TWeakObjectPtr<UWeaponConfig> _curWeaponConfig, FGetS
 	SkillTreeData = _curWeaponConfig->SkillTree;
 	GetSkillUpgradeInfoFunc = _upgradeInfofunc;
 	GetUsableSkillPointFunc = _usableSkillPointFunc;
-
 	SetSkillTree();
 }
 
@@ -202,7 +225,6 @@ void UUWSkillDevelop::ShowDetail()
 
 	const FSkillNode& CurSkillNode = SkillTreeData->SkillTrees[CurKey].Tree[CurNodeIdx];
 	bool bIsFullUpgrade = CurSkillNode.UpgradeInfos.Num() - 1 == CurUpgrade;
-
 	const FUpgradeInfo& UpgradeInfo = bIsFullUpgrade ? CurSkillNode.UpgradeInfos.Last() : CurSkillNode.UpgradeInfos[CurUpgrade + 1];
 	
 	NodeNameLabel->SetText(UpgradeInfo.Upgrade->NameText);
@@ -210,7 +232,7 @@ void UUWSkillDevelop::ShowDetail()
 
 	if (bIsFullUpgrade)
 	{
-		// 최대 강화
+		// 최대 강화 처리
 		UpgradeButton->SetIsEnabled(false);
 		UpgradeLabel->SetText(FullUpgradeText);
 		SkillPoint->SetAmountLabel(FText::FromString(TEXT("-")), true);

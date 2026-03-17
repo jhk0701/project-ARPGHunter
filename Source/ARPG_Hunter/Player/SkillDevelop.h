@@ -20,7 +20,7 @@ public:
 	USkillDevelop();
 
 private:
-	// 스킬 포인트 // 수급방법
+	// 스킬 포인트
 	uint16 SkillPoint{ 0 };
 	uint16 UsingSkillPoint{ 0 };
 	// 스킬 육성 정보
