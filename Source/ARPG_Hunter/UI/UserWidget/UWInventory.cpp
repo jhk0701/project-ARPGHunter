@@ -66,9 +66,9 @@ void UUWInventory::HideUI()
 	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWInventory::Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc)
+void UUWInventory::Init(uint8 _initSize, uint32 _gold, FGetItemArrFunc& _func)
 {
-	GetItemArrFunc = _getItemArrFunc;
+	GetItemArrFunc = _func;
 
 	check(ItemSlotClass); // 없는 경우 크래시
 
@@ -116,9 +116,9 @@ void UUWInventory::UpdateSlot()
 	if (!IsValid())
 		return;
 
-	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurCategory);
-	for (uint8 i = 0; i < ItemArr->Num(); ++i)
-		SetSlot(i, (*ItemArr)[i]);
+	const TArray<TObjectPtr<UItem>>& ItemArr = GetItemArrFunc.Execute(CurCategory);
+	for (uint8 i = 0; i < ItemArr.Num(); ++i)
+		SetSlot(i, ItemArr[i]);
 }
 
 void UUWInventory::OnSlotClicked(uint8 _index)
@@ -129,11 +129,11 @@ void UUWInventory::OnSlotClicked(uint8 _index)
 	ItemSlots[CurSelectedSlot]->MarkSelected(false);
 	CurSelectedSlot = _index;
 	
-	const TArray<TObjectPtr<UItem>>* ItemArr = GetItemArrFunc(CurCategory);
-	if ((*ItemArr)[_index] != nullptr)
+	const TArray<TObjectPtr<UItem>>& ItemArr = GetItemArrFunc.Execute(CurCategory);
+	if (ItemArr[_index] != nullptr)
 	{
 		ItemSlots[CurSelectedSlot]->MarkSelected(true);
-		SelectedItemDetail->SetDetail((*ItemArr)[_index]);
+		SelectedItemDetail->SetDetail(ItemArr[_index]);
 		ShowSelectedItemDetail(true);
 	}
 	else

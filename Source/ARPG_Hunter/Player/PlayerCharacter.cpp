@@ -13,14 +13,12 @@
 #include "Interface/Interactable.h"
 #include "Define/Enum.h"
 #include "Core/Subsystem/PlayerManager.h"
-#include "Core/Subsystem/DataManager.h"
 #include "Core/GameMode/CombatGameMode.h"
 #include "Controller/PlayerCombatController.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
 #include "Player/Equipment.h"
 #include "Player/SkillDevelop.h"
-#include "Data/WeaponConfig.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
@@ -123,7 +121,6 @@ void APlayerCharacter::Init()
 {
 	// 플레이어 데이터 받아오기
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 
 	// 스탯 초기화
 	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
@@ -135,16 +132,11 @@ void APlayerCharacter::Init()
 	InitEquipment(Equipment);
 	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
 
-	EWeaponType Type = EWeaponType::SWORD;
-	TWeakObjectPtr<UEquipmentItem> EquipedWeapon = Equipment->GetEquipment(EEquipmentType::WEAPON);
-	if (EquipedWeapon.IsValid())
-		Type = EquipedWeapon->GetWeaponType();
-
 	// 무기에 따른 애니메이션 및 액션 초기화
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 
 	ActionComp->Init({
-			DataManager->GetWeaponConfig(Type),
+			PlayerManager->GetWeaponConfig(),
 			AnimInst,
 			MapEquipmentMeshComp[EEquipmentType::WEAPON],
 			PlayerManager->GetSkillDevelop()->GetSkillSelectPtr()

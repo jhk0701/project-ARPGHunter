@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,6 +16,7 @@ class UUWItemDetail;
 enum class EItemType : uint8;
 
 DECLARE_DELEGATE_TwoParams(FOnItemOptionClicked, EItemType, uint8);
+DECLARE_DELEGATE_RetVal_OneParam(const TArray<TObjectPtr<UItem>>&, FGetItemArrFunc, EItemType);
 
 /**
  * 
@@ -26,9 +27,9 @@ class ARPG_HUNTER_API UUWInventory : public UUWPopUp
 	GENERATED_BODY()
 private:
 	EItemType CurCategory;
-	TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> GetItemArrFunc;
 	uint8 CurSelectedSlot;
 	int8 OptionalIndex{ -1 }; // 장비, 소비템 장착 시, 자리에 해당하는 인덱스가 들어올 것. (장비 : 타입 열거형 값, 소비템 : 퀵슬롯 인덱스)
+	FGetItemArrFunc GetItemArrFunc;
 
 	UPROPERTY(EditAnywhere)
 	FVector2D SlotSize{80.0f,80.0f};
@@ -84,8 +85,8 @@ public:
 
 	virtual void HideUI() override;
 
-	void Init(uint8 _initSize, uint32 _gold, TFunction<const TArray<TObjectPtr<UItem>>*(EItemType)> _getItemArrFunc = nullptr);
-	bool IsValid() const { return GetItemArrFunc != nullptr; }
+	void Init(uint8 _initSize, uint32 _gold, FGetItemArrFunc& _func);
+	bool IsValid() const { return GetItemArrFunc.IsBound(); }
 	void SetSlot(uint8 _idx, TWeakObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
 	int8 GetOptionalIndex() const { return OptionalIndex; }

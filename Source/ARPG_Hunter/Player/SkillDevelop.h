@@ -36,6 +36,8 @@ public:
 	uint16 GetUsingSkillPoint() const { return UsingSkillPoint; }
 
 	void AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx);
+	int8 GetSpecificSkillUpgrade(uint8 _skillTree, uint8 _nodeIdx) const;
+
 	const TMap<uint8, TMap<uint8, int8>>& GetSkillSelect() const { return SkillSelectMap; }
 	const TMap<uint8, TMap<uint8, int8>>* GetSkillSelectPtr() const { return &SkillSelectMap; }
 

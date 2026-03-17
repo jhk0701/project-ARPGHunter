@@ -28,6 +28,19 @@ void USkillDevelop::AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx
 	Upgrade = _upgradeIdx;
 }
 
+int8 USkillDevelop::GetSpecificSkillUpgrade(uint8 _skillTree, uint8 _nodeIdx) const
+{
+	const TMap<uint8, int8>* Skill = SkillSelectMap.Find(_skillTree);
+	if (nullptr == Skill)
+		return -1;
+
+	const int8* Upgrade = Skill->Find(_nodeIdx);
+	if (nullptr == Upgrade)
+		return -1;
+
+	return *Upgrade;
+}
+
 void USkillDevelop::TestSetting()
 {
 	AddSkill(9, 0, 0);		// 9 - 0 - 0 Skill Charge

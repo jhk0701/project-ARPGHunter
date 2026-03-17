@@ -19,7 +19,7 @@ struct FPlayerActionInitParam
 {
 	GENERATED_BODY()
 public:
-	TObjectPtr<UWeaponConfig> WeaonConfig;
+	TWeakObjectPtr<UWeaponConfig> WeaonConfig;
 	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance;
 	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp;
 	const TMap<uint8, TMap<uint8, int8>>* SkillDevelop;
@@ -53,7 +53,7 @@ class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
 	GENERATED_BODY()
 
 private:
-	TObjectPtr<UWeaponConfig> CurWeapon;
+	TWeakObjectPtr<UWeaponConfig> CurWeapon;
 
 	UPROPERTY(VisibleAnywhere)
 	FAppliedGraph AppliedGraph;
@@ -89,7 +89,7 @@ public:
 	void ResetAction();
 	void SetActionProcess(EActionProcess _eProcess);
 
-	bool IsValid() const { return CurWeapon != nullptr; }
+	bool IsValid() const { return CurWeapon.IsValid(); }
 	bool IsInProgress() const;
 
 	bool PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);

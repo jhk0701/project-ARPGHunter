@@ -8,6 +8,7 @@
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
+#include "Player/SkillDevelop.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWGameMenu.h"
 #include "UI/UserWidget/UWMaintenance.h"
@@ -95,14 +96,13 @@ void ANonCombatHUD::BeginPlay()
 		if (InventoryUI)
 		{
 			TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-			
+			FGetItemArrFunc InventoryUIInitDelegate;
+			InventoryUIInitDelegate.BindUObject(Inventory.Get(), &UInventory::GetContainer);
+
 			InventoryUI->Init(
 				Inventory->GetContainerSize(), 
 				PlayerManager->GetGold(), 
-				[Inventory](EItemType _type)
-				{ 
-					return &Inventory->GetContainer(_type);
-				}
+				InventoryUIInitDelegate
 			);
 
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
@@ -113,6 +113,12 @@ void ANonCombatHUD::BeginPlay()
 	if (SkillDevelopUIClass) 
 	{
 		SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
+		
+		TWeakObjectPtr<USkillDevelop> SkillDevelop = PlayerManager->GetSkillDevelop();
+		FGetSkillUpgradeInfoFunc SkillDevelopUIInitDelegate;
+		SkillDevelopUIInitDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade);
+		
+		SkillDevelopUI->Init(PlayerManager->GetSkillTreeData(), SkillDevelopUIInitDelegate);
 	}
 
 	BindMainenanceAndInventory();
@@ -123,7 +129,6 @@ void ANonCombatHUD::BeginPlay()
 		TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
 		MenuUI->ToggleOptionalButton(UUWGameMenu::RETURN, false);
 	}
-
 }
 
 void ANonCombatHUD::BindMainenanceAndInventory()
@@ -219,6 +224,7 @@ void ANonCombatHUD::ToggleMaintenanceUI()
 	else
 		MaintenanceUI->ShowUI();
 }
+
 void ANonCombatHUD::ToggleInventoryUI()
 {
 	if (InventoryUI == nullptr)

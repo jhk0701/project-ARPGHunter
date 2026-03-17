@@ -5,6 +5,8 @@
 #include "Core/Subsystem/DataManager.h"
 #include "Define/Enum.h"
 #include "Data/PlayerConfig.h"
+#include "Data/WeaponConfig.h"
+#include "Data/SkillTreeData.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
@@ -62,6 +64,22 @@ TWeakObjectPtr<UQuickSlot> UPlayerManager::GetQuickSlot() const { return QuickSl
 TWeakObjectPtr<USkillDevelop> UPlayerManager::GetSkillDevelop() const { return SkillDevelop; }
 const TMap<ECharacterStatType, uint32>& UPlayerManager::GetEquipmentStat() const { return Equipment->GetEquipmentStat(); }
 
+TWeakObjectPtr<UWeaponConfig> UPlayerManager::GetWeaponConfig() const
+{
+	EWeaponType Type = EWeaponType::SWORD;
+	TWeakObjectPtr<UEquipmentItem> Weapon = Equipment->GetEquipment(EEquipmentType::WEAPON);
+	
+	if (Weapon.IsValid())
+		Type = Weapon->GetWeaponType();
+
+	return GetGameInstance()->GetSubsystem<UDataManager>()->GetWeaponConfig(Type);
+}
+
+TWeakObjectPtr<USkillTreeData> UPlayerManager::GetSkillTreeData() const
+{
+	return GetWeaponConfig()->SkillTree;
+}
+
 void UPlayerManager::AddGold(uint32 _amount)
 {
 	Gold.Value += _amount;
@@ -100,7 +118,6 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 	if (Inventory->GetItem(EItemType::CONSUMABLE, _inventoryIdx).IsValid() == false)
 		QuickSlot->ClearSlot(_quickSlotIdx);
 }
-
 
 void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 {
@@ -148,7 +165,6 @@ void UPlayerManager::UseQuickSlotItem(uint8 _index, IEffectable* _target)
 {
 	QuickSlot->UseItem(_index, _target);
 }
-
 
 void UPlayerManager::WriteSaveData(UARPGSaveGame* _savegame)
 {

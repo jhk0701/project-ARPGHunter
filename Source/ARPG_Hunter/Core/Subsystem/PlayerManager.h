@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -75,10 +75,14 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	void PostInit();
 
+	void CreateNewPlayer(const FString& _playerName);
+
 	const FString& GetPlayerName() const { return PlayerName; }
 	const TMap<ECharacterStatType, uint32>& GetStat() const { return Stat; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const;
-	
+	TWeakObjectPtr<class UWeaponConfig> GetWeaponConfig() const;
+	TWeakObjectPtr<class USkillTreeData> GetSkillTreeData() const;
+
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
 	bool TrySubGold(uint32 _amount);
@@ -91,8 +95,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName& _itemID, int32 _amount);
 
-	void CreateNewPlayer(const FString& _playerName);
-	
 	// Inherited via ISaveLoadHandler
 	virtual void WriteSaveData(UARPGSaveGame* _savegame) override;
 	virtual void ReadSaveData(UARPGSaveGame* _savegame) override;
