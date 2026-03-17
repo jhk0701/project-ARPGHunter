@@ -49,8 +49,6 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
-
-	SkillDevelop->TestSetting();
 }
 
 void UPlayerManager::PostInit()
@@ -168,6 +166,9 @@ void UPlayerManager::WriteSaveData(UARPGSaveGame* _savegame)
 	PlayerSave->PlayerName = PlayerName;
 	PlayerSave->Gold = Gold.Value;
 	PlayerSave->SetInventoryData(GetInventory());
+	PlayerSave->SkillPoint = SkillDevelop->GetSkillPoint();
+	PlayerSave->UsingSkillPoint = SkillDevelop->GetUsingSkillPoint();
+	PlayerSave->SetSkillTreeData(GetSkillDevelop());
 }
 
 void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
@@ -185,4 +186,10 @@ void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
 				Equipment->LoadEquipment(_item);
 		}
 	);
+
+	SkillDevelop->LoadSkillPoints(
+		PlayerSaveData->SkillPoint,
+		PlayerSaveData->UsingSkillPoint
+	);
+	PlayerSaveData->GetSkillTreeData(GetSkillDevelop());
 }

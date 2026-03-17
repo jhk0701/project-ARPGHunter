@@ -5,6 +5,7 @@
 
 #include "Define/Enum.h"
 #include "Player/Inventory.h"
+#include "Player/SkillDevelop.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 
@@ -88,5 +89,30 @@ void UPlayerSaveGame::GetInventoryData(TWeakObjectPtr<UInventory> _inventory, TF
 
 			_inventory->SetItem(Type, ItemInst->GetInventoryIndex(), ItemInst);
 		}
+	}
+}
+
+void UPlayerSaveGame::SetSkillTreeData(TWeakObjectPtr<class USkillDevelop> _skillDevelop)
+{
+	if (false == _skillDevelop.IsValid())
+		return;
+
+	const TMap<uint8, TMap<uint8, int8>>& SelectMap = _skillDevelop->GetSkillSelect();
+	for (const TPair<uint8, TMap<uint8, int8>>& Trees : SelectMap)
+	{
+		FSkillNodeData& NodeData = SkillTreeData.Add(Trees.Key);
+		NodeData.Node = Trees.Value;
+	}
+}
+
+void UPlayerSaveGame::GetSkillTreeData(TWeakObjectPtr<class USkillDevelop> _skillDevelop)
+{
+	if (false == _skillDevelop.IsValid())
+		return;
+
+	for (const TPair<uint8, FSkillNodeData>& TreeData : SkillTreeData)
+	{
+		for (const TPair<uint8, int8>& NodeData : TreeData.Value.Node)
+			_skillDevelop->AddSkill(TreeData.Key, NodeData.Key, NodeData.Value);
 	}
 }

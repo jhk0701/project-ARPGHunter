@@ -38,6 +38,16 @@ public:
 	TArray<FItemSaveData> ItemArray;
 };
 
+USTRUCT()
+struct FSkillNodeData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	TMap<uint8, int8> Node;
+};
+
+
 /**
  *
  */
@@ -52,13 +62,22 @@ public:
 		SlotName = TEXT("ARPG_PlayerData");
 	}
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	FString PlayerName;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	uint32 Gold{ 0 };
 	UPROPERTY()
 	TMap<uint8, FItemSaveDataArray> InventoryDataMap;
 
+	UPROPERTY()
+	uint16 SkillPoint{ 0 };
+	UPROPERTY()
+	uint16 UsingSkillPoint{ 0 };
+	UPROPERTY()
+	TMap<uint8, FSkillNodeData> SkillTreeData;
+
 	void SetInventoryData(TWeakObjectPtr<class UInventory> _inventory);
 	void GetInventoryData(TWeakObjectPtr<class UInventory> _inventory, TFunctionRef<void(EItemType, TObjectPtr<class UItem>)> _slotedItemProcess);
+	void SetSkillTreeData(TWeakObjectPtr<class USkillDevelop> _skillDevelop);
+	void GetSkillTreeData(TWeakObjectPtr<class USkillDevelop> _skillDevelop);
 };

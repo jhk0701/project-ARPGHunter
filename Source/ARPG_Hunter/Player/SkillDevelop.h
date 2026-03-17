@@ -42,6 +42,12 @@ public:
 	const TMap<uint8, TMap<uint8, int8>>& GetSkillSelect() const { return SkillSelectMap; }
 	const TMap<uint8, TMap<uint8, int8>>* GetSkillSelectPtr() const { return &SkillSelectMap; }
 
+	void LoadSkillPoints(uint16 _skillPoint, uint16 _usingSkillPoint) 
+	{
+		SkillPoint = _skillPoint;
+		UsingSkillPoint = _usingSkillPoint;
+	}
+
 	void TestSetting();
 };
 
