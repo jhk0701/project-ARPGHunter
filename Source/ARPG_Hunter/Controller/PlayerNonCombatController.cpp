@@ -23,7 +23,9 @@ void APlayerNonCombatController::ShortCut(EShortCutType _key)
 	{
 		if (_key == EShortCutType::TAB)
 			HUD->ToggleMaintenanceUI();
-		else if (_key == EShortCutType::INVENTORY)
+		else if (_key == EShortCutType::KEY_I)
 			HUD->ToggleInventoryUI();
+		else if (_key == EShortCutType::KEY_K)
+			HUD->ToggleSkillDevelopUI();
 	}
 }

@@ -21,5 +21,5 @@ void UUWNonCombatHUD::ClickMaintenanceButton()
 
 void UUWNonCombatHUD::ClickInventoryButton()
 {
-	OnClickShortCutButton.ExecuteIfBound(EShortCutType::INVENTORY);
+	OnClickShortCutButton.ExecuteIfBound(EShortCutType::KEY_I);
 }

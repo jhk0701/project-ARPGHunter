@@ -67,6 +67,23 @@ void UStatComponent::Clear()
 	}
 }
 
+uint32 UStatComponent::GetStat(ECharacterStatType _type, bool _bExceptEffect) const
+{
+	uint32 Result = Stat[_type];
+
+	Result += EquipmentStat[_type];
+
+	if (_bExceptEffect)
+		return Result;
+
+	Result += BuffedStat[_type];
+	if (Result <= DebuffedStat[_type])
+		return 0;
+
+	Result -= DebuffedStat[_type];
+	return Result;
+}
+
 void UStatComponent::StartStaminaRecovery()
 {
 	TObjectPtr<UWorld> World = GetWorld();
@@ -222,7 +239,7 @@ bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
 		
 		// 스택 쌓기 가능한지 확인
-		if (Applied->Effect->IsStackFull() == false)
+		if (false == Applied->Effect->IsStackFull())
 			AppliedEffect->AddStack(); // 스택 쌓기
 
 		// 지속 시간 갱신

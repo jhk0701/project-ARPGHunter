@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/NonCombatHUD.h"
@@ -9,9 +9,10 @@
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
+#include "UI/UserWidget/UWGameMenu.h"
 #include "UI/UserWidget/UWMaintenance.h"
 #include "UI/UserWidget/UWInventory.h"
-#include "UI/UserWidget/UWGameMenu.h"
+#include "UI/UserWidget/UWSkillDevelop.h"
 
 #include "Item/Item.h"
 
@@ -26,8 +27,11 @@ ANonCombatHUD::ANonCombatHUD()
 	static ConstructorHelpers::FClassFinder<UUWInventory> InventoryUIFinder(TEXT("/Game/06-UI/WBP_Inventory.WBP_Inventory_C"));
 	if (InventoryUIFinder.Succeeded())
 		InventoryUIClass = InventoryUIFinder.Class;
-
+	static ConstructorHelpers::FClassFinder<UUWSkillDevelop> SkillUIFinder(TEXT("/Game/06-UI/WBP_SkillDevelop.WBP_SkillDevelop_C"));
+	if (SkillUIFinder.Succeeded())
+		SkillDevelopUIClass = SkillUIFinder.Class;
 }
+
 void ANonCombatHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -46,8 +50,11 @@ void ANonCombatHUD::BeginPlay()
 					case EShortCutType::TAB:
 						ToggleMaintenanceUI();
 						break;
-					case EShortCutType::INVENTORY:
+					case EShortCutType::KEY_I:
 						ToggleInventoryUI();
+						break;
+					case EShortCutType::KEY_K:
+						ToggleSkillDevelopUI();
 						break;
 					}
 					
@@ -101,6 +108,11 @@ void ANonCombatHUD::BeginPlay()
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
 			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
 		}
+	}
+
+	if (SkillDevelopUIClass) 
+	{
+		SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
 	}
 
 	BindMainenanceAndInventory();
@@ -216,4 +228,15 @@ void ANonCombatHUD::ToggleInventoryUI()
 		InventoryUI->HideUI();
 	else
 		InventoryUI->ShowUI();
+}
+
+void ANonCombatHUD::ToggleSkillDevelopUI()
+{
+	if (SkillDevelopUI == nullptr)
+		return;
+
+	if (SkillDevelopUI->IsShowing())
+		SkillDevelopUI->HideUI();
+	else
+		SkillDevelopUI->ShowUI();
 }

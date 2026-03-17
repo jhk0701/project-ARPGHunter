@@ -12,15 +12,13 @@ void USkillDevelop::Init()
 	SkillPoint = 30;
 }
 
-void USkillDevelop::AddPoint(uint16 _point)
+bool USkillDevelop::TryUseSkillPoint(uint16 _point)
 {
-	SkillPoint += _point;
-}
+	if (UsingSkillPoint + _point > SkillPoint)
+		return false;
 
-void USkillDevelop::SubPoint(uint16 _point)
-{
-	check(SkillPoint >= _point);
-	SkillPoint -= _point;
+	UsingSkillPoint += _point;
+	return true;
 }
 
 void USkillDevelop::AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx)

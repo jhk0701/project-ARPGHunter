@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,19 +20,20 @@ public:
 	USkillDevelop();
 
 private:
+	// 스킬 포인트 // 수급방법
 	uint16 SkillPoint{ 0 };
-
-	// 무기 타입
-	EWeaponType WeaponType;
+	uint16 UsingSkillPoint{ 0 };
 	// 스킬 육성 정보
 	TMap<uint8, TMap<uint8, int8>> SkillSelectMap; // SkillTree - [NodeIdx - UpgradeIdx]
 
 public:
 	void Init();
 
-	void AddPoint(uint16 _point);
-	void SubPoint(uint16 _point);
+	void AddSkillPoint(uint16 _point) { SkillPoint += _point; }
+	bool TryUseSkillPoint(uint16 _point);
+
 	uint16 GetSkillPoint() const { return SkillPoint; }
+	uint16 GetUsingSkillPoint() const { return UsingSkillPoint; }
 
 	void AddSkill(uint8 _skillTree, uint8 _nodeIdx, uint8 _upgradeIdx);
 	const TMap<uint8, TMap<uint8, int8>>& GetSkillSelect() const { return SkillSelectMap; }

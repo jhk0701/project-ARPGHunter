@@ -50,6 +50,19 @@ FName EnumToName(EWeaponType _value)
 	}
 }
 
+FText EnumToText(EWeaponType _value)
+{
+	switch (_value)
+	{
+	case EWeaponType::SWORD:
+		return FText::FromString(TEXT("검"));
+	case EWeaponType::HAND_GUN:
+		return FText::FromString(TEXT("핸드건"));
+	default:
+		return FText::FromString(TEXT("None"));
+	}
+}
+
 FString EnumToString(EEquipmentType _type)
 {
 	switch (_type)

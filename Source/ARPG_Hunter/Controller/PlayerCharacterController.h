@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -47,9 +47,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> ShortCutAction_Tab;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInputAction> ShortCutAction_Inventory;
-	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInputAction> ShortCutAction_F1;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> ShortCutAction_Key_I;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInputAction> ShortCutAction_Key_K;
 	
 
 protected:
@@ -80,9 +82,11 @@ public:
 	UFUNCTION()
 	void InputShortCutTAB(const FInputActionValue& _value);
 	UFUNCTION()
+	void InputShortCutF1(const FInputActionValue& _value);
+	UFUNCTION()
 	void InputShortCutI(const FInputActionValue& _value);
 	UFUNCTION()
-	void InputShortCutF1(const FInputActionValue& _value);
+	void InputShortCutK(const FInputActionValue& _value);
 
 	virtual void LockCursor(TSharedPtr<SWidget> _uiToFocus);
 	void UnLockCursor();

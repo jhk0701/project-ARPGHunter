@@ -113,22 +113,7 @@ public:
 	void Init(const TMap<ECharacterStatType, uint32>& _initStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void Clear();
  
-	uint32 GetStat(ECharacterStatType _type, bool _bExceptEffect = false) const 
-	{ 
-		uint32 Result = Stat[_type];
-		Result += EquipmentStat[_type];
-
-		if (_bExceptEffect)
-			return Result;
-
-		Result += BuffedStat[_type];
-		
-		if (Result <= DebuffedStat[_type])
-			return 0;
-		
-		Result -= DebuffedStat[_type];
-		return Result;
-	}
+	uint32 GetStat(ECharacterStatType _type, bool _bExceptEffect = false) const;
 	uint32 GetResourceValue(ECharacterResourceType _type) const { return Resource[_type].Value; }
 	uint32 GetResourceMaxValue(ECharacterResourceType _type) const { return Resource[_type].MaxValue; }
 	FOnValueChanged& GetResourceEvent(ECharacterResourceType _type) { return Resource[_type].OnValueChanged; }

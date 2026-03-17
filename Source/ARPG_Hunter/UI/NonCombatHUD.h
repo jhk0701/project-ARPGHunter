@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,9 +7,9 @@
 #include "NonCombatHUD.generated.h"
 
 class UUWNonCombatHUD;
-class UUWInventory;
-class UUWEquipment;
 class UUWMaintenance;
+class UUWInventory;
+class UUWSkillDevelop;
 
 /**
  * 
@@ -31,11 +31,14 @@ private:
 	TSubclassOf<UUWMaintenance> MaintenanceUIClass;
 	UPROPERTY()
 	TObjectPtr<UUWMaintenance> MaintenanceUI;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWInventory> InventoryUIClass;
 	UPROPERTY()
 	TObjectPtr<UUWInventory> InventoryUI;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWSkillDevelop> SkillDevelopUIClass;
+	UPROPERTY()
+	TObjectPtr<UUWSkillDevelop> SkillDevelopUI;
 
 	void BindMainenanceAndInventory();
 
@@ -45,4 +48,5 @@ protected:
 public:
 	void ToggleMaintenanceUI();
 	void ToggleInventoryUI();
+	void ToggleSkillDevelopUI();
 };

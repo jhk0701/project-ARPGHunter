@@ -8,9 +8,8 @@ enum class EItemType : uint8
 {
 	ITEM				UMETA(DisplayName = "Item"),
 	CONSUMABLE			UMETA(DisplayName = "Consumable Item"),
-	
-	WEAPON				UMETA(DisplayName = "Weapon Item"),
-	EQUIPABLE = WEAPON	UMETA(Hidden), // 장비 계열이라고 표시
+	EQUIPABLE			UMETA(Hidden), // 장비 계열이라고 표시
+	WEAPON = EQUIPABLE	UMETA(DisplayName = "Weapon Item"),
 	ARMOR				UMETA(DisplayName = "Armor Item"),
 	
 	END					UMETA(Hidden)
@@ -27,6 +26,7 @@ enum class EWeaponType : uint8
 	END			UMETA(Hidden)
 };
 FName EnumToName(EWeaponType _value);
+FText EnumToText(EWeaponType _value);
 
 UENUM(BlueprintType)
 enum class EEquipmentType : uint8
@@ -78,6 +78,7 @@ enum class EActionInput : uint8
 {
 	NORMAL		UMETA(DisplayName = "Normal"),
 	HOLD		UMETA(DisplayName = "Hold"),
+	COMBO		UMETA(DisplayName = "Combo"),
 };
 
 UENUM(BlueprintType)
@@ -118,7 +119,6 @@ enum class ECharacterResourceType : uint8
 	END			UMETA(Hidden),
 };
 
-
 UENUM(BlueprintType)
 enum class EMonsterType : uint8
 {
@@ -153,7 +153,6 @@ enum class EMonsterState : uint8
 {
 	NORMAL,
 	DEAD,
-
 	GIMIC,
 	GROGGY,
 };
@@ -165,8 +164,9 @@ enum class EShortCutType : uint8
 
 	ESC,
 	TAB,
-	INVENTORY,
 	F1,
+	KEY_I,
+	KEY_K,
 
 	END
 };

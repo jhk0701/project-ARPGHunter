@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
 
@@ -48,8 +48,6 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	Equipment->OnStatValueChanged.AddUObject(this, &UPlayerManager::EquipmentStatChanged);
 	QuickSlot->OnQuickSlotUsed.AddUObject(this, &UPlayerManager::QuickSlotItemUsed);
-
-	SkillDevelop->TestSetting(); // 테스트용 세팅
 }
 
 void UPlayerManager::PostInit()
@@ -112,7 +110,7 @@ void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	Gold.Value = 10000;
+	Gold.Value = 30000;
 	
 	AddItem(FName(TEXT("1001")), 100);
 	AddItem(FName(TEXT("1002")), 100);

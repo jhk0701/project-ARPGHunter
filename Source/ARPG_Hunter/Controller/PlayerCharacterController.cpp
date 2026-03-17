@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Controller/PlayerCharacterController.h"
@@ -36,12 +36,15 @@ APlayerCharacterController::APlayerCharacterController()
 	static ConstructorHelpers::FObjectFinder<UInputAction> TabFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_TAB.IA_ShortCut_TAB'"));
 	if (TabFinder.Succeeded())
 		ShortCutAction_Tab = TabFinder.Object;
-	static ConstructorHelpers::FObjectFinder<UInputAction> InventoryFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_I.IA_ShortCut_I'"));
-	if (InventoryFinder.Succeeded())
-		ShortCutAction_Inventory = InventoryFinder.Object;
 	static ConstructorHelpers::FObjectFinder<UInputAction> F1Finder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_F1.IA_ShortCut_F1'"));
 	if (F1Finder.Succeeded())
 		ShortCutAction_F1 = F1Finder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> KeyIFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_I.IA_ShortCut_I'"));
+	if (KeyIFinder.Succeeded())
+		ShortCutAction_Key_I = KeyIFinder.Object;
+	static ConstructorHelpers::FObjectFinder<UInputAction> KeyKFinder(TEXT("/Script/EnhancedInput.InputAction'/Game/04-Input/IA_ShortCut_K.IA_ShortCut_K'"));
+	if (KeyKFinder.Succeeded())
+		ShortCutAction_Key_K = KeyKFinder.Object;
 }
 
 void APlayerCharacterController::OnPossess(APawn* _pawn)
@@ -75,8 +78,9 @@ void APlayerCharacterController::SetupInputComponent()
 		
 		InputComp->BindAction(ShortCutAction_ESC, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutESC);
 		InputComp->BindAction(ShortCutAction_Tab, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutTAB);
-		InputComp->BindAction(ShortCutAction_Inventory, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutI);
 		InputComp->BindAction(ShortCutAction_F1, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutF1);
+		InputComp->BindAction(ShortCutAction_Key_I, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutI);
+		InputComp->BindAction(ShortCutAction_Key_K, ETriggerEvent::Started, this, &APlayerCharacterController::InputShortCutK);
 	}	
 }
 
@@ -145,16 +149,22 @@ void APlayerCharacterController::InputShortCutTAB(const FInputActionValue& _valu
 	ShortCut(EShortCutType::TAB);
 }
 
-void APlayerCharacterController::InputShortCutI(const FInputActionValue& _value)
-{
-	if (!ControlledCharacter) return;
-	ShortCut(EShortCutType::INVENTORY);
-}
-
 void APlayerCharacterController::InputShortCutF1(const FInputActionValue& _value)
 {
 	if (!ControlledCharacter) return;
 	ShortCut(EShortCutType::F1);
+}
+
+void APlayerCharacterController::InputShortCutI(const FInputActionValue& _value)
+{
+	if (!ControlledCharacter) return;
+	ShortCut(EShortCutType::KEY_I);
+}
+
+void APlayerCharacterController::InputShortCutK(const FInputActionValue& _value)
+{
+	if (!ControlledCharacter) return;
+	ShortCut(EShortCutType::KEY_K);
 }
 
 void APlayerCharacterController::LockCursor(TSharedPtr<SWidget> _uiToFocus)
