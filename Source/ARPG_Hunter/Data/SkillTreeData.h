@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -39,13 +39,12 @@ struct FSkillTree
 {
 	GENERATED_BODY()
 
-private:
+public:
 	// 노드들은 전체적으로 하나의 배열로 관리
 	// 각 노드에 자식에 해당하는 노드들의 포인터 대신 인덱스를 기입할 것
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillNode> Tree;
 
-public:
 	const FSkillNode* GetRoot() const 
 	{ 
 		if (Tree.IsEmpty())

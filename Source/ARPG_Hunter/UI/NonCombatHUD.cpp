@@ -118,7 +118,7 @@ void ANonCombatHUD::BeginPlay()
 		FGetSkillUpgradeInfoFunc SkillDevelopUIInitDelegate;
 		SkillDevelopUIInitDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade);
 		
-		SkillDevelopUI->Init(PlayerManager->GetSkillTreeData(), SkillDevelopUIInitDelegate);
+		SkillDevelopUI->Init(PlayerManager->GetWeaponConfig(), SkillDevelopUIInitDelegate);
 	}
 
 	BindMainenanceAndInventory();

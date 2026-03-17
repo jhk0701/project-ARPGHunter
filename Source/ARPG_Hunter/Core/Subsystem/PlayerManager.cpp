@@ -6,7 +6,6 @@
 #include "Define/Enum.h"
 #include "Data/PlayerConfig.h"
 #include "Data/WeaponConfig.h"
-#include "Data/SkillTreeData.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"
@@ -73,11 +72,6 @@ TWeakObjectPtr<UWeaponConfig> UPlayerManager::GetWeaponConfig() const
 		Type = Weapon->GetWeaponType();
 
 	return GetGameInstance()->GetSubsystem<UDataManager>()->GetWeaponConfig(Type);
-}
-
-TWeakObjectPtr<USkillTreeData> UPlayerManager::GetSkillTreeData() const
-{
-	return GetWeaponConfig()->SkillTree;
 }
 
 void UPlayerManager::AddGold(uint32 _amount)

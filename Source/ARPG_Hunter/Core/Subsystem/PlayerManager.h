@@ -81,7 +81,6 @@ public:
 	const TMap<ECharacterStatType, uint32>& GetStat() const { return Stat; }
 	const TMap<ECharacterStatType, uint32>& GetEquipmentStat() const;
 	TWeakObjectPtr<class UWeaponConfig> GetWeaponConfig() const;
-	TWeakObjectPtr<class USkillTreeData> GetSkillTreeData() const;
 
 	const uint32 GetGold() const { return Gold.Value; }
 	void AddGold(uint32 _amount);
