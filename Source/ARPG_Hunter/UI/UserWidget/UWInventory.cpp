@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWInventory.h"
@@ -26,6 +26,8 @@ void UUWInventory::NativeOnInitialized()
 	UnequipButton->OnClicked.AddDynamic(this, &UUWInventory::ClickUnequipItem);
 	ItemCategory->OnSelected.AddUObject(this, &UUWInventory::ClickCategory);
 
+	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
+
 	OptionalIndex = -1;
 }
 
@@ -35,7 +37,6 @@ void UUWInventory::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 
 	if (OptionalIndex < 0) // 일반 인벤토리 열기
 	{
-		ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 		ItemCategory->SetVisibility(ESlateVisibility::Visible);
 		UpdateCategory(CurCategory, false); // 외부요인으로 변경된 카테고리일 수 있으므로 UI에 반영
 	}
