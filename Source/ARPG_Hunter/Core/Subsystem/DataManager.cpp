@@ -23,6 +23,10 @@ UDataManager::UDataManager()
 	if (WeaponTypeDataFinder.Succeeded())
 		WeaponTypeData = WeaponTypeDataFinder.Object;
 
+	static ConstructorHelpers::FObjectFinder<UCurveTable> PlayerLvCurveFinder(TEXT("/Script/Engine.CurveTable'/Game/03-Data/CT_PlayerLevel.CT_PlayerLevel'"));
+	if (PlayerLvCurveFinder.Succeeded())
+		PlayerLvCurveTable = PlayerLvCurveFinder.Object;
+
 	static ConstructorHelpers::FObjectFinder<UEquipmentSuccessData> SuccessDataFinder(TEXT("/Script/ARPG_Hunter.EquipmentSuccessData'/Game/03-Data/EquipmentSuccessData.EquipmentSuccessData'"));
 	if (SuccessDataFinder.Succeeded())
 		SuccessData = SuccessDataFinder.Object;
@@ -67,6 +71,16 @@ UDataManager::UDataManager()
 TObjectPtr<UWeaponConfig> UDataManager::GetWeaponConfig(EWeaponType _type) const
 {
 	return WeaponTypeData->Map[_type];
+}
+
+float UDataManager::GetPlayerLvCurve(uint32 _lv, const FName& _rowName)
+{
+	FSimpleCurve* Curve = PlayerLvCurveTable->FindSimpleCurve(_rowName, TEXT("Player Lv Curve Search"), false);
+
+	if (Curve == nullptr)
+		return 0.0f;
+
+	return Curve->Eval(_lv);
 }
 
 FMonsterData* UDataManager::GetMonsterData(const FName& _id) const

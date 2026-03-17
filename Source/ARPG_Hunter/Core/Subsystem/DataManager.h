@@ -26,6 +26,8 @@ private:
 	UPROPERTY()
 	TObjectPtr<UWeaponType> WeaponTypeData;
 	UPROPERTY()
+	TObjectPtr<UCurveTable> PlayerLvCurveTable;
+	UPROPERTY()
 	TObjectPtr<UEquipmentSuccessData> SuccessData;
 	UPROPERTY()
 	TObjectPtr<UDataTable> MonsterDataTable;
@@ -50,6 +52,7 @@ public:
 	UDataManager();
 	
 	TObjectPtr<UWeaponConfig> GetWeaponConfig(EWeaponType _type) const;
+	float GetPlayerLvCurve(uint32 _lv, const FName& _rowName);
 	TObjectPtr<UEquipmentSuccessData> GetSuccessData() const { return SuccessData; }
 	struct FMonsterData* GetMonsterData(const FName& _id) const;
 	float GetMonsterLvCurve(uint32 _lv, const FName& _rowName);

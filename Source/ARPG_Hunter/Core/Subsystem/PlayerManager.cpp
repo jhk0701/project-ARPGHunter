@@ -99,6 +99,16 @@ uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 	return Param.OutIndex;
 }
 
+void UPlayerManager::AddExp(double _exp)
+{
+	Exp += _exp;
+	if (RequiredExp <= Exp) 
+	{
+		// 레벨업
+		Level++;
+	}
+}
+
 void UPlayerManager::EquipmentStatChanged(const TMap<ECharacterStatType, uint32>& _equipmentStat)
 {
 	OnStatValueChanged.Broadcast(Stat, _equipmentStat);

@@ -3,6 +3,8 @@
 
 #include "UI/UserWidget/UWSkillDevelop.h"
 #include "Components/PanelWidget.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
@@ -14,8 +16,6 @@
 #include "Data/SkillTreeData.h"
 #include "Data/SkillUpgrade.h"
 #include "UI/UserWidget/UWEquipmentUtilSlot.h"
-
-#include "Define/Debug.h"
 
 void UUWSkillNode::NativeOnInitialized()
 {
@@ -55,11 +55,6 @@ void UUWSkillTree::NativeOnInitialized()
 		LevelContainer.Add(Cast<UPanelWidget>(TreeContainer->GetChildAt(i)));
 }
 
-void UUWSkillTree::SetSkillLabel(const FText& _name)
-{
-	SkillLabel->SetText(_name);
-}
-
 void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height)
 {
 	if (nullptr == _tree || nullptr == SkillNodeClass)
@@ -81,6 +76,8 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 		SkillNodes.Add(NodeInst);
 	}
 
+	// ConnectLines();
+
 	// 노드 상태에 따른 자식 노드 상호작용 설정
 	SkillNodes[0]->SetButtonEnable(true);
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i) 
@@ -92,6 +89,47 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 		for (uint8 ChildIdx : Node->ChildrenIdx)
 			SkillNodes[ChildIdx]->SetButtonEnable(true);
 	}
+}
+
+void UUWSkillTree::ConnectLines()
+{
+	if (nullptr == SkillTree || nullptr == NodeLineClass)
+		return;
+
+	const FVector2D ALIGNMENT(0.5f);
+	const FVector2D INIT_SIZE(3.0f, 10.0f);
+
+	const int32 SIZE = SkillTree->Tree.Num();
+	NodeLines.Reserve(SIZE * 2);
+
+	for (uint8 i = 0; i < SIZE; ++i)
+	{
+		const FSkillNode* Node = SkillTree->GetNode(i);
+		const FGeometry& CanvasGeo = LineContainer->GetCachedGeometry();
+		FVector2D ParentLoc = SkillNodes[i]->GetCachedGeometry().GetAbsolutePosition();
+
+		for (uint8 ChildIdx : Node->ChildrenIdx)
+		{
+			TObjectPtr<UUWSkillNodeLine> LineInst = CreateWidget<UUWSkillNodeLine>(GetWorld(), NodeLineClass);
+			UCanvasPanelSlot* CanvasSlot = LineContainer->AddChildToCanvas(LineInst);
+			CanvasSlot->SetAlignment(ALIGNMENT);
+			CanvasSlot->SetSize(INIT_SIZE);
+
+			FVector2D ChildLoc = SkillNodes[ChildIdx]->GetCachedGeometry().GetAbsolutePosition();
+			FVector2D Dir = ChildLoc - ParentLoc;
+			double Len = Dir.Length();
+			Dir.Normalize();
+
+			
+
+			CanvasSlot->SetPosition(ParentLoc + Dir * Len * 0.5f);
+		}
+	}
+}
+
+void UUWSkillTree::SetSkillLabel(const FText& _name)
+{
+	SkillLabel->SetText(_name);
 }
 
 void UUWSkillTree::OnClickNode(uint8 _idx)

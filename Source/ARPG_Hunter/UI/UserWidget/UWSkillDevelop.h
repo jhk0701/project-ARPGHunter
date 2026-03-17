@@ -61,11 +61,20 @@ public:
 	void SetButtonEnable(bool _bIsEnable);
 };
 
+
+UCLASS()
+class ARPG_HUNTER_API UUWSkillNodeLine : public UUserWidget 
+{
+	GENERATED_BODY()
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> Line;
+};
+
 UCLASS()
 class ARPG_HUNTER_API UUWSkillTree : public UUserWidget
 {
 	GENERATED_BODY()
-
 public:
 	struct FSkillNodeState 
 	{
@@ -86,15 +95,23 @@ private:
 	TSubclassOf<UUWSkillNode> SkillNodeClass;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWSkillNode>> SkillNodes;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UCanvasPanel> LineContainer;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWSkillNodeLine> NodeLineClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWSkillNodeLine>> NodeLines;
 
 protected:
 	virtual void NativeOnInitialized() override;
 
 public:
 	FOnSkillNodeSelected OnSkillNodeSelected;
+	void Construct(struct FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height);
+	void ConnectLines();
+
 	void SetIndex(uint8 _idx) { Index = _idx; }
 	void SetSkillLabel(const FText& _name);
-	void Construct(struct FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height);
 	void OnClickNode(uint8 _idx);
 	void UpdateNode(uint8 _idx, UUWSkillNode::EState _state);
 };
@@ -132,7 +149,6 @@ private:
 	TObjectPtr<class UUWIngredientSlot> SkillPoint;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> UpgradeButton;
-
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> UpgradeLabel;
 	UPROPERTY(EditAnywhere)

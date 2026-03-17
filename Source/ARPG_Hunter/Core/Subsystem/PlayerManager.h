@@ -46,6 +46,9 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<class UPlayerConfig> PlayerDefault;
+	uint8 Level;
+	double RequiredExp;
+	double Exp;
 	TMap<ECharacterStatType, uint32> Stat;
 	
 	FCurrency Gold;
@@ -93,6 +96,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName& _itemID, int32 _amount);
+	void AddExp(double _exp);
 
 	// Inherited via ISaveLoadHandler
 	virtual void WriteSaveData(UARPGSaveGame* _savegame) override;
