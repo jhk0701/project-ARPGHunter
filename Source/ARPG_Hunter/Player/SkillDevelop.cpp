@@ -9,7 +9,7 @@ USkillDevelop::USkillDevelop()
 
 void USkillDevelop::Init()
 {
-	SkillPoint = 3;
+	SkillPoint = 100;
 	UsingSkillPoint = 0;
 }
 
