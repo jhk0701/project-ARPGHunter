@@ -76,14 +76,11 @@ void UUWActionGuide::SetActionInfo(bool _bIsInit, int8 _curIdx, const FAppliedGr
 			continue;
 		}
 
-		if (false == Connect->bIsUnlocked)
-		{
-			NextActions[i]->SetLocked(Type);
-			continue;
-		}
-		
 		NextActions[i]->SetVisibility(ESlateVisibility::Visible);
-		NextActions[i]->SetInfo(Type, _comboData->Actions[Connect->Index]->GetAction()->NameText);
+		if (false == Connect->bIsUnlocked)
+			NextActions[i]->SetLocked(Type);
+		else
+			NextActions[i]->SetInfo(Type, _comboData->Actions[Connect->Index]->GetAction()->NameText);
 	}
 }
 
