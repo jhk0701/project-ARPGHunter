@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWSkillDevelop.h"
@@ -126,41 +126,7 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 			continue;
 		
 		for (uint8 j = 0; j < Node->ChildrenIdx.Num(); ++j)
-		{
 			SkillNodes[Node->ChildrenIdx[j]]->SetButtonEnable(bIsNodeEnable);
-			
-			//if (_treeNodeStates[i].SiblingCount == 1)
-			//{
-			//	if (Node->ChildrenIdx.Num() == 1)
-			//		SkillNodes[i]->SetChild(j, 0);
-			//	else
-			//	{
-			//		float Angle = 90.0f / Node->ChildrenIdx.Num();
-			//		SkillNodes[i]->SetChild(j, Angle * j - Angle * 0.5f);
-			//	}
-			//}
-			//else
-			//{
-			//	if (_treeNodeStates[i].SiblingCount > Node->ChildrenIdx.Num()) 
-			//	{
-			//		// 형제 갯수가 줄어듦
-			//		// offset 발생
-			//		float Offset = 90.0f / _treeNodeStates[i].SiblingCount;
-			//		int8 Dir = _treeNodeStates[i].SiblingIdx <= j ? -1 : 1;
-
-			//		SkillNodes[i]->SetChild(j, Offset * Dir);
-			//	}
-			//	else if (_treeNodeStates[i].SiblingCount == Node->ChildrenIdx.Num()) 
-			//	{
-			//		// 형제 갯수가 유지
-			//		// offset 발생
-			//		int8 Dir = _treeNodeStates[i].SiblingIdx < _treeNodeStates[i].SiblingCount / 2 ? -1 : 1;
-			//		float Angle = 90.0f / Node->ChildrenIdx.Num();
-
-			//		SkillNodes[i]->SetChild(j, Angle * Dir * j);
-			//	}
-			//}
-		}
 	}
 
 	NodeLine->Init(SkillTree, &SkillNodes);

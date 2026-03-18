@@ -2,10 +2,12 @@
 
 
 #include "Stage/StageCutSceneSection.h"
+#include "Engine/AssetManager.h"
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"
 #include "LevelSequenceActor.h"
 
+#include "Data/CutSceneAssetData.h"
 #include "Define/Debug.h"
 #include "Core/GameMode/CombatGameMode.h"
 #include "UI/CombatHUD.h"
@@ -28,6 +30,22 @@ void AStageCutSceneSection::BeginPlay()
 		CutSceneUI = CreateWidget<UUWCutScene>(GetWorld(), CutSceneUIClass);
 		CutSceneUI->OnSkipClicked.BindUObject(this, &AStageCutSceneSection::SkipCutScene);
 	}
+
+	TObjectPtr<ACombatGameMode> GM = GetWorld()->GetAuthGameMode<ACombatGameMode>();
+	CutSceneAssetPath = GM->GetCutSceneAsset(CutSceneIndex)->LevelSequence;
+	if (nullptr != CutSceneAssetPath) 
+	{
+		FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+		Streamable.RequestAsyncLoad(
+			CutSceneAssetPath.ToSoftObjectPath(), 
+			FStreamableDelegate::CreateUObject(this, &AStageCutSceneSection::OnCutSceneAssetLoaded)
+		);
+	}
+}
+
+void AStageCutSceneSection::OnCutSceneAssetLoaded()
+{
+	CutSceneAsset = CutSceneAssetPath.Get();
 }
 
 void AStageCutSceneSection::BeginSection()
@@ -35,7 +53,6 @@ void AStageCutSceneSection::BeginSection()
 	// 플레이어 입장하는 시점에 컷씬 재생
 	TObjectPtr<UWorld> World = GetWorld();
 	TObjectPtr<ACombatGameMode> GM = World->GetAuthGameMode<ACombatGameMode>();
-	TObjectPtr<ULevelSequence> CutSceneAsset = GM->GetCutSceneAsset(CutSceneIndex);
 	if (nullptr == CutSceneAsset)
 	{
 		// 컷씬이 없다면 재생하지 않고, Section과 동일하게 처리
@@ -74,6 +91,7 @@ void AStageCutSceneSection::BeginSection()
 	SequencePlayer->OnFinished.AddDynamic(this, &AStageCutSceneSection::OnCutSceneEnd);
 	SequencePlayer->Play();
 }
+
 
 void AStageCutSceneSection::OnCutSceneEnd()
 {

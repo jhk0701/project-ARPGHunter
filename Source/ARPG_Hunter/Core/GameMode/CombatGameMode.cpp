@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/GameMode/CombatGameMode.h"
@@ -338,7 +338,7 @@ AActor* ACombatGameMode::ChoosePlayerStart_Implementation(AController* _player)
 	return Super::ChoosePlayerStart_Implementation(_player);
 }
 
-TObjectPtr<ULevelSequence> ACombatGameMode::GetCutSceneAsset(uint8 _idx) const
+TObjectPtr<UCutSceneAssetData> ACombatGameMode::GetCutSceneAsset(uint8 _idx) const
 {
 	if(nullptr == StageData || StageData->CutSceneAssets.Num() <= _idx)
 		return nullptr;

@@ -20,7 +20,10 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Section|Setting")
 	uint8 CutSceneIndex{0};
-
+	UPROPERTY()
+	TSoftObjectPtr<class ULevelSequence> CutSceneAssetPath;
+	UPROPERTY()
+	TObjectPtr<class ULevelSequence> CutSceneAsset;
 	UPROPERTY()
 	class ALevelSequenceActor* CutScenePlayer;
 
@@ -35,8 +38,8 @@ protected:
 public:
 	virtual void BeginSection() override;
 	
+	void OnCutSceneAssetLoaded();
 	UFUNCTION()
 	void OnCutSceneEnd();
 	void SkipCutScene();
-
 };
