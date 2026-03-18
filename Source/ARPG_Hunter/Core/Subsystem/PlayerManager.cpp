@@ -149,7 +149,7 @@ void UPlayerManager::AdjustStatByLevel()
 	// 1 ~ 현재 레벨까지 스탯 반영
 	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
 
-	float NextExp = DataManager->GetPlayerLvCurve(Level + 1, NAME_EXP);
+	float NextExp = DataManager->GetPlayerLvCurve(Level, NAME_EXP);
 	RequiredExp = static_cast<int32>(NextExp);
 	
 	for (uint16 lv = 1; lv <= Level; ++lv)
