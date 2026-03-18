@@ -194,6 +194,7 @@ void UUWStageSelect::Clear()
 	StageNameLabel->SetText(FText::FromString(TEXT("-")));
 	StageDescLabel->SetText(FText::FromString(TEXT("-")));
 	GoldRewardLabel->SetText(FText::FromString(TEXT("-")));
+	ExpRewardLabel->SetText(FText::FromString(TEXT("-")));
 
 	for (TObjectPtr<UUWItemSlot>& ItemSlot : ItemSlotContainer)
 		ItemSlot->SetVisibility(ESlateVisibility::Hidden);

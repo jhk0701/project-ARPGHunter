@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,6 +24,8 @@ private:
 	TObjectPtr<UTextBlock> ResultLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> RewardGoldLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> RewardExpLabel;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> ReturnButton;
 

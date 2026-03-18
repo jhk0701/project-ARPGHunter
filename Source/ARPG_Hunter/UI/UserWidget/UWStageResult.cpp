@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWStageResult.h"
@@ -29,9 +29,8 @@ void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 	if (_bIsClear)
 	{
 		ResultLabel->SetText(FText::FromString(TEXT("Stage Clear")));
-
-		FText GoldFormat = FText::FromString(TEXT("{0} G"));
-		RewardGoldLabel->SetText(FText::Format(GoldFormat, _stageData->RewardGold));
+		RewardGoldLabel->SetText(FText::Format(FText::FromString(TEXT("{0} G")), _stageData->RewardGold));
+		RewardExpLabel->SetText(FText::Format(FText::FromString(TEXT("{0} EXP")), _stageData->RewardExp));
 
 		if (ItemSlotClass)
 		{
@@ -48,6 +47,7 @@ void UUWStageResult::Update(bool _bIsClear, const FStageData* _stageData)
 	{
 		ResultLabel->SetText(FText::FromString(TEXT("Stage Fail")));
 		RewardGoldLabel->SetText(FText::FromString(TEXT("- G")));
+		RewardExpLabel->SetText(FText::FromString(TEXT("- EXP")));
 	}
 }
 
