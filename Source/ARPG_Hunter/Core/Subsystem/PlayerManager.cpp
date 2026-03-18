@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
 
@@ -186,6 +186,8 @@ void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 	PlayerName = _playerName;
 	Level = 0;
 	LevelUp();
+	
+	SkillDevelop->AddSkillPoint(100);
 	ProvideBasicProperty();
 }
 

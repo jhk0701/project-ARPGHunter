@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWSkillDevelop.h"
@@ -9,6 +9,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/Border.h"
+#include "Components/Overlay.h"
 
 #include "Data/WeaponConfig.h"
 #include "Data/ActionComboData.h"
@@ -22,6 +23,12 @@ void UUWSkillNode::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	SkillButton->OnClicked.AddDynamic(this, &UUWSkillNode::ClickButton);
+	
+	for (uint8 i = 0; i < LineContainer->GetChildrenCount(); ++i)
+	{
+		TObjectPtr<UUserWidget> Line = Cast<UUserWidget>(LineContainer->GetChildAt(i));
+		Line->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void UUWSkillNode::ClickButton()
@@ -42,6 +49,16 @@ void UUWSkillNode::SetState(EState _state)
 void UUWSkillNode::SetButtonEnable(bool _bIsEnable)
 {
 	SkillButton->SetIsEnabled(_bIsEnable);
+}
+
+void UUWSkillNode::SetChild(int8 _idx, float _angle)
+{
+	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("%d"), ChildLines[_idx] == nullptr));
+	TObjectPtr<UUserWidget> Line = Cast<UUserWidget>(LineContainer->GetChildAt(_idx));
+	Line->SetVisibility(ESlateVisibility::Visible);
+	Line->SetRenderTransformAngle(_angle);
+
+	Line->SetRenderScale({ 0.05f, LengthVal /*+ FMath::Sign(FMath::Abs(_angle))*/ });
 }
 
 
@@ -76,53 +93,51 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 		SkillNodes.Add(NodeInst);
 	}
 
-	// ConnectLines();
-
 	// 노드 상태에 따른 자식 노드 상호작용 설정
 	SkillNodes[0]->SetButtonEnable(true);
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i) 
 	{
-		if (_treeNodeStates[i].State == UUWSkillNode::NONE)
+		const FSkillNode* Node = SkillTree->GetNode(i);
+		bool bIsNodeEnable = _treeNodeStates[i].State != UUWSkillNode::NONE;
+		
+		if (Node->ChildrenIdx.Num() <= 0)
 			continue;
-
-		const FSkillNode* Node = SkillTree->GetNode(i);
-		for (uint8 ChildIdx : Node->ChildrenIdx)
-			SkillNodes[ChildIdx]->SetButtonEnable(true);
-	}
-}
-
-void UUWSkillTree::ConnectLines()
-{
-	if (nullptr == SkillTree || nullptr == NodeLineClass)
-		return;
-
-	const FVector2D ALIGNMENT(0.5f);
-	const FVector2D INIT_SIZE(3.0f, 10.0f);
-
-	const int32 SIZE = SkillTree->Tree.Num();
-	NodeLines.Reserve(SIZE * 2);
-
-	for (uint8 i = 0; i < SIZE; ++i)
-	{
-		const FSkillNode* Node = SkillTree->GetNode(i);
-		const FGeometry& CanvasGeo = LineContainer->GetCachedGeometry();
-		FVector2D ParentLoc = SkillNodes[i]->GetCachedGeometry().GetAbsolutePosition();
-
-		for (uint8 ChildIdx : Node->ChildrenIdx)
+		
+		for (uint8 j = 0; j < Node->ChildrenIdx.Num(); ++j)
 		{
-			TObjectPtr<UUWSkillNodeLine> LineInst = CreateWidget<UUWSkillNodeLine>(GetWorld(), NodeLineClass);
-			UCanvasPanelSlot* CanvasSlot = LineContainer->AddChildToCanvas(LineInst);
-			CanvasSlot->SetAlignment(ALIGNMENT);
-			CanvasSlot->SetSize(INIT_SIZE);
-
-			FVector2D ChildLoc = SkillNodes[ChildIdx]->GetCachedGeometry().GetAbsolutePosition();
-			FVector2D Dir = ChildLoc - ParentLoc;
-			double Len = Dir.Length();
-			Dir.Normalize();
-
+			SkillNodes[Node->ChildrenIdx[j]]->SetButtonEnable(bIsNodeEnable);
 			
+			if (_treeNodeStates[i].SiblingCount == 1)
+			{
+				if (Node->ChildrenIdx.Num() == 1)
+					SkillNodes[i]->SetChild(j, 0);
+				else
+				{
+					float Angle = 90.0f / Node->ChildrenIdx.Num();
+					SkillNodes[i]->SetChild(j, Angle * j - Angle * 0.5f);
+				}
+			}
+			else
+			{
+				if (_treeNodeStates[i].SiblingCount > Node->ChildrenIdx.Num()) 
+				{
+					// 형제 갯수가 줄어듦
+					// offset 발생
+					float Offset = 90.0f / _treeNodeStates[i].SiblingCount;
+					int8 Dir = _treeNodeStates[i].SiblingIdx <= j ? -1 : 1;
 
-			CanvasSlot->SetPosition(ParentLoc + Dir * Len * 0.5f);
+					SkillNodes[i]->SetChild(j, Offset * Dir);
+				}
+				else if (_treeNodeStates[i].SiblingCount == Node->ChildrenIdx.Num()) 
+				{
+					// 형제 갯수가 유지
+					// offset 발생
+					int8 Dir = _treeNodeStates[i].SiblingIdx < _treeNodeStates[i].SiblingCount / 2 ? -1 : 1;
+					float Angle = 90.0f / Node->ChildrenIdx.Num();
+
+					SkillNodes[i]->SetChild(j, Angle * Dir * j);
+				}
+			}
 		}
 	}
 }
@@ -191,14 +206,18 @@ void UUWSkillDevelop::SetSkillTree()
 		TArray<UUWSkillTree::FSkillNodeState> TreeNodeState;
 		TreeNodeState.SetNum(SkillTree.Value.Tree.Num());
 		TreeNodeState[0].Level = 0;
+		TreeNodeState[0].SiblingCount = 1;
 		uint8 Height = 0;
 
 		for (uint8 i = 0; i < SkillTree.Value.Tree.Num(); ++i)
 		{
 			const FSkillNode& Node = SkillTree.Value.Tree[i];
+			int8 SiblingIdx = 0;
 			for (uint8 Idx : Node.ChildrenIdx)
 			{
 				TreeNodeState[Idx].Level = TreeNodeState[i].Level + 1;
+				TreeNodeState[Idx].SiblingCount = Node.ChildrenIdx.Num();
+				TreeNodeState[Idx].SiblingIdx = SiblingIdx++;
 				Height = FMath::Max(Height, TreeNodeState[Idx].Level);
 			}
 
@@ -298,3 +317,5 @@ void UUWSkillDevelop::ClickUpgrade()
 
 	UpdateSkillTree();
 }
+
+

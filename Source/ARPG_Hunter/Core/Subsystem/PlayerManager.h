@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -52,7 +52,6 @@ private:
 	int32 RequiredExp{ 0 };
 	int32 Exp{ 0 };
 	TMap<ECharacterStatType, uint32> Stat;
-	
 	FCurrency Gold;
 	
 	UPROPERTY()
@@ -108,4 +107,7 @@ public:
 	// Inherited via ISaveLoadHandler
 	virtual void WriteSaveData(UARPGSaveGame* _savegame) override;
 	virtual void ReadSaveData(UARPGSaveGame* _savegame) override;
+
+	UFUNCTION(BlueprintCallable)
+	void exeAddExp(int32 _exp) { AddExp(_exp); };
 };

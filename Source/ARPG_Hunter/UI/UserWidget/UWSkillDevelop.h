@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -43,12 +43,16 @@ private:
 	TObjectPtr<UImage> SkillThumbnail;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> SelectedMark;
-
 	UPROPERTY(EditAnywhere)
 	TArray<FSlateColor> ColorOnState;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UOverlay> LineContainer;
 	
 	UFUNCTION()
 	void ClickButton();
+
+	UPROPERTY(EditAnywhere)
+	float LengthVal{ 1.75f };
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -59,6 +63,7 @@ public:
 	void SetIndex(uint8 _idx) { Index = _idx; };
 	void SetState(EState _state);
 	void SetButtonEnable(bool _bIsEnable);
+	void SetChild(int8 _idx, float _angle);
 };
 
 
@@ -80,6 +85,8 @@ public:
 	{
 		uint8 Level; // TreeLevel
 		UUWSkillNode::EState State;
+		uint8 SiblingIdx;
+		uint8 SiblingCount;
 	};
 private:
 	uint8 Index;
@@ -95,12 +102,12 @@ private:
 	TSubclassOf<UUWSkillNode> SkillNodeClass;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWSkillNode>> SkillNodes;
-	UPROPERTY(meta = (BindWidget))
+	/*UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UCanvasPanel> LineContainer;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWSkillNodeLine> NodeLineClass;
 	UPROPERTY()
-	TArray<TObjectPtr<UUWSkillNodeLine>> NodeLines;
+	TArray<TObjectPtr<UUWSkillNodeLine>> NodeLines;*/
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -108,7 +115,6 @@ protected:
 public:
 	FOnSkillNodeSelected OnSkillNodeSelected;
 	void Construct(struct FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height);
-	void ConnectLines();
 
 	void SetIndex(uint8 _idx) { Index = _idx; }
 	void SetSkillLabel(const FText& _name);
