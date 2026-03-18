@@ -10,6 +10,8 @@
 #include "Components/Image.h"
 #include "Components/Border.h"
 #include "Components/Overlay.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+// #include "Slate/SlateBlueprintLibrary.h"
 
 #include "Data/WeaponConfig.h"
 #include "Data/ActionComboData.h"
@@ -26,12 +28,6 @@ void UUWSkillNode::NativeOnInitialized()
 	
 	SetState(EState::NONE);
 	SetSelected(false);
-
-	for (uint8 i = 0; i < LineContainer->GetChildrenCount(); ++i)
-	{
-		TObjectPtr<UUserWidget> Line = Cast<UUserWidget>(LineContainer->GetChildAt(i));
-		Line->SetVisibility(ESlateVisibility::Collapsed);
-	}
 }
 
 void UUWSkillNode::ClickButton()
@@ -59,17 +55,6 @@ void UUWSkillNode::SetButtonEnable(bool _bIsEnable)
 	SkillButton->SetIsEnabled(_bIsEnable);
 }
 
-void UUWSkillNode::SetChild(int8 _idx, float _angle)
-{
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("%d"), ChildLines[_idx] == nullptr));
-	TObjectPtr<UUserWidget> Line = Cast<UUserWidget>(LineContainer->GetChildAt(_idx));
-	Line->SetVisibility(ESlateVisibility::Visible);
-	Line->SetRenderTransformAngle(_angle);
-
-	Line->SetRenderScale({ 0.05f, LengthVal /*+ FMath::Sign(FMath::Abs(_angle))*/ });
-}
-
-
 void UUWSkillTree::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -78,6 +63,35 @@ void UUWSkillTree::NativeOnInitialized()
 	LevelContainer.Reserve(CHILDREN_COUNT);
 	for (int32 i = 0; i < CHILDREN_COUNT; ++i)
 		LevelContainer.Add(Cast<UPanelWidget>(TreeContainer->GetChildAt(i)));
+}
+
+int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
+{
+	int32 LayerID = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+
+	if (nullptr == SkillTree || SkillNodes->Num() == 0 || (SkillNodes->Num() != SkillTree->Tree.Num()))
+		return LayerID;
+
+	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+	FVector2D CommonOffset{ 10.0f, 10.0f };
+
+	// 노드별 선긋기
+	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
+	{
+		const FSkillNode& Node = SkillTree->Tree[i];
+
+		FVector2D ParentAbsCoord = (*SkillNodes)[i]->GetCachedGeometry().GetAbsolutePositionAtCoordinates({0.5, 1.0});
+		FVector2D Start = AllottedGeometry.AbsoluteToLocal(ParentAbsCoord) + CommonOffset;
+
+		for (uint8 ChildIdx : Node.ChildrenIdx)
+		{
+			FVector2D ChildAbsCoord = (*SkillNodes)[ChildIdx]->GetCachedGeometry().GetAbsolutePositionAtCoordinates({ 0.5, 0.0 });
+			FVector2D End = AllottedGeometry.AbsoluteToLocal(ChildAbsCoord) + CommonOffset;
+			UWidgetBlueprintLibrary::DrawLine(Context, Start, End, FLinearColor::White);
+		}
+	}
+
+	return LayerID;
 }
 
 void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height)
@@ -148,6 +162,8 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 			//}
 		}
 	}
+
+	NodeLine->Init(SkillTree, &SkillNodes);
 }
 
 void UUWSkillTree::SetSkillLabel(const FText& _name)
@@ -217,7 +233,6 @@ void UUWSkillDevelop::SetSkillTree()
 		TArray<UUWSkillTree::FSkillNodeState> TreeNodeState;
 		TreeNodeState.SetNum(SkillTree.Value.Tree.Num());
 		TreeNodeState[0].Level = 0;
-		TreeNodeState[0].SiblingCount = 1;
 		uint8 Height = 0;
 
 		for (uint8 i = 0; i < SkillTree.Value.Tree.Num(); ++i)
@@ -227,8 +242,6 @@ void UUWSkillDevelop::SetSkillTree()
 			for (uint8 Idx : Node.ChildrenIdx)
 			{
 				TreeNodeState[Idx].Level = TreeNodeState[i].Level + 1;
-				TreeNodeState[Idx].SiblingCount = Node.ChildrenIdx.Num();
-				TreeNodeState[Idx].SiblingIdx = SiblingIdx++;
 				Height = FMath::Max(Height, TreeNodeState[Idx].Level);
 			}
 

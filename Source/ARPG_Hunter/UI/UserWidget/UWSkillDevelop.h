@@ -47,14 +47,9 @@ private:
 	TObjectPtr<UImage> StateMark;
 	UPROPERTY(EditAnywhere)
 	TArray<FSlateColor> ColorOnState;
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UOverlay> LineContainer;
 	
 	UFUNCTION()
 	void ClickButton();
-
-	UPROPERTY(EditAnywhere)
-	float LengthVal{ 1.75f };
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -66,7 +61,6 @@ public:
 	void SetState(EState _state);
 	void SetSelected(bool _bIsSelected);
 	void SetButtonEnable(bool _bIsEnable);
-	void SetChild(int8 _idx, float _angle);
 };
 
 
@@ -75,8 +69,17 @@ class ARPG_HUNTER_API UUWSkillNodeLine : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> Line;
+	struct FSkillTree* SkillTree;
+	TArray<TObjectPtr<UUWSkillNode>>* SkillNodes;
+
+protected:
+	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+public:
+	void Init(FSkillTree* _skillTree, TArray<TObjectPtr<UUWSkillNode>>* _nodeUIs) 
+	{
+		SkillTree = _skillTree;
+		SkillNodes = _nodeUIs;
+	}
 };
 
 UCLASS()
@@ -88,8 +91,6 @@ public:
 	{
 		uint8 Level; // TreeLevel
 		UUWSkillNode::EState State;
-		uint8 SiblingIdx;
-		uint8 SiblingCount;
 	};
 private:
 	uint8 Index;
@@ -105,12 +106,9 @@ private:
 	TSubclassOf<UUWSkillNode> SkillNodeClass;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWSkillNode>> SkillNodes;
-	/*UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UCanvasPanel> LineContainer;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUWSkillNodeLine> NodeLineClass;
-	UPROPERTY()
-	TArray<TObjectPtr<UUWSkillNodeLine>> NodeLines;*/
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UUWSkillNodeLine> NodeLine;
 
 protected:
 	virtual void NativeOnInitialized() override;
