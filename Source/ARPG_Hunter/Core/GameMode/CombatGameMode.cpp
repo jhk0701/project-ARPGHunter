@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/GameMode/CombatGameMode.h"
@@ -314,6 +314,7 @@ void ACombatGameMode::GameClear()
 	// 골드 재화 지급
 	UPlayerManager* PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	PlayerManager->AddGold(StageData->RewardGold);
+	PlayerManager->AddExp(StageData->RewardExp);
 
 	// 아이템 지급
 	for (const FRewardItem& Item : StageData->RewardItems)

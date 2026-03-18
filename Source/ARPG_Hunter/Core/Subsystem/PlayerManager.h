@@ -43,12 +43,14 @@ public:
 
 private:
 	FString PlayerName;
+	const FName NAME_EXP{ FName(TEXT("Exp")) };
+	const FName NAME_SkillPoint{ FName(TEXT("SkillPoint")) };
 
 	UPROPERTY()
 	TObjectPtr<class UPlayerConfig> PlayerDefault;
-	uint8 Level;
-	double RequiredExp;
-	double Exp;
+	uint16 Level{ 0 };
+	int32 RequiredExp{ 0 };
+	int32 Exp{ 0 };
 	TMap<ECharacterStatType, uint32> Stat;
 	
 	FCurrency Gold;
@@ -96,7 +98,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	uint8 AddItem(const FName& _itemID, int32 _amount);
-	void AddExp(double _exp);
+	void AddExp(uint32 _exp);
+	void LevelUp();
+	void AdjustStatByLevel();
+	uint16 GetLevel() const { return Level; }
+	int32 GetExp() const { return Exp; }
+	int32 GetRequiredExp() const { return RequiredExp; }
 
 	// Inherited via ISaveLoadHandler
 	virtual void WriteSaveData(UARPGSaveGame* _savegame) override;

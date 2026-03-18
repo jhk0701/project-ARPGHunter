@@ -75,6 +75,9 @@ void ANonCombatHUD::BeginPlay()
 
 			FUWMaintenanceInitParam InitParm
 			(
+				PlayerManager->GetLevel(),
+				PlayerManager->GetExp(),
+				PlayerManager->GetRequiredExp(),
 				PlayerManager->GetStat(),
 				PlayerManager->GetEquipmentStat(),
 				Equipment->GetContainer(),

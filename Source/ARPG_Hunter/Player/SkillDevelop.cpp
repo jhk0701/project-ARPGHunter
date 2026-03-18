@@ -9,8 +9,6 @@ USkillDevelop::USkillDevelop()
 
 void USkillDevelop::Init()
 {
-	SkillPoint = 100;
-	UsingSkillPoint = 0;
 }
 
 bool USkillDevelop::TryUseSkillPoint(uint16 _point)

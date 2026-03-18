@@ -1,12 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWMaintenance.h"
-#include "Components/TextBlock.h"
-#include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Components/HorizontalBox.h"
 #include "Components/WrapBox.h"
+#include "Components/TextBlock.h"
+#include "Components/Button.h"
+#include "Components/ProgressBar.h"
 
 #include "Define/Enum.h"
 #include "Item/Item.h"
@@ -74,10 +75,24 @@ void UUWMaintenance::NativeOnInitialized()
 
 void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 {
+	LevelLabel->SetText(FText::Format(
+		FText::FromString(TEXT("Lv. {0}")), 
+		_param.Level)
+	);
+
+	ExpLabel->SetText(FText::Format(
+		FText::FromString(TEXT("{0} / {1}")),
+		_param.Exp, _param.ReqExp)
+	);
+
+	ExpBar->SetPercent(static_cast<float>(_param.Exp) / _param.ReqExp);
+
 	for (const TPair<ECharacterStatType, uint32>& Pair : _param.PlayerStat)
 	{
-		FString Fmt = FString::Printf(TEXT("%d + (%d) = %d"), Pair.Value, _param.EquipmentStat[Pair.Key], Pair.Value + _param.EquipmentStat[Pair.Key]);
-		MapStatInfo[Pair.Key]->SetStatValue(FText::FromString(Fmt));
+		MapStatInfo[Pair.Key]->SetStatValue(FText::Format(
+			FText::FromString(TEXT("{0} + ({1}) = {2}")), 
+			Pair.Value, _param.EquipmentStat[Pair.Key], Pair.Value + _param.EquipmentStat[Pair.Key])
+		);
 	}
 
 	for (const TPair<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Pair : _param.Equipment)

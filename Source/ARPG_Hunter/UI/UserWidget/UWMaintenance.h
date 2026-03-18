@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,6 +7,7 @@
 #include "UWMaintenance.generated.h"
 
 class UWrapBox;
+class UTextBlock;
 class UUWItemSlot;
 class UUWStatInfo;
 class UItem;
@@ -19,6 +20,9 @@ enum class EItemType : uint8;
 struct FUWMaintenanceInitParam 
 {
 public:
+	const uint16 Level;
+	const int32 Exp;
+	const int32 ReqExp;
 	const TMap<ECharacterStatType, uint32>& PlayerStat;
 	const TMap<ECharacterStatType, uint32>& EquipmentStat;
 	const TMap<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Equipment;
@@ -47,6 +51,13 @@ private:
 	TObjectPtr<class UHorizontalBox> QuickSlotContainer;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWItemSlot>> ArrQuickSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> LevelLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> ExpLabel;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UProgressBar> ExpBar;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWStatInfo> StatInfoUIClass;

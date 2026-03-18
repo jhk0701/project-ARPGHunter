@@ -65,6 +65,10 @@ public:
 	UPROPERTY()
 	FString PlayerName;
 	UPROPERTY()
+	uint16 Level{ 0 };
+	UPROPERTY()
+	uint32 Exp{ 0 };
+	UPROPERTY()
 	uint32 Gold{ 0 };
 	UPROPERTY()
 	TMap<uint8, FItemSaveDataArray> InventoryDataMap;

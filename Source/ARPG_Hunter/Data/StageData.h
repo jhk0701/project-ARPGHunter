@@ -67,6 +67,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	uint32 RewardGold;
 	UPROPERTY(EditAnywhere)
+	uint32 RewardExp;
+	UPROPERTY(EditAnywhere)
 	TArray<FRewardItem> RewardItems;
 
 	// 스테이지에서 재생할 사운드

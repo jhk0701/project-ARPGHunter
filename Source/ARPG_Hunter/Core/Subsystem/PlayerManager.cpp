@@ -99,13 +99,71 @@ uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 	return Param.OutIndex;
 }
 
-void UPlayerManager::AddExp(double _exp)
+void UPlayerManager::AddExp(uint32 _exp)
 {
+	if (RequiredExp < 0)
+		return;
+
 	Exp += _exp;
-	if (RequiredExp <= Exp) 
+	if (RequiredExp > Exp)
+		return;
+
+	// 대량의 경험치를 얻은 경우 처리
+	while (RequiredExp > 0 && RequiredExp <= Exp)
+		LevelUp();
+}
+
+void UPlayerManager::LevelUp()
+{
+	Exp -= RequiredExp;
+
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+	float NextExp = DataManager->GetPlayerLvCurve(Level + 1, NAME_EXP);
+	RequiredExp = static_cast<int32>(NextExp);
+
+	if (RequiredExp < 0)
+		return;
+
+	// 레벨업
+	++Level;
+
+	// 스킬포인트 추가
+	float SkillPoint = DataManager->GetPlayerLvCurve(Level, NAME_SkillPoint);
+	SkillDevelop->AddSkillPoint(static_cast<uint16>(SkillPoint));
+	
+	// 변경 스탯 반영
+	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
 	{
-		// 레벨업
-		Level++;
+		ECharacterStatType Type = static_cast<ECharacterStatType>(i);
+		float Amount = DataManager->GetPlayerLvCurve(Level, EnumToName(Type));
+
+		if (Amount < 0)
+			continue;
+
+		Stat[Type] += static_cast<uint32>(Amount);
+	}
+}
+
+void UPlayerManager::AdjustStatByLevel()
+{
+	// 1 ~ 현재 레벨까지 스탯 반영
+	TObjectPtr<UDataManager> DataManager = GetGameInstance()->GetSubsystem<UDataManager>();
+
+	float NextExp = DataManager->GetPlayerLvCurve(Level + 1, NAME_EXP);
+	RequiredExp = static_cast<int32>(NextExp);
+	
+	for (uint16 lv = 1; lv <= Level; ++lv)
+	{
+		for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
+		{
+			ECharacterStatType Type = static_cast<ECharacterStatType>(i);
+			float Amount = DataManager->GetPlayerLvCurve(lv, EnumToName(Type));
+
+			if (Amount < 0)
+				continue;
+
+			Stat[Type] += static_cast<uint32>(Amount);
+		}
 	}
 }
 
@@ -126,6 +184,8 @@ void UPlayerManager::QuickSlotItemUsed(uint8 _quickSlotIdx, uint8 _inventoryIdx)
 void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 {
 	PlayerName = _playerName;
+	Level = 0;
+	LevelUp();
 	ProvideBasicProperty();
 }
 
@@ -174,6 +234,8 @@ void UPlayerManager::WriteSaveData(UARPGSaveGame* _savegame)
 {
 	UPlayerSaveGame* PlayerSave = Cast<UPlayerSaveGame>(_savegame);
 	PlayerSave->PlayerName = PlayerName;
+	PlayerSave->Level = Level;
+	PlayerSave->Exp = Exp;
 	PlayerSave->Gold = Gold.Value;
 	PlayerSave->SetInventoryData(GetInventory());
 	PlayerSave->SkillPoint = SkillDevelop->GetSkillPoint();
@@ -185,6 +247,8 @@ void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
 {
 	TObjectPtr<UPlayerSaveGame> PlayerSaveData = Cast<UPlayerSaveGame>(_savegame);
 	PlayerName = PlayerSaveData->PlayerName;
+	Level = PlayerSaveData->Level;
+	Exp = PlayerSaveData->Exp;
 	Gold.Value = PlayerSaveData->Gold;
 
 	PlayerSaveData->GetInventoryData(GetInventory(), 
@@ -202,4 +266,6 @@ void UPlayerManager::ReadSaveData(UARPGSaveGame* _savegame)
 		PlayerSaveData->UsingSkillPoint
 	);
 	PlayerSaveData->GetSkillTreeData(GetSkillDevelop());
+
+	AdjustStatByLevel();
 }

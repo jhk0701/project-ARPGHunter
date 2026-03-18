@@ -78,7 +78,7 @@ float UDataManager::GetPlayerLvCurve(uint32 _lv, const FName& _rowName)
 	FSimpleCurve* Curve = PlayerLvCurveTable->FindSimpleCurve(_rowName, TEXT("Player Lv Curve Search"), false);
 
 	if (Curve == nullptr)
-		return 0.0f;
+		return -1.0f;
 
 	return Curve->Eval(_lv);
 }
