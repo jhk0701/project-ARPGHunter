@@ -24,6 +24,9 @@ void UUWSkillNode::NativeOnInitialized()
 
 	SkillButton->OnClicked.AddDynamic(this, &UUWSkillNode::ClickButton);
 	
+	SetState(EState::NONE);
+	SetSelected(false);
+
 	for (uint8 i = 0; i < LineContainer->GetChildrenCount(); ++i)
 	{
 		TObjectPtr<UUserWidget> Line = Cast<UUserWidget>(LineContainer->GetChildAt(i));
@@ -43,7 +46,12 @@ void UUWSkillNode::SetSkillThumbnail(TObjectPtr<UTexture2D> _tex)
 
 void UUWSkillNode::SetState(EState _state)
 {
-	SelectedMark->SetBrushTintColor(ColorOnState[static_cast<uint8>(_state)]);
+	StateMark->SetBrushTintColor(ColorOnState[static_cast<uint8>(_state)]);
+}
+
+void UUWSkillNode::SetSelected(bool _bIsSelected)
+{
+	SelectedMark->SetVisibility(_bIsSelected ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void UUWSkillNode::SetButtonEnable(bool _bIsEnable)
@@ -107,37 +115,37 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 		{
 			SkillNodes[Node->ChildrenIdx[j]]->SetButtonEnable(bIsNodeEnable);
 			
-			if (_treeNodeStates[i].SiblingCount == 1)
-			{
-				if (Node->ChildrenIdx.Num() == 1)
-					SkillNodes[i]->SetChild(j, 0);
-				else
-				{
-					float Angle = 90.0f / Node->ChildrenIdx.Num();
-					SkillNodes[i]->SetChild(j, Angle * j - Angle * 0.5f);
-				}
-			}
-			else
-			{
-				if (_treeNodeStates[i].SiblingCount > Node->ChildrenIdx.Num()) 
-				{
-					// 형제 갯수가 줄어듦
-					// offset 발생
-					float Offset = 90.0f / _treeNodeStates[i].SiblingCount;
-					int8 Dir = _treeNodeStates[i].SiblingIdx <= j ? -1 : 1;
+			//if (_treeNodeStates[i].SiblingCount == 1)
+			//{
+			//	if (Node->ChildrenIdx.Num() == 1)
+			//		SkillNodes[i]->SetChild(j, 0);
+			//	else
+			//	{
+			//		float Angle = 90.0f / Node->ChildrenIdx.Num();
+			//		SkillNodes[i]->SetChild(j, Angle * j - Angle * 0.5f);
+			//	}
+			//}
+			//else
+			//{
+			//	if (_treeNodeStates[i].SiblingCount > Node->ChildrenIdx.Num()) 
+			//	{
+			//		// 형제 갯수가 줄어듦
+			//		// offset 발생
+			//		float Offset = 90.0f / _treeNodeStates[i].SiblingCount;
+			//		int8 Dir = _treeNodeStates[i].SiblingIdx <= j ? -1 : 1;
 
-					SkillNodes[i]->SetChild(j, Offset * Dir);
-				}
-				else if (_treeNodeStates[i].SiblingCount == Node->ChildrenIdx.Num()) 
-				{
-					// 형제 갯수가 유지
-					// offset 발생
-					int8 Dir = _treeNodeStates[i].SiblingIdx < _treeNodeStates[i].SiblingCount / 2 ? -1 : 1;
-					float Angle = 90.0f / Node->ChildrenIdx.Num();
+			//		SkillNodes[i]->SetChild(j, Offset * Dir);
+			//	}
+			//	else if (_treeNodeStates[i].SiblingCount == Node->ChildrenIdx.Num()) 
+			//	{
+			//		// 형제 갯수가 유지
+			//		// offset 발생
+			//		int8 Dir = _treeNodeStates[i].SiblingIdx < _treeNodeStates[i].SiblingCount / 2 ? -1 : 1;
+			//		float Angle = 90.0f / Node->ChildrenIdx.Num();
 
-					SkillNodes[i]->SetChild(j, Angle * Dir * j);
-				}
-			}
+			//		SkillNodes[i]->SetChild(j, Angle * Dir * j);
+			//	}
+			//}
 		}
 	}
 }
@@ -175,6 +183,9 @@ void UUWSkillDevelop::NativeOnInitialized()
 void UUWSkillDevelop::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
 	Super::ShowUI(_bIsSubUI, _mainUI);
+
+	if (nullptr != SkillTreeUIs.Find(CurKey))
+		SkillTreeUIs[CurKey]->GetNodeUI(CurNodeIdx)->SetSelected(false); // 이전 항목 선택 해제
 	HideDetail();
 }
 
@@ -238,9 +249,15 @@ void UUWSkillDevelop::SetSkillTree()
 
 void UUWSkillDevelop::SelectSkillNode(uint8 _key, uint8 _nodeIdx)
 {
+	if(nullptr != SkillTreeUIs.Find(CurKey))
+		SkillTreeUIs[CurKey]->GetNodeUI(CurNodeIdx)->SetSelected(false); // 이전 항목 선택 해제
+
 	CurKey = _key;
 	CurNodeIdx = _nodeIdx;
 	CurUpgrade = GetSkillUpgradeInfoFunc.Execute(_key, _nodeIdx);
+
+	if (nullptr != SkillTreeUIs.Find(CurKey))
+		SkillTreeUIs[CurKey]->GetNodeUI(CurNodeIdx)->SetSelected(true); // 새 항목 선택
 
 	ShowDetail();
 }

@@ -43,6 +43,8 @@ private:
 	TObjectPtr<UImage> SkillThumbnail;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> SelectedMark;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> StateMark;
 	UPROPERTY(EditAnywhere)
 	TArray<FSlateColor> ColorOnState;
 	UPROPERTY(meta = (BindWidget))
@@ -62,6 +64,7 @@ public:
 	void SetSkillThumbnail(TObjectPtr<UTexture2D> _tex);
 	void SetIndex(uint8 _idx) { Index = _idx; };
 	void SetState(EState _state);
+	void SetSelected(bool _bIsSelected);
 	void SetButtonEnable(bool _bIsEnable);
 	void SetChild(int8 _idx, float _angle);
 };
@@ -120,6 +123,8 @@ public:
 	void SetSkillLabel(const FText& _name);
 	void OnClickNode(uint8 _idx);
 	void UpdateNode(uint8 _idx, UUWSkillNode::EState _state);
+	
+	TObjectPtr<UUWSkillNode> GetNodeUI(uint8 _nodeIdx) { return SkillNodes[_nodeIdx]; }
 };
 
 UCLASS()
