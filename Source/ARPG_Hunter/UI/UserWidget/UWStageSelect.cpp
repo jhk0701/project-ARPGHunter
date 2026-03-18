@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWStageSelect.h"
@@ -158,7 +158,8 @@ void UUWStageSelect::RefreshStageInfo()
 
 	StageNameLabel->SetText(FText::FromString(StageData->StageName));
 	StageDescLabel->SetText(FText::FromString(StageData->StageDesc));
-	GoldRewardLabel->SetText(FText::FromString(FString::Printf(TEXT("%d G"), StageData->RewardGold)));
+	GoldRewardLabel->SetText(FText::Format(FText::FromString(TEXT("{0} G")), StageData->RewardGold));
+	ExpRewardLabel->SetText(FText::Format(FText::FromString(TEXT("{0} EXP")), StageData->RewardExp));
 	
 	// 보상 아이템 출력
 	// 슬롯 보충이 필요한 경우
