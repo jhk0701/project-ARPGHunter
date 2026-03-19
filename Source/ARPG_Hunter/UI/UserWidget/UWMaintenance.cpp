@@ -104,6 +104,9 @@ void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 
 void UUWMaintenance::OnInventoryChanged(uint8 _idx, TWeakObjectPtr<UItem> _item)
 {
+	if (false == _item.IsValid())
+		return; // 인벤토리에서 제거된 변경은 반환
+
 	if (_item->GetType() == EItemType::CONSUMABLE) 
 	{
 		TObjectPtr<UConsumableItem> Consumable = Cast<UConsumableItem>(_item);
@@ -119,8 +122,10 @@ void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _player
 {
 	for (const TPair<ECharacterStatType, uint32>& Pair : _playerStat)
 	{
-		FString Fmt = FString::Printf(TEXT("%d + (%d) = %d"), Pair.Value, _equipmentStat[Pair.Key], Pair.Value + _equipmentStat[Pair.Key]);
-		MapStatInfo[Pair.Key]->SetStatValue(FText::FromString(Fmt));
+		MapStatInfo[Pair.Key]->SetStatValue(FText::Format(
+			FText::FromString(TEXT("{0} + ({1}) = {2}")),
+			Pair.Value, _equipmentStat[Pair.Key], Pair.Value + _equipmentStat[Pair.Key])
+		);
 	}
 }
 

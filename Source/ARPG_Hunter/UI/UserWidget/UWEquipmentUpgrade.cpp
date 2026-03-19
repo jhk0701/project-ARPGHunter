@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/UserWidget/UWEquipmentUpgrade.h"
 #include "Components/ScrollBox.h"
@@ -153,7 +153,10 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	NextGradeLabel->SetText(FText::Format(GradeFormat, Equipment->GetGrade() + 1));
 
 	// 성공률 출력
-	SucceessPercentLabel->SetText(FText::Format(FText::FromString(TEXT("{0} %")), UpgradeData->SuccessPercent));
+	SucceessPercentLabel->SetText(FText::Format(
+		FText::FromString(TEXT("{0} %")), 
+		UpgradeData->SuccessPercent)
+	);
 
 	// 강화 수치
 	// 기본 스탯 + 강화 스탯
@@ -186,16 +189,16 @@ void UUWEquipmentUpgrade::SelectSlot(uint8 _index)
 	for (const FUpgradeIngredient& Ingredient : UpgradeData->Ingredients)
 	{
 		FItemData* IngredientData = DataManager->GetItemData(Ingredient.ItemID);
-
 		uint8 InvenIdx = 0;
 		uint16 OwnAmount = 0;
 		if (Inventory->TryFindItem(IngredientData->Type, Ingredient.ItemID, InvenIdx)) 
 			OwnAmount = Inventory->GetItem(IngredientData->Type, InvenIdx)->GetAmount();
 
-		bIngredientIsEnough &= (OwnAmount >= Ingredient.Amount);
+		bool bIsEnough = OwnAmount >= Ingredient.Amount;
+		bIngredientIsEnough &= bIsEnough;
 
-		TArray<FText> Addictive = { FText::Format(IngredientFormat, OwnAmount, Ingredient.Amount) };
-		IngredientSlotInst[Idx]->SetSlot(IngredientData, &Addictive);
+		IngredientSlotInst[Idx]->SetSlot(IngredientData);
+		IngredientSlotInst[Idx]->SetAmountLabel(FText::Format(IngredientFormat, OwnAmount, Ingredient.Amount), bIsEnough);
 		IngredientSlotInst[Idx]->SetVisibility(ESlateVisibility::Visible);
 		Idx++;
 	}
@@ -242,7 +245,6 @@ void UUWEquipmentUpgrade::Upgrade()
 	for (const FUpgradeIngredient& Ingredient : UpgradeData->Ingredients)
 	{
 		FItemData* IngredientItem = DataManager->GetItemData(Ingredient.ItemID);
-		
 		uint8 Idx = 0;
 		if (Inventory->TryFindItem(IngredientItem->Type, Ingredient.ItemID, Idx) == false)
 			return;

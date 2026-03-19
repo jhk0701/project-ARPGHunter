@@ -32,7 +32,11 @@ void AStageCutSceneSection::BeginPlay()
 	}
 
 	TObjectPtr<ACombatGameMode> GM = GetWorld()->GetAuthGameMode<ACombatGameMode>();
-	CutSceneAssetPath = GM->GetCutSceneAsset(CutSceneIndex)->LevelSequence;
+	TObjectPtr<UCutSceneAssetData> CutSceneAssetData = GM->GetCutSceneAsset(CutSceneIndex);
+	if (nullptr == CutSceneAssetData)
+		return;
+
+	CutSceneAssetPath = CutSceneAssetData->LevelSequence;
 	if (nullptr != CutSceneAssetPath) 
 	{
 		FStreamableManager& Streamable = UAssetManager::GetStreamableManager();

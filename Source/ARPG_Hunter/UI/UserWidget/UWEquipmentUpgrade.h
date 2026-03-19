@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,7 +23,8 @@ enum class EItemType : uint8;
 enum class EEquipmentType : uint8;
 enum class ECharacterStatType : uint8;
 
-UENUM()
+// Detail 창에 표시하기 위함
+UENUM() 
 enum class EDisableReason : uint8
 {
 	NO_UPGRADE_DATA,
