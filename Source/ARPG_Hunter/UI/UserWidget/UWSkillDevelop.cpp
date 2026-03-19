@@ -73,7 +73,6 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 		return LayerID;
 
 	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-	FVector2D CommonOffset{ 10.0f, 10.0f };
 
 	// 노드별 선긋기
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
@@ -81,12 +80,12 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 		const FSkillNode& Node = SkillTree->Tree[i];
 
 		FVector2D ParentAbsCoord = (*SkillNodes)[i]->GetCachedGeometry().GetAbsolutePositionAtCoordinates({0.5, 1.0});
-		FVector2D Start = AllottedGeometry.AbsoluteToLocal(ParentAbsCoord) + CommonOffset;
+		FVector2D Start = AllottedGeometry.AbsoluteToLocal(ParentAbsCoord);
 
 		for (uint8 ChildIdx : Node.ChildrenIdx)
 		{
 			FVector2D ChildAbsCoord = (*SkillNodes)[ChildIdx]->GetCachedGeometry().GetAbsolutePositionAtCoordinates({ 0.5, 0.0 });
-			FVector2D End = AllottedGeometry.AbsoluteToLocal(ChildAbsCoord) + CommonOffset;
+			FVector2D End = AllottedGeometry.AbsoluteToLocal(ChildAbsCoord);
 			UWidgetBlueprintLibrary::DrawLine(Context, Start, End, FLinearColor::White);
 		}
 	}
