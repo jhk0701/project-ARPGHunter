@@ -115,7 +115,6 @@ void UUWMaintenance::OnInventoryChanged(uint8 _idx, TWeakObjectPtr<UItem> _item)
 
 		SetQuickSlot(Consumable->GetQuickSlotIndex(), Consumable);
 	}
-
 }
 
 void UUWMaintenance::SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat)
