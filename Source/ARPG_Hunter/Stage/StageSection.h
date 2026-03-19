@@ -27,7 +27,7 @@ public:
 	AStageSection();
 
 private:
-	UPROPERTY(EditAnywhere, Category = "Section")
+	UPROPERTY(VisibleAnywhere, Category = "Section")
 	TObjectPtr<class UBoxComponent> BoxComp;
 	UPROPERTY(EditAnywhere, Category = "Section|Setting")
 	uint8 Index{ 0 };
@@ -37,6 +37,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SpawnedCount{ 0 };
+
+	UPROPERTY(VisibleAnywhere, Category = "Section")
+	TArray<AActor*> SpawnPoints;
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -51,4 +54,5 @@ public:
 	virtual void BeginSection();
 	virtual void EndSection();
 	void SpawnMonster();
+	bool IsCleared() const { return State == EState::CLEARED; }
 };

@@ -76,7 +76,7 @@ public:
 	virtual AActor* ChoosePlayerStart_Implementation(AController* _player) override;
 
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
-	uint8 SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize);
+	uint8 SpawnMonsterOnSection(uint8 _sectionID, const TArray<AActor*>& _points);
 
 	TObjectPtr<class UCutSceneAssetData> GetCutSceneAsset(uint8 _idx) const;
 };

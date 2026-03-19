@@ -239,7 +239,7 @@ void ACombatGameMode::RegisterObjectPool()
 	}
 }
 
-uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _point, const FVector& _areaSize)
+uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const TArray<AActor*>& _points)
 {
 	if (StageData->Sections.Num() <= _sectionID)
 		return 0;
@@ -264,8 +264,8 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 			TObjectPtr<AMonsterBase> Instance = Cast<AMonsterBase>(Inst);
 
 			FNavLocation Loc;
-			FVector RandBoxPos = UKismetMathLibrary::RandomPointInBoundingBox(_point, _areaSize);
-			NavSys->GetRandomReachablePointInRadius(RandBoxPos, 0.0f, Loc);
+			FVector RandPos = _points[FMath::Rand() % _points.Num()]->GetActorLocation(); // UKismetMathLibrary::RandomPointInBoundingBox(_point, _areaSize);
+			NavSys->GetRandomReachablePointInRadius(RandPos, 0.0f, Loc);
 
 			bool bIsValid = false;
 			for (int j = 0; j < 20; ++j) // 재시도 횟수 20번으로 고정
@@ -274,7 +274,7 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const FVector& _p
 				if (bIsValid)
 					break;
 				else
-					NavSys->GetRandomReachablePointInRadius(RandBoxPos, 300.0f, Loc);
+					NavSys->GetRandomReachablePointInRadius(RandPos, 300.0f, Loc);
 			}
 						
 			FRotator Rot(0, FMath::Rand() % 360, 0);

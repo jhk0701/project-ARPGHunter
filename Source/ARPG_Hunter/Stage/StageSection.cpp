@@ -32,6 +32,11 @@ void AStageSection::BeginPlay()
 {
 	Super::BeginPlay();
 	State = EState::READY;
+	
+	GetAttachedActors(SpawnPoints);
+	
+	if (SpawnPoints.Num() == 0)
+		SpawnPoints.Add(this); // 스폰 포인트를 패치하지 않았다면 이 액터의 위치를 사용
 }
 
 void AStageSection::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -70,7 +75,7 @@ void AStageSection::SpawnMonster()
 		return;
 	}
 
-	SpawnedCount = GameMode->SpawnMonsterOnSection(Index, GetActorLocation(), BoxComp->GetScaledBoxExtent());
+	SpawnedCount = GameMode->SpawnMonsterOnSection(Index, SpawnPoints);
 
 	if (SpawnedCount > 0)
 		EventHandle = GameMode->StageEvent[EStageEvent::HUNT].AddUObject(this, &AStageSection::OnMonsterDead);
