@@ -34,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	FText NameText;
 	UPROPERTY(EditAnywhere)
-	FText DescText;
+	FString DescString;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UTexture2D> Thumbnail;
 

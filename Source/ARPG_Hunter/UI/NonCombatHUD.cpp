@@ -118,13 +118,11 @@ void ANonCombatHUD::BeginPlay()
 		SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
 		
 		TWeakObjectPtr<USkillDevelop> SkillDevelop = PlayerManager->GetSkillDevelop();
-		
-		FGetSkillUpgradeInfoFunc SkillDevelopUIInitDelegate;
-		SkillDevelopUIInitDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade);
-		FGetUsableSkillPointFunc UsableSkillPointDelegate;
-		UsableSkillPointDelegate.BindUObject(SkillDevelop.Get(), &USkillDevelop::GetUsableSkillPoint);
-		
-		SkillDevelopUI->Init(PlayerManager->GetWeaponConfig(), SkillDevelopUIInitDelegate, UsableSkillPointDelegate);
+		SkillDevelopUI->Init(
+			PlayerManager->GetWeaponConfig(), 
+			FGetSkillUpgradeInfoFunc::CreateUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade),
+			FGetUsableSkillPointFunc::CreateUObject(SkillDevelop.Get(), &USkillDevelop::GetUsableSkillPoint)
+		);
 		SkillDevelopUI->OnUpgradeClicked.BindWeakLambda(this,
 			[SkillDevelop](uint8 _key, uint8 _nodeIdx, uint8 _upgradeIdx, uint8 _cost)
 			{
@@ -135,7 +133,6 @@ void ANonCombatHUD::BeginPlay()
 					SkillDevelop->AddSkill(_key, _nodeIdx, _upgradeIdx);
 			}
 		);
-		//BindUObject(SkillDevelop.Get(), &USkillDevelop::AddSkill);
 	}
 
 	BindMainenanceAndInventory();

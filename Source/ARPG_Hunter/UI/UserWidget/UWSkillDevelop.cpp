@@ -168,10 +168,11 @@ void UUWSkillDevelop::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI
 
 	if (nullptr != SkillTreeUIs.Find(CurKey))
 		SkillTreeUIs[CurKey]->GetNodeUI(CurNodeIdx)->SetSelected(false); // 이전 항목 선택 해제
+	
 	HideDetail();
 }
 
-void UUWSkillDevelop::Init(TWeakObjectPtr<UWeaponConfig> _curWeaponConfig, FGetSkillUpgradeInfoFunc& _upgradeInfofunc, FGetUsableSkillPointFunc& _usableSkillPointFunc)
+void UUWSkillDevelop::Init(TWeakObjectPtr<UWeaponConfig> _curWeaponConfig, FGetSkillUpgradeInfoFunc&& _upgradeInfofunc, FGetUsableSkillPointFunc&& _usableSkillPointFunc)
 {
 	ActionComboData = _curWeaponConfig->AttackCombo;
 	SkillTreeData = _curWeaponConfig->SkillTree;
@@ -281,7 +282,7 @@ void UUWSkillDevelop::ShowDetail()
 	const FUpgradeInfo& UpgradeInfo = bIsFullUpgrade ? CurSkillNode.UpgradeInfos.Last() : CurSkillNode.UpgradeInfos[CurUpgrade + 1];
 	
 	NodeNameLabel->SetText(UpgradeInfo.Upgrade->NameText);
-	NodeDescLabel->SetText(UpgradeInfo.Upgrade->DescText);
+	NodeDescLabel->SetText(FText::FromString(UpgradeInfo.Upgrade->DescString.Replace(TEXT("\\n"), TEXT("\n"))));
 
 	if (bIsFullUpgrade)
 	{
