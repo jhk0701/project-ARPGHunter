@@ -66,7 +66,7 @@ void UUWInventory::HideUI()
 	ComparedItemDetail->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UUWInventory::Init(uint8 _initSize, uint32 _gold, FGetItemArrFunc& _func)
+void UUWInventory::Init(uint8 _initSize, uint32 _gold, FGetItemArrFunc&& _func)
 {
 	GetItemArrFunc = _func;
 
@@ -155,11 +155,13 @@ void UUWInventory::ShowSelectedItemDetail(bool _bShow)
 
 	if (ItemSlots[CurSelectedSlot]->IsEquipped())
 	{
+		ThrowButton->SetVisibility(ESlateVisibility::Collapsed);
 		EquipButton->SetVisibility(ESlateVisibility::Collapsed);
 		UnequipButton->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
+		ThrowButton->SetVisibility(ESlateVisibility::Visible);
 		EquipButton->SetVisibility(ESlateVisibility::Visible);
 		UnequipButton->SetVisibility(ESlateVisibility::Collapsed);
 	}

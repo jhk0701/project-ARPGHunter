@@ -99,15 +99,11 @@ void ANonCombatHUD::BeginPlay()
 		if (InventoryUI)
 		{
 			TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-			FGetItemArrFunc InventoryUIInitDelegate;
-			InventoryUIInitDelegate.BindUObject(Inventory.Get(), &UInventory::GetContainer);
-
 			InventoryUI->Init(
-				Inventory->GetContainerSize(), 
-				PlayerManager->GetGold(), 
-				InventoryUIInitDelegate
+				Inventory->GetContainerSize(),
+				PlayerManager->GetGold(),
+				FGetItemArrFunc::CreateUObject(Inventory.Get(), &UInventory::GetContainer)
 			);
-
 			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
 			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
 		}

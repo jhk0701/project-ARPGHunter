@@ -64,7 +64,6 @@ private:
 
 	void OnSlotClicked(uint8 _index);
 	void ShowSelectedItemDetail(bool _bShow);
-
 	void ClickCategory(uint8 _opt);
 	void UpdateCategory(EItemType _category, bool _bUpdateSlot = true);
 	void UpdateSlot();
@@ -85,7 +84,7 @@ public:
 
 	virtual void HideUI() override;
 
-	void Init(uint8 _initSize, uint32 _gold, FGetItemArrFunc& _func);
+	void Init(uint8 _initSize, uint32 _gold, FGetItemArrFunc&& _func);
 	bool IsValid() const { return GetItemArrFunc.IsBound(); }
 	void SetSlot(uint8 _idx, TWeakObjectPtr<UItem> _item);
 	void SetGoldLabel(uint32 _goldValue);
