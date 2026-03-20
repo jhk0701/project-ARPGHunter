@@ -38,7 +38,7 @@ void UUWPopUp::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 		PC->LockCursor(GetCachedWidget()); // 이 UI로 포커스
 
 	if(IsInViewport() == false) 
-		AddToViewport();
+		AddToViewport(ZOrder);
 
 	SetVisibility(ESlateVisibility::Visible);
 	bIsShowing = true;

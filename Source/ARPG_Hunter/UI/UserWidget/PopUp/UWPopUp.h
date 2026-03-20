@@ -17,6 +17,9 @@ class ARPG_HUNTER_API UUWPopUp : public UUserWidget
 private:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsSubUI{ false };
+	UPROPERTY(EditAnywhere)
+	int32 ZOrder{ 0 };
+
 	TWeakObjectPtr<UUserWidget> MainUI{ nullptr };
 
 	UPROPERTY(VisibleAnywhere)
