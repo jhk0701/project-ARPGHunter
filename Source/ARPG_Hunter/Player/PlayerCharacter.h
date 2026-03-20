@@ -86,7 +86,6 @@ private:
 #pragma endregion
 
 #pragma region Camera
-
 	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
 	TSubclassOf<UCameraShakeBase> CameraShakeOnAttack;
 	UPROPERTY(EditAnywhere, Category = "Effect|Camera")
@@ -165,6 +164,5 @@ public:
 	void ProgressCameraCurve();
 
 	void Interact();
-
 	void SetIgnoreInput(bool _bIgnoreMoveInput);
 };

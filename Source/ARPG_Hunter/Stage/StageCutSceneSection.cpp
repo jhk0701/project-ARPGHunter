@@ -34,17 +34,18 @@ void AStageCutSceneSection::BeginPlay()
 	TObjectPtr<ACombatGameMode> GM = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	TObjectPtr<UCutSceneAssetData> CutSceneAssetData = GM->GetCutSceneAsset(CutSceneIndex);
 	if (nullptr == CutSceneAssetData)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Cut Scene Data is null"));
 		return;
+	}
 
 	CutSceneAssetPath = CutSceneAssetData->LevelSequence;
-	if (nullptr != CutSceneAssetPath) 
-	{
-		FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
-		Streamable.RequestAsyncLoad(
-			CutSceneAssetPath.ToSoftObjectPath(), 
-			FStreamableDelegate::CreateUObject(this, &AStageCutSceneSection::OnCutSceneAssetLoaded)
-		);
-	}
+	
+	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+	Streamable.RequestAsyncLoad(
+		CutSceneAssetPath.ToSoftObjectPath(),
+		FStreamableDelegate::CreateUObject(this, &AStageCutSceneSection::OnCutSceneAssetLoaded)
+	);
 }
 
 void AStageCutSceneSection::OnCutSceneAssetLoaded()
@@ -56,7 +57,6 @@ void AStageCutSceneSection::BeginSection()
 {
 	// 플레이어 입장하는 시점에 컷씬 재생
 	TObjectPtr<UWorld> World = GetWorld();
-	TObjectPtr<ACombatGameMode> GM = World->GetAuthGameMode<ACombatGameMode>();
 	if (nullptr == CutSceneAsset)
 	{
 		// 컷씬이 없다면 재생하지 않고, Section과 동일하게 처리
@@ -86,7 +86,7 @@ void AStageCutSceneSection::BeginSection()
 	}
 
 	// PlayerHUD 가리기
-	TObjectPtr<ACombatHUD> HUD = GetWorld()->GetFirstPlayerController()->GetHUD<ACombatHUD>();
+	TObjectPtr<ACombatHUD> HUD = World->GetFirstPlayerController()->GetHUD<ACombatHUD>();
 	HUD->ShowPlayerUI(false);
 
 	if (CutSceneUI)
