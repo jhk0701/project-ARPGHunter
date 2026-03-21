@@ -78,13 +78,16 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
 	{
 		const FSkillNode& Node = SkillTree->Tree[i];
+		const FGeometry StartTickSpaceGeo = (*SkillNodes)[i]->GetTickSpaceGeometry();
 
-		FVector2D ParentAbsCoord = (*SkillNodes)[i]->GetCachedGeometry().GetAbsolutePositionAtCoordinates({0.5, 1.0});
+		if (MyCullingRect.ContainsPoint(StartTickSpaceGeo.AbsolutePosition) == false)
+			continue;
+		FVector2D ParentAbsCoord = StartTickSpaceGeo.GetAbsolutePositionAtCoordinates({0.5, 1.0});
 		FVector2D Start = AllottedGeometry.AbsoluteToLocal(ParentAbsCoord);
 
 		for (uint8 ChildIdx : Node.ChildrenIdx)
 		{
-			FVector2D ChildAbsCoord = (*SkillNodes)[ChildIdx]->GetCachedGeometry().GetAbsolutePositionAtCoordinates({ 0.5, 0.0 });
+			FVector2D ChildAbsCoord = (*SkillNodes)[ChildIdx]->GetTickSpaceGeometry().GetAbsolutePositionAtCoordinates({ 0.5, 0.0 });
 			FVector2D End = AllottedGeometry.AbsoluteToLocal(ChildAbsCoord);
 			UWidgetBlueprintLibrary::DrawLine(Context, Start, End, FLinearColor::White);
 		}
