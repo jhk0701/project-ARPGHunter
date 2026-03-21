@@ -141,6 +141,7 @@ void APlayerCharacter::Init()
 			MapEquipmentMeshComp[EEquipmentType::WEAPON],
 			PlayerManager->GetSkillDevelop()->GetSkillSelectPtr()
 		});
+	ActionComp->StaminaUsagePredicate.BindUObject(StatComp, &UStatComponent::TryUseStamina);
 
 	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
 
@@ -246,9 +247,7 @@ void APlayerCharacter::Dodge()
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
-	bool bIsSuccess = ActionComp->PlayDodgeAction(InputDirection.SizeSquared() > 0,
-		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage);  }
-	);
+	bool bIsSuccess = ActionComp->PlayDodgeAction(InputDirection.SizeSquared() > 0);
 
 	if (bIsSuccess)
 		SetIgnoreInput(true);
@@ -259,10 +258,7 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	if (ActionComp->IsValid() == false || StatComp->IsDead())
 		return;
 
-	bool bIsValid = ActionComp->PlayAttackAction(_eType,
-		[this](float _staminaUsage) { return StatComp->TryUseStamina(_staminaUsage); }
-	);
-
+	bool bIsValid = ActionComp->PlayAttackAction(_eType);
 	if (bIsValid == false || InputDirection.SquaredLength() > 0)
 		return;
 

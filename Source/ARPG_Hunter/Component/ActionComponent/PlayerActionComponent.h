@@ -46,6 +46,7 @@ public:
 };
 
 DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, int8, const FAppliedGraph*);
+DECLARE_DELEGATE_RetVal_OneParam(bool, FStaminaUsagePredicate, uint32);
 
 UCLASS()
 class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
@@ -61,7 +62,6 @@ private:
 	int8 CurAttackActionID{ -1 };
 	EActionProcess CurActionProcess;
 	EActionInput CurActionInput;
-	TFunction<bool(float)> CurActionPredicate{ nullptr };
 
 	UPROPERTY(EditAnywhere)
 	float ActionProgressRate{ 0.1f };
@@ -81,6 +81,7 @@ private:
 
 public:
 	FOnActionUpdated OnActionUpdated;
+	FStaminaUsagePredicate StaminaUsagePredicate;
 
 	void Init(const FPlayerActionInitParam& _param);
 	virtual void Clear() override;
@@ -92,11 +93,11 @@ public:
 	bool IsValid() const { return CurWeapon.IsValid(); }
 	bool IsInProgress() const;
 
-	bool PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate);
+	bool PlayDodgeAction(bool _isMoving);
 	void PlayHitAction();
 	void PlayDeadAction();
 	void PlayItemUsageAction();
-	bool PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate);
+	bool PlayAttackAction(EAttackType _type);
 	void ProcessAttackProgress();
 	void ProcessAttackEnd();
 

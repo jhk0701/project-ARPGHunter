@@ -34,10 +34,7 @@ void AStageCutSceneSection::BeginPlay()
 	TObjectPtr<ACombatGameMode> GM = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	TObjectPtr<UCutSceneAssetData> CutSceneAssetData = GM->GetCutSceneAsset(CutSceneIndex);
 	if (nullptr == CutSceneAssetData)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Cut Scene Data is null"));
 		return;
-	}
 
 	CutSceneAssetPath = CutSceneAssetData->LevelSequence;
 	

@@ -179,7 +179,7 @@ void UPlayerActionComponent::SetActionProcess(EActionProcess _eProcess)
 }
 
 
-bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(float)> _predicate)
+bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving)
 {
 	TObjectPtr<UAction> DodgeAction = CurWeapon->DodgeAction;
 	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
@@ -188,7 +188,8 @@ bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving, TFunction<bool(floa
 		AnimInst->Montage_IsPlaying(DodgeAction->Montage))
 		return false;
 
-	if (_predicate && _predicate(DodgeAction->StaminaUsage) == false)
+	if (StaminaUsagePredicate.IsBound() && 
+		StaminaUsagePredicate.Execute(DodgeAction->StaminaUsage) == false)
 		return false;
 
 	AnimInst->Montage_Play(DodgeAction->Montage);
@@ -249,7 +250,7 @@ void UPlayerActionComponent::PlayItemUsageAction()
 	AnimInst->Montage_Play(CurWeapon->ItemUsageMontage);
 }
 
-bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(float)> _predicate)
+bool UPlayerActionComponent::PlayAttackAction(EAttackType _type)
 {
 	if (IsValidAttackInput(_type) == false)
 		return false;
@@ -260,7 +261,8 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 
 	TWeakObjectPtr<UAction> ActionData = AppliedGraph.Actions[id]->GetAction();
 
-	if (_predicate && _predicate(AppliedGraph.Actions[id]->GetStaminaUsage()) == false)
+	if (StaminaUsagePredicate.IsBound() && 
+		StaminaUsagePredicate.Execute(AppliedGraph.Actions[id]->GetStaminaUsage()) == false)
 		return false;
 
 	CurAttackActionID = id;
@@ -269,8 +271,6 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 	// bIsInAttackCombo = true;
 	BroadcastActionUpdated(); // SetCurrentAction(Action);
 
-	if (CurActionInput == EActionInput::HOLD)
-		CurActionPredicate = _predicate;
 
 	GetAnimInstance()->Montage_Play(ActionData->Montage);
 	
@@ -285,9 +285,12 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type, TFunction<bool(
 
 void UPlayerActionComponent::ProcessAttackProgress()
 {
+	if (StaminaUsagePredicate.IsBound() == false)
+		return;
+
 	// 공격 액션 지속 중, 스태미너 소모
 	// 스태미너 부족 시, 바로 Complete로 진행
-	if (CurActionPredicate(AppliedGraph.Actions[CurAttackActionID]->GetStaminaUsage()) == false)
+	if (StaminaUsagePredicate.Execute(AppliedGraph.Actions[CurAttackActionID]->GetStaminaUsage()) == false)
 	{
 		ProcessAttackEnd();
 		return;
