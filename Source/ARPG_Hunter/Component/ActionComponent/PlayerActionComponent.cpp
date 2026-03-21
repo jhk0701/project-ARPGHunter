@@ -315,8 +315,6 @@ void UPlayerActionComponent::ProcessAttackEnd()
 	else if (CurActionProcess == EActionProcess::COMPLETE)
 		return;
 
-	CurActionProcess = EActionProcess::COMPLETE; // 종료 상태로 변경
-
 	// 누르는 입력이 종료됨
 	// 현재 재생중인 몽타주를 강제로 Complete 섹션으로 전환
 	GetAnimInstance()->Montage_JumpToSection(EnumToName(EActionProcess::COMPLETE), CurMontage);
