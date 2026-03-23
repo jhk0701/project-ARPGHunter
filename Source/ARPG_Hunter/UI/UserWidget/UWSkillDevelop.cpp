@@ -74,7 +74,18 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 		return LayerID;
 
 	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-	// float ViewPortScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
+	
+	TSharedPtr<SWindow> CurWindow = GEngine->GameViewport->GetWindow();
+	if (CurWindow.IsValid() == false)
+		return LayerID;
+
+	FVector2D ScreenOffset = CurWindow->GetPositionInScreen();
+	FSlateRect AdjustedCullRect = FSlateRect(
+		MyCullingRect.Left + ScreenOffset.X,
+		MyCullingRect.Top + ScreenOffset.Y,
+		MyCullingRect.Right + ScreenOffset.X,
+		MyCullingRect.Bottom + ScreenOffset.Y
+	);
 
 	// 노드별 선긋기
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
@@ -82,7 +93,7 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 		const FSkillNode& Node = SkillTree->Tree[i];
 		const FGeometry StartTickSpaceGeo = (*SkillNodes)[i]->GetTickSpaceGeometry();
 
-		// if (MyCullingRect.ContainsPoint(StartTickSpaceGeo.AbsolutePosition) == false)
+		// if (AdjustedCullRect.ContainsPoint(StartTickSpaceGeo.AbsolutePosition) == false)
 			// continue;
 
 		/*FVector2D StartPixelPos;
