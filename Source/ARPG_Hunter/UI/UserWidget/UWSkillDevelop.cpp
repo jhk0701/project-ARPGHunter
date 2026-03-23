@@ -90,10 +90,10 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 	// 노드별 선긋기
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
 	{
-		FVector2D StartCoord = (*SkillNodes)[i]->GetTickSpaceGeometry().GetLocalPositionAtCoordinates({ 0.5, 0.5 });
-		if (StartCoord.IsNearlyZero())
+		FVector2D StartCoord = (*SkillNodes)[i]->GetTickSpaceGeometry().GetLocalPositionAtCoordinates({0.5, 0.5});
+		if (StartCoord.IsNearlyZero(1) || (*SkillNodes)[i]->IsRendered() == false)
 			continue;
-
+		
 		const FSkillNode& Node = SkillTree->Tree[i];
 		FVector2D StartPos = GetWidgetPosition((*SkillNodes)[i], { 0.5, 1.0 });
 		FVector2D Start = AllottedGeometry.AbsoluteToLocal(StartPos);
