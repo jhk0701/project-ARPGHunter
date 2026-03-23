@@ -24,7 +24,8 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 		return;
 
 	FVector Loc = Monster->GetActorLocation();
-	float RecogRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("RecoginitionRange")));
+	UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
+	float RecogRange = BBComp->GetValueAsFloat(FName(TEXT("RecoginitionRange")));
 
 	FHitResult HitResult;
 	bool IsHit = UKismetSystemLibrary::SphereTraceSingle(
@@ -41,7 +42,7 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
 
 	if (IsHit)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject(FName(TEXT("Target")), HitResult.GetActor());
+		BBComp->SetValueAsObject(FName(TEXT("Target")), HitResult.GetActor());
 		Monster->OnTargetFound();
 	}
 }

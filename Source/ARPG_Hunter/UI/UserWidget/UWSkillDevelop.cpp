@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWSkillDevelop.h"
@@ -11,7 +11,8 @@
 #include "Components/Border.h"
 #include "Components/Overlay.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-// #include "Slate/SlateBlueprintLibrary.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 
 #include "Data/WeaponConfig.h"
 #include "Data/ActionComboData.h"
@@ -73,6 +74,7 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 		return LayerID;
 
 	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+	// float ViewPortScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
 
 	// 노드별 선긋기
 	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
@@ -80,15 +82,30 @@ int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& All
 		const FSkillNode& Node = SkillTree->Tree[i];
 		const FGeometry StartTickSpaceGeo = (*SkillNodes)[i]->GetTickSpaceGeometry();
 
-		if (MyCullingRect.ContainsPoint(StartTickSpaceGeo.AbsolutePosition) == false)
-			continue;
+		// if (MyCullingRect.ContainsPoint(StartTickSpaceGeo.AbsolutePosition) == false)
+			// continue;
+
+		/*FVector2D StartPixelPos;
+		FVector2D StartViewPortPos;
+		USlateBlueprintLibrary::LocalToViewport(GetWorld(), StartTickSpaceGeo, StartTickSpaceGeo.GetLocalPositionAtCoordinates({ 0.5, 1.0 }), StartPixelPos, StartViewPortPos);
+		StartPixelPos /= ViewPortScale;*/
+		
 		FVector2D ParentAbsCoord = StartTickSpaceGeo.GetAbsolutePositionAtCoordinates({0.5, 1.0});
 		FVector2D Start = AllottedGeometry.AbsoluteToLocal(ParentAbsCoord);
 
 		for (uint8 ChildIdx : Node.ChildrenIdx)
 		{
+			const FGeometry& EndTickSpaceGeo = (*SkillNodes)[ChildIdx]->GetTickSpaceGeometry();
+
+			/*FVector2D EndPixelPos;
+			FVector2D EndViewPortPos;
+			USlateBlueprintLibrary::LocalToViewport(GetWorld(), EndTickSpaceGeo, EndTickSpaceGeo.GetLocalPositionAtCoordinates({ 0.5, 0.0 }), EndPixelPos, EndViewPortPos);
+			EndPixelPos /= ViewPortScale;*/
+			// UWidgetBlueprintLibrary::DrawLine(Context, StartPixelPos, EndPixelPos, FLinearColor::White);
+
 			FVector2D ChildAbsCoord = (*SkillNodes)[ChildIdx]->GetTickSpaceGeometry().GetAbsolutePositionAtCoordinates({ 0.5, 0.0 });
 			FVector2D End = AllottedGeometry.AbsoluteToLocal(ChildAbsCoord);
+
 			UWidgetBlueprintLibrary::DrawLine(Context, Start, End, FLinearColor::White);
 		}
 	}

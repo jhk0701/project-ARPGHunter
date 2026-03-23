@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTTask/BTTask_Attack.h"
@@ -22,17 +22,19 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if(Owner == nullptr)
 		return EBTNodeResult::Failed;
 
-	APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target")))); 
+	UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
+	APlayerCharacter* Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(FName(TEXT("Target"))));
 	if (Target == nullptr)
 		return EBTNodeResult::Failed;
 	
 	Owner->OnAttackMontageEnded.BindLambda(
-		[&]()
+		[this, &OwnerComp]()
 		{
-			APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
+			UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
+			APlayerCharacter* Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(FName(TEXT("Target"))));
 
 			if (Target == nullptr || Target->IsDead())
-				OwnerComp.GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
+				BBComp->ClearValue(FName(TEXT("Target")));
 
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
@@ -42,7 +44,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (Interval < 0.0f)
 		return EBTNodeResult::Failed; // 공격 동작이 유효하지 않은 상황 실패처리
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(FName(TEXT("AttackInterval")), Interval); // 공격 후 대기시간
+	BBComp->SetValueAsFloat(FName(TEXT("AttackInterval")), Interval); // 공격 후 대기시간
 
 	return EBTNodeResult::InProgress;
 }
