@@ -71,8 +71,12 @@ class ARPG_HUNTER_API UUWSkillNodeLine : public UUserWidget
 private:
 	struct FSkillTree* SkillTree;
 	TArray<TObjectPtr<UUWSkillNode>>* SkillNodes;
+
+	FVector2D GetWidgetPosition(TObjectPtr<UUserWidget> _widget, FVector2D _normalized) const;
+	
 protected:
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+
 public:
 	void Init(FSkillTree* _skillTree, TArray<TObjectPtr<UUWSkillNode>>* _nodeUIs) 
 	{
