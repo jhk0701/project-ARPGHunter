@@ -69,20 +69,9 @@ class ARPG_HUNTER_API UUWSkillNodeLine : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	struct FSkillTree* SkillTree;
-	TArray<TObjectPtr<UUWSkillNode>>* SkillNodes;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> LineImage;
 
-	FVector2D GetWidgetPosition(TObjectPtr<UUserWidget> _widget, FVector2D _normalized) const;
-	
-protected:
-	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
-
-public:
-	void Init(FSkillTree* _skillTree, TArray<TObjectPtr<UUWSkillNode>>* _nodeUIs) 
-	{
-		SkillTree = _skillTree;
-		SkillNodes = _nodeUIs;
-	}
 };
 
 UCLASS()
@@ -92,33 +81,42 @@ class ARPG_HUNTER_API UUWSkillTree : public UUserWidget
 public:
 	struct FSkillNodeState 
 	{
-		uint8 Level; // TreeLevel
-		UUWSkillNode::EState State;
+		uint8 Level{0}; // TreeLevel
+		uint8 SiblingIdx{0};
+		UUWSkillNode::EState State{ UUWSkillNode::EState::NONE };
 	};
 private:
 	uint8 Index;
 	struct FSkillTree* SkillTree;
 
-	UPROPERTY(meta=(BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> SkillLabel;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UPanelWidget> TreeContainer;
-	UPROPERTY()
-	TArray<TObjectPtr<UPanelWidget>> LevelContainer;
+	TObjectPtr<class UCanvasPanel> TreeContainer;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUWSkillNode> SkillNodeClass;
 	UPROPERTY()
 	TArray<TObjectPtr<UUWSkillNode>> SkillNodes;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUWSkillNodeLine> SkillNodeLineClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UUWSkillNodeLine>> SkillNodeLines;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UUWSkillNodeLine> NodeLine;
-
-protected:
-	virtual void NativeOnInitialized() override;
+	UPROPERTY(EditAnywhere)
+	float TopOffset{ 50.0f };
+	UPROPERTY(EditAnywhere)
+	float LeftOffset{ 200.0f };
+	UPROPERTY(EditAnywhere)
+	FVector2D NodeInterval{50.0, 50.0};
+	UPROPERTY(EditAnywhere)
+	FVector2D NodeSize{ 73.95, 85.0 };
+	UPROPERTY(EditAnywhere)
+	float LineWidth{ 3.0f };
 
 public:
 	FOnSkillNodeSelected OnSkillNodeSelected;
-	void Construct(struct FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height);
+	void Construct(struct FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const TArray<TArray<uint8>>& _siblingPerLevel, const uint8 _height);
 
 	void SetIndex(uint8 _idx) { Index = _idx; }
 	void SetSkillLabel(const FText& _name);

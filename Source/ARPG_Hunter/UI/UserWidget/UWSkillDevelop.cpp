@@ -56,78 +56,74 @@ void UUWSkillNode::SetButtonEnable(bool _bIsEnable)
 	SkillButton->SetIsEnabled(_bIsEnable);
 }
 
-void UUWSkillTree::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
 
-	const int32 CHILDREN_COUNT = TreeContainer->GetChildrenCount();
-	LevelContainer.Reserve(CHILDREN_COUNT);
-	for (int32 i = 0; i < CHILDREN_COUNT; ++i)
-		LevelContainer.Add(Cast<UPanelWidget>(TreeContainer->GetChildAt(i)));
-}
-
-FVector2D UUWSkillNodeLine::GetWidgetPosition(TObjectPtr<UUserWidget> _widget, FVector2D _normalized) const
-{
-	const FGeometry& Geo = _widget->GetTickSpaceGeometry();
-	FVector2D AbsolutePosition = Geo.GetAbsolutePositionAtCoordinates(_normalized);
-	FVector2D PixelPos, ViewPortPos;
-	USlateBlueprintLibrary::AbsoluteToViewport(GetWorld(), AbsolutePosition, PixelPos, ViewPortPos);
-	
-	return PixelPos;
-}
-
-int32 UUWSkillNodeLine::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
-{
-	int32 LayerID = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-
-	if (nullptr == SkillTree || 
-		SkillNodes->Num() == 0 || 
-		(SkillNodes->Num() != SkillTree->Tree.Num()))
-		return LayerID;
-
-	FPaintContext Context(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-	
-	// 노드별 선긋기
-	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
-	{
-		FVector2D StartCoord = (*SkillNodes)[i]->GetTickSpaceGeometry().GetLocalPositionAtCoordinates({0.5, 0.5});
-		if (StartCoord.IsNearlyZero(1) || (*SkillNodes)[i]->IsRendered() == false)
-			continue;
-		
-		const FSkillNode& Node = SkillTree->Tree[i];
-		FVector2D StartPos = GetWidgetPosition((*SkillNodes)[i], { 0.5, 1.0 });
-		FVector2D Start = AllottedGeometry.AbsoluteToLocal(StartPos);
-
-		for (uint8 ChildIdx : Node.ChildrenIdx)
-		{
-			FVector2D EndPos = GetWidgetPosition((*SkillNodes)[ChildIdx], { 0.5, 0.0 });
-			FVector2D End = AllottedGeometry.AbsoluteToLocal(EndPos);
-			UWidgetBlueprintLibrary::DrawLine(Context, Start, End, FLinearColor::White);
-		}
-	}
-
-	return LayerID;
-}
-
-void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const uint8 _height)
+void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _treeNodeStates, const TArray<TArray<uint8>>& _siblingPerLevel, const uint8 _height)
 {
 	if (nullptr == _tree || nullptr == SkillNodeClass)
 		return;
 
 	SkillTree = _tree;
-	SkillNodes.Reserve(SkillTree->Tree.Num());
-	for (uint8 i = 0; i < SkillTree->Tree.Num(); ++i)
+	const uint8 NODE_CNT = SkillTree->Tree.Num();
+	SkillNodes.Reserve(NODE_CNT);
+	SkillNodeLines.Reserve(NODE_CNT);
+
+	for (uint8 i = 0; i < NODE_CNT; ++i)
 	{
 		TObjectPtr<UUWSkillNode> NodeInst = CreateWidget<UUWSkillNode>(GetWorld(), SkillNodeClass);
-
 		NodeInst->SetIndex(i);
 		NodeInst->SetSkillThumbnail((*SkillTree->Tree[i].UpgradeInfos.begin()).Upgrade->Thumbnail);
 		NodeInst->SetState(_treeNodeStates[i].State);
 		NodeInst->SetButtonEnable(false);
 		NodeInst->OnClickSkillNode.BindUObject(this, &UUWSkillTree::OnClickNode);
 		
-		LevelContainer[_treeNodeStates[i].Level]->AddChild(NodeInst);
 		SkillNodes.Add(NodeInst);
+		
+		// 캔버스 상 위치 배치
+		UCanvasPanelSlot* NodeCanvasSlot = TreeContainer->AddChildToCanvas(NodeInst);
+		NodeCanvasSlot->SetSize(NodeSize);
+		NodeCanvasSlot->SetAlignment({ 0.5, 0.5 });
+		
+		uint8 SiblingCnt = _siblingPerLevel[_treeNodeStates[i].Level].Num();
+		FVector2D Position
+		{ 
+			LeftOffset - (SiblingCnt - 1) * NodeInterval.X * 0.5f,
+			TopOffset + _treeNodeStates[i].Level * NodeInterval.Y 
+		};
+
+		Position.X += _treeNodeStates[i].SiblingIdx * NodeInterval.X;
+		Position.Y += _treeNodeStates[i].Level * NodeSize.Y;
+		NodeCanvasSlot->SetPosition(Position);
+	}
+
+	const float NODE_Y_HALF = NodeSize.Y * 0.5f;
+	// 선 배치
+	const FVector2D DOWN{ 0, 1.0 };
+	for (uint8 i = 0; i < NODE_CNT; ++i)
+	{
+		UCanvasPanelSlot* ParentCanvasSlot = Cast<UCanvasPanelSlot>(SkillNodes[i]->Slot);
+		FVector2D ParentPos = ParentCanvasSlot->GetPosition() + FVector2D(0.0, NODE_Y_HALF);
+
+		for (uint8 ChildIdx : SkillTree->Tree[i].ChildrenIdx)
+		{
+			UCanvasPanelSlot* ChildCanvasSlot = Cast<UCanvasPanelSlot>(SkillNodes[ChildIdx]->Slot);
+			FVector2D ChildPos = ChildCanvasSlot->GetPosition();
+			ChildPos.Y -= NODE_Y_HALF;
+
+			TObjectPtr<UUWSkillNodeLine> LineInst = CreateWidget<UUWSkillNodeLine>(GetWorld(), SkillNodeLineClass);
+			SkillNodeLines.Add(LineInst);
+
+			LineInst->RenderTransformPivot = { 0.5, 0.0 };
+			UCanvasPanelSlot* LineCanvasSlot = TreeContainer->AddChildToCanvas(LineInst);
+			LineCanvasSlot->SetAlignment({ 0.5, 0.0 });
+
+			FVector2D vecP2C = ChildPos - ParentPos;
+			LineCanvasSlot->SetSize({ LineWidth, vecP2C.Length() });
+			LineCanvasSlot->SetPosition(ParentPos);
+
+			vecP2C.Normalize();
+			double crs = FVector2D::CrossProduct(DOWN, vecP2C);
+			LineInst->RenderTransform.Angle = FMath::RadiansToDegrees(FMath::Acos(vecP2C.Dot(DOWN))) * (crs > 0 ? 1 : -1);
+		}
 	}
 
 	// 노드 상태에 따른 자식 노드 상호작용 설정
@@ -143,8 +139,6 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 		for (uint8 j = 0; j < Node->ChildrenIdx.Num(); ++j)
 			SkillNodes[Node->ChildrenIdx[j]]->SetButtonEnable(bIsNodeEnable);
 	}
-
-	NodeLine->Init(SkillTree, &SkillNodes);
 }
 
 void UUWSkillTree::SetSkillLabel(const FText& _name)
@@ -168,6 +162,7 @@ void UUWSkillTree::UpdateNode(uint8 _idx, UUWSkillNode::EState _state)
 			SkillNodes[ChildIdx]->SetButtonEnable(true);
 	}
 }
+
 
 void UUWSkillDevelop::NativeOnInitialized()
 {
@@ -213,14 +208,16 @@ void UUWSkillDevelop::SetSkillTree()
 	for (TPair<uint8, FSkillTree>& SkillTree : SkillTreeData->SkillTrees)
 	{
 		TArray<UUWSkillTree::FSkillNodeState> TreeNodeState;
-		TreeNodeState.SetNum(SkillTree.Value.Tree.Num());
-		TreeNodeState[0].Level = 0;
+		TArray<TArray<uint8>> SiblingPerLevel;
 		uint8 Height = 0;
 
-		for (uint8 i = 0; i < SkillTree.Value.Tree.Num(); ++i)
+		const int32 CHILD_CNT = SkillTree.Value.Tree.Num();
+		TreeNodeState.SetNum(CHILD_CNT);
+		TreeNodeState[0].Level = 0;
+
+		for (uint8 i = 0; i < CHILD_CNT; ++i)
 		{
 			const FSkillNode& Node = SkillTree.Value.Tree[i];
-			int8 SiblingIdx = 0;
 			for (uint8 Idx : Node.ChildrenIdx)
 			{
 				TreeNodeState[Idx].Level = TreeNodeState[i].Level + 1;
@@ -231,10 +228,21 @@ void UUWSkillDevelop::SetSkillTree()
 			TreeNodeState[i].State = GetNodeState(SkillTree.Key, i, UpgradeLv);
 		}
 
+		SiblingPerLevel.SetNumZeroed(Height + 1);
+		for (uint8 i = 0; i < CHILD_CNT; ++i)
+		{
+			uint8 lv = TreeNodeState[i].Level;
+			if (SiblingPerLevel[lv].Num() == 0)
+				SiblingPerLevel[lv].Reserve(CHILD_CNT);
+			
+			SiblingPerLevel[lv].Add(i);
+			TreeNodeState[i].SiblingIdx = SiblingPerLevel[lv].Num() - 1;
+		}
+
 		TObjectPtr<UUWSkillTree> UIInst = CreateWidget<UUWSkillTree>(GetWorld(), SkillTreeUIClass);
 		UIInst->SetIndex(SkillTree.Key);
 		UIInst->SetSkillLabel(ActionComboData->AttackAcionArray[SkillTree.Key]->NameText);
-		UIInst->Construct(&SkillTree.Value, TreeNodeState, Height + 1);
+		UIInst->Construct(&SkillTree.Value, TreeNodeState, SiblingPerLevel, Height + 1);
 		UIInst->OnSkillNodeSelected.BindUObject(this, &UUWSkillDevelop::SelectSkillNode);
 		
 		SkillTreeUIs.Add(SkillTree.Key, UIInst);
@@ -329,5 +337,3 @@ void UUWSkillDevelop::ClickUpgrade()
 
 	UpdateSkillTree();
 }
-
-
