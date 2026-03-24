@@ -21,11 +21,12 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	if (Owner == nullptr)
 		return false;
 
-	APlayerCharacter* Target = Cast<APlayerCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName(TEXT("Target"))));
+	UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
+	APlayerCharacter* Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(FName(TEXT("Target"))));
 	if (Target == nullptr || Target->IsDead())
 		return false;
 
-	float Range = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("AttackRange")));
+	float Range = BBComp->GetValueAsFloat(FName(TEXT("AttackRange")));
 	float DistSqr = FVector::DistSquared(Owner->GetActorLocation(), Target->GetActorLocation());
 	
 	return DistSqr <= FMath::Square(Range);

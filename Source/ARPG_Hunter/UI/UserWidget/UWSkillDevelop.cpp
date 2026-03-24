@@ -10,9 +10,6 @@
 #include "Components/Image.h"
 #include "Components/Border.h"
 #include "Components/Overlay.h"
-#include "Blueprint/UserWidget.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Blueprint/SlateBlueprintLibrary.h"
 
 #include "Data/WeaponConfig.h"
 #include "Data/ActionComboData.h"

@@ -187,7 +187,6 @@ void ACombatGameMode::RegisterObjectPool()
 			if (CurSectionCountPerType.Find(Type) != nullptr && MaxCountPerType.Find(Type))
 				MaxCountPerType[Type] = FMath::Max(CurSectionCountPerType[Type], MaxCountPerType[Type]);
 		}
-
 	}
 
 	// 오브젝트 풀링 등록

@@ -191,11 +191,11 @@ void ABossMonster::HandleGimicNotify(EGimicType _type, uint16 _gimicValue)
 		if (GetState() != EMonsterState::NORMAL)
 			return;
 		
-		BossAction->StartGimic(_type, _gimicValue);
-		SetState(EMonsterState::GIMIC);
-		
 		UStatComponent* Stat = GetStatComp();
 		Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
+
+		BossAction->StartGimic(_type, _gimicValue);
+		SetState(EMonsterState::GIMIC);
 	}
 	else
 	{
