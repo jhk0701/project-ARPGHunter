@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -55,7 +55,7 @@ private:
 public:
 	FOnInventoryChanged OnInventoryChanged;
 
-	void Init(const FGetItemDataFunc& _getItemDataFunc, uint8 _size = DEFAULT_INVENTORY_SIZE);
+	void Init(const FGetItemDataFunc&& _getItemDataFunc, uint8 _size = DEFAULT_INVENTORY_SIZE);
 	bool IsValid() const { return GetItemDataFunc.IsBound(); };
 
 	void SetItem(EItemType _type, uint8 _idx, TObjectPtr<UItem> _itemInst);

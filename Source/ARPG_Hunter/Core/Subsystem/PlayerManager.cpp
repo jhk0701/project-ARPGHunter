@@ -40,9 +40,14 @@ void UPlayerManager::Initialize(FSubsystemCollectionBase& Collection)
 	QuickSlot = NewObject<UQuickSlot>(this);
 	SkillDevelop = NewObject<USkillDevelop>(this);
 
-	FGetItemDataFunc GetItemDataFunc;
-	GetItemDataFunc.BindLambda([this](const FName& _id) { return GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_id); });
-	Inventory->Init(GetItemDataFunc);
+	Inventory->Init(
+		FGetItemDataFunc::CreateLambda(
+			[this](const FName& _id) 
+			{
+				return GetGameInstance()->GetSubsystem<UDataManager>()->GetItemData(_id);
+			}
+		)
+	);
 	Equipment->Init(GetGameInstance());
 	QuickSlot->Init();
 	SkillDevelop->Init();
@@ -96,6 +101,7 @@ uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
 	//아이템 추가
 	UInventory::FCreateItemParam Param(_itemID, _amount);
 	Inventory->TryAddItem(Param);
+
 	return Param.OutIndex;
 }
 

@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Player/Inventory.h"
@@ -8,7 +8,7 @@
 #include "Item/Item.h"
 
 
-void UInventory::Init(const FGetItemDataFunc& _getItemDataFunc, uint8 _size)
+void UInventory::Init(const FGetItemDataFunc&& _getItemDataFunc, uint8 _size)
 {
 	GetItemDataFunc = _getItemDataFunc;
 
