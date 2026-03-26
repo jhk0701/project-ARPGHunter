@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Core/Subsystem/PlayerManager.h"
 
@@ -117,6 +117,8 @@ void UPlayerManager::AddExp(uint32 _exp)
 	// 대량의 경험치를 얻은 경우 처리
 	while (RequiredExp > 0 && RequiredExp <= Exp)
 		LevelUp();
+
+	OnExpChanged.Broadcast(Level, Exp, RequiredExp);
 }
 
 void UPlayerManager::LevelUp()
@@ -148,6 +150,8 @@ void UPlayerManager::LevelUp()
 
 		Stat[Type] += static_cast<uint32>(Amount);
 	}
+
+	OnStatValueChanged.Broadcast(Stat, Equipment->GetEquipmentStat());
 }
 
 void UPlayerManager::AdjustStatByLevel()
@@ -193,18 +197,18 @@ void UPlayerManager::CreateNewPlayer(const FString& _playerName)
 	Level = 0;
 	LevelUp();
 	
-	SkillDevelop->AddSkillPoint(100);
+	// SkillDevelop->AddSkillPoint(100);
 	ProvideBasicProperty();
 }
 
 void UPlayerManager::ProvideBasicProperty()
 {
-	Gold.Value = 30000;
+	Gold.Value = 1000;
 	
-	AddItem(FName(TEXT("1001")), 100);
-	AddItem(FName(TEXT("1002")), 100);
-	AddItem(FName(TEXT("1003")), 100);
-	AddItem(FName(TEXT("1004")), 100);
+	AddItem(FName(TEXT("1001")), 10);
+	AddItem(FName(TEXT("1002")), 10);
+	AddItem(FName(TEXT("1003")), 10);
+	AddItem(FName(TEXT("1004")), 10);
 	
 	uint8 Index = 0;
 	Index = AddItem(FName(TEXT("3001")), 1);

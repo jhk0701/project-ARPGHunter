@@ -109,7 +109,7 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 			TObjectPtr<UUWSkillNodeLine> LineInst = CreateWidget<UUWSkillNodeLine>(GetWorld(), SkillNodeLineClass);
 			SkillNodeLines.Add(LineInst);
 
-			LineInst->RenderTransformPivot = { 0.5, 0.0 };
+			LineInst->SetRenderTransformPivot({ 0.5, 0.0 });
 			UCanvasPanelSlot* LineCanvasSlot = TreeContainer->AddChildToCanvas(LineInst);
 			LineCanvasSlot->SetAlignment({ 0.5, 0.0 });
 
@@ -119,7 +119,7 @@ void UUWSkillTree::Construct(FSkillTree* _tree, const TArray<FSkillNodeState>& _
 
 			vecP2C.Normalize();
 			double crs = FVector2D::CrossProduct(DOWN, vecP2C);
-			LineInst->RenderTransform.Angle = FMath::RadiansToDegrees(FMath::Acos(vecP2C.Dot(DOWN))) * (crs > 0 ? 1 : -1);
+			LineInst->SetRenderTransformAngle(FMath::RadiansToDegrees(FMath::Acos(vecP2C.Dot(DOWN))) * (crs > 0 ? 1 : -1));
 		}
 	}
 

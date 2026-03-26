@@ -87,8 +87,8 @@ void ANonCombatHUD::BeginPlay()
 			MaintenanceUI->Init(InitParm);
 			Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
 			PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
+			PlayerManager->OnExpChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetLevelInfo);
 			QuickSlot->OnQuickSlotChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetQuickSlot);
-
 			PlayerManager->GetInventory()->OnInventoryChanged.AddUObject(MaintenanceUI, &UUWMaintenance::OnInventoryChanged);
 		}
 	}

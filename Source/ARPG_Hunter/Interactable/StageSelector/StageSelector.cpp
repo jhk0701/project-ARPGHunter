@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Stage/StageSelector.h"
+#include "Interactable/StageSelector/StageSelector.h"
 #include "Components/BoxComponent.h"
 
 #include "Core/GameMode/ARPGGameMode.h"
@@ -35,6 +35,8 @@ void AStageSelector::BeginPlay()
 
 void AStageSelector::Interact()
 {
+	Super::Interact();
+
 	// 데이터 테이블 기반 UI 띄우기
 	StageSelectUI->ShowUI();
 }

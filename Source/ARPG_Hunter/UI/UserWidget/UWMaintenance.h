@@ -77,6 +77,7 @@ public:
 	FOnQuickSlotClicked OnQuickSlotClicked;
 
 	void Init(const FUWMaintenanceInitParam& _param);
+	void SetLevelInfo(uint16 _level, int32 _exp, int32 _reqExp);
 	void SetStatInfo(const TMap<ECharacterStatType, uint32>& _playerStat, const TMap<ECharacterStatType, uint32>& _equipmentStat);
 	void SetEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment);
 	void SetQuickSlot(uint8 _index, TWeakObjectPtr<UConsumableItem> _consumable);

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,6 +18,7 @@ using FPMAliasMapStat = TMap<ECharacterStatType, uint32>; // 델리게이트 매
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCurrencyChanged, uint32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatValueChanged, const FPMAliasMapStat&, const FPMAliasMapStat&);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnExpChanged, uint16, int32, int32);
 
 USTRUCT()
 struct FCurrency 
@@ -75,6 +76,7 @@ public:
 	TWeakObjectPtr<USkillDevelop> GetSkillDevelop() const;
 
 	FOnStatValueChanged OnStatValueChanged;
+	FOnExpChanged OnExpChanged;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	void PostInit();

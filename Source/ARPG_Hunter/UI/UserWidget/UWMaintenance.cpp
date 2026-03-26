@@ -75,31 +75,29 @@ void UUWMaintenance::NativeOnInitialized()
 
 void UUWMaintenance::Init(const FUWMaintenanceInitParam& _param)
 {
+	SetLevelInfo(_param.Level, _param.Exp, _param.ReqExp);
+	SetStatInfo(_param.PlayerStat, _param.EquipmentStat);
+
+	for (const TPair<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Pair : _param.Equipment)
+		SetEquipment(Pair.Key, Pair.Value);
+
+	for (uint8 i = 0; i < _param.QuickSlot.Num(); ++i)
+		SetQuickSlot(i, _param.QuickSlot[i]);
+}
+
+void UUWMaintenance::SetLevelInfo(uint16 _level, int32 _exp, int32 _reqExp)
+{
 	LevelLabel->SetText(FText::Format(
-		FText::FromString(TEXT("Lv. {0}")), 
-		_param.Level)
+		FText::FromString(TEXT("Lv. {0}")),
+		_level)
 	);
 
 	ExpLabel->SetText(FText::Format(
 		FText::FromString(TEXT("{0} / {1}")),
-		_param.Exp, _param.ReqExp)
+		_exp, _reqExp)
 	);
 
-	ExpBar->SetPercent(static_cast<float>(_param.Exp) / _param.ReqExp);
-
-	for (const TPair<ECharacterStatType, uint32>& Pair : _param.PlayerStat)
-	{
-		MapStatInfo[Pair.Key]->SetStatValue(FText::Format(
-			FText::FromString(TEXT("{0} + ({1}) = {2}")), 
-			Pair.Value, _param.EquipmentStat[Pair.Key], Pair.Value + _param.EquipmentStat[Pair.Key])
-		);
-	}
-
-	for (const TPair<EEquipmentType, TWeakObjectPtr<UEquipmentItem>>& Pair : _param.Equipment)
-		MapEquipmentSlot[Pair.Key]->SetSlot(Pair.Value);
-
-	for (uint8 i = 0; i < _param.QuickSlot.Num(); ++i)
-		ArrQuickSlot[i]->SetSlot(_param.QuickSlot[i]);
+	ExpBar->SetPercent(static_cast<float>(_exp) / _reqExp);
 }
 
 void UUWMaintenance::OnInventoryChanged(uint8 _idx, TWeakObjectPtr<UItem> _item)
