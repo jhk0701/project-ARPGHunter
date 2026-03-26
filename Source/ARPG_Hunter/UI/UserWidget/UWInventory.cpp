@@ -34,17 +34,18 @@ void UUWInventory::NativeOnInitialized()
 void UUWInventory::ShowUI(bool _bIsSubUI, TWeakObjectPtr<UUserWidget> _mainUI)
 {
 	Super::ShowUI(_bIsSubUI, _mainUI);
+	ShowSelectedItemDetail(false);
 
 	if (OptionalIndex < 0) // 일반 인벤토리 열기
 	{
 		ItemCategory->SetVisibility(ESlateVisibility::Visible);
+		ItemCategory->SetSelectElementManually(static_cast<uint8>(CurCategory));
 		UpdateCategory(CurCategory, false); // 외부요인으로 변경된 카테고리일 수 있으므로 UI에 반영
 	}
 	else // 선택모드 일땐 끄기
 		ItemCategory->SetVisibility(ESlateVisibility::Hidden);
 
 	UpdateSlot();
-	ShowSelectedItemDetail(false);
 }
 
 void UUWInventory::SetSelectOption(EItemType _itemType, TWeakObjectPtr<UItem> _item, uint8 _optionalIdx)

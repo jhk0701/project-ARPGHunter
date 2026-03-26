@@ -274,6 +274,7 @@ void UUWEquipmentUpgrade::Upgrade()
 	}
 
 	ShowResult(bIsSuccess); // 결과 UI 출력
+	SelectCategory(static_cast<uint8>(CurItemType));
 	SelectSlot(CurItemIdx); // 재료 UI 갱신
 }
 

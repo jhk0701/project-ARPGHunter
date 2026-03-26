@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWEquipmentSuccession.h"
@@ -130,7 +130,7 @@ void UUWEquipmentSuccession::ClickEquipmentSlot(uint8 _index)
 		{
 			TObjectPtr<UEquipmentItem> Equipment = Cast<UEquipmentItem>(_item);
 			TObjectPtr<UEquipmentItemConfig> EquipmentConfig = Cast<UEquipmentItemConfig>(_item->GetConfig());
-			return SelectedConfig->Rank > EquipmentConfig->Rank && 
+			return SelectedConfig->Rank - 1 == EquipmentConfig->Rank && 
 				SelectedConfig->Type == EquipmentConfig->Type &&
 				Equipment->GetGrade() >= Requirement;
 		});
