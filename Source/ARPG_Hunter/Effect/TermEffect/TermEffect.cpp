@@ -4,6 +4,8 @@
 #include "Effect/TermEffect/TermEffect.h"
 #include "Data/EffectData.h"
 
+#include "Define/Debug.h"
+
 bool UTermEffect::Activate()
 {
 	if (!IsValid())
@@ -11,7 +13,7 @@ bool UTermEffect::Activate()
 
 	// 효과의 유효기간 타이머 설정
 	// 타이머 경과 이후, Deactivate 호출
-	if (GetTarget()->RegisterEffect(this) == false)
+	if (false == GetTarget()->RegisterEffect(this))
 		return false;
 
 	return Super::Activate();
@@ -53,7 +55,7 @@ void UAddDefense::Deactivate()
 
 bool UAddCriticalPercent::Activate()
 {
-	if (!Super::Activate())
+	if (false == Super::Activate())
 		return false;
 
 	GetTarget()->AddStat(ECharacterStatType::CRITICAL_PERCENT, GetValue());
@@ -69,7 +71,7 @@ void UAddCriticalPercent::Deactivate()
 
 bool UAddCriticalDamagePercent::Activate()
 {
-	if (!Super::Activate())
+	if (false == Super::Activate())
 		return false;
 
 	GetTarget()->AddStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT, GetValue());
@@ -85,7 +87,7 @@ void UAddCriticalDamagePercent::Deactivate()
 
 bool UAddAttackPercent::Activate()
 {
-	if (!Super::Activate())
+	if (false == Super::Activate())
 		return false;
 	
 	uint32 Attack = GetTarget()->GetStat(ECharacterStatType::ATTACK, true);
@@ -108,7 +110,7 @@ void UAddAttackPercent::Deactivate()
 
 bool USubDefensePercent::Activate()
 {
-	if (!Super::Activate())
+	if (false == Super::Activate())
 		return false;
 
 	uint32 Defense = GetTarget()->GetStat(ECharacterStatType::DEFENSE, true);

@@ -70,7 +70,6 @@ void UStatComponent::Clear()
 uint32 UStatComponent::GetStat(ECharacterStatType _type, bool _bExceptEffect) const
 {
 	uint32 Result = Stat[_type];
-
 	Result += EquipmentStat[_type];
 
 	if (_bExceptEffect)
@@ -223,7 +222,7 @@ void UStatComponent::ApplyEffect(const FApplyEffectParam& _param)
 	FEffectContext Context
 	{
 		_param.EffectData,
-		& _param.EffectData->Param,
+		&_param.EffectData->Param,
 		_param.AddictiveValue // 스킬 성장에 따른 효과 증가량
 	};
 	EffectInst->Init(_param.Subject, this, &Context);
@@ -239,8 +238,12 @@ bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 		TObjectPtr<UEffect> AppliedEffect = Applied->Effect;
 		
 		// 스택 쌓기 가능한지 확인
+		bool bIsStacked = false;
 		if (false == Applied->Effect->IsStackFull())
+		{
+			bIsStacked = true;
 			AppliedEffect->AddStack(); // 스택 쌓기
+		}
 
 		// 지속 시간 갱신
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -250,7 +253,7 @@ bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 			AppliedEffect->GetDuration(),
 			false);
 
-		return true;
+		return bIsStacked;
 	}
 
 	// 신규 효과 추가
@@ -270,7 +273,6 @@ bool UStatComponent::RegisterEffect(TObjectPtr<UEffect> _effect)
 void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 {
 	FAppliedEffect* Applied = MapEffect.Find(_effect->GetID());
-
 	if (nullptr == Applied)
 		return;
 
@@ -279,6 +281,7 @@ void UStatComponent::RemoveEffect(TObjectPtr<UEffect> _effect)
 		TimerManager.ClearTimer(Applied->Timer);
 
 	_effect->Deactivate();
+
 	MapEffect.Remove(_effect->GetID());
 	OnEffectRemoved.Broadcast(_effect->GetID());
 }

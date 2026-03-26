@@ -92,7 +92,7 @@ bool UAddEffectUsingSkill::Activate()
 		FApplyEffectParam Param;
 		Param.Subject = GetSubject();
 		Param.EffectData = data;
-
+		
 		Target->ApplyEffect(Param);
 	}
 
