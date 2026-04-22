@@ -12,7 +12,7 @@
 
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
-enum class EMonsterState : uint8;
+enum class EMonsterState : uint8; // 행동 상태
 enum class EActorGroup : uint8;
 struct FMonsterData;
 struct FMonsterAction;
@@ -104,6 +104,8 @@ public:
 	FOnMonsterDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
+
+#pragma region Monster Action
 	virtual float Attack(EMonsterAttackType _type);
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;
@@ -117,14 +119,17 @@ public:
 	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	EMonsterType GetType() const;
 	EMonsterState GetState() const { return CurState; }
-
 	// IEffectable을(를) 통해 상속됨
 	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
+#pragma endregion
+	
+#pragma region Monster AI
+	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
 
 	TWeakObjectPtr<AActor> GetTarget() const;
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것
 	virtual void OnTargetFound() {};
 	virtual void OnTargetLost() {};
-
-	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
+#pragma endregion
+	
 };

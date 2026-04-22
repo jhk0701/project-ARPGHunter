@@ -23,9 +23,10 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UAIPerceptionComponent> AIPerception;
-	uint8 MoveToRetryCnt{0};
-	
-	void PlayBT(APawn* _inPawn);
+	TObjectPtr<class AMonsterBase> ControlledMonster;
+	uint8 MoveToRetryCnt{ 0 };
+
+	void InitBT(APawn* _inPawn);
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -37,8 +38,15 @@ public:
 	void StopBT();
 	void RestartBT();
 
+	void StopPerception();
+	void RestartPerception();
+
+	void EnableController();
+	void DisableController();
+
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
-	
-	void SetMonsterAlertState(EMonsterAlertState _alertState);
+
+	void HandleSuspicious(const FVector& _location);
+	void HandleEngage();
 };

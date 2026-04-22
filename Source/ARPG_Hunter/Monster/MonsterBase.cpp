@@ -65,6 +65,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	SectionID = _param.SectionIndex;
 	Data = DataManager->GetMonsterData(ID);
 	CurState = EMonsterState::NORMAL;
+	AlertState = EMonsterAlertState::IDLE;
 
 	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();
@@ -123,7 +124,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		BBComp->SetValueAsFloat(FName(TEXT("MoveRangeOnAttack")), Data->MoveRangeOnAttack);
 
 		// BT 재가동
-		MonsterAI->RestartBT();
+		MonsterAI->EnableController();
 	}
 
 	SetMovementMode(EMovementMode::MOVE_Flying);
@@ -249,7 +250,7 @@ void AMonsterBase::OnDead()
 {
 	// 사망 시 처리
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
-	AICon->StopBT();
+	AICon->DisableController();
 
 	// 몬스터 사망 이벤트 호출
 	ACombatGameMode* GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();

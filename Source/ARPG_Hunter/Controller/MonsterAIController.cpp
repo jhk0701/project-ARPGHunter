@@ -29,7 +29,11 @@ void AMonsterAIController::PostInitializeComponents()
 void AMonsterAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	PlayBT(InPawn);
+
+	ControlledMonster = Cast<AMonsterBase>(InPawn);
+
+	InitBT(InPawn);
+	StopPerception();
 }
 
 void AMonsterAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
@@ -50,7 +54,7 @@ void AMonsterAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFo
 	}
 }
 
-void AMonsterAIController::PlayBT(APawn* _inPawn)
+void AMonsterAIController::InitBT(APawn* _inPawn)
 {
 	AMonsterBase* Monster = Cast<AMonsterBase>(_inPawn);
 	if (Monster == nullptr)
@@ -78,6 +82,29 @@ void AMonsterAIController::RestartBT()
 	BTComp->RestartTree();
 }
 
+void AMonsterAIController::StopPerception()
+{
+	AIPerception->ForgetAll();
+	AIPerception->Deactivate();
+}
+
+void AMonsterAIController::RestartPerception()
+{
+	AIPerception->Activate();
+	AIPerception->RequestStimuliListenerUpdate();
+}
+
+void AMonsterAIController::EnableController()
+{
+	RestartBT();
+	RestartPerception();
+}
+
+void AMonsterAIController::DisableController()
+{
+	StopBT();
+	StopPerception();
+}
 
 void AMonsterAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
@@ -90,27 +117,39 @@ void AMonsterAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 
 		for (const FAIStimulus& Stimulus : Info.LastSensedStimuli)
 		{
-			if (Stimulus.IsExpired() || false == Stimulus.WasSuccessfullySensed())
+			if (Stimulus.IsExpired() || 
+				false == Stimulus.WasSuccessfullySensed()) 
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] Not Valid Stimulus"), *GetPawn()->GetActorNameOrLabel()));
 				continue;
+			}
 			
-			// FVector Location = Stimulus.StimulusLocation; // 자극 발생 위치
+			UBlackboardComponent* BBComp = GetBlackboardComponent();
+
 			if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>() ||
 				Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
 			{
 				// 상태 전환 : 주의-경계
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+				HandleSuspicious(Stimulus.StimulusLocation);
+				return;
 			}
 			else if (Stimulus.Type == UAISense::GetSenseID<UAISense_Damage>() || 
-				Stimulus.Type == UAISense::GetSenseID<UAISenseConfig_Team>())
+				Stimulus.Type == UAISense::GetSenseID<UAISense_Team>())
 			{
 				// 상태 전환 : 전투
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Combat"));
+				HandleEngage();
+				return;
 			}
 		}
 	}
 }
 
-void AMonsterAIController::SetMonsterAlertState(EMonsterAlertState _alertState)
+void AMonsterAIController::HandleSuspicious(const FVector& _location)
 {
-	GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("AlertState")), static_cast<uint8>(_alertState));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+}
+
+void AMonsterAIController::HandleEngage()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Engage"));
 }
