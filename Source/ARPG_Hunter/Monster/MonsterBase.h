@@ -12,6 +12,7 @@
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
 enum class EMonsterState : uint8;
+enum class EActorGroup : uint8;
 struct FMonsterData;
 struct FMonsterAction;
 
@@ -64,6 +65,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	bool bIsMovable{ true };
+
+	UPROPERTY(EditAnywhere, Category = "Attribute")
+	EActorGroup ActorGroup;
 
 protected:
 	UPROPERTY(EditAnywhere)

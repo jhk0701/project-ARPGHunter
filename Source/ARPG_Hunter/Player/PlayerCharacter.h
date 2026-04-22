@@ -13,6 +13,7 @@ class UCameraShakeBase;
 enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
 enum class EEquipmentType :uint8;
+enum class EActorGroup : uint8;
 
 UCLASS()
 class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler, public IEffectable
@@ -44,11 +45,16 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TObjectPtr<class UWidgetComponent> InteractWidget;
 
+	UPROPERTY(VisibleAnywhere, Category = "AIStimuli")
+	TObjectPtr<class UAIPerceptionStimuliSourceComponent> StimuliSourceComp;
 
 #pragma endregion
 
 #pragma region Attribute
+	UPROPERTY(EditAnywhere, Category = "Attribute")
+	EActorGroup ActorGroup;
 	FVector2D InputDirection{};
+
 	UPROPERTY(EditAnywhere, Category = "Attribute|Rotate")
 	float RotateSpeedToInputDir{ 10.0f };
 
@@ -74,7 +80,7 @@ private:
 #pragma endregion
 
 #pragma region Interaction
-
+	
 	class IInteractable* CurInteractable;
 
 #pragma endregion

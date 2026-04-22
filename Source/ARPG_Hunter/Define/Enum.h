@@ -158,6 +158,17 @@ enum class EMonsterState : uint8
 };
 FName EnumToName(EMonsterState _type);
 
+UENUM(BlueprintType)
+enum class EActorGroup : uint8 
+{
+	FRIENDLY = 0	UMETA(DisplayName = "Friendly"),
+	HOSTILE = 100	UMETA(DisplayName = "Hostile"),
+	NEUTRAL = 200	UMETA(DisplayName = "Neutral"),
+
+	DEFAULT = 255	UMETA(DisplayName = "Default"),
+	END = DEFAULT
+};
+
 enum class EShortCutType : uint8
 {
 	NONE,

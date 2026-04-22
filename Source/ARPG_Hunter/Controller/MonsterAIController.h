@@ -19,11 +19,14 @@ public:
 	static constexpr uint8 MAX_MOVETO_RETRY_CNT = 5; 
 
 private:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UAIPerceptionComponent> AIPerception;
 	uint8 MoveToRetryCnt{0};
-
+	
 	void PlayBT(APawn* _inPawn);
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:
@@ -32,4 +35,6 @@ public:
 	void StopBT();
 	void RestartBT();
 
+	UFUNCTION()
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 };

@@ -4,11 +4,12 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "Curves/CurveVector.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "Components/WidgetComponent.h"
 
 #include "Interface/Interactable.h"
 #include "Define/Enum.h"
@@ -65,6 +66,8 @@ APlayerCharacter::APlayerCharacter()
 
 	InteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractWidget"));
 	InteractWidget->SetupAttachment(GetRootComponent());
+
+	StimuliSourceComp = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliComp"));
 #pragma endregion
 
 #pragma region Init Comp
@@ -88,6 +91,8 @@ APlayerCharacter::APlayerCharacter()
 	if (InteractWidgetFinder.Succeeded())
 		InteractWidget->SetWidgetClass(InteractWidgetFinder.Class);
 #pragma endregion
+
+	ActorGroup = EActorGroup::FRIENDLY;
 }
 
 // Called when the game starts or when spawned
@@ -171,6 +176,9 @@ void APlayerCharacter::Init()
 	}
 
 	InteractWidget->SetHiddenInGame(true);
+
+	// AI Perception Stimuli Source 업데이트
+	StimuliSourceComp->RegisterWithPerceptionSystem();
 
 	// 기타 수치 조절
 	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))

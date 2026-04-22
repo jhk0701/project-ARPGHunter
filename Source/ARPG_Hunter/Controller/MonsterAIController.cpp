@@ -2,15 +2,23 @@
 
 
 #include "Controller/MonsterAIController.h"
-#include "Monster/MonsterBase.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Perception/AIPerceptionComponent.h"
 
+#include "Monster/MonsterBase.h"
 
 AMonsterAIController::AMonsterAIController()
 {
+	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComp"));
+}
+
+void AMonsterAIController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AIPerception->OnPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnPerceptionUpdated);
 }
 
 void AMonsterAIController::OnPossess(APawn* InPawn)
@@ -63,4 +71,10 @@ void AMonsterAIController::RestartBT()
 {
 	UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
 	BTComp->RestartTree();
+}
+
+
+void AMonsterAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] Perception updated"), *GetPawn()->GetActorNameOrLabel()));
 }
