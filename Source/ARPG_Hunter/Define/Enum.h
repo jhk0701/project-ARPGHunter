@@ -151,12 +151,20 @@ FName EnumToName(EGimicType _type);
 UENUM(BlueprintType)
 enum class EMonsterState : uint8
 {
-	NORMAL,
-	DEAD,
-	GIMIC,
-	GROGGY,
+	NORMAL		UMETA(DisplayName = "Normal"),
+	DEAD		UMETA(DisplayName = "Dead"),
+	GIMIC		UMETA(DisplayName = "Gimic"),
+	GROGGY		UMETA(DisplayName = "Groggy"),
 };
 FName EnumToName(EMonsterState _type);
+
+UENUM(BlueprintType)
+enum class EMonsterAlertState : uint8 
+{
+	IDLE		UMETA(DisplayName = "Idle"),
+	SUSPICIOUS	UMETA(DisplayName = "Suspicious"), 
+	ENAGE		UMETA(DisplayName = "Engage")
+};
 
 UENUM(BlueprintType)
 enum class EActorGroup : uint8 

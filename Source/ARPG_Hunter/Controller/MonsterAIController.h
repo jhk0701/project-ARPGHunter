@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "MonsterAIController.generated.h"
 
+enum class EMonsterAlertState :uint8;
+
 /**
  * 
  */
@@ -37,4 +39,6 @@ public:
 
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	
+	void SetMonsterAlertState(EMonsterAlertState _alertState);
 };

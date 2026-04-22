@@ -7,6 +7,7 @@
 #include "Interface/Hitable.h"
 #include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
+#include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class UCameraShakeBase;
@@ -16,7 +17,9 @@ enum class EEquipmentType :uint8;
 enum class EActorGroup : uint8;
 
 UCLASS()
-class ARPG_HUNTER_API APlayerCharacter : public ACharacter, public IHitable, public IAttackNotifyHandler, public IEffectable
+class ARPG_HUNTER_API APlayerCharacter : public ACharacter, 
+	public IHitable, public IAttackNotifyHandler, public IEffectable, 
+	public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -171,4 +174,6 @@ public:
 
 	void Interact();
 	void SetIgnoreInput(bool _bIgnoreMoveInput);
+
+	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
 };

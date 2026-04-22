@@ -7,8 +7,13 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AISenseConfig_Hearing.h"
+#include "Perception/AISenseConfig_Damage.h"
+#include "Perception/AISenseConfig_Team.h"
 
 #include "Monster/MonsterBase.h"
+#include "Define/Enum.h"
 
 AMonsterAIController::AMonsterAIController()
 {
@@ -76,5 +81,36 @@ void AMonsterAIController::RestartBT()
 
 void AMonsterAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] Perception updated"), *GetPawn()->GetActorNameOrLabel()));
+	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] Perception updated"), *GetPawn()->GetActorNameOrLabel()));
+	for (AActor* Actor : UpdatedActors)
+	{
+		FActorPerceptionBlueprintInfo Info;
+		if (false == AIPerception->GetActorsPerception(Actor, Info))
+			continue;
+
+		for (const FAIStimulus& Stimulus : Info.LastSensedStimuli)
+		{
+			if (Stimulus.IsExpired() || false == Stimulus.WasSuccessfullySensed())
+				continue;
+			
+			// FVector Location = Stimulus.StimulusLocation; // 자극 발생 위치
+			if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>() ||
+				Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
+			{
+				// 상태 전환 : 주의-경계
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+			}
+			else if (Stimulus.Type == UAISense::GetSenseID<UAISense_Damage>() || 
+				Stimulus.Type == UAISense::GetSenseID<UAISenseConfig_Team>())
+			{
+				// 상태 전환 : 전투
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Combat"));
+			}
+		}
+	}
+}
+
+void AMonsterAIController::SetMonsterAlertState(EMonsterAlertState _alertState)
+{
+	GetBlackboardComponent()->SetValueAsEnum(FName(TEXT("AlertState")), static_cast<uint8>(_alertState));
 }

@@ -7,6 +7,7 @@
 #include "Interface/Hitable.h"
 #include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
+#include "GenericTeamAgentInterface.h"
 #include "MonsterBase.generated.h"
 
 enum class EMonsterType : uint8;
@@ -29,7 +30,9 @@ DECLARE_DELEGATE(FOnAttackMontageEnded);
 DECLARE_DELEGATE_OneParam(FOnMonsterDead, TObjectPtr<class AMonsterBase>);
 
 UCLASS(Abstract)
-class ARPG_HUNTER_API AMonsterBase : public ACharacter, public IHitable, public IEffectable, public IAttackNotifyHandler
+class ARPG_HUNTER_API AMonsterBase : public ACharacter, 
+	public IHitable, public IEffectable, public IAttackNotifyHandler,
+	public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -122,4 +125,6 @@ public:
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것
 	virtual void OnTargetFound() {};
 	virtual void OnTargetLost() {};
+
+	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
 };
