@@ -149,15 +149,17 @@ void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& 
 
 void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus)
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Engage"));
+	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Damaged"));
 
 	UBlackboardComponent* BBComp = GetBlackboardComponent();
 	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
-
 	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+
+	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
+		return;
 
 	BBComp->SetValueAsEnum(NAME_ALERTSTATE, static_cast<uint8>(EMonsterAlertState::ENAGE));
+	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
 }
 
 void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimulus)

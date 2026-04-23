@@ -5,11 +5,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "Curves/CurveVector.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Damage.h"
 
 #include "Interface/Interactable.h"
 #include "Define/Enum.h"
@@ -372,6 +373,16 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 				bIsCritical |= HitInfo.bIsCriticalHit;
 
 				Hitable->HitBy(HitInfo);
+
+				// 맞은 몬스터에게 Damage Sense 유형 이벤트 발행
+				UAISense_Damage::ReportDamageEvent(
+					WeakThis->GetWorld(),
+					Hit.GetActor(),
+					WeakThis.Get(),
+					static_cast<float>(Damage),
+					WeakThis->GetActorLocation(),
+					Hit.ImpactPoint
+				);
 			}
 
 			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.75f);
