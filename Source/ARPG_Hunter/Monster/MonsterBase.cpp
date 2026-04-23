@@ -65,7 +65,6 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	SectionID = _param.SectionIndex;
 	Data = DataManager->GetMonsterData(ID);
 	CurState = EMonsterState::NORMAL;
-	AlertState = EMonsterAlertState::IDLE;
 
 	// 메쉬 설정
 	USkeletalMeshComponent* MeshComp = GetMesh();

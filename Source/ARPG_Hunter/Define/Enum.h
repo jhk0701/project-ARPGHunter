@@ -163,7 +163,9 @@ enum class EMonsterAlertState : uint8
 {
 	IDLE		UMETA(DisplayName = "Idle"),
 	SUSPICIOUS	UMETA(DisplayName = "Suspicious"), 
-	ENAGE		UMETA(DisplayName = "Engage")
+	ALERT		UMETA(DisplayName = "Alert"),
+	ENAGE		UMETA(DisplayName = "Engage"),
+	RETURN		UMETA(DisplayName = "Return"),
 };
 
 UENUM(BlueprintType)

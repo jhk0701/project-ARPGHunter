@@ -18,12 +18,14 @@ class ARPG_HUNTER_API AMonsterAIController : public AAIController
 
 public:
 	AMonsterAIController();
-	static constexpr uint8 MAX_MOVETO_RETRY_CNT = 5; 
 
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UAIPerceptionComponent> AIPerception;
 	TObjectPtr<class AMonsterBase> ControlledMonster;
+	
+	UPROPERTY(EditAnywhere)
+	uint8 MaxMoveToRetryCnt{ 5 };
 	uint8 MoveToRetryCnt{ 0 };
 
 	void InitBT(APawn* _inPawn);
@@ -45,8 +47,9 @@ public:
 	void DisableController();
 
 	UFUNCTION()
-	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	void OnTargetPerceptionUpdated(AActor* Actor, struct FAIStimulus Stimulus);
 
-	void HandleSuspicious(const FVector& _location);
-	void HandleEngage();
+	void HandleSuspicious(AActor* _actor, struct FAIStimulus& _stimulus);
+	void HandleEngage(AActor* _actor, struct FAIStimulus& _stimulus);
+	void MissTarget(AActor* _actor);
 };

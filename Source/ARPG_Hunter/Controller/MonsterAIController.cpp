@@ -23,7 +23,7 @@ AMonsterAIController::AMonsterAIController()
 void AMonsterAIController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	AIPerception->OnPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnPerceptionUpdated);
+	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 }
 
 void AMonsterAIController::OnPossess(APawn* InPawn)
@@ -43,7 +43,7 @@ void AMonsterAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFo
 	// 원하는 곳으로 못갈 때 처리
 	// 주로, 플레이어가 네비 메시를 벗어나 갈 수 없을 경우 처리용
 	MoveToRetryCnt = Result.IsSuccess() ? 0 : MoveToRetryCnt + 1;
-	if (MoveToRetryCnt >= MAX_MOVETO_RETRY_CNT)
+	if (MoveToRetryCnt >= MaxMoveToRetryCnt)
 	{
 		MoveToRetryCnt = 0;
 		// 타겟 초기화
@@ -106,50 +106,57 @@ void AMonsterAIController::DisableController()
 	StopPerception();
 }
 
-void AMonsterAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] Perception updated"), *GetPawn()->GetActorNameOrLabel()));
-	for (AActor* Actor : UpdatedActors)
+	if (Stimulus.WasSuccessfullySensed())
 	{
-		FActorPerceptionBlueprintInfo Info;
-		if (false == AIPerception->GetActorsPerception(Actor, Info))
-			continue;
-
-		for (const FAIStimulus& Stimulus : Info.LastSensedStimuli)
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Percepted"), *Actor->GetActorNameOrLabel()));
+		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()) ||
+			Stimulus.Type == UAISense::GetSenseID(UAISense_Hearing::StaticClass()))
 		{
-			if (Stimulus.IsExpired() || 
-				false == Stimulus.WasSuccessfullySensed()) 
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] Not Valid Stimulus"), *GetPawn()->GetActorNameOrLabel()));
-				continue;
-			}
-			
-			UBlackboardComponent* BBComp = GetBlackboardComponent();
-
-			if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>() ||
-				Stimulus.Type == UAISense::GetSenseID<UAISense_Hearing>())
-			{
-				// 상태 전환 : 주의-경계
-				HandleSuspicious(Stimulus.StimulusLocation);
-				return;
-			}
-			else if (Stimulus.Type == UAISense::GetSenseID<UAISense_Damage>() || 
-				Stimulus.Type == UAISense::GetSenseID<UAISense_Team>())
-			{
-				// 상태 전환 : 전투
-				HandleEngage();
-				return;
-			}
+			HandleSuspicious(Actor, Stimulus);
 		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *Actor->GetActorNameOrLabel()));
+		MissTarget(Actor);
 	}
 }
 
-void AMonsterAIController::HandleSuspicious(const FVector& _location)
+void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& _stimulus)
 {
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
+
+	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
+	if (CurAlert > static_cast<uint8>(EMonsterAlertState::ENAGE))
+		return;
+
+	if (CurAlert > static_cast<uint8>(EMonsterAlertState::ALERT)) 
+	{
+	}
+
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+
+	BBComp->SetValueAsEnum(NAME_ALERTSTATE, static_cast<uint8>(EMonsterAlertState::SUSPICIOUS));
+	BBComp->SetValueAsVector(FName(TEXT("MovePoint")), _stimulus.StimulusLocation);
+	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
 }
 
-void AMonsterAIController::HandleEngage()
+void AMonsterAIController::HandleEngage(AActor* _actor, struct FAIStimulus& _stimulus)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Engage"));
+}
+
+void AMonsterAIController::MissTarget(AActor* _actor)
+{
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
+
+	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
+	if (CurAlert > static_cast<uint8>(EMonsterAlertState::ENAGE))
+		return;
+
+	BBComp->SetValueAsObject(FName(TEXT("Target")), nullptr);
 }
