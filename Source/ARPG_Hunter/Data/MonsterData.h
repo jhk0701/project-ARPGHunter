@@ -35,6 +35,8 @@ public:
 	float MoveRangeOnAttack{ 100.0f }; 
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed{ 200.0f };
+	UPROPERTY(EditAnywhere)
+	float ChaseSpeed{ 400.0f };
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UMonsterConfig> Config;

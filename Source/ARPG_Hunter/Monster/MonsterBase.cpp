@@ -127,6 +127,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	}
 
 	SetMovementMode(EMovementMode::MOVE_Flying);
+	SetMoveSpeed(false);
 	AddActorWorldOffset(FVector(0,0, Capsule->GetUnscaledCapsuleHalfHeight()));
 
 	GetWorld()->GetTimerManager().SetTimer(
@@ -159,7 +160,13 @@ void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 void AMonsterBase::SetMovable(bool _bIsMovable)
 {
 	bIsMovable = _bIsMovable;
-	GetCharacterMovement()->MaxWalkSpeed = _bIsMovable ? GetData()->MoveSpeed : 0.0f;
+	GetCharacterMovement()->MaxWalkSpeed = _bIsMovable ? MoveSpeed : 0.0f;
+}
+
+void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
+{
+	MoveSpeed = _bIsChasing ? GetData()->ChaseSpeed : GetData()->MoveSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)

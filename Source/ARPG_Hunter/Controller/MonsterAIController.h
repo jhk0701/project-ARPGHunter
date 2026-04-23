@@ -50,6 +50,8 @@ public:
 	void OnTargetPerceptionUpdated(AActor* Actor, struct FAIStimulus Stimulus);
 
 	void HandleSuspicious(AActor* _actor, struct FAIStimulus& _stimulus);
-	void HandleEngage(AActor* _actor, struct FAIStimulus& _stimulus);
+	void HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus);
+	void HandleTeamDamage(AActor* _actor, struct FAIStimulus& _stimulus);
 	void MissTarget(AActor* _actor);
+	void ReleaseAlert();
 };

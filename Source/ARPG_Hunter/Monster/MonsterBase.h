@@ -67,6 +67,8 @@ private:
 	FTimerHandle OnDeadTimer;
 
 	UPROPERTY(VisibleAnywhere)
+	float MoveSpeed{ 0.0f };
+	UPROPERTY(VisibleAnywhere)
 	bool bIsMovable{ true };
 
 	UPROPERTY(EditAnywhere, Category = "Attribute")
@@ -111,7 +113,7 @@ public:
 	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
-
+	
 	bool IsDead() const;
 	bool IsMovable() const { return bIsMovable; }
 
@@ -121,12 +123,15 @@ public:
 	EMonsterState GetState() const { return CurState; }
 	// IEffectable을(를) 통해 상속됨
 	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
+
+	void SetMoveSpeed(bool _bIsChasing);
 #pragma endregion
 	
 #pragma region Monster AI
 	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
 
 	TWeakObjectPtr<AActor> GetTarget() const;
+	
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것
 	virtual void OnTargetFound() {};
 	virtual void OnTargetLost() {};
