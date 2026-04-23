@@ -86,12 +86,17 @@ void AMonsterAIController::StopPerception()
 {
 	AIPerception->ForgetAll();
 	AIPerception->Deactivate();
+
+	AIPerception->OnTargetPerceptionUpdated.RemoveDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 }
 
 void AMonsterAIController::RestartPerception()
 {
+	
 	AIPerception->Activate();
 	AIPerception->RequestStimuliListenerUpdate();
+
+	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 }
 
 void AMonsterAIController::EnableController()
@@ -110,7 +115,7 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Percepted"), *Actor->GetActorNameOrLabel()));
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Percepted"), *Actor->GetActorNameOrLabel()));
 
 		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()) ||
 			Stimulus.Type == UAISense::GetSenseID(UAISense_Hearing::StaticClass()))
@@ -145,6 +150,14 @@ void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& 
 void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus)
 {
 	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Engage"));
+
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
+
+	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
+	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+
+	BBComp->SetValueAsEnum(NAME_ALERTSTATE, static_cast<uint8>(EMonsterAlertState::ENAGE));
 }
 
 void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimulus)
@@ -162,7 +175,7 @@ void AMonsterAIController::MissTarget(AActor* _actor)
 
 	BBComp->ClearValue(FName(TEXT("Target")));
 
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
 }
 
 void AMonsterAIController::ReleaseAlert()

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTTask/BTTask_GetRandomPoint.h"
@@ -18,21 +18,30 @@ EBTNodeResult::Type UBTTask_GetRandomPoint::ExecuteTask(UBehaviorTreeComponent& 
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	AMonsterBase* Owner = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
-	if(Owner == nullptr)
+	if (Owner == nullptr)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetNavigationSystem(Owner);
-	if(NavSys == nullptr)
+	if (NavSys == nullptr)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	FNavLocation RandomLoc;
 	float RecogRange = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(FName(TEXT("RecoginitionRange")));
 	if (NavSys->GetRandomPointInNavigableRadius(Owner->GetActorLocation(), RecogRange, RandomLoc) == false)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, TEXT("GetRandomPoint Failed 3"));
 		return EBTNodeResult::Failed;
+	}
 
 	UBlackboardComponent* BlackBoardComp = OwnerComp.GetBlackboardComponent();
 	if (BlackBoardComp == nullptr)
+	{
 		return EBTNodeResult::Failed;
+	}
 
 	BlackBoardComp->SetValueAsVector(FName(TEXT("MovePoint")), RandomLoc.Location);
 
