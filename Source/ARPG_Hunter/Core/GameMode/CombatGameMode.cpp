@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Core/GameMode/CombatGameMode.h"
@@ -281,10 +281,10 @@ uint8 ACombatGameMode::SpawnMonsterOnSection(uint8 _sectionID, const TArray<AAct
 			FMonsterInitParam InitParam
 			{
 				Spawn.MonsterID,
+				Spawn.Level,
 				_sectionID,
 				Loc.Location,
-				Rot,
-				Spawn.Level
+				Rot
 			};
 			Instance->Init(InitParam);
 

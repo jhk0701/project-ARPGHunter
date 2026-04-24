@@ -121,7 +121,7 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[%s]:: [%s] is Percepted"), *GetActorNameOrLabel(), *Actor->GetActorNameOrLabel()));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[%s]:: [%s] is Percepted"), *GetActorNameOrLabel(), *Actor->GetActorNameOrLabel()));
 
 		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
 			HandleSuspicious(Actor, Stimulus);
@@ -183,7 +183,7 @@ void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimul
 	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
 	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Team Damaged"));
+	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Team Damaged"));
 }
 
 void AMonsterAIController::MissTarget(AActor* _actor)
@@ -194,7 +194,7 @@ void AMonsterAIController::MissTarget(AActor* _actor)
 
 	GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
+	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
 }
 
 uint8 AMonsterAIController::GetAlertState()

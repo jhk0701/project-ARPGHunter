@@ -18,10 +18,10 @@ struct FMonsterAction;
 struct FMonsterInitParam
 {
 	FName ID;
+	uint32 Lv;
 	uint8 SectionIndex;
 	FVector Location;
 	FRotator Rotation;
-	uint32 Lv;
 };
 
 DECLARE_DELEGATE(FOnAttackMontageEnded);

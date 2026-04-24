@@ -37,6 +37,8 @@ public:
 	float MoveSpeed{ 200.0f };
 	UPROPERTY(EditAnywhere)
 	float ChaseSpeed{ 400.0f };
+	UPROPERTY(EditAnywhere) // 활동 범위
+	float ActivityRange{ 5000.0f };
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UMonsterConfig> Config;
