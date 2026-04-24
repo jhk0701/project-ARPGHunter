@@ -6,7 +6,8 @@
 #include "AIController.h"
 #include "MonsterAIController.generated.h"
 
-enum class EMonsterAlertState :uint8;
+enum class EMonsterAlertState : uint8;
+enum class EActorGroup : uint8;
 
 /**
  * 
@@ -27,6 +28,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	uint8 MaxMoveToRetryCnt{ 5 };
 	uint8 MoveToRetryCnt{ 0 };
+
+	UPROPERTY(EditAnywhere)
+	FName AlertStateName;
+
+	UPROPERTY(EditAnywhere)
+	EActorGroup ActorGroup;
 
 	void InitBT(APawn* _inPawn);
 
@@ -53,5 +60,6 @@ public:
 	void HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus);
 	void HandleTeamDamage(AActor* _actor, struct FAIStimulus& _stimulus);
 	void MissTarget(AActor* _actor);
-	void ReleaseAlert();
+
+	uint8 GetAlertState();
 };

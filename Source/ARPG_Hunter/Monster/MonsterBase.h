@@ -7,13 +7,11 @@
 #include "Interface/Hitable.h"
 #include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
-#include "GenericTeamAgentInterface.h"
 #include "MonsterBase.generated.h"
 
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
 enum class EMonsterState : uint8; // 행동 상태
-enum class EActorGroup : uint8;
 struct FMonsterData;
 struct FMonsterAction;
 
@@ -31,8 +29,7 @@ DECLARE_DELEGATE_OneParam(FOnMonsterDead, TObjectPtr<class AMonsterBase>);
 
 UCLASS(Abstract)
 class ARPG_HUNTER_API AMonsterBase : public ACharacter, 
-	public IHitable, public IEffectable, public IAttackNotifyHandler,
-	public IGenericTeamAgentInterface
+	public IHitable, public IEffectable, public IAttackNotifyHandler
 {
 	GENERATED_BODY()
 
@@ -70,9 +67,6 @@ private:
 	float MoveSpeed{ 0.0f };
 	UPROPERTY(VisibleAnywhere)
 	bool bIsMovable{ true };
-
-	UPROPERTY(EditAnywhere, Category = "Attribute")
-	EActorGroup ActorGroup;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -128,8 +122,6 @@ public:
 #pragma endregion
 	
 #pragma region Monster AI
-	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
-
 	TWeakObjectPtr<AActor> GetTarget() const;
 	
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것

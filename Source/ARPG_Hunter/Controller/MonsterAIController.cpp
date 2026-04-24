@@ -8,7 +8,6 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AISenseConfig_Damage.h"
 #include "Perception/AISenseConfig_Team.h"
 
@@ -18,12 +17,15 @@
 AMonsterAIController::AMonsterAIController()
 {
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComp"));
+	AlertStateName = FName(TEXT("AlertState"));
+	ActorGroup = EActorGroup::HOSTILE;
 }
 
 void AMonsterAIController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
+
+	SetGenericTeamId(FGenericTeamId(static_cast<uint8>(ActorGroup)));
 }
 
 void AMonsterAIController::OnPossess(APawn* InPawn)
@@ -86,17 +88,14 @@ void AMonsterAIController::StopPerception()
 {
 	AIPerception->ForgetAll();
 	AIPerception->Deactivate();
-
 	AIPerception->OnTargetPerceptionUpdated.RemoveDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 }
 
 void AMonsterAIController::RestartPerception()
 {
-	
+	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 	AIPerception->Activate();
 	AIPerception->RequestStimuliListenerUpdate();
-
-	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 }
 
 void AMonsterAIController::EnableController()
@@ -115,10 +114,9 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Percepted"), *Actor->GetActorNameOrLabel()));
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[%s]:: [%s] is Percepted"), *GetActorNameOrLabel(), *Actor->GetActorNameOrLabel()));
 
-		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()) ||
-			Stimulus.Type == UAISense::GetSenseID(UAISense_Hearing::StaticClass()))
+		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
 			HandleSuspicious(Actor, Stimulus);
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_Damage::StaticClass()))
 			HandleDamage(Actor, Stimulus);
@@ -133,53 +131,63 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 
 void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& _stimulus)
 {
-	UBlackboardComponent* BBComp = GetBlackboardComponent();
-	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
-
-	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
+	uint8 CurAlert = GetAlertState();
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
 	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
 
-	BBComp->SetValueAsEnum(NAME_ALERTSTATE, static_cast<uint8>(EMonsterAlertState::SUSPICIOUS));
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::SUSPICIOUS));
 	BBComp->SetValueAsVector(FName(TEXT("MovePoint")), _stimulus.StimulusLocation);
 	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
 }
 
 void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus)
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Damaged"));
-
-	UBlackboardComponent* BBComp = GetBlackboardComponent();
-	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
-	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
-
+	uint8 CurAlert = GetAlertState();
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
-	BBComp->SetValueAsEnum(NAME_ALERTSTATE, static_cast<uint8>(EMonsterAlertState::ENAGE));
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
 	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
+
+	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(
+		GetWorld(),
+		FAITeamStimulusEvent(
+			GetPawn(),
+			_actor,
+			_stimulus.StimulusLocation,
+			1000.0f)
+	);
 }
 
 void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimulus)
 {
+	uint8 CurAlert = GetAlertState();
+	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
+		return;
+
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
+	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Team Damaged"));
 }
 
 void AMonsterAIController::MissTarget(AActor* _actor)
 {
-	UBlackboardComponent* BBComp = GetBlackboardComponent();
-	const FName NAME_ALERTSTATE = FName(TEXT("AlertState"));
-
-	uint8 CurAlert = BBComp->GetValueAsEnum(NAME_ALERTSTATE);
+	uint8 CurAlert = GetAlertState();
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ALERT))
 		return;
 
-	BBComp->ClearValue(FName(TEXT("Target")));
+	GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
 
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
 }
 
-void AMonsterAIController::ReleaseAlert()
+uint8 AMonsterAIController::GetAlertState()
 {
+	return GetBlackboardComponent()->GetValueAsEnum(AlertStateName);
 }

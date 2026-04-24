@@ -32,10 +32,7 @@ AMonsterBase::AMonsterBase()
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-
-	ActorGroup = EActorGroup::HOSTILE;
 }
-
 
 void AMonsterBase::BeginPlay()
 {
