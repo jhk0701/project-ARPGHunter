@@ -18,8 +18,6 @@ class ARPG_HUNTER_API ABossMonster : public AMonsterBase, public IGimicHandler
 {
 	GENERATED_BODY()
 private:
-	TArray<float> ActionTotalWeights;
-
 	// Player HUD에 보스 체력바 출력
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UUserWidget> StatusBarClass;
@@ -40,7 +38,6 @@ public:
 	ABossMonster();
 
 	void Init(const FMonsterInitParam& _param) override;
-	float Attack(EMonsterAttackType _type) override;
 	void HitBy(const FHitInfo& _hitInfo) override;
 
 	bool CanUseGimic() override;

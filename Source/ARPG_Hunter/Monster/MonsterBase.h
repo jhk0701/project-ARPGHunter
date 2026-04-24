@@ -68,6 +68,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsMovable{ true };
 
+	TArray<float> ActionTotalWeights;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMonsterActionComponent> ActionComp;

@@ -32,6 +32,8 @@ AMonsterBase::AMonsterBase()
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
 }
 
 void AMonsterBase::BeginPlay()
@@ -99,6 +101,9 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 	StatComp->Init(BaseStat);
 
+	for (const FMonsterAction& Action : Data->Config->AttackActions)
+		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
+
 	// 충돌 설정
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Monster")));
 	
@@ -163,7 +168,9 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
 {
 	MoveSpeed = _bIsChasing ? GetData()->ChaseSpeed : GetData()->MoveSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
+
+	if (bIsMovable)
+		GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
@@ -204,6 +211,26 @@ float AMonsterBase::Attack(EMonsterAttackType _type)
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 	if (AnimInst->Montage_IsPlaying(Data->Config->HitMontage))
 		return -1.0f;
+
+	// 가중치에 따른 선별
+	FMonsterData* MonsterData = GetData();
+	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_type)]);
+	float Sum = 0.0f;
+
+	for (uint8 i = 0; i < MonsterData->Config->AttackActions.Num(); ++i)
+	{
+		const FMonsterAction& Action = MonsterData->Config->AttackActions[i];
+
+		if (Action.Type != _type)
+			continue;
+
+		Sum += Action.Weight;
+		if (RandomValue < Sum)
+		{
+			ActionComp->SetCurAttackIdx(i);
+			break;
+		}
+	}
 
 	// 공격
 	float Interval = ActionComp->PlayAttackAction();

@@ -30,8 +30,6 @@ ABossMonster::ABossMonster()
 	static ConstructorHelpers::FClassFinder<UUserWidget> UserWidgetFinder(TEXT("/Game/06-UI/WBP_BossStatusBar.WBP_BossStatusBar_C"));
 	if (UserWidgetFinder.Succeeded())
 		StatusBarClass = UserWidgetFinder.Class;
-
-	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
 }
 
 void ABossMonster::BeginPlay()
@@ -87,12 +85,6 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 {
 	Super::Init(_param);
 
-	FMonsterData* MonsterData = GetData();
-	for (const FMonsterAction& Action : MonsterData->Config->AttackActions)
-	{
-		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
-	}
-
 	// UI 초기화
 	if (StatusBar)
 	{
@@ -104,30 +96,6 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	}
 }
 
-float ABossMonster::Attack(EMonsterAttackType _type)
-{
-	// 가중치에 따른 선별
-	FMonsterData* MonsterData = GetData();
-	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_type)]);
-	float Sum = 0.0f;
-
-	for (uint8 i = 0; i < MonsterData->Config->AttackActions.Num(); ++i)
-	{
-		const FMonsterAction& Action = MonsterData->Config->AttackActions[i];
-
-		if (Action.Type != _type)
-			continue;
-
-		Sum += Action.Weight;
-		if (RandomValue < Sum)
-		{
-			ActionComp->SetCurAttackIdx(i);
-			break;
-		}
-	}
-
-	return Super::Attack(_type);
-}
 
 void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 {
