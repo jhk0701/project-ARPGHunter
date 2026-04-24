@@ -79,6 +79,24 @@ void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 	KnockBack(_hitInfo);
 }
 
+void ARegularMonster::OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState)
+{
+	Super::OnAlertStateChanged(_prevState, _nextState);
+
+	TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget());
+
+	if (_prevState == EMonsterAlertState::ENAGE) 
+	{
+		MonsterStatusBar->PlayOpenAnim(true);
+	}
+
+	if (_nextState == EMonsterAlertState::ENAGE)
+	{
+		WidgetComp->SetVisibility(true);
+		MonsterStatusBar->PlayOpenAnim();
+	}
+}
+
 void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)
 {
 	FVector Dir = GetActorLocation() - _hitInfo.Attacker->GetActorLocation();
@@ -86,24 +104,4 @@ void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)
 	Dir.Normalize();
 
 	LaunchCharacter(Dir * _hitInfo.KnockBackStrength * 10.0f, true, false);
-}
-
-void ARegularMonster::OnTargetFound()
-{
-	Super::OnTargetFound();
-
-	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
-	{
-		WidgetComp->SetVisibility(true);
-		MonsterStatusBar->PlayOpenAnim();
-	}
-}
-
-void ARegularMonster::OnTargetLost()
-{
-	Super::OnTargetLost();
-	if (TObjectPtr<UUWMonsterStatusBar> MonsterStatusBar = Cast<UUWMonsterStatusBar>(WidgetComp->GetWidget()))
-	{
-		MonsterStatusBar->PlayOpenAnim(true);
-	}
 }

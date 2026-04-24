@@ -12,8 +12,8 @@
 #include "Perception/AISenseConfig_Damage.h"
 #include "Perception/AISenseConfig_Team.h"
 
-#include "Monster/MonsterBase.h"
 #include "Define/Enum.h"
+#include "Monster/MonsterBase.h"
 
 AMonsterAIController::AMonsterAIController()
 {
@@ -53,9 +53,6 @@ void AMonsterAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFo
 		MoveToRetryCnt = 0;
 		// 타겟 초기화
 		GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
-
-		if (AMonsterBase* Monster = Cast<AMonsterBase>(GetPawn()))
-			Monster->OnTargetLost();
 	}
 }
 
@@ -156,9 +153,7 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
-	UBlackboardComponent* BBComp = GetBlackboardComponent();
-	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
-	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
+	SetEnageState(_actor);
 
 	FAITeamStimulusEvent TeamEvent = FAITeamStimulusEvent(
 		GetPawn(),
@@ -179,10 +174,7 @@ void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimul
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
-	UBlackboardComponent* BBComp = GetBlackboardComponent();
-	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
-	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
-
+	SetEnageState(_actor);
 	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Team Damaged"));
 }
 
@@ -195,6 +187,17 @@ void AMonsterAIController::MissTarget(AActor* _actor)
 	GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
 
 	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
+}
+
+void AMonsterAIController::SetEnageState(AActor* _target)
+{
+	UBlackboardComponent* BBComp = GetBlackboardComponent();
+
+	if (AMonsterBase* Monster = Cast<AMonsterBase>(GetPawn()))
+		Monster->OnAlertStateChanged(static_cast<EMonsterAlertState>(GetAlertState()), EMonsterAlertState::ENAGE);
+
+	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
+	BBComp->SetValueAsObject(FName(TEXT("Target")), _target);
 }
 
 uint8 AMonsterAIController::GetAlertState()

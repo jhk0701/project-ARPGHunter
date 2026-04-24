@@ -12,6 +12,7 @@
 enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
 enum class EMonsterState : uint8; // 행동 상태
+enum class EMonsterAlertState : uint8; // 경계 상태
 struct FMonsterData;
 struct FMonsterAction;
 
@@ -125,10 +126,9 @@ public:
 	
 #pragma region Monster AI
 	TWeakObjectPtr<AActor> GetTarget() const;
-	
+
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것
-	virtual void OnTargetFound() {};
-	virtual void OnTargetLost() {};
+	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) {};
 #pragma endregion
 	
 };

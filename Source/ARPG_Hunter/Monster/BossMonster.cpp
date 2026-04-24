@@ -186,24 +186,18 @@ void ABossMonster::ShowDamageUI(bool _bIsCritical, uint32 _damage)
 	}
 }
 
-void ABossMonster::OnTargetFound()
+void ABossMonster::OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState)
 {
-	Super::OnTargetFound();
+	Super::OnAlertStateChanged(_prevState, _nextState);
 
-	if (StatusBar) 
-	{
-		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
-		BossUI->ShowUI();
-	}
-}
+	if (nullptr == StatusBar)
+		return;
 
-void ABossMonster::OnTargetLost()
-{
-	Super::OnTargetLost();
-
-	if (StatusBar)
-	{
-		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+	TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
+	
+	if (_prevState == EMonsterAlertState::ENAGE)
 		BossUI->HideUI();
-	}
+
+	if(_nextState == EMonsterAlertState::ENAGE)
+		BossUI->ShowUI();
 }

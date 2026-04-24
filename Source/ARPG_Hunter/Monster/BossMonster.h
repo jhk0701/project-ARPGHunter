@@ -43,6 +43,5 @@ public:
 	bool CanUseGimic() override;
 	void HandleGimicNotify(EGimicType _type, uint16 _gimicValue) override;
 
-	void OnTargetFound() override;
-	void OnTargetLost() override;
+	void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) override;
 };

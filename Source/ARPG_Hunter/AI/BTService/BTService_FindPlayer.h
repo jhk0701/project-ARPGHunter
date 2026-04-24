@@ -7,7 +7,7 @@
 #include "BTService_FindPlayer.generated.h"
 
 /**
- * 
+ * AI Perception으로 변경
  */
 UCLASS()
 class ARPG_HUNTER_API UBTService_FindPlayer : public UBTService

@@ -33,8 +33,7 @@ protected:
 public:
 	virtual void Init(const FMonsterInitParam& _param) override;
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
+	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) override;
 
 	void KnockBack(const FHitInfo& _hitInfo);
-	virtual void OnTargetFound() override;
-	virtual void OnTargetLost() override;
 };

@@ -66,5 +66,6 @@ public:
 	void HandleTeamDamage(AActor* _actor, struct FAIStimulus& _stimulus);
 	void MissTarget(AActor* _actor);
 
+	void SetEnageState(AActor* _target);
 	uint8 GetAlertState();
 };
