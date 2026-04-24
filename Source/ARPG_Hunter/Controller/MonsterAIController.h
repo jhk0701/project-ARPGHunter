@@ -23,6 +23,9 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UAIPerceptionComponent> AIPerception;
+	UPROPERTY(EditAnywhere) // 팀 피격 이벤트 전파 용도
+	TObjectPtr<class UAIPerceptionStimuliSourceComponent> AIStimuliSource;
+
 	TObjectPtr<class AMonsterBase> ControlledMonster;
 	
 	UPROPERTY(EditAnywhere)
@@ -31,6 +34,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	FName AlertStateName;
+	UPROPERTY(EditAnywhere)
+	float TeamSenseRange{ 1000.0f };
 
 	UPROPERTY(EditAnywhere)
 	EActorGroup ActorGroup;

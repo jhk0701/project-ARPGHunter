@@ -7,6 +7,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Damage.h"
 #include "Perception/AISenseConfig_Team.h"
@@ -17,6 +18,8 @@
 AMonsterAIController::AMonsterAIController()
 {
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComp"));
+	AIStimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSourceComp"));
+
 	AlertStateName = FName(TEXT("AlertState"));
 	ActorGroup = EActorGroup::HOSTILE;
 }
@@ -89,6 +92,8 @@ void AMonsterAIController::StopPerception()
 	AIPerception->ForgetAll();
 	AIPerception->Deactivate();
 	AIPerception->OnTargetPerceptionUpdated.RemoveDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
+
+	AIStimuliSource->UnregisterFromPerceptionSystem();
 }
 
 void AMonsterAIController::RestartPerception()
@@ -96,6 +101,8 @@ void AMonsterAIController::RestartPerception()
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AMonsterAIController::OnTargetPerceptionUpdated);
 	AIPerception->Activate();
 	AIPerception->RequestStimuliListenerUpdate();
+
+	AIStimuliSource->RegisterWithPerceptionSystem();
 }
 
 void AMonsterAIController::EnableController()
@@ -153,13 +160,16 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::ENAGE));
 	BBComp->SetValueAsObject(FName(TEXT("Target")), _actor);
 
+	FAITeamStimulusEvent TeamEvent = FAITeamStimulusEvent(
+		GetPawn(),
+		_actor,
+		_stimulus.StimulusLocation,
+		TeamSenseRange);
+	TeamEvent.TeamIdentifier = GetGenericTeamId();
+
 	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(
 		GetWorld(),
-		FAITeamStimulusEvent(
-			GetPawn(),
-			_actor,
-			_stimulus.StimulusLocation,
-			1000.0f)
+		TeamEvent
 	);
 }
 
