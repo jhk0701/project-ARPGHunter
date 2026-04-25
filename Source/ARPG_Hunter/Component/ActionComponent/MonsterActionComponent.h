@@ -42,7 +42,8 @@ public:
 
 	float PlayAttackAction();
 	virtual void PlayHitAction(EMonsterState _state);
-	
+	bool PlayExtraAction(const FName& _actName);
+
 	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
 	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
 

@@ -25,7 +25,7 @@ struct FMonsterInitParam
 	FRotator Rotation;
 };
 
-DECLARE_DELEGATE(FOnAttackMontageEnded);
+DECLARE_DELEGATE(FOnActionMontageEnded);
 DECLARE_DELEGATE_OneParam(FOnMonsterDead, TObjectPtr<class AMonsterBase>);
 
 UCLASS(Abstract)
@@ -99,13 +99,15 @@ protected:
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() const { return WeaponComp; }
 
 public:
-	FOnAttackMontageEnded OnAttackMontageEnded;
+	FOnActionMontageEnded OnAttackMontageEnded;
+	FOnActionMontageEnded OnExtraActMontageEnded;
 	FOnMonsterDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
 
 #pragma region Monster Action
 	virtual float Attack(EMonsterAttackType _type);
+	virtual bool ExtraAct(const FName& _actName);
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨

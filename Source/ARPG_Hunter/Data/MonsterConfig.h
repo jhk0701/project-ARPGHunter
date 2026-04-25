@@ -61,5 +61,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Action")
 	TObjectPtr<UAnimMontage> HitMontage;
 	UPROPERTY(EditAnywhere, Category = "Action")
+	TObjectPtr<UAnimMontage> ExtraMontage;
+	UPROPERTY(EditAnywhere, Category = "Action")
 	TArray<FMonsterAction> AttackActions;
 };

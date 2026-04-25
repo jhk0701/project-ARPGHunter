@@ -99,12 +99,29 @@ void UMonsterActionComponent::PlayHitAction(EMonsterState _state)
 		return;
 
 	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (false == AnimInst.IsValid())
+		return;
 	
 	AnimInst->Montage_Play(Data->Config->HitMontage);
 	if (_state == EMonsterState::DEAD)
 		AnimInst->Montage_JumpToSection(EnumToName(_state), Data->Config->HitMontage);
 	else
 		AnimInst->Montage_JumpToSection(FName(TEXT("Hit")), Data->Config->HitMontage);
+}
+
+bool UMonsterActionComponent::PlayExtraAction(const FName& _actName)
+{
+	if (nullptr == Data->Config->ExtraMontage)
+		return false;
+
+	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
+	if (false == AnimInst.IsValid())
+		return false;
+
+	AnimInst->Montage_Play(Data->Config->ExtraMontage);
+	AnimInst->Montage_JumpToSection(_actName);
+
+	return true;
 }
 
 const FMonsterAction& UMonsterActionComponent::GetCurrentAction() const

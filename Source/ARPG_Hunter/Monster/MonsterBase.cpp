@@ -154,8 +154,13 @@ void AMonsterBase::SetMovementMode(EMovementMode _mode)
 
 void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == ActionComp->GetCurrentMontage() || _montage == Data->Config->HitMontage)
+	if (_montage == ActionComp->GetCurrentMontage() || 
+		_montage == Data->Config->HitMontage)
 		OnAttackMontageEnded.ExecuteIfBound();
+
+	if (_montage == Data->Config->ExtraMontage ||
+		_montage == Data->Config->HitMontage)
+		OnExtraActMontageEnded.ExecuteIfBound();
 
 	if (_bInterrupted == false)
 		SetMovable(true);
@@ -240,6 +245,11 @@ float AMonsterBase::Attack(EMonsterAttackType _type)
 		SetMovable(false);
 
 	return Interval;
+}
+
+bool AMonsterBase::ExtraAct(const FName& _actName)
+{
+	return ActionComp->PlayExtraAction(_actName);
 }
 
 void AMonsterBase::HandleAttackNotify(uint8 _opt)

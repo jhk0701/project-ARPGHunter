@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/BTTask/BTTask_Attack.h"
@@ -41,6 +41,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	);
 
 	float Interval = Owner->Attack(AttackType);
+
 	if (Interval < 0.0f)
 		return EBTNodeResult::Failed; // 공격 동작이 유효하지 않은 상황 실패처리
 
