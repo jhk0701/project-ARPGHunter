@@ -14,8 +14,6 @@ struct FAIPlayerActionStimulusEvent
 	UPROPERTY()
 	uint8 ActionType = 0;
 	UPROPERTY()
-	float Intensity = 0.0f;
-	UPROPERTY()
 	float Range = 500.0f;
 	UPROPERTY()
 	FVector Location = FVector::ZeroVector;

@@ -67,10 +67,19 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 		MonsterStatusBar->SetHealthBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::HEALTH), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		WidgetComp->SetVisibility(false);
 	}
+
+	bReactToPlayerAction = false;
 }
 
 void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 {
+	if (bReactToPlayerAction) 
+	{
+		bReactToPlayerAction = false;
+		ExtraAct(FName(TEXT("Dodge")));
+		return;
+	}
+
 	Super::HitBy(_hitInfo);
 
 	// 모션 재생
@@ -95,6 +104,17 @@ void ARegularMonster::OnAlertStateChanged(EMonsterAlertState _prevState, EMonste
 		WidgetComp->SetVisibility(true);
 		MonsterStatusBar->PlayOpenAnim();
 	}
+}
+
+void ARegularMonster::TriggerReactForPlayerAction(uint8 _actionType)
+{
+	Super::TriggerReactForPlayerAction(_actionType);
+
+	if (EPlayerActionType::ATTACK != static_cast<EPlayerActionType>(_actionType))
+		return;
+
+	int r = FMath::Rand() % 100 + 1;
+	bReactToPlayerAction = r <= GetData()->PlayerActionReactProbability;
 }
 
 void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)

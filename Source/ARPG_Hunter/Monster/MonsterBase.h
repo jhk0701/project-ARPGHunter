@@ -55,7 +55,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
 	TObjectPtr<class UBlackboardData> MonsterBB;
 
-
 	UPROPERTY(EditAnywhere, Category = "Monster|Init")
 	float InitDelay{ 0.5f };
 	FTimerHandle InitTimer;
@@ -129,8 +128,11 @@ public:
 #pragma region Monster AI
 	TWeakObjectPtr<AActor> GetTarget() const;
 
-	// 하위 클래스에서 구체적인 동작을 구현해둘 것
+
+	// 하위 클래스에서 구체적인 동작을 구현해둘 것	
 	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) {};
+	// 플레이어 액션에 대한 반응처리
+	virtual void TriggerReactForPlayerAction(uint8 _actionType) {};
 #pragma endregion
 	
 };

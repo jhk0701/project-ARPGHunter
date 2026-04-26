@@ -274,16 +274,15 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	{
 		// 플레이어 공격 이벤트 호출
 		FAIPlayerActionStimulusEvent ActionEvent;
-		ActionEvent.ActionType = 0;
+		ActionEvent.ActionType = static_cast<uint8>(EPlayerActionType::ATTACK);
 		ActionEvent.Instigator = this;
 		ActionEvent.Location = GetActorLocation();
-		ActionEvent.Intensity = 1.0f;
-		ActionEvent.Range = 500.0f;
+		ActionEvent.Range = 300.0f;
 
 		UAISense_PlayerAction::ReportEvent(this, ActionEvent);
 	}
 
-	if (bIsValid == false || InputDirection.SquaredLength() > 0)
+	if (false == bIsValid || InputDirection.SquaredLength() > 0)
 		return;
 
 	// 주변 적 자동 조준

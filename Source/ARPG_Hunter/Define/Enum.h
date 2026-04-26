@@ -179,6 +179,13 @@ enum class EActorGroup : uint8
 	END = DEFAULT
 };
 
+UENUM(BlueprintType)
+enum class EPlayerActionType:uint8 
+{
+	ATTACK		UMETA(DisplayName = "Attack Action"),
+	USE_ITEM	UMETA(DisplayName = "Use Item"),
+};
+
 enum class EShortCutType : uint8
 {
 	NONE,

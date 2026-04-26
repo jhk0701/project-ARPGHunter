@@ -23,7 +23,6 @@ public:
 		UObject* _worldContext,
 		uint8 _type,
 		const FVector& _location,
-		float _intensity,
 		float _range,
 		AActor* _instigator
 	);

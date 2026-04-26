@@ -24,6 +24,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 
+	bool bReactToPlayerAction{ false };
+
 protected:
 	void BeginPlay() override;
 	void ShowDamageUI(bool _bIsCritical, uint32 _damage) override;
@@ -34,6 +36,7 @@ public:
 	virtual void Init(const FMonsterInitParam& _param) override;
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
 	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) override;
+	void TriggerReactForPlayerAction(uint8 _actionType) override;
 
 	void KnockBack(const FHitInfo& _hitInfo);
 };

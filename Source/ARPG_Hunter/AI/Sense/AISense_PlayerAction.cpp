@@ -15,7 +15,6 @@ UAISense_PlayerAction::UAISense_PlayerAction()
 void UAISense_PlayerAction::ReportPlayerActionEvent(UObject* _worldContext,
 	uint8 _type,
 	const FVector& _location,
-	float _intensity,
 	float _range,
 	AActor* _instigator)
 {
@@ -27,7 +26,6 @@ void UAISense_PlayerAction::ReportPlayerActionEvent(UObject* _worldContext,
 	FAIPlayerActionStimulusEvent Event;
 	Event.ActionType = _type;
 	Event.Location = _location;
-	Event.Intensity = _intensity;
 	Event.Range = _range;
 	Event.Instigator = _instigator;
 
@@ -97,7 +95,7 @@ void UAISense_PlayerAction::ProcessPlayerActionEvent(AIPerception::FListenerMap*
 			// 지정한 범위 이내라면 Listener에게 이벤트 전달
 			FAIStimulus Stimulus(
 				*this,
-				_event.Intensity, // 자극 강도
+				static_cast<float>(_event.ActionType), // 원래 자극 강도 : 현재는 공격 타입을 보내줄 것
 				_event.Location,  // 자극 발생 지점
 				ListenerActor->GetActorLocation() // 수신자 위치
 			);

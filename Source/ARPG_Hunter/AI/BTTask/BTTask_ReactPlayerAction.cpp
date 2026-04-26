@@ -21,7 +21,5 @@ EBTNodeResult::Type UBTTask_ReactPlayerAction::ExecuteTask(UBehaviorTreeComponen
 	if (r > BBComp->GetValueAsFloat(ProbabilityVarName))
 		return EBTNodeResult::Succeeded;
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, TEXT("Dodge On"));
-
 	return Super::ExecuteTask(OwnerComp, NodeMemory);
 }
