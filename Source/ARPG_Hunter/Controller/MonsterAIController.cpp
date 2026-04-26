@@ -122,8 +122,6 @@ void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& 
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("AI Suspicious :: %s"), *_actor->GetActorNameOrLabel()));
-
 	UBlackboardComponent* BBComp = GetBlackboardComponent();
 	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::SUSPICIOUS));
 	BBComp->SetValueAsVector(FName(TEXT("MovePoint")), _stimulus.StimulusLocation);
@@ -159,7 +157,6 @@ void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimul
 		return;
 
 	SetEnageState(_actor);
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Team Damaged"));
 }
 
 void AMonsterAIController::MissTarget(AActor* _actor)
@@ -169,8 +166,6 @@ void AMonsterAIController::MissTarget(AActor* _actor)
 		return;
 
 	GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
-
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("[%s] is Missed"), *_actor->GetActorNameOrLabel()));
 }
 
 void AMonsterAIController::SetEnageState(AActor* _target)
