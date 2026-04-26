@@ -112,9 +112,7 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_Team::StaticClass()))
 			HandleTeamDamage(Actor, Stimulus);
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_PlayerAction::StaticClass()))
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, TEXT("Player Action Sense On"));
-		}
+			HandlePlayerAction(Actor, Stimulus);
 	}
 	else
 	{
@@ -163,6 +161,16 @@ void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimul
 		return;
 
 	SetEnageState(_actor);
+}
+
+void AMonsterAIController::HandlePlayerAction(AActor* _actor, FAIStimulus& _stimulus)
+{
+	uint8 CurAlert = GetAlertState();
+	if (CurAlert != static_cast<uint8>(EMonsterAlertState::ENAGE))
+		return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, TEXT("Player Action Sense On"));
+	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("bPlayerActionTrigger")), true);
 }
 
 void AMonsterAIController::MissTarget(AActor* _actor)

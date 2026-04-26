@@ -39,6 +39,8 @@ public:
 	float ChaseSpeed{ 400.0f };
 	UPROPERTY(EditAnywhere) // 활동 범위
 	float ActivityRange{ 5000.0f };
+	UPROPERTY(EditAnywhere)
+	float PlayerActionReactProbability{ 10.0f }; // 플레이어의 액션에 반응할 확률
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UMonsterConfig> Config;

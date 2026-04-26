@@ -270,18 +270,21 @@ void APlayerCharacter::Attack(EAttackType _eType)
 		return;
 
 	bool bIsValid = ActionComp->PlayAttackAction(_eType);
+	if (bIsValid) 
+	{
+		// 플레이어 공격 이벤트 호출
+		FAIPlayerActionStimulusEvent ActionEvent;
+		ActionEvent.ActionType = 0;
+		ActionEvent.Instigator = this;
+		ActionEvent.Location = GetActorLocation();
+		ActionEvent.Intensity = 1.0f;
+		ActionEvent.Range = 500.0f;
+
+		UAISense_PlayerAction::ReportEvent(this, ActionEvent);
+	}
+
 	if (bIsValid == false || InputDirection.SquaredLength() > 0)
 		return;
-
-	// 플레이어 공격 이벤트 호출
-	FAIPlayerActionStimulusEvent ActionEvent;
-	ActionEvent.ActionType = 0;
-	ActionEvent.Instigator = this;
-	ActionEvent.Location = GetActorLocation();
-	ActionEvent.Intensity = 1.0f;
-	ActionEvent.Range = 500.0f;
-
-	UAISense_PlayerAction::ReportEvent(this, ActionEvent);
 
 	// 주변 적 자동 조준
 	// 이동 입력이 없을 때, 조준

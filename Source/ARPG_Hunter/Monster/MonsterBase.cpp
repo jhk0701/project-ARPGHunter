@@ -125,6 +125,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		BBComp->SetValueAsFloat(FName(TEXT("MoveRangeOnAttack")), Data->MoveRangeOnAttack);
 		BBComp->SetValueAsFloat(FName(TEXT("ActivityRange")), Data->ActivityRange);
 		BBComp->SetValueAsVector(FName(TEXT("ReturnPoint")), _param.Location);
+		BBComp->SetValueAsFloat(FName(TEXT("PlayerActionReactProbability")), Data->PlayerActionReactProbability);
 
 		// BT 재가동
 		MonsterAI->EnableController();

@@ -57,6 +57,7 @@ public:
 	void HandleSuspicious(AActor* _actor, struct FAIStimulus& _stimulus);
 	void HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus);
 	void HandleTeamDamage(AActor* _actor, struct FAIStimulus& _stimulus);
+	void HandlePlayerAction(AActor* _actor, struct FAIStimulus& _stimulus);
 	void MissTarget(AActor* _actor);
 
 	void SetEnageState(AActor* _target);
