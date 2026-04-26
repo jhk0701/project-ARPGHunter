@@ -16,7 +16,8 @@ public class ARPG_Hunter : ModuleRules
 				"NavigationSystem", "GameplayTasks", 
 				"Niagara", 
 				"Slate", "SlateCore", 
-				"LevelSequence", "MovieScene"
+				"LevelSequence", "MovieScene",
+        "AIModule"
     });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

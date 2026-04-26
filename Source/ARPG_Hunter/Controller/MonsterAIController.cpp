@@ -138,11 +138,11 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 
 	// 피격 시, 주변 몬스터들에게 피격 이벤트 발행
 	FAITeamStimulusEvent TeamEvent = FAITeamStimulusEvent(
-		GetPawn(),
+		this,
 		_actor,
 		_stimulus.StimulusLocation,
 		TeamSenseRange);
-	TeamEvent.TeamIdentifier = GetGenericTeamId();
+	// TeamEvent.TeamIdentifier = GetGenericTeamId();
 
 	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(
 		GetWorld(),
