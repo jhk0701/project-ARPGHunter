@@ -41,21 +41,6 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 	StopPerception();
 }
 
-void AMonsterAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
-{
-	Super::OnMoveCompleted(RequestID, Result);
-
-	// 원하는 곳으로 못갈 때 처리
-	// 주로, 플레이어가 네비 메시를 벗어나 갈 수 없을 경우 처리용
-	MoveToRetryCnt = Result.IsSuccess() ? 0 : MoveToRetryCnt + 1;
-	if (MoveToRetryCnt >= MaxMoveToRetryCnt)
-	{
-		MoveToRetryCnt = 0;
-		// 타겟 초기화
-		GetBlackboardComponent()->ClearValue(FName(TEXT("Target")));
-	}
-}
-
 void AMonsterAIController::InitBT(APawn* _inPawn)
 {
 	AMonsterBase* Monster = Cast<AMonsterBase>(_inPawn);
@@ -118,8 +103,6 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("[%s]:: [%s] is Percepted"), *GetActorNameOrLabel(), *Actor->GetActorNameOrLabel()));
-
 		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
 			HandleSuspicious(Actor, Stimulus);
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_Damage::StaticClass()))
@@ -139,7 +122,7 @@ void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& 
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("AI Suspicious"));
+	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("AI Suspicious :: %s"), *_actor->GetActorNameOrLabel()));
 
 	UBlackboardComponent* BBComp = GetBlackboardComponent();
 	BBComp->SetValueAsEnum(AlertStateName, static_cast<uint8>(EMonsterAlertState::SUSPICIOUS));
@@ -155,6 +138,7 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 
 	SetEnageState(_actor);
 
+	// 피격 시, 주변 몬스터들에게 피격 이벤트 발행
 	FAITeamStimulusEvent TeamEvent = FAITeamStimulusEvent(
 		GetPawn(),
 		_actor,

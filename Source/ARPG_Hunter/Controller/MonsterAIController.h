@@ -25,12 +25,7 @@ private:
 	TObjectPtr<class UAIPerceptionComponent> AIPerception;
 	UPROPERTY(EditAnywhere) // 팀 피격 이벤트 전파 용도
 	TObjectPtr<class UAIPerceptionStimuliSourceComponent> AIStimuliSource;
-
 	TObjectPtr<class AMonsterBase> ControlledMonster;
-	
-	UPROPERTY(EditAnywhere)
-	uint8 MaxMoveToRetryCnt{ 5 };
-	uint8 MoveToRetryCnt{ 0 };
 
 	UPROPERTY(EditAnywhere)
 	FName AlertStateName;
@@ -47,8 +42,6 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:
-	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
-
 	void StopBT();
 	void RestartBT();
 
