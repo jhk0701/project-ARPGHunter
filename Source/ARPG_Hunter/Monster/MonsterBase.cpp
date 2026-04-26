@@ -249,7 +249,12 @@ float AMonsterBase::Attack(EMonsterAttackType _type)
 
 bool AMonsterBase::ExtraAct(const FName& _actName)
 {
-	return ActionComp->PlayExtraAction(_actName);
+	bool bPlayExtraAct = ActionComp->PlayExtraAction(_actName);
+
+	if (bPlayExtraAct)
+		SetMovable(false);
+
+	return bPlayExtraAct;
 }
 
 void AMonsterBase::HandleAttackNotify(uint8 _opt)
