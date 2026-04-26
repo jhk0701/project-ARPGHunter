@@ -10,7 +10,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "Perception/AISense_Damage.h"
+#include "Perception/AISense_Damage.h" // 플레이어가 데미지를 줬을 경우, 몬스터 AI가 감지할 수 있게 이벤트 발행
 
 #include "Interface/Interactable.h"
 #include "Define/Enum.h"
@@ -23,6 +23,8 @@
 #include "Player/SkillDevelop.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
+#include "AI/Sense/AISense_PlayerAction.h" // 플레이어가 특정 동작을 했음을 AI들에게 이벤트 발행
+#include "AI/Sense/AISenseEvent_PlayerAction.h"
 
 #include "UI/CombatHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
@@ -270,6 +272,16 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	bool bIsValid = ActionComp->PlayAttackAction(_eType);
 	if (bIsValid == false || InputDirection.SquaredLength() > 0)
 		return;
+
+	// 플레이어 공격 이벤트 호출
+	FAIPlayerActionStimulusEvent ActionEvent;
+	ActionEvent.ActionType = 0;
+	ActionEvent.Instigator = this;
+	ActionEvent.Location = GetActorLocation();
+	ActionEvent.Intensity = 1.0f;
+	ActionEvent.Range = 500.0f;
+
+	UAISense_PlayerAction::ReportEvent(this, ActionEvent);
 
 	// 주변 적 자동 조준
 	// 이동 입력이 없을 때, 조준

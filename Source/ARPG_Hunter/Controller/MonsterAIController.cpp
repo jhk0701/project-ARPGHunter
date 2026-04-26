@@ -12,6 +12,8 @@
 #include "Perception/AISenseConfig_Damage.h"
 #include "Perception/AISenseConfig_Team.h"
 
+#include "AI/Sense/AISense_PlayerAction.h"
+
 #include "Define/Enum.h"
 #include "Monster/MonsterBase.h"
 
@@ -109,6 +111,10 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 			HandleDamage(Actor, Stimulus);
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_Team::StaticClass()))
 			HandleTeamDamage(Actor, Stimulus);
+		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_PlayerAction::StaticClass()))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, TEXT("Player Action Sense On"));
+		}
 	}
 	else
 	{
