@@ -201,3 +201,14 @@ void ABossMonster::OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAl
 	if(_nextState == EMonsterAlertState::ENAGE)
 		BossUI->ShowUI();
 }
+
+void ABossMonster::TriggerReactForPlayerAction(uint8 _actionType)
+{
+	// 보스의 경우 플레이어의 아이템 사용에 반응할 것
+	if (static_cast<EPlayerActionType>(_actionType) != EPlayerActionType::USE_ITEM ||
+		true == GetReactToPlayerAction(EPlayerActionType::USE_ITEM))
+		return;
+
+	int r = FMath::Rand() % 100 + 1;
+	SetReactToPlayerAction(EPlayerActionType::USE_ITEM, r <= GetData()->PlayerActionReactProbability);
+}

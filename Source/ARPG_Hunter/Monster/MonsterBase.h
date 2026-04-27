@@ -13,6 +13,7 @@ enum class EMonsterType : uint8;
 enum class EMonsterAttackType : uint8;
 enum class EMonsterState : uint8; // 행동 상태
 enum class EMonsterAlertState : uint8; // 경계 상태
+enum class EPlayerActionType : uint8; // 몬스터가 인식하는 플레이어의 액션 타입
 struct FMonsterData;
 struct FMonsterAction;
 
@@ -68,7 +69,10 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsMovable{ true };
 
+	UPROPERTY(VisibleAnywhere, Category = "AI")
 	TArray<float> ActionTotalWeights;
+	UPROPERTY(VisibleAnywhere, Category = "AI")
+	TMap<EPlayerActionType, bool> bReactToPlayerAction;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -103,6 +107,11 @@ public:
 	FOnMonsterDead OnMonsterDead;
 
 	virtual void Init(const FMonsterInitParam& _param);
+	EMonsterType GetType() const;
+	EMonsterState GetState() const { return CurState; }
+	bool IsDead() const;
+	bool IsMovable() const { return bIsMovable; }
+	void SetMoveSpeed(bool _bIsChasing);
 
 #pragma region Monster Action
 	virtual float Attack(EMonsterAttackType _type);
@@ -111,28 +120,22 @@ public:
 	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
-	
-	bool IsDead() const;
-	bool IsMovable() const { return bIsMovable; }
-
-	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
-	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
-	EMonsterType GetType() const;
-	EMonsterState GetState() const { return CurState; }
 	// IEffectable을(를) 통해 상속됨
 	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
-
-	void SetMoveSpeed(bool _bIsChasing);
 #pragma endregion
 	
 #pragma region Monster AI
+	TObjectPtr<UBehaviorTree> GetBehaviorTree() const { return MonsterBT; }
+	TObjectPtr<UBlackboardData> GetBlackboardData() const { return MonsterBB; }
 	TWeakObjectPtr<AActor> GetTarget() const;
 
-
 	// 하위 클래스에서 구체적인 동작을 구현해둘 것	
-	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) {};
+	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) {}
 	// 플레이어 액션에 대한 반응처리
-	virtual void TriggerReactForPlayerAction(uint8 _actionType) {};
+	virtual void TriggerReactForPlayerAction(uint8 _actionType) {}
+
+	void SetReactToPlayerAction(EPlayerActionType _type, bool _newVal) { bReactToPlayerAction[_type] = _newVal; }
+	bool GetReactToPlayerAction(EPlayerActionType _type) const { return bReactToPlayerAction[_type]; }
 #pragma endregion
 	
 };

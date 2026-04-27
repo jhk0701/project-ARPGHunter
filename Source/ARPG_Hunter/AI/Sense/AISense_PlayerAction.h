@@ -19,7 +19,7 @@ class ARPG_HUNTER_API UAISense_PlayerAction : public UAISense
 public:
 	UAISense_PlayerAction();
 
-	static void ReportPlayerActionEvent(
+	static void ReportEvent(
 		UObject* _worldContext,
 		uint8 _type,
 		const FVector& _location,

@@ -18,6 +18,7 @@
 #include "Data/EffectData.h"
 
 #include "Define/Debug.h"
+#include "Define/Enum.h"
 
 AMonsterBase::AMonsterBase()
 { 	
@@ -34,6 +35,9 @@ AMonsterBase::AMonsterBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
+
+	for (uint8 i = 0; i < static_cast<uint8>(EPlayerActionType::END); ++i)
+		bReactToPlayerAction.Add(static_cast<EPlayerActionType>(i), false);
 }
 
 void AMonsterBase::BeginPlay()
@@ -128,6 +132,10 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 		// BT 재가동
 		MonsterAI->EnableController();
+
+		// AI 연관 변수 초기화
+		for (uint8 i = 0; i < static_cast<uint8>(EPlayerActionType::END); ++i)
+			bReactToPlayerAction[static_cast<EPlayerActionType>(i)] = false;
 	}
 
 	SetMovementMode(EMovementMode::MOVE_Flying);

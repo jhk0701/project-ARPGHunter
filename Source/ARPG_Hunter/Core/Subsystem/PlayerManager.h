@@ -97,8 +97,7 @@ public:
 	TWeakObjectPtr<class UConsumableItem> GetQuickSlotItem(uint8 _idx) const;
 	void UseQuickSlotItem(uint8 _index, class IEffectable* _target);
 	
-	UFUNCTION(BlueprintCallable)
-	uint8 AddItem(const FName& _itemID, int32 _amount);
+	uint8 AddItem(const FName& _itemID, uint8 _amount);
 	void AddExp(uint32 _exp);
 	void LevelUp();
 	void AdjustStatByLevel();
@@ -112,4 +111,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void exeAddExp(int32 _exp) { AddExp(_exp); };
+	UFUNCTION(BlueprintCallable)
+	void exeAddItem(const FName& _itemID, int32 _amount) { AddItem(_itemID, _amount); };
 };

@@ -44,4 +44,5 @@ public:
 	void HandleGimicNotify(EGimicType _type, uint16 _gimicValue) override;
 
 	void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) override;
+	virtual void TriggerReactForPlayerAction(uint8 _actionType) override;
 };

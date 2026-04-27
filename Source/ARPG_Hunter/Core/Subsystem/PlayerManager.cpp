@@ -96,7 +96,7 @@ bool UPlayerManager::TrySubGold(uint32 _amount)
 	return true;
 }
 
-uint8 UPlayerManager::AddItem(const FName& _itemID, int32 _amount)
+uint8 UPlayerManager::AddItem(const FName& _itemID, uint8 _amount)
 {
 	//아이템 추가
 	UInventory::FCreateItemParam Param(_itemID, _amount);

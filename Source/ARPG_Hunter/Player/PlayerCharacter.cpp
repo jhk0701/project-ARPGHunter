@@ -272,14 +272,8 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	bool bIsValid = ActionComp->PlayAttackAction(_eType);
 	if (bIsValid) 
 	{
-		// 플레이어 공격 이벤트 호출
-		FAIPlayerActionStimulusEvent ActionEvent;
-		ActionEvent.ActionType = static_cast<uint8>(EPlayerActionType::ATTACK);
-		ActionEvent.Instigator = this;
-		ActionEvent.Location = GetActorLocation();
-		ActionEvent.Range = 300.0f;
-
-		UAISense_PlayerAction::ReportEvent(this, ActionEvent);
+		// 아이템 사용 자극 이벤트
+		ReportPlayerActionEvent(static_cast<uint8>(EPlayerActionType::ATTACK), 500.0f); // TODO : 매직넘버 제거
 	}
 
 	if (false == bIsValid || InputDirection.SquaredLength() > 0)
@@ -458,16 +452,17 @@ void APlayerCharacter::HandleUseItemNotify()
 	// 퀵슬롯 사용
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 	TWeakObjectPtr<UConsumableItem> Item = PlayerManager->GetQuickSlotItem(UsingQuickSlotIndex);
-	if (Item.IsValid()) 
-	{
-		TObjectPtr<UConsumableItemConfig> Config = Cast<UConsumableItemConfig>(Item->GetConfig());
-		if (Config->VFX)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Config->VFX, GetActorLocation(), GetActorRotation(), true, EPSCPoolMethod::AutoRelease);
-		}
+	if (false == Item.IsValid())
+		return;
 
-		PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
-	}
+	TObjectPtr<UConsumableItemConfig> Config = Cast<UConsumableItemConfig>(Item->GetConfig());
+	if (Config->VFX)
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Config->VFX, GetActorLocation(), GetActorRotation(), true, EPSCPoolMethod::AutoRelease);
+
+	PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
+
+	// 아이템 사용 자극 이벤트
+	ReportPlayerActionEvent(static_cast<uint8>(EPlayerActionType::USE_ITEM), 1000.0f);
 }
 
 #pragma region Interaction
@@ -593,4 +588,15 @@ void APlayerCharacter::SetIgnoreInput(bool _bIgnoreMoveInput)
 {
 	bIgnoreMoveInput = _bIgnoreMoveInput;
 	Controller->SetIgnoreMoveInput(bIgnoreMoveInput);
+}
+
+void APlayerCharacter::ReportPlayerActionEvent(uint8 _actionType, float _range)
+{
+	FAIPlayerActionStimulusEvent Event;
+	Event.ActionType = _actionType;
+	Event.Instigator = this;
+	Event.Location = GetActorLocation();
+	Event.Range = _range;
+
+	UAISense_PlayerAction::ReportEvent(this, Event);
 }

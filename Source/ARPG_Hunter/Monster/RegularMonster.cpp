@@ -67,15 +67,13 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 		MonsterStatusBar->SetHealthBarPercent(GetStatComp()->GetResourceValue(ECharacterResourceType::HEALTH), GetStatComp()->GetResourceMaxValue(ECharacterResourceType::HEALTH));
 		WidgetComp->SetVisibility(false);
 	}
-
-	bReactToPlayerAttack = false;
 }
 
 void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 {
-	if (bReactToPlayerAttack)
+	if (GetReactToPlayerAction(EPlayerActionType::ATTACK))
 	{
-		bReactToPlayerAttack = false;
+		SetReactToPlayerAction(EPlayerActionType::ATTACK, false);
 		ExtraAct(FName(TEXT("Dodge")));
 		return;
 	}
@@ -114,7 +112,7 @@ void ARegularMonster::TriggerReactForPlayerAction(uint8 _actionType)
 		return;
 
 	int r = FMath::Rand() % 100 + 1;
-	bReactToPlayerAttack = r <= GetData()->PlayerActionReactProbability;
+	SetReactToPlayerAction(EPlayerActionType::ATTACK, r <= GetData()->PlayerActionReactProbability);
 }
 
 void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)

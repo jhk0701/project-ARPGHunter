@@ -177,4 +177,5 @@ public:
 	void SetIgnoreInput(bool _bIgnoreMoveInput);
 
 	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
+	void ReportPlayerActionEvent(uint8 _actionType, float _range);
 };

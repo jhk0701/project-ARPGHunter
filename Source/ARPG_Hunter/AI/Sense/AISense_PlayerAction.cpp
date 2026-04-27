@@ -11,7 +11,7 @@ UAISense_PlayerAction::UAISense_PlayerAction()
 {
 }
 
-void UAISense_PlayerAction::ReportPlayerActionEvent(UObject* _worldContext,
+void UAISense_PlayerAction::ReportEvent(UObject* _worldContext,
 	uint8 _type,
 	const FVector& _location,
 	float _range,

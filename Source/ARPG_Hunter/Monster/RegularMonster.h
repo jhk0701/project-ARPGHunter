@@ -24,8 +24,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TObjectPtr<class UWidgetComponent> WidgetComp;
 
-	bool bReactToPlayerAttack{ false };
-
 protected:
 	void BeginPlay() override;
 	void ShowDamageUI(bool _bIsCritical, uint32 _damage) override;

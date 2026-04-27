@@ -184,6 +184,8 @@ enum class EPlayerActionType:uint8
 {
 	ATTACK		UMETA(DisplayName = "Attack Action"),
 	USE_ITEM	UMETA(DisplayName = "Use Item"),
+
+	END			UMETA(Hidden),
 };
 
 enum class EShortCutType : uint8
