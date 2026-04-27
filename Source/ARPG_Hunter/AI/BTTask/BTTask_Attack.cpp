@@ -36,6 +36,8 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 			if (Target == nullptr || Target->IsDead())
 				BBComp->ClearValue(FName(TEXT("Target")));
 
+			OnAttackEnded(OwnerComp);
+
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	);
@@ -48,4 +50,19 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	BBComp->SetValueAsFloat(FName(TEXT("AttackInterval")), Interval); // 공격 후 대기시간
 
 	return EBTNodeResult::InProgress;
+}
+
+UBTTask_ReactionAttack::UBTTask_ReactionAttack()
+{
+	NodeName = TEXT("Reaction Attack");
+	TriggerVarName = FName(TEXT("bPlayerActionTrigger"));
+}
+
+void UBTTask_ReactionAttack::OnAttackEnded(UBehaviorTreeComponent& OwnerComp)
+{
+	// 처리후 정리
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool(TriggerVarName, false);
+
+	if (AMonsterBase* Monster = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn()))
+		Monster->SetReactToPlayerAction(ReactingPlayerAction, false);
 }

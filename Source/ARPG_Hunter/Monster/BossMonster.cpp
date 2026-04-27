@@ -5,6 +5,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AIController.h"
 
 #include "Define/Enum.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
@@ -210,5 +211,12 @@ void ABossMonster::TriggerReactForPlayerAction(uint8 _actionType)
 		return;
 
 	int r = FMath::Rand() % 100 + 1;
-	SetReactToPlayerAction(EPlayerActionType::USE_ITEM, r <= GetData()->PlayerActionReactProbability);
+	bool bIsTrue = r <= GetData()->PlayerActionReactProbability;
+	SetReactToPlayerAction(EPlayerActionType::USE_ITEM, bIsTrue);
+
+	if (bIsTrue)
+	{
+		if (AAIController* AICon = Cast<AAIController>(GetController()))
+			AICon->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("bPlayerActionTrigger")), bIsTrue);
+	}
 }
