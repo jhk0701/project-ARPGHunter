@@ -34,8 +34,6 @@ AMonsterBase::AMonsterBase()
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
-
 	for (uint8 i = 0; i < static_cast<uint8>(EPlayerActionType::END); ++i)
 		bReactToPlayerAction.Add(static_cast<EPlayerActionType>(i), false);
 }
@@ -105,10 +103,6 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 
 	StatComp->Init(BaseStat);
 
-	for (const FMonsterAction& Action : Data->Config->AttackActions)
-		ActionTotalWeights[static_cast<uint8>(Action.Type)] = 0.0f;
-	for (const FMonsterAction& Action : Data->Config->AttackActions)
-		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 
 	// 충돌 설정
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Monster")));
@@ -229,27 +223,10 @@ float AMonsterBase::Attack(EMonsterAttackType _type)
 	if (AnimInst->Montage_IsPlaying(Data->Config->HitMontage))
 		return -1.0f;
 
-	// 가중치에 따른 선별
-	FMonsterData* MonsterData = GetData();
-	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_type)]);
-	float Sum = 0.0f;
+	// 공격 선택
+	ActionComp->SelectAttack(_type);
 
-	for (uint8 i = 0; i < MonsterData->Config->AttackActions.Num(); ++i)
-	{
-		const FMonsterAction& Action = MonsterData->Config->AttackActions[i];
-
-		if (Action.Type != _type)
-			continue;
-
-		Sum += Action.Weight;
-		if (RandomValue < Sum)
-		{
-			ActionComp->SetCurAttackIdx(i);
-			break;
-		}
-	}
-
-	// 공격
+	// 공격 실행
 	float Interval = ActionComp->PlayAttackAction();
 	if (Interval > 0)
 		SetMovable(false);

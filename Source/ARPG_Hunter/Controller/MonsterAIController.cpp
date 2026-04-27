@@ -148,6 +148,7 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 		_stimulus.StimulusLocation,
 		TeamSenseRange);
 	// TeamEvent.TeamIdentifier = GetGenericTeamId();
+	GEngine->AddOnScreenDebugMessage(1, 10.0f, FColor::Purple, FString::Printf(TEXT("Damage Sense :: Team Event (%d)"), TeamEvent.TeamIdentifier.GetId()));
 
 	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(
 		GetWorld(),

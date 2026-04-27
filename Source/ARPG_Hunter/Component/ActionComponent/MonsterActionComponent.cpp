@@ -16,6 +16,12 @@ void UMonsterActionComponent::Init(FTableRowBase* _data, TWeakObjectPtr<UAnimIns
 	SetFirePointComp(_firePointComp);
 
 	Data = static_cast<FMonsterData*>(_data);
+
+	SetCurAttackIdx(0);
+	ActionTotalWeights.Init(0.0f, static_cast<uint8>(EMonsterAttackType::END));
+
+	for (const FMonsterAction& Action : Data->Config->AttackActions)
+		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 }
 
 void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
@@ -122,6 +128,41 @@ bool UMonsterActionComponent::PlayExtraAction(const FName& _actName)
 	AnimInst->Montage_JumpToSection(_actName);
 
 	return true;
+}
+
+void UMonsterActionComponent::SelectAttack(EMonsterAttackType _type)
+{
+	SetCurAttackIdx(0);
+
+	if (_type == EMonsterAttackType::MELEE_OR_RANGED)
+	{
+		if (FMath::IsNearlyZero(ActionTotalWeights[static_cast<uint8>(EMonsterAttackType::MELEE)]))
+			_type = EMonsterAttackType::RANGED;
+		else if (FMath::IsNearlyZero(ActionTotalWeights[static_cast<uint8>(EMonsterAttackType::RANGED)]))
+			_type = EMonsterAttackType::MELEE;
+		else
+			_type = FMath::RandBool() ? EMonsterAttackType::MELEE : EMonsterAttackType::RANGED;
+	}
+
+	// 가중치에 따른 선별
+	FMonsterData* MonsterData = GetData();
+	float RandomValue = FMath::FRandRange(0.0f, ActionTotalWeights[static_cast<uint8>(_type)]);
+	float Sum = 0.0f;
+
+	for (uint8 i = 0; i < MonsterData->Config->AttackActions.Num(); ++i)
+	{
+		const FMonsterAction& Action = MonsterData->Config->AttackActions[i];
+
+		if (Action.Type != _type)
+			continue;
+
+		Sum += Action.Weight;
+		if (RandomValue <= Sum)
+		{
+			SetCurAttackIdx(i);
+			break;
+		}
+	}
 }
 
 const FMonsterAction& UMonsterActionComponent::GetCurrentAction() const

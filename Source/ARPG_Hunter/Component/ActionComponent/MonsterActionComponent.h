@@ -10,6 +10,7 @@ struct FMonsterData;
 struct FMonsterAction;
 struct FHitInfo;
 
+enum class EMonsterAttackType : uint8;
 enum class EGimicType : uint8;
 enum class EMonsterState : uint8;
 
@@ -27,6 +28,7 @@ class ARPG_HUNTER_API UMonsterActionComponent : public UActionComponent
 private:
 	FMonsterData* Data;
 	uint8 CurAttackIdx{ 0 };
+	TArray<float> ActionTotalWeights;
 
 protected:
 	FMonsterData* GetData() const { return Data; }
@@ -44,6 +46,7 @@ public:
 	virtual void PlayHitAction(EMonsterState _state);
 	bool PlayExtraAction(const FName& _actName);
 
+	void SelectAttack(EMonsterAttackType _type);
 	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
 	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
 

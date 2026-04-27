@@ -70,8 +70,6 @@ private:
 	bool bIsMovable{ true };
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
-	TArray<float> ActionTotalWeights;
-	UPROPERTY(VisibleAnywhere, Category = "AI")
 	TMap<EPlayerActionType, bool> bReactToPlayerAction;
 
 protected:

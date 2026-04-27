@@ -131,11 +131,12 @@ enum class EMonsterType : uint8
 UENUM(BlueprintType)
 enum class EMonsterAttackType : uint8 
 {
-	MELEE		UMETA(DisplayName = "Melee"),
-	RANGED		UMETA(DisplayName = "Ranged"),
-	GIMIC		UMETA(DisplayName = "Gimic"),
+	MELEE					UMETA(DisplayName = "Melee"),
+	RANGED					UMETA(DisplayName = "Ranged"),
+	GIMIC					UMETA(DisplayName = "Gimic"),
 
-	END
+	MELEE_OR_RANGED			UMETA(DisplayName = "MeleeOrRanged"),
+	END = MELEE_OR_RANGED	UMETA(Hidden)
 };
 
 UENUM(BlueprintType)
