@@ -105,6 +105,8 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, FString::Printf(TEXT("Sensed : %d"), Stimulus.Type.Index));
+
 		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
 			HandleSuspicious(Actor, Stimulus);
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_Damage::StaticClass()))
@@ -147,8 +149,7 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 		_actor,
 		_stimulus.StimulusLocation,
 		TeamSenseRange);
-	// TeamEvent.TeamIdentifier = GetGenericTeamId();
-	GEngine->AddOnScreenDebugMessage(1, 10.0f, FColor::Purple, FString::Printf(TEXT("Damage Sense :: Team Event (%d)"), TeamEvent.TeamIdentifier.GetId()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, FString::Printf(TEXT("Damage Sense :: Team Event (%d)"), TeamEvent.TeamIdentifier.GetId()));
 
 	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(
 		GetWorld(),
@@ -158,6 +159,8 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 
 void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimulus)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, FString::Printf(TEXT("Team Sense :: Target : %s"), *_actor->GetActorNameOrLabel()));
+
 	uint8 CurAlert = GetAlertState();
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
@@ -167,6 +170,8 @@ void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimul
 
 void AMonsterAIController::HandlePlayerAction(AActor* _actor, FAIStimulus& _stimulus)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, FString::Printf(TEXT("Player Action")));
+
 	uint8 CurAlert = GetAlertState();
 	if (CurAlert != static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
