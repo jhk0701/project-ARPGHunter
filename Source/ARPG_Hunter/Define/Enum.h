@@ -176,7 +176,7 @@ enum class EActorGroup : uint8
 	NEUTRAL = 200	UMETA(DisplayName = "Neutral"),
 
 	DEFAULT = 255	UMETA(DisplayName = "Default"),
-	END = DEFAULT
+	END = DEFAULT	UMETA(Hidden)
 };
 
 UENUM(BlueprintType)

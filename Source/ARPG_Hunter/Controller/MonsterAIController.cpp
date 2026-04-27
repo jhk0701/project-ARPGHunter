@@ -134,6 +134,7 @@ void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& 
 
 void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _stimulus)
 {
+	// 처음 피격 시에만 작동
 	uint8 CurAlert = GetAlertState();
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;

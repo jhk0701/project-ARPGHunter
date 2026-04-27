@@ -106,6 +106,8 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	StatComp->Init(BaseStat);
 
 	for (const FMonsterAction& Action : Data->Config->AttackActions)
+		ActionTotalWeights[static_cast<uint8>(Action.Type)] = 0.0f;
+	for (const FMonsterAction& Action : Data->Config->AttackActions)
 		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 
 	// 충돌 설정
