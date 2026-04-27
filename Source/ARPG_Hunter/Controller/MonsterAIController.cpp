@@ -11,7 +11,6 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Damage.h"
 #include "Perception/AISenseConfig_Team.h"
-
 #include "AI/Sense/AISense_PlayerAction.h"
 
 #include "Define/Enum.h"
@@ -26,18 +25,15 @@ AMonsterAIController::AMonsterAIController()
 	ActorGroup = EActorGroup::HOSTILE;
 }
 
-void AMonsterAIController::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	SetGenericTeamId(FGenericTeamId(static_cast<uint8>(ActorGroup)));
-}
-
 void AMonsterAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
 	ControlledMonster = Cast<AMonsterBase>(InPawn);
+
+	SetGenericTeamId(FGenericTeamId(static_cast<uint8>(ActorGroup)));
+	if (UAIPerceptionSystem* AIPerceptSys = UAIPerceptionSystem::GetCurrent(GetWorld()))
+		AIPerceptSys->UpdateListener(*AIPerception);
 
 	InitBT(InPawn);
 	StopPerception();
@@ -105,8 +101,6 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 {
 	if (Stimulus.WasSuccessfullySensed())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, FString::Printf(TEXT("Sensed : %d"), Stimulus.Type.Index));
-
 		if (Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
 			HandleSuspicious(Actor, Stimulus);
 		else if (Stimulus.Type == UAISense::GetSenseID(UAISense_Damage::StaticClass()))
@@ -117,9 +111,7 @@ void AMonsterAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus 
 			HandlePlayerAction(Actor, Stimulus);
 	}
 	else
-	{
 		MissTarget(Actor);
-	}
 }
 
 void AMonsterAIController::HandleSuspicious(AActor* _actor, struct FAIStimulus& _stimulus)
@@ -145,22 +137,17 @@ void AMonsterAIController::HandleDamage(AActor* _actor, struct FAIStimulus& _sti
 
 	// 피격 시, 주변 몬스터들에게 피격 이벤트 발행
 	FAITeamStimulusEvent TeamEvent = FAITeamStimulusEvent(
-		this,
-		_actor,
-		_stimulus.StimulusLocation,
+		GetPawn(),
+		_actor, 
+		_stimulus.StimulusLocation, 
 		TeamSenseRange);
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, FString::Printf(TEXT("Damage Sense :: Team Event (%d)"), TeamEvent.TeamIdentifier.GetId()));
+	TeamEvent.TeamIdentifier = GetGenericTeamId();
 
-	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(
-		GetWorld(),
-		TeamEvent
-	);
+	UAIPerceptionSystem::OnEvent<FAITeamStimulusEvent, FAITeamStimulusEvent::FSenseClass>(GetWorld(), TeamEvent);
 }
 
 void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimulus)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Blue, FString::Printf(TEXT("Team Sense :: Target : %s"), *_actor->GetActorNameOrLabel()));
-
 	uint8 CurAlert = GetAlertState();
 	if (CurAlert >= static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
@@ -170,8 +157,6 @@ void AMonsterAIController::HandleTeamDamage(AActor* _actor, FAIStimulus& _stimul
 
 void AMonsterAIController::HandlePlayerAction(AActor* _actor, FAIStimulus& _stimulus)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, FString::Printf(TEXT("Player Action")));
-
 	uint8 CurAlert = GetAlertState();
 	if (CurAlert != static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;

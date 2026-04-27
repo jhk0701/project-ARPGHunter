@@ -38,7 +38,6 @@ private:
 	void InitBT(APawn* _inPawn);
 
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:

@@ -100,9 +100,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		float Val = DataManager->GetMonsterLvCurve(_param.Lv, EnumToName(Type));
 		BaseStat.Add(Type, Data->BaseStat[Type] + static_cast<uint32>(Val));
 	}
-
 	StatComp->Init(BaseStat);
-
 
 	// 충돌 설정
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Monster")));
@@ -125,6 +123,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		BBComp->SetValueAsFloat(FName(TEXT("MoveRangeOnAttack")), Data->MoveRangeOnAttack);
 		BBComp->SetValueAsFloat(FName(TEXT("ActivityRange")), Data->ActivityRange);
 		BBComp->SetValueAsVector(FName(TEXT("ReturnPoint")), _param.Location);
+		BBComp->SetValueAsEnum(FName(TEXT("AlertState")), static_cast<uint8>(EMonsterAlertState::IDLE));
 
 		// BT 재가동
 		MonsterAI->EnableController();
