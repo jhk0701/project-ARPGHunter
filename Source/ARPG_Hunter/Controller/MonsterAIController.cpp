@@ -169,13 +169,8 @@ void AMonsterAIController::HandlePlayerAction(AActor* _actor, FAIStimulus& _stim
 	if (CurAlert != static_cast<uint8>(EMonsterAlertState::ENAGE))
 		return;
 
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Purple, TEXT("Player Action Sense On"));
-
 	if (AMonsterBase* Monster = Cast<AMonsterBase>(GetPawn()))
 		Monster->TriggerReactForPlayerAction(static_cast<uint8>(_stimulus.Strength));
-
-	/*
-	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("bPlayerActionTrigger")), true);*/
 }
 
 void AMonsterAIController::MissTarget(AActor* _actor)

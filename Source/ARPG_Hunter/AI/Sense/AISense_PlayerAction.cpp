@@ -9,7 +9,6 @@
 
 UAISense_PlayerAction::UAISense_PlayerAction()
 {
-
 }
 
 void UAISense_PlayerAction::ReportPlayerActionEvent(UObject* _worldContext,

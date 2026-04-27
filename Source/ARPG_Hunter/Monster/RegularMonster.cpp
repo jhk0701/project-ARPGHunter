@@ -68,14 +68,14 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 		WidgetComp->SetVisibility(false);
 	}
 
-	bReactToPlayerAction = false;
+	bReactToPlayerAttack = false;
 }
 
 void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 {
-	if (bReactToPlayerAction) 
+	if (bReactToPlayerAttack)
 	{
-		bReactToPlayerAction = false;
+		bReactToPlayerAttack = false;
 		ExtraAct(FName(TEXT("Dodge")));
 		return;
 	}
@@ -114,7 +114,7 @@ void ARegularMonster::TriggerReactForPlayerAction(uint8 _actionType)
 		return;
 
 	int r = FMath::Rand() % 100 + 1;
-	bReactToPlayerAction = r <= GetData()->PlayerActionReactProbability;
+	bReactToPlayerAttack = r <= GetData()->PlayerActionReactProbability;
 }
 
 void ARegularMonster::KnockBack(const FHitInfo& _hitInfo)
