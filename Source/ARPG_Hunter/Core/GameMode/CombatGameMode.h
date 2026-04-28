@@ -70,6 +70,7 @@ public:
 
 	TMap<EStageEvent, FStageEvent> StageEvent;
 	FOnGameEnd OnGameEnd;
+
 	void PublishEvent(EStageEvent _event, const FStageEventContext& _context) { StageEvent[_event].Broadcast(_context); }
 
 	// PlayerStart 중 하나에서 스폰하기 위해 Blueprint Native 함수 오버라이드

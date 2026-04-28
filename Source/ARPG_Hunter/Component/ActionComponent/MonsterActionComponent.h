@@ -55,7 +55,6 @@ public:
 	uint16 GetAttackActionDamagePer(uint8 _opt);
 };
 
-
 UCLASS()
 class ARPG_HUNTER_API UBossActionComponent : public UMonsterActionComponent
 {

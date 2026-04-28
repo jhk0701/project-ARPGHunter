@@ -65,3 +65,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Action")
 	TArray<FMonsterAction> AttackActions;
 };
+
+
+UCLASS()
+class ARPG_HUNTER_API URegularMonsterConfig : public UMonsterConfig
+{
+	GENERATED_BODY()
+
+
+};

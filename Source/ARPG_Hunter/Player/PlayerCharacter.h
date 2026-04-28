@@ -115,7 +115,6 @@ private:
 
 #pragma endregion
 
-
 private:
 	void InitEquipment(TWeakObjectPtr<class UEquipment> _equipment);
 	void UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<class UEquipmentItem> _equipment);

@@ -87,7 +87,7 @@ float UMonsterActionComponent::PlayAttackAction()
 	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
 
 	if (AttackMontage == nullptr ||
-		AnimInst->Montage_IsPlaying(MonsterAction.Action->Montage))
+		AnimInst->Montage_IsPlaying(AttackMontage))
 		return -1.0f;
 
 	AnimInst->Montage_Play(AttackMontage);
