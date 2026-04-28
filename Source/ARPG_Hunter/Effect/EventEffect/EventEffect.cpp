@@ -70,6 +70,5 @@ void USuperArmorEffect::OnHitEvent(uint8& _hitBit, uint32& _damage)
 
 	// 슈퍼 아머 적용
 	_hitBit |= static_cast<uint8>(EHitOption::IMMUNE_STIFFEN); // 경직 면역 적용
-
-	_damage *= 0.25f; // 데미지 경감
+	_damage *= (1.0f - static_cast<float>(GetValue()) * 0.01f); // 데미지 경감
 }
