@@ -157,6 +157,22 @@ FText EnumToText(ECharacterStatType _type)
 	}
 }
 
+FName EnumToName(EPickOff _type)
+{
+	switch (_type)
+	{
+	case EPickOff::BACKWARD:
+		return FName(TEXT("Backward"));
+	case EPickOff::RIGHTWARD:
+		return FName(TEXT("Rightward"));
+	case EPickOff::LEFTWARD:
+		return FName(TEXT("Leftward"));
+	case EPickOff::NONE: __fallthrough;
+	default:
+		return NAME_None;
+	}
+}
+
 FName EnumToName(EGimicType _type)
 {
 	switch (_type)

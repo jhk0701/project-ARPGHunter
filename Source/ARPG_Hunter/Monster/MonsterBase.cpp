@@ -213,7 +213,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	SetMovable(false);
 }
 
-float AMonsterBase::Attack(EMonsterAttackType _type, AActor* _target)
+float AMonsterBase::Attack(EMonsterAttackType _type, const FName& _opt /*= NAME_None*/)
 {
 	if (IsDead())
 		return -1.0f;
@@ -226,7 +226,7 @@ float AMonsterBase::Attack(EMonsterAttackType _type, AActor* _target)
 	ActionComp->SelectAttack(_type);
 
 	// 공격 실행
-	float Interval = ActionComp->PlayAttackAction();
+	float Interval = ActionComp->PlayAttackAction(_opt);
 	if (Interval > 0)
 		SetMovable(false);
 

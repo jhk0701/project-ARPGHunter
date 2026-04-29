@@ -42,7 +42,7 @@ public:
 		TWeakObjectPtr<AActor> _target = nullptr
 	) override;
 
-	float PlayAttackAction();
+	float PlayAttackAction(const FName& _opt = NAME_None);
 	virtual void PlayHitAction(EMonsterState _state);
 	bool PlayExtraAction(const FName& _actName);
 

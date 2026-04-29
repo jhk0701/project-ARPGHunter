@@ -134,11 +134,23 @@ enum class EMonsterAttackType : uint8
 	MELEE					UMETA(DisplayName = "Melee"),
 	RANGED					UMETA(DisplayName = "Ranged"),
 	GIMIC					UMETA(DisplayName = "Gimic"),
-	KEEP_IN_CHECK			UMETA(DisplayName = "KeepInCheck"),
+	PICK_OFF				UMETA(DisplayName = "PickOff"),
 
 	MELEE_OR_RANGED			UMETA(DisplayName = "MeleeOrRanged"),
 	END = MELEE_OR_RANGED	UMETA(Hidden)
 };
+
+// 몬스터의 견제 행동 시 방향
+UENUM(BlueprintType)
+enum class EPickOff : uint8 
+{
+	BACKWARD		UMETA(DisplayName = "Backward"),
+	RIGHTWARD		UMETA(DisplayName = "Rightward"),
+	LEFTWARD		UMETA(DisplayName = "Leftward"),
+	
+	NONE			UMETA(Hidden)
+};
+FName EnumToName(EPickOff _type);
 
 UENUM(BlueprintType)
 enum class EGimicType : uint8 

@@ -79,7 +79,7 @@ void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _trace
 	}
 }
 
-float UMonsterActionComponent::PlayAttackAction()
+float UMonsterActionComponent::PlayAttackAction(const FName& _opt /*= NAME_None*/)
 {
 	const FMonsterAction& MonsterAction = GetCurrentAction();
 
@@ -91,6 +91,8 @@ float UMonsterActionComponent::PlayAttackAction()
 		return -1.0f;
 
 	AnimInst->Montage_Play(AttackMontage);
+	if (_opt != NAME_None)
+		AnimInst->Montage_JumpToSection(_opt, AttackMontage);
 
 	// 공격 시 자기 버프 획득
 	if (MonsterAction.Action->EventEffect.Contains(EActionEvent::ON_START))
