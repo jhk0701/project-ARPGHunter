@@ -26,7 +26,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float FrontDegreeRange{ 60.0f };
 	UPROPERTY(EditAnywhere)
-	float BackDegreeRange{ 150.0f };
+	float BackDegreeRange{ 30.0f };
 
 protected:
 	bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;

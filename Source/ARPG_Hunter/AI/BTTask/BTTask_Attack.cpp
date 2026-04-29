@@ -12,29 +12,32 @@
 UBTTask_Attack::UBTTask_Attack()
 {
 	NodeName = TEXT("Attack");
+	TargetValName = FName(TEXT("Target"));
+	AttackIntervalValName = FName(TEXT("AttackInterval"));
+	PickOffValName = FName(TEXT("PickOff"));
 }
 
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	AMonsterBase* Owner = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
+	TObjectPtr<AMonsterBase> Owner = Cast<AMonsterBase>(OwnerComp.GetAIOwner()->GetPawn());
 	if(Owner == nullptr)
 		return EBTNodeResult::Failed;
 
-	UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
-	APlayerCharacter* Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(FName(TEXT("Target"))));
+	TObjectPtr<UBlackboardComponent> BBComp = OwnerComp.GetBlackboardComponent();
+	TObjectPtr<APlayerCharacter> Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(TargetValName));
 	if (Target == nullptr)
 		return EBTNodeResult::Failed;
 	
 	Owner->OnAttackMontageEnded.BindLambda(
 		[this, &OwnerComp]()
 		{
-			UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
-			APlayerCharacter* Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(FName(TEXT("Target"))));
+			TObjectPtr<UBlackboardComponent> BBComp = OwnerComp.GetBlackboardComponent();
+			TObjectPtr<APlayerCharacter> Target = Cast<APlayerCharacter>(BBComp->GetValueAsObject(TargetValName));
 
 			if (Target == nullptr || Target->IsDead())
-				BBComp->ClearValue(FName(TEXT("Target")));
+				BBComp->ClearValue(TargetValName);
 
 			OnAttackEnded(OwnerComp);
 
@@ -42,12 +45,13 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		}
 	);
 
-	float Interval = Owner->Attack(AttackType);
+	EPickOff CurPickOff = static_cast<EPickOff>(BBComp->GetValueAsEnum(PickOffValName));
+	float Interval = Owner->Attack(AttackType, EnumToName(CurPickOff));
 
 	if (Interval < 0.0f)
 		return EBTNodeResult::Failed; // 공격 동작이 유효하지 않은 상황 실패처리
 
-	BBComp->SetValueAsFloat(FName(TEXT("AttackInterval")), Interval); // 공격 후 대기시간
+	BBComp->SetValueAsFloat(AttackIntervalValName, Interval); // 공격 후 대기시간
 
 	return EBTNodeResult::InProgress;
 }

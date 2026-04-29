@@ -27,22 +27,24 @@ bool UBTDecorator_TargetIsInFront::CalculateRawConditionValue(UBehaviorTreeCompo
 	double Dot = FVector::DotProduct(Dist, Owner->GetActorForwardVector());
 	double Degree = FMath::RadiansToDegrees(FMath::Acos(Dot));
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Target Degree : %f"), Degree));
-
 	if (Degree < FrontDegreeRange) // 정면인 경우
 	{
 		BBComp->SetValueAsEnum(PickOffValName, static_cast<uint8>(EPickOff::NONE));
 		return true;
 	}
 
-	if (Degree > BackDegreeRange) // 후면인 경우
-		BBComp->SetValueAsEnum(PickOffValName, static_cast<uint8>(EPickOff::BACKWARD));
+	EPickOff PickOffDir;
+
+	if (Degree > 180.0f - BackDegreeRange) // 후면인 경우
+		PickOffDir = EPickOff::BACKWARD;
 	else
 	{
 		// 좌우 판정, 외적 결과, Z축이 음수 : 왼쪽, 양수 : 오른쪽
 		FVector Crs = FVector::CrossProduct(Owner->GetActorForwardVector(), Dist);
-		BBComp->SetValueAsEnum(PickOffValName, static_cast<uint8>(Crs.Z > 0 ? EPickOff::RIGHTWARD : EPickOff::LEFTWARD));
+		PickOffDir = Crs.Z > 0 ? EPickOff::RIGHTWARD : EPickOff::LEFTWARD;
 	}
+
+	BBComp->SetValueAsEnum(PickOffValName, static_cast<uint8>(PickOffDir));
 
 	return false;
 }

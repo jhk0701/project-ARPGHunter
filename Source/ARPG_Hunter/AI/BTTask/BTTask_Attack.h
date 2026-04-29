@@ -22,6 +22,12 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	EMonsterAttackType AttackType;
+	UPROPERTY(EditAnywhere)
+	FName TargetValName;
+	UPROPERTY(EditAnywhere)
+	FName AttackIntervalValName;
+	UPROPERTY(EditAnywhere)
+	FName PickOffValName;
 
 protected:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
