@@ -213,7 +213,7 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	SetMovable(false);
 }
 
-float AMonsterBase::Attack(EMonsterAttackType _type)
+float AMonsterBase::Attack(EMonsterAttackType _type, AActor* _target)
 {
 	if (IsDead())
 		return -1.0f;

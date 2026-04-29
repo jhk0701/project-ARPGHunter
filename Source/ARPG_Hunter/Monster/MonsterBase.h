@@ -112,7 +112,7 @@ public:
 	void SetMoveSpeed(bool _bIsChasing);
 
 #pragma region Monster Action
-	virtual float Attack(EMonsterAttackType _type);
+	float Attack(EMonsterAttackType _type, AActor* _target);
 	virtual bool ExtraAct(const FName& _actName);
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;

@@ -20,5 +20,7 @@ private:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	virtual void Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector) override;
+	void Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector) override;
+	
+	void Hit(TObjectPtr<AActor> _target, const FHitResult& _result) override;
 };

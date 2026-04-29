@@ -21,11 +21,18 @@ void AProjectile::Tick(float DeltaTime)
 		return;
 	}
 	
-	AddActorWorldOffset(Speed * DeltaTime * GetFireVector(), true, GetHitResult());
+	AddActorWorldOffset(Speed * DeltaTime * GetFireVector(), true);
 }
 
 void AProjectile::Fire(TWeakObjectPtr<AActor> _attacker, const FVector& _vector)
 {
 	Super::Fire(_attacker, _vector);
 	SetActorRotation(GetFireVector().ToOrientationRotator());
+}
+
+void AProjectile::Hit(TObjectPtr<AActor> _target, const FHitResult& _result)
+{
+	Super::Hit(_target, _result);
+
+	Disable();
 }

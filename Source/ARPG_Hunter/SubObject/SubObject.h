@@ -20,8 +20,6 @@ public:
 	FOnDisable OnDisable;
 
 private:
-	FHitResult HitResult;
-
 	UPROPERTY(EditDefaultsOnly);
 	TObjectPtr<class UBoxComponent> BoxComp;
 	UPROPERTY(EditDefaultsOnly);
@@ -58,15 +56,13 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Hit(TObjectPtr<AActor> _target);
+	virtual void Hit(TObjectPtr<AActor> _target, const FHitResult& _result);
 	
 	void SetElapsedTime(float _time) { ElapsedTime = _time; }
 	void AddElapsedTime(float _time) { ElapsedTime += _time; }
 
 	float GetElapsedTime() const { return ElapsedTime; }
 	float GetLifeTime() const { return LifeTime; }
-	FHitResult* GetHitResult() { return &HitResult; }
-
 	const FVector& GetFireVector() { return FireVector; }
 
 };

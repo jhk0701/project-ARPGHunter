@@ -34,8 +34,7 @@ void ASubObject::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (nullptr == OtherActor)
 		return;
 
-	HitResult = SweepResult;
-	Hit(OtherActor);
+	Hit(OtherActor, SweepResult);
 }
 
 void ASubObject::Init(TObjectPtr<USubObjectConfig> _config, TFunction<void(TArray<FHitResult>&)> _onHitAction)
@@ -61,16 +60,13 @@ void ASubObject::Disable()
 	SetActorTickEnabled(false); // 틱 비활성화
 }
 
-void ASubObject::Hit(TObjectPtr<AActor> _target)
+void ASubObject::Hit(TObjectPtr<AActor> _target, const FHitResult& _result)
 {
 	if (OnHit) 
 	{
 		TArray<FHitResult> ArrResult;
-		ArrResult.Add(HitResult);
+		ArrResult.Add(_result);
 
 		OnHit(ArrResult);
 	}
-
-
-	Disable();
 }

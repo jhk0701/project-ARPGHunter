@@ -42,7 +42,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		}
 	);
 
-	float Interval = Owner->Attack(AttackType);
+	float Interval = Owner->Attack(AttackType, Target);
 
 	if (Interval < 0.0f)
 		return EBTNodeResult::Failed; // 공격 동작이 유효하지 않은 상황 실패처리

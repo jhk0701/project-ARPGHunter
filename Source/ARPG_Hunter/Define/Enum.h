@@ -134,6 +134,7 @@ enum class EMonsterAttackType : uint8
 	MELEE					UMETA(DisplayName = "Melee"),
 	RANGED					UMETA(DisplayName = "Ranged"),
 	GIMIC					UMETA(DisplayName = "Gimic"),
+	KEEP_IN_CHECK			UMETA(DisplayName = "KeepInCheck"),
 
 	MELEE_OR_RANGED			UMETA(DisplayName = "MeleeOrRanged"),
 	END = MELEE_OR_RANGED	UMETA(Hidden)
