@@ -40,8 +40,4 @@ protected:
 private:
 	// 등록된 이벤트
 	TArray<FAIPlayerActionStimulusEvent> RegisteredEvents;
-
-	// 실제 감지 판정 로직
-	void ProcessPlayerActionEvent(AIPerception::FListenerMap* _listenerMap, const FAIPlayerActionStimulusEvent& _event);
-	
 };

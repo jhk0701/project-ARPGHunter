@@ -273,7 +273,7 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	if (bIsValid) 
 	{
 		// 아이템 사용 자극 이벤트
-		ReportPlayerActionEvent(static_cast<uint8>(EPlayerActionType::ATTACK), 500.0f); // TODO : 매직넘버 제거
+		ReportPlayerActionEvent(static_cast<uint8>(EPlayerActionType::ATTACK), RangePerAction[EPlayerActionType::ATTACK]);
 	}
 
 	if (false == bIsValid || InputDirection.SquaredLength() > 0)
@@ -462,7 +462,7 @@ void APlayerCharacter::HandleUseItemNotify()
 	PlayerManager->UseQuickSlotItem(UsingQuickSlotIndex, this);
 
 	// 아이템 사용 자극 이벤트
-	ReportPlayerActionEvent(static_cast<uint8>(EPlayerActionType::USE_ITEM), 1000.0f);
+	ReportPlayerActionEvent(static_cast<uint8>(EPlayerActionType::USE_ITEM), RangePerAction[EPlayerActionType::USE_ITEM]);
 }
 
 #pragma region Interaction

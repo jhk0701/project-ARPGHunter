@@ -20,5 +20,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sense", config, meta = (UIMin = 0.0, ClampMin = 0.0))
 	float RecogRange = 500.0f;
 	
-	virtual TSubclassOf<UAISense> GetSenseImplementation() const;
+	virtual TSubclassOf<UAISense> GetSenseImplementation() const override;
 };

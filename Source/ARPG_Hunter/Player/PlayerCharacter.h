@@ -13,6 +13,7 @@
 class UCameraShakeBase;
 enum class EAttackType : uint8;
 enum class EActionProcess : uint8;
+enum class EPlayerActionType : uint8;
 enum class EEquipmentType :uint8;
 enum class EActorGroup : uint8;
 
@@ -80,6 +81,10 @@ private:
 	float InteractionRange{ 1000.0f };
 	UPROPERTY(EditAnywhere, Category = "Setting|Interaction")
 	float InteractionSize{ 100.0f };
+
+
+	UPROPERTY(EditAnywhere, Category = "Setting|PlayerAction")
+	TMap<EPlayerActionType, float> RangePerAction;
 #pragma endregion
 
 #pragma region Interaction

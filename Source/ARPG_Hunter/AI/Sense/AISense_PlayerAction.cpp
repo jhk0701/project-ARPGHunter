@@ -59,47 +59,44 @@ float UAISense_PlayerAction::Update()
 	// 핵심 처리 함수 — 매 Sense 업데이트 틱마다 호출
 	AIPerception::FListenerMap* ListenersMap = GetListeners();
 
+	if (nullptr == ListenersMap)
+		return SuspendNextUpdate;
+
 	// 등록된 이벤트 처리
 	for (const FAIPlayerActionStimulusEvent& Event : RegisteredEvents)
-		ProcessPlayerActionEvent(ListenersMap, Event);
+	{
+		// 감지를 등록한 리스너들에 대해 순회
+		for (TPair<FPerceptionListenerID, FPerceptionListener>& Pair : *ListenersMap)
+		{
+			FPerceptionListener& Listener = Pair.Value;
+
+			// 리스너가 이 Sense를 등록했는지 확인
+			if (!Listener.HasSense(GetSenseID()))
+				continue;
+
+			const AActor* ListenerActor = Listener.GetBodyActor();
+			if (nullptr == ListenerActor)
+				continue;
+
+			// 발생 위치와 Listener의 거리 체크
+			FVector DistVec = Event.Location - ListenerActor->GetActorLocation();
+			if (DistVec.SquaredLength() < Event.Range * Event.Range)
+			{
+				// 지정한 범위 이내라면 Listener에게 이벤트 전달
+				FAIStimulus Stimulus(
+					*this,
+					static_cast<float>(Event.ActionType), // 원래 자극 강도 : 현재는 공격 타입을 보내줄 것
+					Event.Location,  // 자극 발생 지점
+					ListenerActor->GetActorLocation() // 수신자 위치
+				);
+
+				Listener.RegisterStimulus(Event.Instigator, Stimulus);
+			}
+		}
+	}
 
 	RegisteredEvents.Reset();
 
 	// 다음 업데이트까지 대기
 	return SuspendNextUpdate;
-}
-
-void UAISense_PlayerAction::ProcessPlayerActionEvent(AIPerception::FListenerMap* _listenerMap, const FAIPlayerActionStimulusEvent& _event)
-{
-	if (nullptr == _listenerMap)
-		return;
-
-	// 감지를 등록한 리스너들에 대해 순회
-	for (TPair<FPerceptionListenerID, FPerceptionListener>& Pair : *_listenerMap)
-	{
-		FPerceptionListener& Listener = Pair.Value;
-
-		// 리스너가 이 Sense를 등록했는지 확인
-		if (!Listener.HasSense(GetSenseID()))
-			continue;
-
-		const AActor* ListenerActor = Listener.GetBodyActor();
-		if (nullptr == ListenerActor)
-			continue;
-
-		// 발생 위치와 Listener의 거리 체크
-		FVector DistVec = _event.Location - ListenerActor->GetActorLocation();
-		if (DistVec.SquaredLength() < _event.Range * _event.Range)
-		{
-			// 지정한 범위 이내라면 Listener에게 이벤트 전달
-			FAIStimulus Stimulus(
-				*this,
-				static_cast<float>(_event.ActionType), // 원래 자극 강도 : 현재는 공격 타입을 보내줄 것
-				_event.Location,  // 자극 발생 지점
-				ListenerActor->GetActorLocation() // 수신자 위치
-			);
-
-			Listener.RegisterStimulus(_event.Instigator, Stimulus);
-		}
-	}
 }
