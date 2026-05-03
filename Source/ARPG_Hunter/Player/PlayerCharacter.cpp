@@ -95,6 +95,7 @@ APlayerCharacter::APlayerCharacter()
 #pragma endregion
 
 	ActorGroup = EActorGroup::FRIENDLY;
+	SetEnemyCollisionChannel(ECC_GameTraceChannel4); // Monster Collision Channel
 }
 
 // Called when the game starts or when spawned
@@ -287,7 +288,7 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	bool bIsHit = UKismetSystemLibrary::SphereTraceSingle(
 		GetWorld(),
 		Start, Start, AutoOrientToEnemyRadius,
-		UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4), false,
+		UEngineTypes::ConvertToTraceType(GetEnemyCollisionChannel()), false,
 		{}, EDrawDebugTrace::None, 
 		HitResult, true);
 
@@ -322,25 +323,6 @@ void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 	ActionComp->SetActionProcess(_eProcess);
 }
 
-void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
-{
-	if (IsDead())
-		return;
-
-	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
-	uint32 Damage = _hitInfo.bIgnoreDefense ? 
-		_hitInfo.Damage : 
-		ACombatGameMode::CalculateDefense(_hitInfo.Damage, Stat->GetStat(ECharacterStatType::DEFENSE));
-
-	Stat->TakeDamage(Damage,
-		[this]() 
-		{
-			ActionComp->PlayHitAction(); // hit 애니메이션 실행
-			ShakeCamera(CameraShakeOnHit); 
-		}
-	);
-}
-
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
 	if (IsDead())
@@ -350,7 +332,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
 	
 	// 공격 로직 수행
-	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel4,
+	ActionComp->ProcessAttack(_opt, GetEnemyCollisionChannel(),
 		[WeakThis, _opt](TArray<FHitResult>& _hitResults)
 		{
 			if (false == WeakThis.IsValid())
@@ -424,6 +406,14 @@ void APlayerCharacter::OnDead()
 	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
 
 	ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
+}
+
+void APlayerCharacter::OnCharacterHit()
+{
+	Super::OnCharacterHit();
+
+	ActionComp->PlayHitAction(); // hit 애니메이션 실행
+	ShakeCamera(CameraShakeOnHit);
 }
 
 void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)

@@ -3,6 +3,8 @@
 
 #include "Character/ARPGCharacterBase.h"
 
+#include "Define/Enum.h"
+#include "Core/GameMode/CombatGameMode.h"
 #include "Component/StatComponent.h"
 
 // Sets default values
@@ -45,7 +47,17 @@ void AARPGCharacterBase::HandleAttackNotify(uint8 _opt)
 {
 }
 
-void AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)
+uint32 AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)
 {
+	if (IsDead())
+		return 0;
 
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	uint32 Damage = _hitInfo.bIgnoreDefense ?
+		_hitInfo.Damage :
+		ACombatGameMode::CalculateDefense(_hitInfo.Damage, Stat->GetStat(ECharacterStatType::DEFENSE));
+
+	Stat->TakeDamage(Damage, [this]() { OnCharacterHit(); });
+
+	return Damage;
 }

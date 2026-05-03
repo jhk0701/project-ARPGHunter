@@ -34,6 +34,8 @@ AMonsterBase::AMonsterBase()
 
 	for (uint8 i = 0; i < static_cast<uint8>(EPlayerActionType::END); ++i)
 		bReactToPlayerAction.Add(static_cast<EPlayerActionType>(i), false);
+
+	SetEnemyCollisionChannel(ECC_GameTraceChannel3); // Player Collision Channel
 }
 
 void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -176,19 +178,14 @@ void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
 		GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
 
-void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
+uint32 AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
-	if (IsDead())
-		return;
+	uint32 Damage = Super::HitBy(_hitInfo);
+	if (0 == Damage)
+		return Damage;
 
 	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
 
-	// 피격 발생
-	uint32 Damage = _hitInfo.bIgnoreDefense ? 
-		_hitInfo.Damage :
-		ACombatGameMode::CalculateDefense(_hitInfo.Damage, Stat->GetStat(ECharacterStatType::DEFENSE));
-
-	Stat->TakeDamage(Damage);
 	Stat->TakeStaminaDamage(_hitInfo.StaggerDamage);
 	ShowDamageUI(_hitInfo.bIsCriticalHit, Damage);
 
@@ -205,10 +202,9 @@ void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 		);
 	}
 
-	/*if (StatComp->IsDead())
-		OnDead();*/
-
 	SetMovable(false);
+
+	return Damage;
 }
 
 float AMonsterBase::Attack(EMonsterAttackType _type, const FName& _opt /*= NAME_None*/)
@@ -248,7 +244,7 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 
 	TWeakObjectPtr<AMonsterBase> WeakThis(this);
 
-	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel3,
+	ActionComp->ProcessAttack(_opt, GetEnemyCollisionChannel(),
 		[WeakThis, _opt](TArray<FHitResult>& _hitResult)
 		{
 			if (WeakThis.IsValid() == false)

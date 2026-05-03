@@ -38,7 +38,7 @@ public:
 	ABossMonster();
 
 	void Init(const FMonsterInitParam& _param) override;
-	void HitBy(const FHitInfo& _hitInfo) override;
+	uint32 HitBy(const FHitInfo& _hitInfo) override;
 
 	bool CanUseGimic() override;
 	void HandleGimicNotify(EGimicType _type, uint16 _gimicValue) override;

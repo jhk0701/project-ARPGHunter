@@ -109,7 +109,7 @@ public:
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨
-	virtual void HitBy(const FHitInfo& _hitInfo) override;
+	virtual uint32 HitBy(const FHitInfo& _hitInfo) override;
 
 #pragma endregion
 	

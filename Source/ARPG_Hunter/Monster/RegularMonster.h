@@ -31,9 +31,10 @@ protected:
 	TObjectPtr<UWidgetComponent> GetWidgetComp() { return WidgetComp; }
 
 public:
-	virtual void Init(const FMonsterInitParam& _param) override;
-	virtual void HitBy(const FHitInfo& _hitInfo) override;
-	virtual void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) override;
+	void Init(const FMonsterInitParam& _param) override;
+	uint32 HitBy(const FHitInfo& _hitInfo) override;
+
+	void OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState) override;
 	void TriggerReactForPlayerAction(uint8 _actionType) override;
 
 	void KnockBack(const FHitInfo& _hitInfo);

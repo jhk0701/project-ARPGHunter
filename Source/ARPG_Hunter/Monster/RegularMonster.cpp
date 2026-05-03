@@ -69,21 +69,24 @@ void ARegularMonster::Init(const FMonsterInitParam& _param)
 	}
 }
 
-void ARegularMonster::HitBy(const FHitInfo& _hitInfo)
+uint32 ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	if (GetReactToPlayerAction(EPlayerActionType::ATTACK))
 	{
 		SetReactToPlayerAction(EPlayerActionType::ATTACK, false);
 		ExtraAct(FName(TEXT("Dodge")));
-		return;
+		return 0;
 	}
 
-	Super::HitBy(_hitInfo);
+	uint32 Damage = Super::HitBy(_hitInfo);
+	if (0 == Damage)
+		return Damage;
 
 	// 모션 재생
 	ActionComp->PlayHitAction(IsDead() ? EMonsterState::DEAD : EMonsterState::NORMAL);
-
 	KnockBack(_hitInfo);
+
+	return Damage;
 }
 
 void ARegularMonster::OnAlertStateChanged(EMonsterAlertState _prevState, EMonsterAlertState _nextState)

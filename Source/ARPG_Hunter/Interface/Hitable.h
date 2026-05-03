@@ -36,5 +36,5 @@ class ARPG_HUNTER_API IHitable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void HitBy(const FHitInfo& _hitInfo) = 0;
+	virtual uint32 HitBy(const FHitInfo& _hitInfo) = 0;
 };

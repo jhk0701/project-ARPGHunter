@@ -75,7 +75,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Setting|Interaction")
 	float InteractionSize{ 100.0f };
 
-
 	UPROPERTY(EditAnywhere, Category = "Setting|PlayerAction")
 	TMap<EPlayerActionType, float> RangePerAction;
 #pragma endregion
@@ -126,6 +125,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void OnDead() override;
+	void OnCharacterHit() override;
 
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
@@ -151,8 +151,6 @@ public:
 
 	void SetActionProcess(EActionProcess _eProcess);
 
-	// IHitable을(를) 통해 상속됨
-	void HitBy(const FHitInfo& _hitInfo) override;
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify(uint8 _opt) override;
 	bool HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt);

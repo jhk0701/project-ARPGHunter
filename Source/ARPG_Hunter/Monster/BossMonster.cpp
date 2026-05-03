@@ -100,16 +100,18 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 }
 
 
-void ABossMonster::HitBy(const FHitInfo& _hitInfo)
+uint32 ABossMonster::HitBy(const FHitInfo& _hitInfo)
 {
-	Super::HitBy(_hitInfo);
+	uint32 Damage = Super::HitBy(_hitInfo);
+	if (0 == Damage)
+		return Damage;
 
 	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
 	// 피격 처리
 	if (IsDead())
 	{
 		BossAction->PlayHitAction(EMonsterState::DEAD);
-		return;
+		return Damage;
 	}
 	else if (GetStatComp()->IsStaggering() && GetState() != EMonsterState::GROGGY)
 	{
@@ -131,12 +133,14 @@ void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 			}, 
 			3.0f, false);
 
-		return;
+		return Damage;
 	}
 
 	// 기믹 처리
 	if (GetState() == EMonsterState::GIMIC)
 		BossAction->InterruptGimic(_hitInfo);
+
+	return Damage;
 }
 
 void ABossMonster::OnDead()
