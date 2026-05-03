@@ -18,6 +18,7 @@ void AARPGCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StatComp->OnDead.AddUObject(this, &AARPGCharacterBase::OnDead);
 }
 
 void AARPGCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -27,14 +28,24 @@ void AARPGCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	StatComp->Clear();
 }
 
-void AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)
-{
-}
-
 void AARPGCharacterBase::ApplyEffect(const FApplyEffectParam& _param)
 {
+	if (IsDead())
+		return;
+
+	StatComp->ApplyEffect(_param);
+}
+
+bool AARPGCharacterBase::IsDead() const
+{
+	return StatComp->IsDead();
 }
 
 void AARPGCharacterBase::HandleAttackNotify(uint8 _opt)
 {
+}
+
+void AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)
+{
+
 }

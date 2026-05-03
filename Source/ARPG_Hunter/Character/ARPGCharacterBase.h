@@ -25,18 +25,22 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
 
-protected:
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 public:
 	// Inherited via IEffectable
-	const TWeakObjectPtr<class UStatComponent> GetStatComp() const override { return StatComp; };
-	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
+	TWeakObjectPtr<class UStatComponent> GetStatComp() const override { return StatComp; };
+	void ApplyEffect(const FApplyEffectParam& _param) override;
+
+	bool IsDead() const;
 
 	// Inherited via IAttackNotifyHandler
 	virtual void HandleAttackNotify(uint8 _opt) override;
 
 	// Inherited via IHitable
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void OnDead() {};
 };

@@ -3,10 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "Interface/Hitable.h"
-#include "Interface/Effectable.h"
-#include "Interface/AttackNotifyHandler.h"
+#include "Character/ARPGCharacterBase.h"
 #include "MonsterBase.generated.h"
 
 enum class EMonsterType : uint8;
@@ -30,8 +27,7 @@ DECLARE_DELEGATE(FOnActionMontageEnded);
 DECLARE_DELEGATE_OneParam(FOnMonsterDead, TObjectPtr<class AMonsterBase>);
 
 UCLASS(Abstract)
-class ARPG_HUNTER_API AMonsterBase : public ACharacter, 
-	public IHitable, public IEffectable, public IAttackNotifyHandler
+class ARPG_HUNTER_API AMonsterBase : public AARPGCharacterBase
 {
 	GENERATED_BODY()
 
@@ -46,9 +42,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Section")
 	uint8 SectionID{0};
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UStatComponent> StatComp;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> WeaponComp;
 
 	UPROPERTY(EditAnywhere, Category = "AI|BT")
@@ -76,17 +70,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UMonsterActionComponent> ActionComp;
 
-	void SetMovementMode(EMovementMode _mode);
-
-	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
-	UFUNCTION()
-	virtual void OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted);
-	virtual void OnDead();
 
+	virtual void OnDead() override;
+	UFUNCTION()
+	virtual void OnMontageEnded(UAnimMontage* _montage, bool _bInterrupted);
+	
 	// 구체적인 동작은 하위에서 구현할 것
 	virtual void ShowDamageUI(bool _bIsCritical, uint32 _damage) {};
+
+	void SetMovementMode(EMovementMode _mode);
 
 	void SetBehaviorTree(TObjectPtr<UBehaviorTree> _inBT) { MonsterBT = _inBT; }
 	void SetBlackboardData(TObjectPtr<UBlackboardData> _inBB) { MonsterBB = _inBB; }
@@ -96,7 +89,6 @@ protected:
 	uint8 GetSectionID() const { return SectionID; }
 	FMonsterData* GetData() const { return Data; }
 	
-	const TWeakObjectPtr<class UStatComponent> GetStatComp() const override { return StatComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() const { return WeaponComp; }
 
 public:
@@ -107,19 +99,18 @@ public:
 	virtual void Init(const FMonsterInitParam& _param);
 	EMonsterType GetType() const;
 	EMonsterState GetState() const { return CurState; }
-	bool IsDead() const;
 	bool IsMovable() const { return bIsMovable; }
 	void SetMoveSpeed(bool _bIsChasing);
 
 #pragma region Monster Action
+	
 	float Attack(EMonsterAttackType _type, const FName& _opt = NAME_None);
 	virtual bool ExtraAct(const FName& _actName);
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	virtual void HandleAttackNotify(uint8 _opt) override;
 	// IHitable을(를) 통해 상속됨
 	virtual void HitBy(const FHitInfo& _hitInfo) override;
-	// IEffectable을(를) 통해 상속됨
-	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
+
 #pragma endregion
 	
 #pragma region Monster AI

@@ -135,7 +135,6 @@ void APlayerCharacter::Init()
 
 	Stat->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
 	Stat->StartStaminaRecovery();
-	Stat->OnDead.AddUObject(this, &APlayerCharacter::OnDead);
 
 	// 장비 초기화
 	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
@@ -344,75 +343,78 @@ void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 {
+	if (IsDead())
+		return;
+
+	// 아래 콜백 함수 호출 시점이 액터 파괴 이후일 잠재적 가능성이 있음
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
-		
-	uint8 OptionIdx = _opt;
+	
+	// 공격 로직 수행
 	ActionComp->ProcessAttack(_opt, ECC_GameTraceChannel4,
-		[WeakThis, OptionIdx](TArray<FHitResult>& _hitResults)
+		[WeakThis, _opt](TArray<FHitResult>& _hitResults)
 		{
-			if (WeakThis.IsValid() == false)
+			if (false == WeakThis.IsValid())
 				return;
 
 			TWeakObjectPtr<UStatComponent> Stat = WeakThis->GetStatComp();
 			if (false == Stat.IsValid())
 				return;
 
-			UPlayerActionComponent* Action = WeakThis->ActionComp;
-			uint32 BaseDamage = ACombatGameMode::CalculateAttack(
+			bool bIsCritical = false;
+			uint32 Damage = ACombatGameMode::CalculateAttack(
 				Stat->GetStat(ECharacterStatType::ATTACK),
-				Action->GetAttackActionDamagePer(OptionIdx)
+				WeakThis->ActionComp->GetAttackActionDamagePer(_opt)
 			);
 
-			bool bIsCritical = false;
 			for (FHitResult& Hit : _hitResults)
-			{
-				IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
-				if (Hitable == nullptr)
-					continue;
+				bIsCritical |= WeakThis->HitTarget(Hit, Damage, _opt);
 
-				uint32 Damage = BaseDamage;
-
-				FHitInfo HitInfo;
-				HitInfo.bIsCriticalHit = ACombatGameMode::CalculateCritical(
-					Stat->GetStat(ECharacterStatType::CRITICAL_PERCENT),
-					Stat->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT),
-					Damage);
-				HitInfo.Damage = Damage;
-				HitInfo.StaggerDamage = Action->GetAttackActionStaggerDamage(OptionIdx);
-				HitInfo.KnockBackStrength = Action->GetAttackActionKnockBack(OptionIdx);
-				HitInfo.AttackType = Action->GetAttackActionType();
-				HitInfo.Attacker = WeakThis;
-				HitInfo.HitResult = &Hit;
-
-				bIsCritical |= HitInfo.bIsCriticalHit;
-
-				Hitable->HitBy(HitInfo);
-
-				// 맞은 몬스터에게 Damage Sense 유형 이벤트 발행
-				UAISense_Damage::ReportDamageEvent(
-					WeakThis->GetWorld(),
-					Hit.GetActor(),
-					WeakThis.Get(),
-					static_cast<float>(Damage),
-					WeakThis->GetActorLocation(),
-					Hit.ImpactPoint
-				);
-			}
-
+			// 공격 시, 카메라 셰이크
 			WeakThis->ShakeCameraOnAttack(bIsCritical ? 1.0f : 0.75f);
 		}
 	);
 }
 
-
-bool APlayerCharacter::IsDead() const
+bool APlayerCharacter::HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt)
 {
+	// 피격 대상들에게 피격 처리
+	IHitable* Hitable = Cast<IHitable>(_hit.GetActor());
+	if (nullptr == Hitable)
+		return false;
+
 	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
-	return false == Stat.IsValid() || Stat->IsDead();
+
+	FHitInfo HitInfo;
+	HitInfo.bIsCriticalHit = ACombatGameMode::CalculateCritical(
+		Stat->GetStat(ECharacterStatType::CRITICAL_PERCENT),
+		Stat->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT),
+		_damage);
+	HitInfo.Damage = _damage;
+	HitInfo.StaggerDamage = ActionComp->GetAttackActionStaggerDamage(_opt);
+	HitInfo.KnockBackStrength = ActionComp->GetAttackActionKnockBack(_opt);
+	HitInfo.AttackType = ActionComp->GetAttackActionType();
+	HitInfo.Attacker = this;
+	HitInfo.HitResult = &_hit;
+
+	Hitable->HitBy(HitInfo);
+
+	// 맞은 몬스터에게 Damage Sense 유형 이벤트 발행
+	UAISense_Damage::ReportDamageEvent(
+		GetWorld(),
+		_hit.GetActor(),
+		this,
+		static_cast<float>(_damage),
+		GetActorLocation(),
+		_hit.ImpactPoint
+	);
+
+	return HitInfo.bIsCriticalHit;
 }
 
 void APlayerCharacter::OnDead()
 {
+	Super::OnDead();
+
 	// 플레이어 사망 후 처리
 	// 플레이어 사망 이벤트 발행
 	FStageEventContext Context;
@@ -428,14 +430,6 @@ void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (ActionComp->GetDodgeMontage() == Montage || ActionComp->GetHitMontage() == Montage)
 		SetIgnoreInput(false);
-}
-
-void APlayerCharacter::ApplyEffect(const FApplyEffectParam& _param)
-{
-	if (IsDead())
-		return;
-
-	GetStatComp()->ApplyEffect(_param);
 }
 
 void APlayerCharacter::UseQuickSlot(uint8 _index)

@@ -120,20 +120,20 @@ private:
 	void SmoothRotateToInputDir(float DeltaTime);
 
 	void CheckInteractable();
-	void OnDead();
-
-	UFUNCTION()
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	void OnDead() override;
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 	
 	void Init();
-	bool IsDead() const;
 
 	void Dodge();
 	void Attack(EAttackType _eType);
@@ -155,10 +155,8 @@ public:
 	void HitBy(const FHitInfo& _hitInfo) override;
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify(uint8 _opt) override;
+	bool HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt);
 
-	// IEffectable을(를) 통해 상속됨
-	void ApplyEffect(const FApplyEffectParam& _param) override;
-	
 	void UseQuickSlot(uint8 _index);
 	void HandleUseItemNotify();
 

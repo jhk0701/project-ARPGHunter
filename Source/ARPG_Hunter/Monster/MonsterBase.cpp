@@ -23,8 +23,6 @@
 AMonsterBase::AMonsterBase()
 { 	
 	PrimaryActorTick.bCanEverTick = false;
-
-	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	// 하위에서 필요한 컴포넌트를 넣을 것
 	// ActionComp = CreateDefaultSubobject<UMonsterActionComponent>(TEXT("ActionComp")); 
 
@@ -36,13 +34,6 @@ AMonsterBase::AMonsterBase()
 
 	for (uint8 i = 0; i < static_cast<uint8>(EPlayerActionType::END); ++i)
 		bReactToPlayerAction.Add(static_cast<EPlayerActionType>(i), false);
-}
-
-void AMonsterBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	StatComp->OnDead.AddUObject(this, &AMonsterBase::OnDead);
 }
 
 void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -90,6 +81,10 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		WeaponComp->SetHiddenInGame(true);
 
 	// Stat 설정
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	if (false == Stat.IsValid())
+		return;
+
 	// 레벨 반영 스탯 계산
 	TMap<ECharacterStatType, uint32> BaseStat;
 	for (uint8 i = 0; i < static_cast<uint8>(ECharacterStatType::END); ++i)
@@ -98,7 +93,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 		float Val = DataManager->GetMonsterLvCurve(_param.Lv, EnumToName(Type));
 		BaseStat.Add(Type, Data->BaseStat[Type] + static_cast<uint32>(Val));
 	}
-	StatComp->Init(BaseStat);
+	Stat->Init(BaseStat);
 
 	// 충돌 설정
 	GetCapsuleComponent()->SetCollisionProfileName(FName(TEXT("Monster")));
@@ -107,7 +102,7 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	MeshComp->SetAnimInstanceClass(Data->Config->AnimBP);
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 	if (AnimInst)
-		AnimInst->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnAnimMontageEnd);
+		AnimInst->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnMontageEnded);
 	ActionComp->Init(Data, AnimInst, WeaponComp);
 
 	// AI BlackBoard 설정
@@ -153,7 +148,7 @@ void AMonsterBase::SetMovementMode(EMovementMode _mode)
 		MoveComp->SetMovementMode(_mode);
 }
 
-void AMonsterBase::OnAnimMontageEnd(UAnimMontage* _montage, bool _bInterrupted)
+void AMonsterBase::OnMontageEnded(UAnimMontage* _montage, bool _bInterrupted)
 {
 	if (_montage == ActionComp->GetCurrentMontage() || 
 		_montage == Data->Config->HitMontage)
@@ -183,13 +178,18 @@ void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
 
 void AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
+	if (IsDead())
+		return;
+
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+
 	// 피격 발생
 	uint32 Damage = _hitInfo.bIgnoreDefense ? 
 		_hitInfo.Damage :
-		ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
+		ACombatGameMode::CalculateDefense(_hitInfo.Damage, Stat->GetStat(ECharacterStatType::DEFENSE));
 
-	StatComp->TakeDamage(Damage);
-	StatComp->TakeStaminaDamage(_hitInfo.StaggerDamage);
+	Stat->TakeDamage(Damage);
+	Stat->TakeStaminaDamage(_hitInfo.StaggerDamage);
 	ShowDamageUI(_hitInfo.bIsCriticalHit, Damage);
 
 	// 피격 시, 이펙트 출력
@@ -258,16 +258,16 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
 				WeakThis->ActionComp->GetAttackActionDamagePer(_opt));
 
-			for (FHitResult& hitResult : _hitResult)
+			for (FHitResult& Hit : _hitResult)
 			{
-				IHitable* Hitable = Cast<IHitable>(hitResult.GetActor());
+				IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
 
 				if (Hitable)
 				{
 					FHitInfo HitInfo;
 					HitInfo.Damage = Damage;
 					HitInfo.Attacker = WeakThis;
-					HitInfo.HitResult = &hitResult;
+					HitInfo.HitResult = &Hit;
 
 					Hitable->HitBy(HitInfo);
 				}
@@ -279,6 +279,8 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 
 void AMonsterBase::OnDead()
 {
+	Super::OnDead();
+
 	// 사망 시 처리
 	AMonsterAIController* AICon = Cast<AMonsterAIController>(GetController());
 	AICon->DisableController();
@@ -304,21 +306,9 @@ void AMonsterBase::OnDead()
 	);
 }
 
-bool AMonsterBase::IsDead() const
-{
-	return StatComp->IsDead();
-}
 EMonsterType AMonsterBase::GetType() const
 {
 	return Data->Config->Type;
-}
-
-void AMonsterBase::ApplyEffect(const FApplyEffectParam& _param)
-{
-	if (StatComp->IsDead())
-		return;
-
-	StatComp->ApplyEffect(_param);
 }
 
 TWeakObjectPtr<AActor> AMonsterBase::GetTarget() const
