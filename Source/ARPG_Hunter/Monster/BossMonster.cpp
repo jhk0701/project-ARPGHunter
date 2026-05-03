@@ -89,7 +89,9 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 	// UI 초기화
 	if (StatusBar)
 	{
-		UStatComponent* Stat = GetStatComp();
+		TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+		if (false == Stat.IsValid())
+			return;
 
 		TObjectPtr<UUWBossMonsterStatusBar> BossUI = Cast<UUWBossMonsterStatusBar>(StatusBar);
 		BossUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
@@ -120,7 +122,10 @@ void ABossMonster::HitBy(const FHitInfo& _hitInfo)
 		GetWorld()->GetTimerManager().SetTimer(GroggyRecoverTimer, 
 			[this]() 
 			{
-				TObjectPtr<UStatComponent> Stat = GetStatComp();
+				TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+				if (false == Stat.IsValid())
+					return;
+
 				Stat->RecoverResource(ECharacterResourceType::STAMINA, Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
 				SetState(EMonsterState::NORMAL);
 			}, 
@@ -147,7 +152,10 @@ void ABossMonster::OnDead()
 
 bool ABossMonster::CanUseGimic()
 {
-	UStatComponent* Stat = GetStatComp();
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	if (false == Stat.IsValid())
+		return false;
+
 	return Stat->GetResourceValue(ECharacterResourceType::SKILL) ==
 		Stat->GetResourceMaxValue(ECharacterResourceType::SKILL);
 }
@@ -160,7 +168,10 @@ void ABossMonster::HandleGimicNotify(EGimicType _type, uint16 _gimicValue)
 		if (GetState() != EMonsterState::NORMAL)
 			return;
 		
-		UStatComponent* Stat = GetStatComp();
+		TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+		if (false == Stat.IsValid())
+			return;
+
 		Stat->TryUseResource(ECharacterResourceType::SKILL, Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
 
 		BossAction->StartGimic(_type, _gimicValue);

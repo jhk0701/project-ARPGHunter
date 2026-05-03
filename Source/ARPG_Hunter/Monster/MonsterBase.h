@@ -96,7 +96,7 @@ protected:
 	uint8 GetSectionID() const { return SectionID; }
 	FMonsterData* GetData() const { return Data; }
 	
-	const TObjectPtr<class UStatComponent> GetStatComp() override { return StatComp; }
+	const TWeakObjectPtr<class UStatComponent> GetStatComp() const override { return StatComp; }
 	TObjectPtr<USkeletalMeshComponent> GetWeaponComp() const { return WeaponComp; }
 
 public:

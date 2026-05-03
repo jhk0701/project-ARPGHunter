@@ -40,7 +40,6 @@ APlayerCharacter::APlayerCharacter()
 	WeaponSocketOnNonCombat = FName(TEXT("socket_weapon_container"));
 
 #pragma region Create Comp
-	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
 	ActionComp = CreateDefaultSubobject<UPlayerActionComponent>(TEXT("ActionComp"));
 	
 	MapEquipmentMeshComp.Add(EEquipmentType::TOP, GetMesh());
@@ -111,7 +110,6 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	// 액터 제거 시, 컴포넌트도 정리
-	StatComp->Clear();
 	ActionComp->Clear();
 
 	GetWorld()->GetTimerManager().ClearTimer(CameraAnimTimer);
@@ -131,9 +129,13 @@ void APlayerCharacter::Init()
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 
 	// 스탯 초기화
-	StatComp->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
-	StatComp->StartStaminaRecovery();
-	StatComp->OnDead.AddUObject(this, &APlayerCharacter::OnDead);
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	if (false == Stat.IsValid())
+		return;
+
+	Stat->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
+	Stat->StartStaminaRecovery();
+	Stat->OnDead.AddUObject(this, &APlayerCharacter::OnDead);
 
 	// 장비 초기화
 	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
@@ -149,7 +151,7 @@ void APlayerCharacter::Init()
 			MapEquipmentMeshComp[EEquipmentType::WEAPON],
 			PlayerManager->GetSkillDevelop()->GetSkillSelectPtr()
 		});
-	ActionComp->StaminaUsagePredicate.BindUObject(StatComp, &UStatComponent::TryUseStamina);
+	ActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
 
 	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
 
@@ -161,17 +163,17 @@ void APlayerCharacter::Init()
 
 		TObjectPtr<UUWPlayerStatusBar> StatusBarUI = CombatHUD->GetPlayerUI()->GetPlayerStatusBar();
 
-		StatusBarUI->SetHealthBarPercent(StatComp->GetResourceValue(ECharacterResourceType::HEALTH), StatComp->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-		StatusBarUI->SetStaminaBarPercent(StatComp->GetResourceValue(ECharacterResourceType::STAMINA), StatComp->GetResourceMaxValue(ECharacterResourceType::STAMINA));
-		StatusBarUI->SetSkillBarPercent(StatComp->GetResourceValue(ECharacterResourceType::SKILL), StatComp->GetResourceMaxValue(ECharacterResourceType::SKILL));
+		StatusBarUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+		StatusBarUI->SetStaminaBarPercent(Stat->GetResourceValue(ECharacterResourceType::STAMINA), Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
+		StatusBarUI->SetSkillBarPercent(Stat->GetResourceValue(ECharacterResourceType::SKILL), Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
 
 		// HPBar UI 이벤트 바인딩
-		StatComp->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
-		StatComp->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
-		StatComp->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
+		Stat->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
+		Stat->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
+		Stat->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
 
-		StatComp->OnEffectRegistered.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RegisterStatEffect);
-		StatComp->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
+		Stat->OnEffectRegistered.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RegisterStatEffect);
+		Stat->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
 
 		TObjectPtr<UUWActionGuide> ActionGuideUI = CombatHUD->GetPlayerUI()->GetActionGuide();
 		ActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
@@ -231,7 +233,7 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)
 {
-	if(StatComp->IsStaggering())
+	if (IsDead() || GetStatComp()->IsStaggering())
 		bIsSprint = false;
 	else
 		bIsSprint = _isSprint;
@@ -254,7 +256,7 @@ void APlayerCharacter::SetIsCombat(bool _bIsCombat)
 
 void APlayerCharacter::Dodge()
 {
-	if (ActionComp->IsValid() == false || StatComp->IsDead())
+	if (false == ActionComp->IsValid() || IsDead())
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
@@ -266,7 +268,7 @@ void APlayerCharacter::Dodge()
 
 void APlayerCharacter::Attack(EAttackType _eType)
 {
-	if (ActionComp->IsValid() == false || StatComp->IsDead())
+	if (false == ActionComp->IsValid() || IsDead())
 		return;
 
 	bool bIsValid = ActionComp->PlayAttackAction(_eType);
@@ -308,7 +310,7 @@ void APlayerCharacter::AttackEnd()
 {
 	// 현재 모든 입력 중 작업 완료 처리
 	// 필요한 경우에 각 공격 입력 액션을 분리해서 처리
-	if (ActionComp->IsValid() == false || StatComp->IsDead())
+	if (false == ActionComp->IsValid() || IsDead())
 		return;
 
 	ActionComp->ProcessAttackEnd();
@@ -323,14 +325,15 @@ void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 
 void APlayerCharacter::HitBy(const FHitInfo& _hitInfo)
 {
-	if (StatComp->IsDead())
+	if (IsDead())
 		return;
 
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
 	uint32 Damage = _hitInfo.bIgnoreDefense ? 
 		_hitInfo.Damage : 
-		ACombatGameMode::CalculateDefense(_hitInfo.Damage, StatComp->GetStat(ECharacterStatType::DEFENSE));
+		ACombatGameMode::CalculateDefense(_hitInfo.Damage, Stat->GetStat(ECharacterStatType::DEFENSE));
 
-	StatComp->TakeDamage(Damage,
+	Stat->TakeDamage(Damage,
 		[this]() 
 		{
 			ActionComp->PlayHitAction(); // hit 애니메이션 실행
@@ -350,7 +353,10 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			if (WeakThis.IsValid() == false)
 				return;
 
-			UStatComponent* Stat = WeakThis->StatComp;
+			TWeakObjectPtr<UStatComponent> Stat = WeakThis->GetStatComp();
+			if (false == Stat.IsValid())
+				return;
+
 			UPlayerActionComponent* Action = WeakThis->ActionComp;
 			uint32 BaseDamage = ACombatGameMode::CalculateAttack(
 				Stat->GetStat(ECharacterStatType::ATTACK),
@@ -399,9 +405,10 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 }
 
 
-bool APlayerCharacter::IsDead()
+bool APlayerCharacter::IsDead() const
 {
-	return StatComp->IsDead();
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	return false == Stat.IsValid() || Stat->IsDead();
 }
 
 void APlayerCharacter::OnDead()
@@ -425,15 +432,15 @@ void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void APlayerCharacter::ApplyEffect(const FApplyEffectParam& _param)
 {
-	if (StatComp->IsDead())
+	if (IsDead())
 		return;
 
-	StatComp->ApplyEffect(_param);
+	GetStatComp()->ApplyEffect(_param);
 }
 
 void APlayerCharacter::UseQuickSlot(uint8 _index)
 {
-	if (StatComp->IsDead())
+	if (IsDead())
 		return;
 
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();

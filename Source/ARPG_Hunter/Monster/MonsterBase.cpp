@@ -49,8 +49,6 @@ void AMonsterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	StatComp->Clear();
-
 	FTimerManager& Timer = GetWorld()->GetTimerManager();
 	if(Timer.IsTimerActive(OnDeadTimer))
 		Timer.ClearTimer(OnDeadTimer);

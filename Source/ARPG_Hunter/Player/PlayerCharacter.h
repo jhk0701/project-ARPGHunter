@@ -3,10 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "Interface/Hitable.h"
-#include "Interface/Effectable.h"
-#include "Interface/AttackNotifyHandler.h"
+#include "Character/ARPGCharacterBase.h"
 #include "GenericTeamAgentInterface.h"
 #include "PlayerCharacter.generated.h"
 
@@ -18,9 +15,7 @@ enum class EEquipmentType :uint8;
 enum class EActorGroup : uint8;
 
 UCLASS()
-class ARPG_HUNTER_API APlayerCharacter : public ACharacter, 
-	public IHitable, public IAttackNotifyHandler, public IEffectable, 
-	public IGenericTeamAgentInterface
+class ARPG_HUNTER_API APlayerCharacter : public AARPGCharacterBase,	public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -29,8 +24,6 @@ public:
 
 private:
 #pragma region Component
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UStatComponent> StatComp;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UPlayerActionComponent> ActionComp;
 
@@ -140,6 +133,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void Init();
+	bool IsDead() const;
 
 	void Dodge();
 	void Attack(EAttackType _eType);
@@ -161,12 +155,9 @@ public:
 	void HitBy(const FHitInfo& _hitInfo) override;
 	// IAttackNotifyHandler을(를) 통해 상속됨
 	void HandleAttackNotify(uint8 _opt) override;
-	
-	bool IsDead();
 
 	// IEffectable을(를) 통해 상속됨
-	const TObjectPtr<class UStatComponent> GetStatComp() override { return StatComp; }
-	virtual void ApplyEffect(const FApplyEffectParam& _param) override;
+	void ApplyEffect(const FApplyEffectParam& _param) override;
 	
 	void UseQuickSlot(uint8 _index);
 	void HandleUseItemNotify();

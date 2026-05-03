@@ -29,6 +29,6 @@ class ARPG_HUNTER_API IEffectable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual const TObjectPtr<class UStatComponent> GetStatComp() = 0;
+	virtual const TWeakObjectPtr<class UStatComponent> GetStatComp() const = 0;
 	virtual void ApplyEffect(const FApplyEffectParam& _param) = 0;
 };
