@@ -36,11 +36,12 @@ private:
 #pragma endregion
 
 public:
-	// Inherited via IEffectable
-	TWeakObjectPtr<class UStatComponent> GetStatComp() const override { return StatComp; };
-	void ApplyEffect(const FApplyEffectParam& _param) override;
 	bool IsDead() const;
 
+	// Inherited via IEffectable
+	TObjectPtr<UStatComponent> GetStatComp() const override { return StatComp; };
+	void ApplyEffect(const FApplyEffectParam& _param) override;
+	
 	// Inherited via IAttackNotifyHandler
 	virtual void HandleAttackNotify(uint8 _opt) override;
 

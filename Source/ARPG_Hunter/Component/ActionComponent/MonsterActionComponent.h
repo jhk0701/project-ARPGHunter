@@ -33,14 +33,11 @@ private:
 protected:
 	FMonsterData* GetData() const { return Data; }
 
+	TWeakObjectPtr<class UAction> GetCurrentAction() const override;
+	void PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults) override;
+
 public:
 	virtual void Init(FTableRowBase* _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp);
-	virtual void ProcessAttack(
-		uint8 _opt,
-		ECollisionChannel _traceChannel,
-		TFunction<void(TArray<FHitResult>&)> _onHitAction,
-		TWeakObjectPtr<AActor> _target = nullptr
-	) override;
 
 	float PlayAttackAction(const FName& _opt = NAME_None);
 	virtual void PlayHitAction(EMonsterState _state);
@@ -50,7 +47,7 @@ public:
 	void SetCurAttackIdx(uint8 _idx) { CurAttackIdx = _idx; }
 	uint8 GetCurAttackIdx() const { return CurAttackIdx; }
 
-	const FMonsterAction& GetCurrentAction() const;
+	const FMonsterAction& GetCurrentMonsterAction() const;
 	TObjectPtr<UAnimMontage> GetCurrentMontage() const;
 	uint16 GetAttackActionDamagePer(uint8 _opt);
 };

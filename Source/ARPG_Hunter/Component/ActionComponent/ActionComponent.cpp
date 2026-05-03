@@ -5,10 +5,11 @@
 #include "NiagaraComponent.h"
 
 #include "Define/Enum.h"
-#include "Core/WorldSubsystem/ObjectPoolManager.h"
-#include "SubObject/SubObject.h"
 #include "Interface/Effectable.h"
+#include "Core/WorldSubsystem/ObjectPoolManager.h"
+#include "Data/Action.h"
 #include "Data/EffectData.h"
+#include "SubObject/SubObject.h"
 
 UActionComponent::UActionComponent()
 {
@@ -28,7 +29,7 @@ void UActionComponent::SpawnHitVFX(UNiagaraSystem* _vfx, const FVector& _locatio
 	NiagaraComp->SetVariableFloat(FName(TEXT("User.HitSize")), _size);
 }
 
-void UActionComponent::ActivateActionEffect(TObjectPtr<AActor> _target, const TArray<TObjectPtr<class UEffectData>>& _effectArray)
+void UActionComponent::ActivateActionEffect(TObjectPtr<AActor> _target, const TArray<TObjectPtr<UEffectData>>& _effectArray)
 {
 	IEffectable* Effectable = Cast<IEffectable>(_target);
 	if (Effectable == nullptr)
@@ -42,6 +43,42 @@ void UActionComponent::ActivateActionEffect(TObjectPtr<AActor> _target, const TA
 
 		Effectable->ApplyEffect(Param);
 	}
+}
+
+bool UActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
+{
+	TWeakObjectPtr<UAction> ActionData = GetCurrentAction();
+	EAttackDetailType DetailType = ActionData->ArrOption[_opt].Detail;
+
+	if (DetailType > EAttackDetailType::MELEE_END)
+	{
+		// 원거리 방식 처리
+		FSubObjectDeployParam DeployParam;
+		DeployParam.DetailType = DetailType;
+		DeployParam.SubObjectClass = ActionData->SubObjectClass;
+		DeployParam.SubObjectConfig = ActionData->SubObjectConfig;
+
+		DeploySubObject(DeployParam, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
+
+		return true;
+	}
+
+	// 근거리 방식 처리
+	TArray<FHitResult> HitResults;
+	FTraceParam TraceParam;
+	TraceParam.DetailType = DetailType;
+	TraceParam.Size = ActionData->ArrOption[_opt].Size;
+	TraceParam.Range = ActionData->ArrOption[_opt].Range;
+
+	bool bIsHit = Trace(TraceParam, _traceChannel, HitResults);
+	if (false == bIsHit)
+		return bIsHit;
+
+	if (_onHitAction)
+		_onHitAction(HitResults); // 피격했다면 콜백 호출
+
+	PostProcessAttack(_opt, HitResults);
+	return bIsHit;
 }
 
 bool UActionComponent::Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults)

@@ -79,13 +79,16 @@ private:
 	void BroadcastActionUpdated();
 	TObjectPtr<UAnimMontage> GetCurrentMontage();
 
+protected:
+	TWeakObjectPtr<class UAction> GetCurrentAction() const override;
+	void PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults) override;
+
 public:
 	FOnActionUpdated OnActionUpdated;
 	FStaminaUsagePredicate StaminaUsagePredicate;
 
 	void Init(const FPlayerActionInitParam& _param);
 	virtual void Clear() override;
-	virtual void ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr) override;
 
 	void ResetAction();
 	void SetActionProcess(EActionProcess _eProcess);

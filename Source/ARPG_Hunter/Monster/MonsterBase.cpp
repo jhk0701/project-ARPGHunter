@@ -178,6 +178,72 @@ void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
 		GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
 
+bool AMonsterBase::ExtraAct(const FName& _actName)
+{
+	bool bPlayExtraAct = ActionComp->PlayExtraAction(_actName);
+
+	if (bPlayExtraAct)
+		SetMovable(false);
+
+	return bPlayExtraAct;
+}
+
+float AMonsterBase::Attack(EMonsterAttackType _type, const FName& _opt /*= NAME_None*/)
+{
+	if (IsDead())
+		return -1.0f;
+
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
+	if (AnimInst->Montage_IsPlaying(Data->Config->HitMontage))
+		return -1.0f;
+
+	// 공격 선택
+	ActionComp->SelectAttack(_type);
+
+	// 공격 실행
+	float Interval = ActionComp->PlayAttackAction(_opt);
+	if (Interval > 0)
+		SetMovable(false);
+
+	return Interval;
+}
+
+void AMonsterBase::HandleAttackNotify(uint8 _opt)
+{
+	if (IsDead())
+		return;
+
+	TWeakObjectPtr<AMonsterBase> WeakThis(this);
+
+	ActionComp->ProcessAttack(_opt, GetEnemyCollisionChannel(),
+		[WeakThis, _opt](TArray<FHitResult>& _hitResult)
+		{
+			if (false == WeakThis.IsValid())
+				return;
+
+			uint16 Damage = ACombatGameMode::CalculateAttack(
+				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
+				WeakThis->ActionComp->GetAttackActionDamagePer(_opt));
+
+			for (FHitResult& Hit : _hitResult)
+			{
+				IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
+
+				if (Hitable)
+				{
+					FHitInfo HitInfo;
+					HitInfo.Damage = Damage;
+					HitInfo.Attacker = WeakThis;
+					HitInfo.HitResult = &Hit;
+
+					Hitable->HitBy(HitInfo);
+				}
+			}
+		},
+		GetTarget()
+	);
+}
+
 uint32 AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	uint32 Damage = Super::HitBy(_hitInfo);
@@ -205,72 +271,6 @@ uint32 AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 	SetMovable(false);
 
 	return Damage;
-}
-
-float AMonsterBase::Attack(EMonsterAttackType _type, const FName& _opt /*= NAME_None*/)
-{
-	if (IsDead())
-		return -1.0f;
-
-	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
-	if (AnimInst->Montage_IsPlaying(Data->Config->HitMontage))
-		return -1.0f;
-
-	// 공격 선택
-	ActionComp->SelectAttack(_type);
-
-	// 공격 실행
-	float Interval = ActionComp->PlayAttackAction(_opt);
-	if (Interval > 0)
-		SetMovable(false);
-
-	return Interval;
-}
-
-bool AMonsterBase::ExtraAct(const FName& _actName)
-{
-	bool bPlayExtraAct = ActionComp->PlayExtraAction(_actName);
-
-	if (bPlayExtraAct)
-		SetMovable(false);
-
-	return bPlayExtraAct;
-}
-
-void AMonsterBase::HandleAttackNotify(uint8 _opt)
-{
-	if (IsDead())
-		return;
-
-	TWeakObjectPtr<AMonsterBase> WeakThis(this);
-
-	ActionComp->ProcessAttack(_opt, GetEnemyCollisionChannel(),
-		[WeakThis, _opt](TArray<FHitResult>& _hitResult)
-		{
-			if (WeakThis.IsValid() == false)
-				return;
-
-			uint16 Damage = ACombatGameMode::CalculateAttack(
-				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
-				WeakThis->ActionComp->GetAttackActionDamagePer(_opt));
-
-			for (FHitResult& Hit : _hitResult)
-			{
-				IHitable* Hitable = Cast<IHitable>(Hit.GetActor());
-
-				if (Hitable)
-				{
-					FHitInfo HitInfo;
-					HitInfo.Damage = Damage;
-					HitInfo.Attacker = WeakThis;
-					HitInfo.HitResult = &Hit;
-
-					Hitable->HitBy(HitInfo);
-				}
-			}
-		},
-		GetTarget()
-	);
 }
 
 void AMonsterBase::OnDead()

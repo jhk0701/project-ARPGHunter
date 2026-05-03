@@ -328,7 +328,6 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 	if (IsDead())
 		return;
 
-	// 아래 콜백 함수 호출 시점이 액터 파괴 이후일 잠재적 가능성이 있음
 	TWeakObjectPtr<APlayerCharacter> WeakThis(this);
 	
 	// 공격 로직 수행

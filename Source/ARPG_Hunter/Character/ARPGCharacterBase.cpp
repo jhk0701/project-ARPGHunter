@@ -45,6 +45,9 @@ bool AARPGCharacterBase::IsDead() const
 
 void AARPGCharacterBase::HandleAttackNotify(uint8 _opt)
 {
+	if (IsDead())
+		return;
+
 }
 
 uint32 AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)

@@ -92,46 +92,24 @@ void UPlayerActionComponent::Clear()
 		TimerManager.ClearTimer(ActionProgressTimer);
 }
 
-void UPlayerActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
+TWeakObjectPtr<UAction> UPlayerActionComponent::GetCurrentAction() const
 {
-	Super::ProcessAttack(_opt, _traceChannel, _onHitAction, _target);
+	return AppliedGraph.Actions[CurAttackActionID]->GetAction();
+}
+
+void UPlayerActionComponent::PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults)
+{
+	Super::PostProcessAttack(_opt, _inHitResults);
 
 	TObjectPtr<UActionInstance> CurAction = AppliedGraph.Actions[CurAttackActionID];
 	TWeakObjectPtr<UAction> ActionData = CurAction->GetAction();
-	EAttackDetailType DetailType = ActionData->ArrOption[_opt].Detail;
-
-	if (DetailType > EAttackDetailType::MELEE_END)
-	{
-		// 원거리 방식 처리
-		FSubObjectDeployParam DeployParam;
-		DeployParam.DetailType = DetailType;
-		DeployParam.SubObjectClass = ActionData->SubObjectClass;
-		DeployParam.SubObjectConfig = ActionData->SubObjectConfig;
-		DeploySubObject(DeployParam, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
-		return;
-	}
-
-	// 근거리 방식 처리
-	TArray<FHitResult> HitResults;
-	FTraceParam TraceParam;
-	TraceParam.DetailType = DetailType;
-	TraceParam.Size = ActionData->ArrOption[_opt].Size;
-	TraceParam.Range = ActionData->ArrOption[_opt].Range;
-
-	bool bIsHit = Trace(TraceParam, _traceChannel, HitResults);
-	if (bIsHit == false)
-		return;
-
-	// 공격 히트 시, 효과 발동
-	if (_onHitAction)
-		_onHitAction(HitResults);
 
 	// 자기 버프 적용
 	if (CurAction->IsContainEventEffect(EActionEvent::ON_HIT))
 		ActivateActionInstanceEffect(EActionEvent::ON_HIT, GetOwner(), CurAction);
 
 	// 적에게 디버프 적용
-	for (const FHitResult& Result : HitResults)
+	for (const FHitResult& Result : _inHitResults)
 	{
 		if (CurAction->IsContainEventEffect(EActionEvent::ON_ENEMY_HIT))
 			ActivateActionInstanceEffect(EActionEvent::ON_ENEMY_HIT, Result.GetActor(), CurAction);
@@ -148,6 +126,7 @@ void UPlayerActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceC
 		}
 	}
 }
+
 
 void UPlayerActionComponent::ResetAction()
 {

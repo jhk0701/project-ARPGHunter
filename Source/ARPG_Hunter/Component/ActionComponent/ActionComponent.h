@@ -39,10 +39,15 @@ private:
 	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp{ nullptr };
 	UPROPERTY(EditAnywhere)
 	FName FirePointSocketName{TEXT("socket_firePoint")};
+
+public:
+	// 실질적인 공격 수행
+	virtual bool ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
+	
+	// 하위에서 구현
+	virtual void Clear() {};
 	
 protected:
-	// bool Trace(uint8 _opt, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
-	// void Deploy(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
 	bool Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
 	void DeploySubObject(const FSubObjectDeployParam& _param, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
 	void SpawnHitVFX(class UNiagaraSystem* _vfx, const FVector& _location, float _roll, float _size);
@@ -54,13 +59,7 @@ protected:
 
 	void ActivateActionEffect(TObjectPtr<AActor> _target, const TArray<TObjectPtr<class UEffectData>>& _effectArray);
 
-public:	
-	// 실질적인 공격 수행
-	virtual void ProcessAttack(
-		uint8 _opt,
-		ECollisionChannel _traceChannel,
-		TFunction<void(TArray<FHitResult>&)> _onHitAction,
-		TWeakObjectPtr<AActor> _target = nullptr
-	) {};
-	virtual void Clear() {};
+	// 하위에서 구현
+	virtual TWeakObjectPtr<class UAction> GetCurrentAction() const { return nullptr; }
+	virtual void PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults) {}
 };

@@ -10,6 +10,7 @@
 #include "Monster/BossMonster.h"
 #include "SubObject/SubObject.h"
 
+
 void UMonsterActionComponent::Init(FTableRowBase* _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp)
 {
 	SetAnimInstance(_ownerAnimInstance);
@@ -24,56 +25,49 @@ void UMonsterActionComponent::Init(FTableRowBase* _data, TWeakObjectPtr<UAnimIns
 		ActionTotalWeights[static_cast<uint8>(Action.Type)] += Action.Weight;
 }
 
-void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target)
+const FMonsterAction& UMonsterActionComponent::GetCurrentMonsterAction() const
 {
-	Super::ProcessAttack(_opt, _traceChannel, _onHitAction, _target);
+	return Data->Config->AttackActions[GetCurAttackIdx()];
+}
 
-	const FMonsterAction& CurAction = GetCurrentAction();
-	EAttackDetailType DetailType = CurAction.Action->ArrOption[_opt].Detail;
+TObjectPtr<UAnimMontage> UMonsterActionComponent::GetCurrentMontage() const
+{
+	return GetCurrentMonsterAction().Action->Montage;
+}
 
-	if (DetailType > EAttackDetailType::MELEE_END)
-	{
-		// 원거리 방식 처리
-		FSubObjectDeployParam DeployParam;
-		DeployParam.DetailType = DetailType;
-		DeployParam.SubObjectClass = CurAction.Action->SubObjectClass;
-		DeployParam.SubObjectConfig = CurAction.Action->SubObjectConfig;
-		DeploySubObject(DeployParam, _traceChannel, MoveTemp(_onHitAction), _target); // 기존에 받았던 람다는 Move로 이동 처리
-		return;
-	}
+uint16 UMonsterActionComponent::GetAttackActionDamagePer(uint8 _opt)
+{
+	return GetCurrentMonsterAction().Action->ArrOption[_opt].AttackDamagePer;
+}
 
-	// 근거리 방식 처리
-	TArray<FHitResult> HitResults;
-	FTraceParam TraceParam;
-	TraceParam.DetailType = DetailType;
-	TraceParam.Size = CurAction.Action->ArrOption[_opt].Size;
-	TraceParam.Range = CurAction.Action->ArrOption[_opt].Range;
+TWeakObjectPtr<class UAction> UMonsterActionComponent::GetCurrentAction() const
+{
+	return GetCurrentMonsterAction().Action;
+}
 
-	bool bIsHit = Trace(TraceParam, _traceChannel, HitResults);
-	if (bIsHit == false)
-		return;
+void UMonsterActionComponent::PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults)
+{
+	Super::PostProcessAttack(_opt, _inHitResults);
 
-	// 공격 히트 시, 효과 발동
-	if (_onHitAction)
-		_onHitAction(HitResults);
+	TWeakObjectPtr<UAction> ActionData = GetCurrentAction();
 
-	if (CurAction.Action->EventEffect.Contains(EActionEvent::ON_HIT))
-		ActivateActionEffect(GetOwner(), CurAction.Action->EventEffect[EActionEvent::ON_HIT].Effects);
+	if (ActionData->EventEffect.Contains(EActionEvent::ON_HIT))
+		ActivateActionEffect(GetOwner(), ActionData->EventEffect[EActionEvent::ON_HIT].Effects);
 
 	// 적에게 디버프 적용
-	for (const FHitResult& Result : HitResults)
+	for (const FHitResult& Result : _inHitResults)
 	{
-		if (CurAction.Action->EventEffect.Contains(EActionEvent::ON_ENEMY_HIT))
-			ActivateActionEffect(Result.GetActor(), CurAction.Action->EventEffect[EActionEvent::ON_ENEMY_HIT].Effects);
+		if (ActionData->EventEffect.Contains(EActionEvent::ON_ENEMY_HIT))
+			ActivateActionEffect(Result.GetActor(), ActionData->EventEffect[EActionEvent::ON_ENEMY_HIT].Effects);
 
 		// 피격 효과 출력
-		if (CurAction.Action->VFXOnHit)
+		if (ActionData->VFXOnHit)
 		{
 			SpawnHitVFX(
-				CurAction.Action->VFXOnHit,
+				ActionData->VFXOnHit,
 				Result.ImpactPoint,
-				CurAction.Action->ArrOption[_opt].HitRoll,
-				CurAction.Action->ArrOption[_opt].HitSize
+				ActionData->ArrOption[_opt].HitRoll,
+				ActionData->ArrOption[_opt].HitSize
 			);
 		}
 	}
@@ -81,7 +75,7 @@ void UMonsterActionComponent::ProcessAttack(uint8 _opt, ECollisionChannel _trace
 
 float UMonsterActionComponent::PlayAttackAction(const FName& _opt /*= NAME_None*/)
 {
-	const FMonsterAction& MonsterAction = GetCurrentAction();
+	const FMonsterAction& MonsterAction = GetCurrentMonsterAction();
 
 	TObjectPtr<UAnimMontage> AttackMontage = MonsterAction.Action->Montage;
 	TWeakObjectPtr<UAnimInstance> AnimInst = GetAnimInstance();
@@ -166,22 +160,6 @@ void UMonsterActionComponent::SelectAttack(EMonsterAttackType _type)
 		}
 	}
 }
-
-const FMonsterAction& UMonsterActionComponent::GetCurrentAction() const
-{
-	return Data->Config->AttackActions[GetCurAttackIdx()];
-}
-
-TObjectPtr<UAnimMontage> UMonsterActionComponent::GetCurrentMontage() const
-{
-	return GetCurrentAction().Action->Montage;
-}
-
-uint16 UMonsterActionComponent::GetAttackActionDamagePer(uint8 _opt)
-{
-	return GetCurrentAction().Action->ArrOption[_opt].AttackDamagePer;
-}
-
 
 void UBossActionComponent::PlayHitAction(EMonsterState _state)
 {
