@@ -110,13 +110,48 @@ private:
 
 #pragma endregion
 
-private:
-	void InitEquipment(TWeakObjectPtr<class UEquipment> _equipment);
-	void UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<class UEquipmentItem> _equipment);
-	
-	void SmoothRotateToInputDir(float DeltaTime);
+public:	
+	virtual void Tick(float DeltaTime) override;
+	void Init();
 
-	void CheckInteractable();
+#pragma region Input Action
+	
+	void SetInputDirection(FVector2D _dir)
+	{
+		InputDirection = _dir;
+		InputDirection.Normalize();
+	}
+	const FVector2D& GetInputDirection() { return InputDirection; }
+	void SetIsSprint(bool _bisSprint);
+	bool GetIsSprint() const { return bIsSprint; }
+	void SetIsCombat(bool _bIsCombat);
+	bool GetIsCombat() const { return bIsCombat; }
+
+	void Dodge();
+	void Attack(EAttackType _eType);
+	void AttackEnd();
+	void SetActionProcess(EActionProcess _eProcess);
+
+	void UseQuickSlot(uint8 _index);
+	void HandleUseItemNotify();
+
+	void Interact();
+	void SetIgnoreInput(bool _bIgnoreMoveInput);
+
+#pragma endregion
+
+	// IAttackNotifyHandler을(를) 통해 상속됨
+	void HandleAttackNotify(uint8 _opt) override;
+	bool HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt);
+
+	void ShakeCameraOnAttack(float _scale = 1.0f);
+	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
+	void SetCameraLag(bool _bIsEnable, float _speed = 0.0f);
+	void PlayCameraAnim(TObjectPtr<UCurveVector> _animCurve, float _duration = 1.0f);
+	void ProgressCameraCurve();
+
+	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
+	void ReportPlayerActionEvent(uint8 _actionType, float _range);
 
 protected:
 	virtual void BeginPlay() override;
@@ -128,43 +163,14 @@ protected:
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-public:	
-	virtual void Tick(float DeltaTime) override;
-	
-	void Init();
+private:
+	void InitStat(class UPlayerManager* _pm);
+	void InitEquipment(class UPlayerManager* _pm);
+	void InitAction(class UPlayerManager* _pm);
+	void InitUI();
 
-	void Dodge();
-	void Attack(EAttackType _eType);
-	void AttackEnd();
-	void SetInputDirection(FVector2D _dir) 
-	{ 
-		InputDirection = _dir; 
-		InputDirection.Normalize(); 
-	}
-	const FVector2D& GetInputDirection() { return InputDirection; }
-	void SetIsSprint(bool _bisSprint);
-	bool GetIsSprint() const { return bIsSprint; }
-	void SetIsCombat(bool _bIsCombat);
-	bool GetIsCombat() const { return bIsCombat; }
+	void UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<class UEquipmentItem> _equipment);
 
-	void SetActionProcess(EActionProcess _eProcess);
-
-	// IAttackNotifyHandler을(를) 통해 상속됨
-	void HandleAttackNotify(uint8 _opt) override;
-	bool HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt);
-
-	void UseQuickSlot(uint8 _index);
-	void HandleUseItemNotify();
-
-	void ShakeCameraOnAttack(float _scale = 1.0f);
-	void ShakeCamera(TSubclassOf<UCameraShakeBase> _shakeClass, float _scale = 1.0f);
-	void SetCameraLag(bool _bIsEnable, float _speed = 0.0f);
-	void PlayCameraAnim(TObjectPtr<UCurveVector> _animCurve, float _duration = 1.0f);
-	void ProgressCameraCurve();
-
-	void Interact();
-	void SetIgnoreInput(bool _bIgnoreMoveInput);
-
-	FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(static_cast<uint8>(ActorGroup)); }
-	void ReportPlayerActionEvent(uint8 _actionType, float _range);
+	void SmoothRotateToInputDir(float DeltaTime);
+	void CheckInteractable();
 };

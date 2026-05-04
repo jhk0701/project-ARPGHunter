@@ -128,63 +128,15 @@ void APlayerCharacter::Init()
 {
 	// 플레이어 데이터 받아오기
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-
+	
 	// 스탯 초기화
-	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
-	if (false == Stat.IsValid())
-		return;
-
-	Stat->Init(PlayerManager->GetStat(), PlayerManager->GetEquipmentStat());
-	Stat->StartStaminaRecovery();
-
-	// 장비 초기화
-	TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-	InitEquipment(Equipment);
-	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
-
+	InitStat(PlayerManager); 
+	// 플레이어 장비 부착 스켈레탈 컴포넌트 초기화
+	InitEquipment(PlayerManager); 
 	// 무기에 따른 애니메이션 및 액션 초기화
-	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
-
-	TObjectPtr<UPlayerActionComponent> PlayerActionComp = GetActionComp<UPlayerActionComponent>();
-	if (nullptr == PlayerActionComp)
-		return;
-
-	PlayerActionComp->Init({
-			PlayerManager->GetWeaponConfig(),
-			AnimInst,
-			MapEquipmentMeshComp[EEquipmentType::WEAPON],
-			PlayerManager->GetSkillDevelop()->GetSkillSelectPtr()
-		});
-	PlayerActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
-
-	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
-
+	InitAction(PlayerManager); 
 	// UI 초기화
-	if (TObjectPtr<APlayerCombatController> CombatController = Cast<APlayerCombatController>(GetController()))
-	{
-		TObjectPtr<ACombatHUD> CombatHUD = CombatController->GetHUD<ACombatHUD>();
-		check(CombatHUD);
-
-		TObjectPtr<UUWPlayerStatusBar> StatusBarUI = CombatHUD->GetPlayerUI()->GetPlayerStatusBar();
-
-		StatusBarUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
-		StatusBarUI->SetStaminaBarPercent(Stat->GetResourceValue(ECharacterResourceType::STAMINA), Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
-		StatusBarUI->SetSkillBarPercent(Stat->GetResourceValue(ECharacterResourceType::SKILL), Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
-
-		// HPBar UI 이벤트 바인딩
-		Stat->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
-		Stat->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
-		Stat->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
-
-		Stat->OnEffectRegistered.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RegisterStatEffect);
-		Stat->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
-
-		TObjectPtr<UUWActionGuide> ActionGuideUI = CombatHUD->GetPlayerUI()->GetActionGuide();
-		PlayerActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
-		PlayerActionComp->ResetAction();
-	}
-
-	InteractWidget->SetHiddenInGame(true);
+	InitUI(); 
 
 	// AI Perception Stimuli Source 업데이트
 	StimuliSourceComp->RegisterWithPerceptionSystem();
@@ -194,16 +146,91 @@ void APlayerCharacter::Init()
 		CharMove->MaxWalkSpeed = WalkSpeed;
 }
 
-void APlayerCharacter::InitEquipment(TWeakObjectPtr<UEquipment> _equipment)
+void APlayerCharacter::InitStat(UPlayerManager* _pm)
 {
-	if (_equipment.IsValid() == false)
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	if (false == Stat.IsValid())
+		return;
+
+	Stat->Init(_pm->GetStat(), _pm->GetEquipmentStat());
+	Stat->StartStaminaRecovery();
+}
+
+void APlayerCharacter::InitEquipment(UPlayerManager* _pm)
+{
+	TWeakObjectPtr<UEquipment> Equipment = _pm->GetEquipment();
+	if (Equipment.IsValid() == false)
 		return;
 
 	for (uint8 i = 0; i < static_cast<uint8>(EEquipmentType::END); ++i)
 	{
 		EEquipmentType Type = static_cast<EEquipmentType>(i);
-		UpdateEquipment(Type, _equipment->GetEquipment(Type));
+		UpdateEquipment(Type, Equipment->GetEquipment(Type));
 	}
+
+	Equipment->OnEquipmentChanged.AddUObject(this, &APlayerCharacter::UpdateEquipment);
+}
+
+void APlayerCharacter::InitAction(UPlayerManager* _pm)
+{
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	if (false == Stat.IsValid())
+		return;
+
+	TObjectPtr<UPlayerActionComponent> PlayerActionComp = GetActionComp<UPlayerActionComponent>();
+	if (nullptr == PlayerActionComp)
+		return;
+
+	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
+
+	PlayerActionComp->Init({
+			_pm->GetWeaponConfig(),
+			AnimInst,
+			MapEquipmentMeshComp[EEquipmentType::WEAPON],
+			_pm->GetSkillDevelop()->GetSkillSelectPtr()
+		});
+	PlayerActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
+
+	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
+}
+
+void APlayerCharacter::InitUI()
+{
+	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
+	if (false == Stat.IsValid())
+		return;
+
+	TObjectPtr<UPlayerActionComponent> PlayerActionComp = GetActionComp<UPlayerActionComponent>();
+	if (nullptr == PlayerActionComp)
+		return;
+
+	TObjectPtr<APlayerCombatController> CombatController = Cast<APlayerCombatController>(GetController());
+	if (nullptr == CombatController)
+		return;
+
+	TObjectPtr<ACombatHUD> CombatHUD = CombatController->GetHUD<ACombatHUD>();
+	check(CombatHUD);
+
+	TObjectPtr<UUWPlayerStatusBar> StatusBarUI = CombatHUD->GetPlayerUI()->GetPlayerStatusBar();
+
+	StatusBarUI->SetHealthBarPercent(Stat->GetResourceValue(ECharacterResourceType::HEALTH), Stat->GetResourceMaxValue(ECharacterResourceType::HEALTH));
+	StatusBarUI->SetStaminaBarPercent(Stat->GetResourceValue(ECharacterResourceType::STAMINA), Stat->GetResourceMaxValue(ECharacterResourceType::STAMINA));
+	StatusBarUI->SetSkillBarPercent(Stat->GetResourceValue(ECharacterResourceType::SKILL), Stat->GetResourceMaxValue(ECharacterResourceType::SKILL));
+
+	// HPBar UI 이벤트 바인딩
+	Stat->GetResourceEvent(ECharacterResourceType::HEALTH).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetHealthBarPercent);
+	Stat->GetResourceEvent(ECharacterResourceType::STAMINA).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetStaminaBarPercent);
+	Stat->GetResourceEvent(ECharacterResourceType::SKILL).AddUObject(StatusBarUI, &UUWPlayerStatusBar::SetSkillBarPercent);
+
+	Stat->OnEffectRegistered.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RegisterStatEffect);
+	Stat->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
+
+	// 콤보 연계 UI 이벤트 바인딩
+	TObjectPtr<UUWActionGuide> ActionGuideUI = CombatHUD->GetPlayerUI()->GetActionGuide();
+	PlayerActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
+	PlayerActionComp->ResetAction();
+
+	InteractWidget->SetHiddenInGame(true);
 }
 
 void APlayerCharacter::UpdateEquipment(EEquipmentType _type, TWeakObjectPtr<UEquipmentItem> _equipment)
