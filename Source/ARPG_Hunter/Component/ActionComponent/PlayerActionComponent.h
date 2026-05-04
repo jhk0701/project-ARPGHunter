@@ -93,7 +93,7 @@ public:
 	void ResetAction();
 	void SetActionProcess(EActionProcess _eProcess);
 
-	bool IsValid() const { return CurWeapon.IsValid(); }
+	bool IsValid() const override { return CurWeapon.IsValid(); }
 	bool IsInProgress() const;
 
 	bool PlayDodgeAction(bool _isMoving);

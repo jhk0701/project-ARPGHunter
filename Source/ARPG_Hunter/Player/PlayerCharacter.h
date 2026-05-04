@@ -24,8 +24,6 @@ public:
 
 private:
 #pragma region Component
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UPlayerActionComponent> ActionComp;
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TMap<EEquipmentType, TObjectPtr<USkeletalMeshComponent>> MapEquipmentMeshComp;

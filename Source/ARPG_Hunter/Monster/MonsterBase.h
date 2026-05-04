@@ -67,9 +67,6 @@ private:
 	TMap<EPlayerActionType, bool> bReactToPlayerAction;
 
 protected:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<class UMonsterActionComponent> ActionComp;
-
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void OnDead() override;

@@ -105,7 +105,12 @@ void AMonsterBase::Init(const FMonsterInitParam& _param)
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 	if (AnimInst)
 		AnimInst->OnMontageEnded.AddUniqueDynamic(this, &AMonsterBase::OnMontageEnded);
-	ActionComp->Init(Data, AnimInst, WeaponComp);
+
+	TObjectPtr<UMonsterActionComponent> MonsterActionComp = GetActionComp<UMonsterActionComponent>();
+	if (nullptr == MonsterActionComp)
+		return;
+
+	MonsterActionComp->Init(Data, AnimInst, WeaponComp);
 
 	// AI BlackBoard 설정
 	if (TObjectPtr<AMonsterAIController> MonsterAI = Cast<AMonsterAIController>(GetController()))
@@ -152,7 +157,7 @@ void AMonsterBase::SetMovementMode(EMovementMode _mode)
 
 void AMonsterBase::OnMontageEnded(UAnimMontage* _montage, bool _bInterrupted)
 {
-	if (_montage == ActionComp->GetCurrentMontage() || 
+	if (_montage == GetActionComp<UMonsterActionComponent>()->GetCurrentMontage() ||
 		_montage == Data->Config->HitMontage)
 		OnAttackMontageEnded.ExecuteIfBound();
 
@@ -180,7 +185,7 @@ void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
 
 bool AMonsterBase::ExtraAct(const FName& _actName)
 {
-	bool bPlayExtraAct = ActionComp->PlayExtraAction(_actName);
+	bool bPlayExtraAct = GetActionComp<UMonsterActionComponent>()->PlayExtraAction(_actName);
 
 	if (bPlayExtraAct)
 		SetMovable(false);
@@ -197,11 +202,13 @@ float AMonsterBase::Attack(EMonsterAttackType _type, const FName& _opt /*= NAME_
 	if (AnimInst->Montage_IsPlaying(Data->Config->HitMontage))
 		return -1.0f;
 
+	TObjectPtr<UMonsterActionComponent> MonsterAcion = GetActionComp<UMonsterActionComponent>();
+
 	// 공격 선택
-	ActionComp->SelectAttack(_type);
+	MonsterAcion->SelectAttack(_type);
 
 	// 공격 실행
-	float Interval = ActionComp->PlayAttackAction(_opt);
+	float Interval = MonsterAcion->PlayAttackAction(_opt);
 	if (Interval > 0)
 		SetMovable(false);
 
@@ -223,7 +230,7 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 
 			uint16 Damage = ACombatGameMode::CalculateAttack(
 				WeakThis->GetStatComp()->GetStat(ECharacterStatType::ATTACK),
-				WeakThis->ActionComp->GetAttackActionDamagePer(_opt));
+				WeakThis->GetActionComp<UMonsterActionComponent>()->GetAttackActionDamagePer(_opt));
 
 			for (FHitResult& Hit : _hitResult)
 			{
@@ -247,8 +254,6 @@ void AMonsterBase::HandleAttackNotify(uint8 _opt)
 uint32 AMonsterBase::HitBy(const FHitInfo& _hitInfo)
 {
 	uint32 Damage = Super::HitBy(_hitInfo);
-	if (0 == Damage)
-		return Damage;
 
 	TWeakObjectPtr<UStatComponent> Stat = GetStatComp();
 

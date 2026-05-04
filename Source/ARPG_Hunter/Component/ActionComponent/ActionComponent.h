@@ -43,10 +43,7 @@ private:
 public:
 	// 실질적인 공격 수행
 	virtual bool ProcessAttack(uint8 _opt, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
-	
-	// 하위에서 구현
-	virtual void Clear() {};
-	
+		
 protected:
 	bool Trace(const FTraceParam& _param, ECollisionChannel _traceChannel, TArray<FHitResult>& _outResults);
 	void DeploySubObject(const FSubObjectDeployParam& _param, ECollisionChannel _traceChannel, TFunction<void(TArray<FHitResult>&)> _onHitAction, TWeakObjectPtr<AActor> _target = nullptr);
@@ -59,7 +56,16 @@ protected:
 
 	void ActivateActionEffect(TObjectPtr<AActor> _target, const TArray<TObjectPtr<class UEffectData>>& _effectArray);
 
-	// 하위에서 구현
+	//하위에서 구현할 메서드
+#pragma region Need To Override
+
+public:
+	virtual void Clear() {};
+	virtual bool IsValid() const { return false; }
+
+protected:
 	virtual TWeakObjectPtr<class UAction> GetCurrentAction() const { return nullptr; }
 	virtual void PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults) {}
+
+#pragma endregion
 };

@@ -79,11 +79,9 @@ uint32 ARegularMonster::HitBy(const FHitInfo& _hitInfo)
 	}
 
 	uint32 Damage = Super::HitBy(_hitInfo);
-	if (0 == Damage)
-		return Damage;
 
 	// 모션 재생
-	ActionComp->PlayHitAction(IsDead() ? EMonsterState::DEAD : EMonsterState::NORMAL);
+	GetActionComp<UMonsterActionComponent>()->PlayHitAction(IsDead() ? EMonsterState::DEAD : EMonsterState::NORMAL);
 	KnockBack(_hitInfo);
 
 	return Damage;

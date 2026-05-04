@@ -103,8 +103,6 @@ void ABossMonster::Init(const FMonsterInitParam& _param)
 uint32 ABossMonster::HitBy(const FHitInfo& _hitInfo)
 {
 	uint32 Damage = Super::HitBy(_hitInfo);
-	if (0 == Damage)
-		return Damage;
 
 	TObjectPtr<UBossActionComponent> BossAction = Cast<UBossActionComponent>(ActionComp);
 	// 피격 처리

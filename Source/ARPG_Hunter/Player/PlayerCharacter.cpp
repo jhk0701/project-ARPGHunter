@@ -145,13 +145,17 @@ void APlayerCharacter::Init()
 	// 무기에 따른 애니메이션 및 액션 초기화
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 
-	ActionComp->Init({
+	TObjectPtr<UPlayerActionComponent> PlayerActionComp = GetActionComp<UPlayerActionComponent>();
+	if (nullptr == PlayerActionComp)
+		return;
+
+	PlayerActionComp->Init({
 			PlayerManager->GetWeaponConfig(),
 			AnimInst,
 			MapEquipmentMeshComp[EEquipmentType::WEAPON],
 			PlayerManager->GetSkillDevelop()->GetSkillSelectPtr()
 		});
-	ActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
+	PlayerActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
 
 	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
 
@@ -176,8 +180,8 @@ void APlayerCharacter::Init()
 		Stat->OnEffectRemoved.AddUObject(StatusBarUI, &UUWPlayerStatusBar::RemoveStatEffect);
 
 		TObjectPtr<UUWActionGuide> ActionGuideUI = CombatHUD->GetPlayerUI()->GetActionGuide();
-		ActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
-		ActionComp->ResetAction();
+		PlayerActionComp->OnActionUpdated.BindUObject(ActionGuideUI, &UUWActionGuide::SetActionInfo);
+		PlayerActionComp->ResetAction();
 	}
 
 	InteractWidget->SetHiddenInGame(true);
@@ -260,7 +264,7 @@ void APlayerCharacter::Dodge()
 		return;
 
 	// ActionComp에 회피 액션 사용을 위한 조건 전달
-	bool bIsSuccess = ActionComp->PlayDodgeAction(InputDirection.SizeSquared() > 0);
+	bool bIsSuccess = GetActionComp<UPlayerActionComponent>()->PlayDodgeAction(InputDirection.SizeSquared() > 0);
 
 	if (bIsSuccess)
 		SetIgnoreInput(true);
@@ -271,7 +275,7 @@ void APlayerCharacter::Attack(EAttackType _eType)
 	if (false == ActionComp->IsValid() || IsDead())
 		return;
 
-	bool bIsValid = ActionComp->PlayAttackAction(_eType);
+	bool bIsValid = GetActionComp<UPlayerActionComponent>()->PlayAttackAction(_eType);
 	if (bIsValid) 
 	{
 		// 아이템 사용 자극 이벤트
@@ -313,14 +317,14 @@ void APlayerCharacter::AttackEnd()
 	if (false == ActionComp->IsValid() || IsDead())
 		return;
 
-	ActionComp->ProcessAttackEnd();
+	GetActionComp<UPlayerActionComponent>()->ProcessAttackEnd();
 }
 
 void APlayerCharacter::SetActionProcess(EActionProcess _eProcess)
 {
 	if (ActionComp->IsValid() == false)
 		return;
-	ActionComp->SetActionProcess(_eProcess);
+	GetActionComp<UPlayerActionComponent>()->SetActionProcess(_eProcess);
 }
 
 void APlayerCharacter::HandleAttackNotify(uint8 _opt)
@@ -344,7 +348,7 @@ void APlayerCharacter::HandleAttackNotify(uint8 _opt)
 			bool bIsCritical = false;
 			uint32 Damage = ACombatGameMode::CalculateAttack(
 				Stat->GetStat(ECharacterStatType::ATTACK),
-				WeakThis->ActionComp->GetAttackActionDamagePer(_opt)
+				WeakThis->GetActionComp<UPlayerActionComponent>()->GetAttackActionDamagePer(_opt)
 			);
 
 			for (FHitResult& Hit : _hitResults)
@@ -371,9 +375,9 @@ bool APlayerCharacter::HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt)
 		Stat->GetStat(ECharacterStatType::CRITICAL_DAMAGE_PERCENT),
 		_damage);
 	HitInfo.Damage = _damage;
-	HitInfo.StaggerDamage = ActionComp->GetAttackActionStaggerDamage(_opt);
-	HitInfo.KnockBackStrength = ActionComp->GetAttackActionKnockBack(_opt);
-	HitInfo.AttackType = ActionComp->GetAttackActionType();
+	HitInfo.StaggerDamage = GetActionComp<UPlayerActionComponent>()->GetAttackActionStaggerDamage(_opt);
+	HitInfo.KnockBackStrength = GetActionComp<UPlayerActionComponent>()->GetAttackActionKnockBack(_opt);
+	HitInfo.AttackType = GetActionComp<UPlayerActionComponent>()->GetAttackActionType();
 	HitInfo.Attacker = this;
 	HitInfo.HitResult = &_hit;
 
@@ -394,9 +398,9 @@ bool APlayerCharacter::HitTarget(FHitResult& _hit, uint32 _damage, uint8 _opt)
 
 void APlayerCharacter::OnDead()
 {
+	// 플레이어 사망 후 처리
 	Super::OnDead();
 
-	// 플레이어 사망 후 처리
 	// 플레이어 사망 이벤트 발행
 	FStageEventContext Context;
 	Context.Target = this;
@@ -404,20 +408,23 @@ void APlayerCharacter::OnDead()
 	TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>();
 	GameMode->PublishEvent(EStageEvent::PLAYER_DEAD, Context);
 
-	ActionComp->PlayDeadAction(); // 사망 애니메이션 실행
+	GetActionComp<UPlayerActionComponent>()->PlayDeadAction(); // 사망 애니메이션 실행
 }
 
 void APlayerCharacter::OnCharacterHit()
 {
 	Super::OnCharacterHit();
 
-	ActionComp->PlayHitAction(); // hit 애니메이션 실행
+	GetActionComp<UPlayerActionComponent>()->PlayHitAction(); // hit 애니메이션 실행
 	ShakeCamera(CameraShakeOnHit);
 }
 
 void APlayerCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (ActionComp->GetDodgeMontage() == Montage || ActionComp->GetHitMontage() == Montage)
+	TObjectPtr<UPlayerActionComponent> PlayerAction = GetActionComp<UPlayerActionComponent>();
+
+	if (PlayerAction->GetDodgeMontage() == Montage ||
+		PlayerAction->GetHitMontage() == Montage)
 		SetIgnoreInput(false);
 }
 
@@ -433,7 +440,7 @@ void APlayerCharacter::UseQuickSlot(uint8 _index)
 		return;
 
 	// 아이템 사용 모션 재생
-	ActionComp->PlayItemUsageAction();
+	GetActionComp<UPlayerActionComponent>()->PlayItemUsageAction();
 	UsingQuickSlotIndex = _index;
 }
 

@@ -38,6 +38,7 @@ protected:
 
 public:
 	virtual void Init(FTableRowBase* _data, TWeakObjectPtr<UAnimInstance> _ownerAnimInstance, TWeakObjectPtr<USkeletalMeshComponent> _firePointComp);
+	bool IsValid() const override { return nullptr != Data; }
 
 	float PlayAttackAction(const FName& _opt = NAME_None);
 	virtual void PlayHitAction(EMonsterState _state);
