@@ -27,32 +27,7 @@ void APlayerHUD::BeginPlay()
 	if (InputGuideUIClass) 
 		InputGuideUI = CreateWidget<UUWPopUp>(GetWorld(), InputGuideUIClass);
 
-	if (GameMenuUIClass)
-	{
-		GameMenuUI = CreateWidget<UUWPopUp>(GetWorld(), GameMenuUIClass);
-		TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(GameMenuUI);
-
-		if (nullptr == MenuUI)
-			return;
-
-		MenuUI->OnExitClicked.BindLambda(
-			[this]()
-			{
-				AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode());
-				if (GM == nullptr)
-					return;
-
-				GM->SaveGame(
-					[this]()
-					{
-						AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode());
-						GM->ExitGame();
-					}
-				);
-			}
-		);
-	}
-
+	InitMenuUI();
 }
 
 void APlayerHUD::ToggleGameMenuUI()
@@ -75,6 +50,35 @@ void APlayerHUD::ToggleInputGuideUI()
 		InputGuideUI->HideUI();
 	else 
 		InputGuideUI->ShowUI();
+}
+
+void APlayerHUD::InitMenuUI()
+{
+	if (nullptr == GameMenuUIClass)
+		return;
+
+	GameMenuUI = CreateWidget<UUWPopUp>(GetWorld(), GameMenuUIClass);
+	TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(GameMenuUI);
+
+	if (nullptr == MenuUI)
+		return;
+
+	MenuUI->OnExitClicked.BindLambda(
+		[this]()
+		{
+			AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode());
+			if (GM == nullptr)
+				return;
+
+			GM->SaveGame(
+				[this]()
+				{
+					AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode());
+					GM->ExitGame();
+				}
+			);
+		}
+	);
 }
 
 TWeakObjectPtr<UUWPopUp> APlayerHUD::GetGameMenuUI() const

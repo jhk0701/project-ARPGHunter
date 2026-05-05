@@ -44,12 +44,12 @@ void ANonCombatHUD::BeginPlay()
 	InitInventoryUI(PlayerManager);
 	InitSkillDevelopUI(PlayerManager);
 	BindMainenanceAndInventory();
-
-	InitMenuUI();
 }
 
 void ANonCombatHUD::InitMenuUI()
 {
+	Super::InitMenuUI();
+
 	TWeakObjectPtr<UUWPopUp> MenuUIInst = GetGameMenuUI();
 	if (false == MenuUIInst.IsValid())
 		return;
@@ -60,7 +60,11 @@ void ANonCombatHUD::InitMenuUI()
 
 void ANonCombatHUD::InitNonCombatHUD()
 {
-	if (false == TryCreateUI<UUWNonCombatHUD>(NonCombatUIClass, NonCombatUI))
+	if (nullptr == NonCombatUIClass)
+		return;
+
+	NonCombatUI = CreateWidget<UUWNonCombatHUD>(GetWorld(), NonCombatUIClass);
+	if (nullptr == NonCombatUI)
 		return;
 
 	NonCombatUI->OnClickShortCutButton.BindLambda(
@@ -86,7 +90,11 @@ void ANonCombatHUD::InitNonCombatHUD()
 
 void ANonCombatHUD::InitMaintenanceUI(UPlayerManager* _pm)
 {
-	if (false == TryCreateUI<UUWMaintenance>(MaintenanceUIClass, MaintenanceUI))
+	if (nullptr == MaintenanceUIClass)
+		return;
+
+	MaintenanceUI = CreateWidget<UUWMaintenance>(GetWorld(), MaintenanceUIClass);
+	if (nullptr == MaintenanceUI)
 		return;
 
 	TWeakObjectPtr<UEquipment> Equipment = _pm->GetEquipment();
@@ -113,7 +121,11 @@ void ANonCombatHUD::InitMaintenanceUI(UPlayerManager* _pm)
 
 void ANonCombatHUD::InitInventoryUI(UPlayerManager* _pm)
 {
-	if (false == TryCreateUI<UUWInventory>(InventoryUIClass, InventoryUI))
+	if (nullptr == InventoryUIClass)
+		return;
+
+	InventoryUI = CreateWidget<UUWInventory>(GetWorld(), InventoryUIClass);
+	if (nullptr == InventoryUI)
 		return;
 
 	TWeakObjectPtr<UInventory> Inventory = _pm->GetInventory();
@@ -128,7 +140,11 @@ void ANonCombatHUD::InitInventoryUI(UPlayerManager* _pm)
 
 void ANonCombatHUD::InitSkillDevelopUI(UPlayerManager* _pm)
 {
-	if (false == TryCreateUI<UUWSkillDevelop>(SkillDevelopUIClass, SkillDevelopUI))
+	if (nullptr == SkillDevelopUIClass)
+		return;
+
+	SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
+	if (nullptr == SkillDevelopUI)
 		return;
 
 	TWeakObjectPtr<USkillDevelop> SkillDevelop = _pm->GetSkillDevelop();

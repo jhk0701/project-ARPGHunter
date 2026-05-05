@@ -37,8 +37,6 @@ void ACombatHUD::BeginPlay()
 	InitPlayerUI();
 	InitStageResultUI();
 	InitDamageUI();
-
-	InitMenuUI();
 }
 
 void ACombatHUD::InitMenuUI()
