@@ -33,12 +33,19 @@ private:
 	UPROPERTY()
 	TSubclassOf<class ADamageFont> DamageUIClass;
 
-protected:
-	void BeginPlay() override;
-
 public:
 	TObjectPtr<UUWCombatHUD> GetPlayerUI() const { return PlayerUI; }
 
 	void ShowPlayerUI(bool _bIsShow);
 	void ShowResultUI(bool _bOnCleared, const struct FStageData* _stageData);
+
+protected:
+	void BeginPlay() override;
+	void InitMenuUI() override;
+
+private:
+	void InitPlayerUI();
+	void InitStageResultUI();
+	void InitDamageUI();
+
 };

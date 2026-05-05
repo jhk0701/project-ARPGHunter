@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Interface/Interactable.h"
 #include "InteractableActor.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class ARPG_HUNTER_API AInteractableActor : public AActor, public IInteractable
 {
 	GENERATED_BODY()

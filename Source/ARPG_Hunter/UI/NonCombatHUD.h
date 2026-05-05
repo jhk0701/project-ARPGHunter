@@ -40,13 +40,20 @@ private:
 	UPROPERTY()
 	TObjectPtr<UUWSkillDevelop> SkillDevelopUI;
 
-	void BindMainenanceAndInventory();
-
-protected:
-	void BeginPlay() override;
-
 public:
 	void ToggleMaintenanceUI();
 	void ToggleInventoryUI();
 	void ToggleSkillDevelopUI();
+
+protected:
+	void BeginPlay() override;
+	void InitMenuUI() override;
+
+private:
+	void InitNonCombatHUD();
+	void InitMaintenanceUI(class UPlayerManager* _pm);
+	void InitInventoryUI(class UPlayerManager* _pm);
+	void InitSkillDevelopUI(class UPlayerManager* _pm);
+
+	void BindMainenanceAndInventory();
 };

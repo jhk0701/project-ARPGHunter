@@ -37,113 +37,121 @@ void ANonCombatHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (NonCombatUIClass) 
-	{
-		NonCombatUI = CreateWidget<UUWNonCombatHUD>(GetWorld(), NonCombatUIClass);
-		if (NonCombatUI)
-		{
-			NonCombatUI->AddToViewport();
-			NonCombatUI->OnClickShortCutButton.BindLambda(
-				[this](EShortCutType _type)
-				{
-					switch (_type)
-					{
-					case EShortCutType::TAB:
-						ToggleMaintenanceUI();
-						break;
-					case EShortCutType::KEY_I:
-						ToggleInventoryUI();
-						break;
-					case EShortCutType::KEY_K:
-						ToggleSkillDevelopUI();
-						break;
-					}
-					
-				}
-			);
-		}
-	}
-
+	InitNonCombatHUD();
+	
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-	if (MaintenanceUIClass)
-	{
-		MaintenanceUI = CreateWidget<UUWMaintenance>(GetWorld(), MaintenanceUIClass);
-		if (MaintenanceUI) 
-		{
-			TWeakObjectPtr<UEquipment> Equipment = PlayerManager->GetEquipment();
-			TWeakObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
-
-			FUWMaintenanceInitParam InitParm
-			(
-				PlayerManager->GetLevel(),
-				PlayerManager->GetExp(),
-				PlayerManager->GetRequiredExp(),
-				PlayerManager->GetStat(),
-				PlayerManager->GetEquipmentStat(),
-				Equipment->GetContainer(),
-				QuickSlot->GetContainer()
-			);
-
-			MaintenanceUI->Init(InitParm);
-			Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
-			PlayerManager->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
-			PlayerManager->OnExpChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetLevelInfo);
-			QuickSlot->OnQuickSlotChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetQuickSlot);
-			PlayerManager->GetInventory()->OnInventoryChanged.AddUObject(MaintenanceUI, &UUWMaintenance::OnInventoryChanged);
-		}
-	}
-
-	if (InventoryUIClass)
-	{
-		InventoryUI = CreateWidget<UUWInventory>(GetWorld(), InventoryUIClass);
-		if (InventoryUI)
-		{
-			TWeakObjectPtr<UInventory> Inventory = PlayerManager->GetInventory();
-			InventoryUI->Init(
-				Inventory->GetContainerSize(),
-				PlayerManager->GetGold(),
-				FGetItemArrFunc::CreateUObject(Inventory.Get(), &UInventory::GetContainer)
-			);
-			Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
-			PlayerManager->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
-		}
-	}
-
-	if (SkillDevelopUIClass) 
-	{
-		SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
-		
-		TWeakObjectPtr<USkillDevelop> SkillDevelop = PlayerManager->GetSkillDevelop();
-		SkillDevelopUI->Init(
-			PlayerManager->GetWeaponConfig(), 
-			FGetSkillUpgradeInfoFunc::CreateUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade),
-			FGetUsableSkillPointFunc::CreateUObject(SkillDevelop.Get(), &USkillDevelop::GetUsableSkillPoint)
-		);
-		SkillDevelopUI->OnUpgradeClicked.BindWeakLambda(this,
-			[SkillDevelop](uint8 _key, uint8 _nodeIdx, uint8 _upgradeIdx, uint8 _cost)
-			{
-				if (false == SkillDevelop.IsValid())
-					return;
-				
-				if (SkillDevelop->TryUseSkillPoint(_cost))
-					SkillDevelop->AddSkill(_key, _nodeIdx, _upgradeIdx);
-			}
-		);
-	}
-
+	InitMaintenanceUI(PlayerManager);
+	InitInventoryUI(PlayerManager);
+	InitSkillDevelopUI(PlayerManager);
 	BindMainenanceAndInventory();
 
+	InitMenuUI();
+}
+
+void ANonCombatHUD::InitMenuUI()
+{
 	TWeakObjectPtr<UUWPopUp> MenuUIInst = GetGameMenuUI();
-	if (MenuUIInst.IsValid())
-	{
-		TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
-		MenuUI->ToggleOptionalButton(UUWGameMenu::RETURN, false);
-	}
+	if (false == MenuUIInst.IsValid())
+		return;
+
+	TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
+	MenuUI->ToggleOptionalButton(UUWGameMenu::RETURN, false);
+}
+
+void ANonCombatHUD::InitNonCombatHUD()
+{
+	if (false == TryCreateUI<UUWNonCombatHUD>(NonCombatUIClass, NonCombatUI))
+		return;
+
+	NonCombatUI->OnClickShortCutButton.BindLambda(
+		[this](EShortCutType _type)
+		{
+			switch (_type)
+			{
+			case EShortCutType::TAB:
+				ToggleMaintenanceUI();
+				break;
+			case EShortCutType::KEY_I:
+				ToggleInventoryUI();
+				break;
+			case EShortCutType::KEY_K:
+				ToggleSkillDevelopUI();
+				break;
+			}
+		}
+	);
+
+	NonCombatUI->AddToViewport();
+}
+
+void ANonCombatHUD::InitMaintenanceUI(UPlayerManager* _pm)
+{
+	if (false == TryCreateUI<UUWMaintenance>(MaintenanceUIClass, MaintenanceUI))
+		return;
+
+	TWeakObjectPtr<UEquipment> Equipment = _pm->GetEquipment();
+	TWeakObjectPtr<UQuickSlot> QuickSlot = _pm->GetQuickSlot();
+
+	FUWMaintenanceInitParam InitParm
+	(
+		_pm->GetLevel(),
+		_pm->GetExp(),
+		_pm->GetRequiredExp(),
+		_pm->GetStat(),
+		_pm->GetEquipmentStat(),
+		Equipment->GetContainer(),
+		QuickSlot->GetContainer()
+	);
+
+	MaintenanceUI->Init(InitParm);
+	Equipment->OnEquipmentChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetEquipment);
+	_pm->OnStatValueChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetStatInfo);
+	_pm->OnExpChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetLevelInfo);
+	QuickSlot->OnQuickSlotChanged.AddUObject(MaintenanceUI, &UUWMaintenance::SetQuickSlot);
+	_pm->GetInventory()->OnInventoryChanged.AddUObject(MaintenanceUI, &UUWMaintenance::OnInventoryChanged);
+}
+
+void ANonCombatHUD::InitInventoryUI(UPlayerManager* _pm)
+{
+	if (false == TryCreateUI<UUWInventory>(InventoryUIClass, InventoryUI))
+		return;
+
+	TWeakObjectPtr<UInventory> Inventory = _pm->GetInventory();
+	InventoryUI->Init(
+		Inventory->GetContainerSize(),
+		_pm->GetGold(),
+		FGetItemArrFunc::CreateUObject(Inventory.Get(), &UInventory::GetContainer)
+	);
+	Inventory->OnInventoryChanged.AddUObject(InventoryUI, &UUWInventory::SetSlot);
+	_pm->GetGoldChangedEvent().AddUObject(InventoryUI, &UUWInventory::SetGoldLabel);
+}
+
+void ANonCombatHUD::InitSkillDevelopUI(UPlayerManager* _pm)
+{
+	if (false == TryCreateUI<UUWSkillDevelop>(SkillDevelopUIClass, SkillDevelopUI))
+		return;
+
+	TWeakObjectPtr<USkillDevelop> SkillDevelop = _pm->GetSkillDevelop();
+	SkillDevelopUI->Init(
+		_pm->GetWeaponConfig(),
+		FGetSkillUpgradeInfoFunc::CreateUObject(SkillDevelop.Get(), &USkillDevelop::GetSpecificSkillUpgrade),
+		FGetUsableSkillPointFunc::CreateUObject(SkillDevelop.Get(), &USkillDevelop::GetUsableSkillPoint)
+	);
+	SkillDevelopUI->OnUpgradeClicked.BindWeakLambda(this,
+		[SkillDevelop](uint8 _key, uint8 _nodeIdx, uint8 _upgradeIdx, uint8 _cost)
+		{
+			if (false == SkillDevelop.IsValid())
+				return;
+
+			if (SkillDevelop->TryUseSkillPoint(_cost))
+				SkillDevelop->AddSkill(_key, _nodeIdx, _upgradeIdx);
+		}
+	);
 }
 
 void ANonCombatHUD::BindMainenanceAndInventory()
 {
-	if (MaintenanceUI == nullptr || InventoryUI == nullptr)
+	if (nullptr == MaintenanceUI || nullptr == InventoryUI)
 		return;
 
 	MaintenanceUI->OnEquipmentSlotClicked.BindLambda(

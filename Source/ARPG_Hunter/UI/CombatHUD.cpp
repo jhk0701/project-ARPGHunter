@@ -34,63 +34,85 @@ void ACombatHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PlayerUIClass)
-	{
-		PlayerUI = CreateWidget<UUWCombatHUD>(GetWorld(), PlayerUIClass);
-		if (PlayerUI) 
-		{
-			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-			
-			TWeakObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
-			TObjectPtr<UUWQuickSlot> QuickSlotUI = PlayerUI->GetQuickSlot();
-			QuickSlotUI->Init(QuickSlot->GetContainer());
+	InitPlayerUI();
+	InitStageResultUI();
+	InitDamageUI();
 
-			// 전투 관련 월드에서만 띄울 것이므로 AddWeakLambda로 바인딩
-			QuickSlot->OnPostQuickSlotUsed.AddWeakLambda(this,
-				[this](uint8 _quickSlotIdx, uint8 _inventoryIdx) 
-				{
-					// 플레이어가 퀵슬롯 아이템 사용 시, 업데이트
-					TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
-					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlotItem(_quickSlotIdx));
-				}
-			);
-			QuickSlot->OnQuickSlotChanged.AddWeakLambda(this, 
-				[this](uint8 _quickSlotIdx, TWeakObjectPtr<UConsumableItem> _item)
-				{
-					PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, _item);
-				}
-			);
+	InitMenuUI();
+}
 
-			PlayerUI->AddToViewport();
-		}
-	}
-
-	if (StageResultUIClass)
-	{
-		StageResultUI = CreateWidget<UUWStageResult>(GetWorld(), StageResultUIClass);
-
-		if (TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
-			GameMode->OnGameEnd.AddUObject(this, &ACombatHUD::ShowResultUI);
-	}
-
-	if (DamageUIClass)
-	{
-		TObjectPtr<UObjectPoolManager> ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
-		ObjectPool->Register(ADamageFont::StaticClass(), [this]() { return GetWorld()->SpawnActor(DamageUIClass); }, 10);
-	}
+void ACombatHUD::InitMenuUI()
+{
+	Super::InitMenuUI();
 
 	TWeakObjectPtr<UUWPopUp> MenuUIInst = GetGameMenuUI();
-	if (MenuUIInst.IsValid())
-	{
-		TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
-		MenuUI->OnReturnClicked.BindLambda(
-			[this]() 
-			{
-				if (AARPGGameMode* GM = Cast<AARPGGameMode>(GetWorld()->GetAuthGameMode())) 
-					GM->GoToTown();
-			}
-		);
-	}
+	if (false == MenuUIInst.IsValid())
+		return;
+
+	TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(MenuUIInst);
+	MenuUI->OnReturnClicked.BindLambda(
+		[this]()
+		{
+			if (AARPGGameMode* GM = GetWorld()->GetAuthGameMode<AARPGGameMode>())
+				GM->GoToTown();
+		}
+	);
+}
+
+void ACombatHUD::InitPlayerUI()
+{
+	if (nullptr == PlayerUIClass)
+		return;
+
+	PlayerUI = CreateWidget<UUWCombatHUD>(GetWorld(), PlayerUIClass);
+	if (nullptr == PlayerUI)
+		return;
+	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+
+	TWeakObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
+	TObjectPtr<UUWQuickSlot> QuickSlotUI = PlayerUI->GetQuickSlot();
+	QuickSlotUI->Init(QuickSlot->GetContainer());
+
+	// 전투 관련 월드에서만 띄울 것이므로 AddWeakLambda로 바인딩
+	QuickSlot->OnPostQuickSlotUsed.AddWeakLambda(this,
+		[this](uint8 _quickSlotIdx, uint8 _inventoryIdx)
+		{
+			// 플레이어가 퀵슬롯 아이템 사용 시, 업데이트
+			TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
+			PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, PlayerManager->GetQuickSlotItem(_quickSlotIdx));
+		}
+	);
+	QuickSlot->OnQuickSlotChanged.AddWeakLambda(this,
+		[this](uint8 _quickSlotIdx, TWeakObjectPtr<UConsumableItem> _item)
+		{
+			PlayerUI->GetQuickSlot()->SetQuickSlot(_quickSlotIdx, _item);
+		}
+	);
+
+	PlayerUI->AddToViewport();
+}
+
+void ACombatHUD::InitStageResultUI()
+{
+	if (nullptr == StageResultUIClass)
+		return;
+
+	StageResultUI = CreateWidget<UUWStageResult>(GetWorld(), StageResultUIClass);
+	if (nullptr == StageResultUI)
+		return;
+
+	if (TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
+		GameMode->OnGameEnd.AddUObject(this, &ACombatHUD::ShowResultUI);
+}
+
+void ACombatHUD::InitDamageUI()
+{
+	if (nullptr == DamageUIClass)
+		return;
+
+	// 데미지 UI 오브젝트 풀링 등록
+	TObjectPtr<UObjectPoolManager> ObjectPool = GetWorld()->GetSubsystem<UObjectPoolManager>();
+	ObjectPool->Register(ADamageFont::StaticClass(), [this]() { return GetWorld()->SpawnActor(DamageUIClass); }, 10);
 }
 
 void ACombatHUD::ShowPlayerUI(bool _bIsShow)

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,12 +30,26 @@ private:
 	UPROPERTY()
 	TObjectPtr<UUWPopUp> GameMenuUI;
 
-protected:
-	void BeginPlay() override;
-
-	TWeakObjectPtr<UUWPopUp> GetGameMenuUI() const;
-
 public:
 	void ToggleGameMenuUI();
 	void ToggleInputGuideUI();
+
+protected:
+	void BeginPlay() override;
+	TWeakObjectPtr<UUWPopUp> GetGameMenuUI() const;
+
+	virtual void InitMenuUI() {};
+
+	template<typename UWType>
+	bool TryCreateUI(TSubclassOf<UWType> _subClass, TObjectPtr<UWType> _outInst);
 };
+
+template<typename UWType>
+inline bool APlayerHUD::TryCreateUI(TSubclassOf<UWType> _subClass, TObjectPtr<UWType> _outInst)
+{
+	if (nullptr == _subClass)
+		return false;
+
+	_outInst = CreateWidget<UWType>(GetWorld(), _subClass);
+	return nullptr != _outInst;
+}
