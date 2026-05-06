@@ -54,10 +54,9 @@ void APlayerHUD::ToggleInputGuideUI()
 
 void APlayerHUD::InitMenuUI()
 {
-	if (nullptr == GameMenuUIClass)
+	if (false == TryCreateWidget<UUWPopUp>(GameMenuUIClass, GameMenuUI))
 		return;
 
-	GameMenuUI = CreateWidget<UUWPopUp>(GetWorld(), GameMenuUIClass);
 	TObjectPtr<UUWGameMenu> MenuUI = Cast<UUWGameMenu>(GameMenuUI);
 
 	if (nullptr == MenuUI)

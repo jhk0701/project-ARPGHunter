@@ -38,4 +38,18 @@ protected:
 	void BeginPlay() override;
 	virtual void InitMenuUI();
 	TWeakObjectPtr<UUWPopUp> GetGameMenuUI() const;
+
+	template<typename T>
+	bool TryCreateWidget(TSubclassOf<T> _class, TObjectPtr<T>& _inst);
 };
+
+template<typename T>
+inline bool APlayerHUD::TryCreateWidget(TSubclassOf<T> _class, TObjectPtr<T>& _inst)
+{
+	if (nullptr == _class)
+		return false;
+
+	_inst = CreateWidget<T>(GetWorld(), _class);
+
+	return nullptr != _inst;
+}

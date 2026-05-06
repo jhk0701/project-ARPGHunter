@@ -60,11 +60,7 @@ void ANonCombatHUD::InitMenuUI()
 
 void ANonCombatHUD::InitNonCombatHUD()
 {
-	if (nullptr == NonCombatUIClass)
-		return;
-
-	NonCombatUI = CreateWidget<UUWNonCombatHUD>(GetWorld(), NonCombatUIClass);
-	if (nullptr == NonCombatUI)
+	if (false == TryCreateWidget<UUWNonCombatHUD>(NonCombatUIClass, NonCombatUI))
 		return;
 
 	NonCombatUI->OnClickShortCutButton.BindLambda(
@@ -90,11 +86,7 @@ void ANonCombatHUD::InitNonCombatHUD()
 
 void ANonCombatHUD::InitMaintenanceUI(UPlayerManager* _pm)
 {
-	if (nullptr == MaintenanceUIClass)
-		return;
-
-	MaintenanceUI = CreateWidget<UUWMaintenance>(GetWorld(), MaintenanceUIClass);
-	if (nullptr == MaintenanceUI)
+	if (false == TryCreateWidget<UUWMaintenance>(MaintenanceUIClass, MaintenanceUI))
 		return;
 
 	TWeakObjectPtr<UEquipment> Equipment = _pm->GetEquipment();
@@ -121,11 +113,7 @@ void ANonCombatHUD::InitMaintenanceUI(UPlayerManager* _pm)
 
 void ANonCombatHUD::InitInventoryUI(UPlayerManager* _pm)
 {
-	if (nullptr == InventoryUIClass)
-		return;
-
-	InventoryUI = CreateWidget<UUWInventory>(GetWorld(), InventoryUIClass);
-	if (nullptr == InventoryUI)
+	if (false == TryCreateWidget<UUWInventory>(InventoryUIClass, InventoryUI))
 		return;
 
 	TWeakObjectPtr<UInventory> Inventory = _pm->GetInventory();
@@ -140,11 +128,7 @@ void ANonCombatHUD::InitInventoryUI(UPlayerManager* _pm)
 
 void ANonCombatHUD::InitSkillDevelopUI(UPlayerManager* _pm)
 {
-	if (nullptr == SkillDevelopUIClass)
-		return;
-
-	SkillDevelopUI = CreateWidget<UUWSkillDevelop>(GetWorld(), SkillDevelopUIClass);
-	if (nullptr == SkillDevelopUI)
+	if (false == TryCreateWidget<UUWSkillDevelop>(SkillDevelopUIClass, SkillDevelopUI))
 		return;
 
 	TWeakObjectPtr<USkillDevelop> SkillDevelop = _pm->GetSkillDevelop();

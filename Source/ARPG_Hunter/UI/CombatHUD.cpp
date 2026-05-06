@@ -59,12 +59,9 @@ void ACombatHUD::InitMenuUI()
 
 void ACombatHUD::InitPlayerUI()
 {
-	if (nullptr == PlayerUIClass)
+	if (false == TryCreateWidget<UUWCombatHUD>(PlayerUIClass, PlayerUI))
 		return;
 
-	PlayerUI = CreateWidget<UUWCombatHUD>(GetWorld(), PlayerUIClass);
-	if (nullptr == PlayerUI)
-		return;
 	TObjectPtr<UPlayerManager> PlayerManager = GetGameInstance()->GetSubsystem<UPlayerManager>();
 
 	TWeakObjectPtr<UQuickSlot> QuickSlot = PlayerManager->GetQuickSlot();
@@ -92,11 +89,7 @@ void ACombatHUD::InitPlayerUI()
 
 void ACombatHUD::InitStageResultUI()
 {
-	if (nullptr == StageResultUIClass)
-		return;
-
-	StageResultUI = CreateWidget<UUWStageResult>(GetWorld(), StageResultUIClass);
-	if (nullptr == StageResultUI)
+	if (false == TryCreateWidget<UUWStageResult>(StageResultUIClass, StageResultUI))
 		return;
 
 	if (TObjectPtr<ACombatGameMode> GameMode = GetWorld()->GetAuthGameMode<ACombatGameMode>())
