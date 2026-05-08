@@ -24,32 +24,13 @@ void APlayerHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (InputGuideUIClass) 
-		InputGuideUI = CreateWidget<UUWPopUp>(GetWorld(), InputGuideUIClass);
-
+	InitInputGuideUI();
 	InitMenuUI();
 }
 
-void APlayerHUD::ToggleGameMenuUI()
+void APlayerHUD::InitInputGuideUI()
 {
-	if (nullptr == GameMenuUI)
-		return;
-
-	if (GameMenuUI->IsShowing())
-		GameMenuUI->HideUI();
-	else
-		GameMenuUI->ShowUI();
-}
-
-void APlayerHUD::ToggleInputGuideUI()
-{
-	if (nullptr == InputGuideUI)
-		return;
-
-	if (InputGuideUI->IsShowing())
-		InputGuideUI->HideUI();
-	else 
-		InputGuideUI->ShowUI();
+	TryCreateWidget<UUWPopUp>(InputGuideUIClass, InputGuideUI);
 }
 
 void APlayerHUD::InitMenuUI()
@@ -83,4 +64,26 @@ void APlayerHUD::InitMenuUI()
 TWeakObjectPtr<UUWPopUp> APlayerHUD::GetGameMenuUI() const
 {
 	return GameMenuUI;
+}
+
+void APlayerHUD::ToggleGameMenuUI()
+{
+	if (nullptr == GameMenuUI)
+		return;
+
+	if (GameMenuUI->IsShowing())
+		GameMenuUI->HideUI();
+	else
+		GameMenuUI->ShowUI();
+}
+
+void APlayerHUD::ToggleInputGuideUI()
+{
+	if (nullptr == InputGuideUI)
+		return;
+
+	if (InputGuideUI->IsShowing())
+		InputGuideUI->HideUI();
+	else
+		InputGuideUI->ShowUI();
 }

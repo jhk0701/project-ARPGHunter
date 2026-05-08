@@ -36,6 +36,7 @@ public:
 
 protected:
 	void BeginPlay() override;
+	void InitInputGuideUI();
 	virtual void InitMenuUI();
 	TWeakObjectPtr<UUWPopUp> GetGameMenuUI() const;
 
