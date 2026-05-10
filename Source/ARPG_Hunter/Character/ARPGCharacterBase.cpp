@@ -5,7 +5,7 @@
 
 #include "Define/Enum.h"
 #include "Core/GameMode/Combat/CombatGameMode.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/StatComponent.h"
 
 // Sets default values
 AARPGCharacterBase::AARPGCharacterBase()

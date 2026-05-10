@@ -6,7 +6,7 @@
 #include "Interface/Effectable.h"
 #include "Interface/Hitable.h"
 #include "Data/EffectData.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/StatComponent.h"
 
 uint32 UEffect::GetValue() const
 {

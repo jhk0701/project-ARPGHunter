@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Component/ActionComponent/ActionComponent.h"
+#include "Component/Action/ActionComponent.h"
 #include "PlayerActionComponent.generated.h"
 
 class UWeaponConfig;

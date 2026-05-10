@@ -3,7 +3,7 @@
 
 #include "Effect/PeriodicalEffect/PeriodicalEffect.h"
 #include "Data/EffectData.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/StatComponent.h"
 
 bool UPeriodicalEffect::Activate()
 {

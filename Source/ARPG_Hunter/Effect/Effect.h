@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/StatComponent.h"
 #include "Effect.generated.h"
 
 struct FEffectParam;

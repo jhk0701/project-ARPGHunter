@@ -5,7 +5,7 @@
 
 #include "Interface/Effectable.h"
 #include "Data/EffectData.h"
-#include "Component/StatComponent.h"
+#include "Component/Stat/StatComponent.h"
 
 bool UEventEffect::Activate()
 {

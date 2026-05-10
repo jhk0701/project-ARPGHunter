@@ -1,5 +1,5 @@
 ﻿
-#include "Component/ActionComponent/ActionComponent.h"
+#include "Component/Action/ActionComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"

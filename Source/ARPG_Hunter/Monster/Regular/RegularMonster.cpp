@@ -6,8 +6,8 @@
 #include "Components/WidgetComponent.h"
 
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
-#include "Component/StatComponent.h"
-#include "Component/ActionComponent/MonsterActionComponent.h"
+#include "Component/Stat/StatComponent.h"
+#include "Component/Action/Monster/MonsterActionComponent.h"
 #include "Data/MonsterData.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 #include "UI/Actor/DamageFont.h"

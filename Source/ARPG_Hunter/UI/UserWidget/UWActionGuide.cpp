@@ -10,7 +10,7 @@
 #include "Data/Action.h"
 #include "Data/ActionComboData.h"
 #include "Action/ActionInstance.h"
-#include "Component/ActionComponent/PlayerActionComponent.h"
+#include "Component/Action/Player/PlayerActionComponent.h"
 
 
 void UUWActionInfo::SetInfo(EAttackType _type, const FText& _name)

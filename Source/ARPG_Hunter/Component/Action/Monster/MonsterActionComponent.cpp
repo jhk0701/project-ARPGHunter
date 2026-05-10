@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Component/ActionComponent/MonsterActionComponent.h"
+#include "Component/Action/Monster/MonsterActionComponent.h"
 
 #include "Interface/Hitable.h"
 #include "Define/Enum.h"

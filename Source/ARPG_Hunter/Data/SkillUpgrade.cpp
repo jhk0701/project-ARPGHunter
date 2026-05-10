@@ -3,7 +3,7 @@
 
 #include "SkillUpgrade.h"
 
-#include "Component/ActionComponent/PlayerActionComponent.h"
+#include "Component/Action/Player/PlayerActionComponent.h"
 #include "Define/Enum.h"
 #include "Data/EffectData.h"
 #include "Action/ActionInstance.h"

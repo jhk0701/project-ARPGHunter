@@ -11,8 +11,8 @@
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Data/MonsterData.h"
 #include "Data/MonsterConfig.h"
-#include "Component/StatComponent.h"
-#include "Component/ActionComponent/MonsterActionComponent.h"
+#include "Component/Stat/StatComponent.h"
+#include "Component/Action/Monster/MonsterActionComponent.h"
 #include "UI/UserWidget/UWMonsterStatusBar.h"
 #include "UI/Actor/DamageFont.h"
 

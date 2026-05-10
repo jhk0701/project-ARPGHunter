@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Component/ActionComponent/PlayerActionComponent.h"
+#include "Component/Action/Player/PlayerActionComponent.h"
 
 #include "Interface/Effectable.h"
 
