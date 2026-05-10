@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Controller/PlayerNonCombatController.h"
+#include "Controller/Player/PlayerNonCombatController.h"
 
 #include "Define/Enum.h"
 #include "Player/PlayerCharacter.h"

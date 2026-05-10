@@ -5,8 +5,8 @@
 
 #include "Define/Enum.h"
 #include "Core/Subsystem/PlayerManager/PlayerManager.h"
-#include "Player/QuickSlot.h"
-#include "Player/Inventory.h"
+#include "Player/QuickSlot/QuickSlot.h"
+#include "Player/Inventory/Inventory.h"
 
 void ATestGameMode::PostInitializeComponents()
 {

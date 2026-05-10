@@ -4,7 +4,7 @@
 #include "Core/GameMode/NonCombat/NonCombatGameMode.h"
 
 #include "Core/Subsystem/SaveLoadManager/SaveLoadManager.h"
-#include "Controller/PlayerNonCombatController.h"
+#include "Controller/Player/PlayerNonCombatController.h"
 #include "UI/HUD/NonCombat/NonCombatHUD.h"
 
 

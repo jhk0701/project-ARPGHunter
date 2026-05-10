@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Player/Equipment.h"
+#include "Player/Equipment/Equipment.h"
 
 #include "Define/Enum.h"
 #include "Core/Subsystem/DataManager/DataManager.h"

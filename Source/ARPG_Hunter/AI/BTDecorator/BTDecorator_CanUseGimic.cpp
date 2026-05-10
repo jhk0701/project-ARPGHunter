@@ -4,7 +4,7 @@
 #include "AI/BTDecorator/BTDecorator_CanUseGimic.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "Controller/MonsterAIController.h"
+#include "Controller/Monster/MonsterAIController.h"
 #include "Interface/GimicHandler.h"
 
 

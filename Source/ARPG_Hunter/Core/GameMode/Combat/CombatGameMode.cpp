@@ -14,7 +14,7 @@
 #include "Core/Subsystem/DataManager/DataManager.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Core/GameState/CombatGameState.h"
-#include "Controller/PlayerCombatController.h"
+#include "Controller/Player/PlayerCombatController.h"
 #include "Data/StageData.h"
 #include "Data/MonsterData.h"
 #include "Data/MonsterConfig.h"

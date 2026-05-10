@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Stage/StageCutSceneSection.h"
+#include "Stage/CutScene/StageCutSceneSection.h"
 #include "Engine/AssetManager.h"
 #include "LevelSequence.h"
 #include "LevelSequencePlayer.h"

@@ -9,7 +9,7 @@
 
 #include "Core/Subsystem/DataManager/DataManager.h"
 #include "Core/GameMode/Combat/CombatGameMode.h"
-#include "Controller/MonsterAIController.h"
+#include "Controller/Monster/MonsterAIController.h"
 #include "Component/Stat/StatComponent.h"
 #include "Component/Action/Monster/MonsterActionComponent.h"
 

@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Player/QuickSlot.h"
-#include "Player/Inventory.h"
+#include "Player/QuickSlot/QuickSlot.h"
+#include "Player/Inventory/Inventory.h"
 #include "Item/Item.h"
 
 UQuickSlot::UQuickSlot()

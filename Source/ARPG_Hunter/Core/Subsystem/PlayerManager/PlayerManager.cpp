@@ -6,14 +6,14 @@
 #include "Define/Enum.h"
 #include "Data/PlayerConfig.h"
 #include "Data/WeaponConfig.h"
-#include "Player/Inventory.h"
-#include "Player/Equipment.h"
-#include "Player/QuickSlot.h"
-#include "Player/SkillDevelop.h"
+#include "Player/Inventory/Inventory.h"
+#include "Player/Equipment/Equipment.h"
+#include "Player/QuickSlot/QuickSlot.h"
+#include "Player/SkillDevelop/SkillDevelop.h"
 #include "Item/Item.h"
 
 #include "Core/Subsystem/SaveLoadManager/SaveLoadManager.h"
-#include "SaveGame/PlayerSaveGame.h"
+#include "SaveGame/PlayerData/PlayerSaveGame.h"
 
 UPlayerManager::UPlayerManager()
 {

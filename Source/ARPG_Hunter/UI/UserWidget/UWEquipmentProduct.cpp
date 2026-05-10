@@ -11,7 +11,7 @@
 #include "Define/Enum.h"
 #include "Core/Subsystem/DataManager/DataManager.h"
 #include "Core/Subsystem/PlayerManager/PlayerManager.h"
-#include "Player/Inventory.h"
+#include "Player/Inventory/Inventory.h"
 #include "Item/Item.h"
 #include "Data/ItemData.h"
 #include "Data/ItemProductData.h"

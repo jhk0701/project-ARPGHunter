@@ -4,7 +4,7 @@
 
 #include "Core/GameMode/Combat/CombatGameMode.h"
 #include "Core/Subsystem/PlayerManager/PlayerManager.h"
-#include "Player/QuickSlot.h"
+#include "Player/QuickSlot/QuickSlot.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWStageResult.h"
 #include "UI/UserWidget/UWQuickSlot.h"
