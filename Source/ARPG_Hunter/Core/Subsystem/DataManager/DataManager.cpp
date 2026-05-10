@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Engine/DataTable.h"
 #include "Engine/CurveTable.h"
 

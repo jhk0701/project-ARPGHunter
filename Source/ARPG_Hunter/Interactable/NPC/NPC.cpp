@@ -4,7 +4,7 @@
 #include "Interactable/NPC/NPC.h"
 #include "Components/CapsuleComponent.h"
 
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Data/NPCConfig.h"
 #include "Data/DialogData.h"
 #include "UI/UserWidget/UWNPCDialog.h"

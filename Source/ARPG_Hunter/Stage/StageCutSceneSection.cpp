@@ -9,8 +9,8 @@
 
 #include "Data/CutSceneAssetData.h"
 #include "Define/Debug.h"
-#include "Core/GameMode/CombatGameMode.h"
-#include "UI/CombatHUD.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
+#include "UI/HUD/Combat/CombatHUD.h"
 #include "UI/UserWidget/UWCutScene.h"
 
 

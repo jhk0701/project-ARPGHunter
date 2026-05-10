@@ -7,7 +7,8 @@
 #include "Data/Action.h"
 #include "Data/MonsterData.h"
 #include "Data/MonsterConfig.h"
-#include "Monster/BossMonster.h"
+
+#include "Monster/Boss/BossMonster.h"
 #include "SubObject/SubObject.h"
 
 

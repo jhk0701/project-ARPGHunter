@@ -7,8 +7,8 @@
 #include "Components/AudioComponent.h"
 
 #include "Core/ARPGGameInstance.h"
-#include "Core/Subsystem/SaveLoadManager.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/SaveLoadManager/SaveLoadManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Data/StageData.h"
 #include "Player/PlayerCharacter.h"
 

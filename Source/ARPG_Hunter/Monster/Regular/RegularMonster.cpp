@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Monster/RegularMonster.h"
+#include "Monster/Regular/RegularMonster.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Components/WidgetComponent.h"

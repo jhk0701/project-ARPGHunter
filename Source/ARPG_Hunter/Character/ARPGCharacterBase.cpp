@@ -4,7 +4,7 @@
 #include "Character/ARPGCharacterBase.h"
 
 #include "Define/Enum.h"
-#include "Core/GameMode/CombatGameMode.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
 #include "Component/StatComponent.h"
 
 // Sets default values

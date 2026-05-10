@@ -11,8 +11,8 @@
 #include "Components/TextBlock.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/PlayerManager.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Item/Item.h"

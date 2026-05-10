@@ -5,7 +5,7 @@
 
 #include "Define/Enum.h"
 #include "Player/PlayerCharacter.h"
-#include "UI/NonCombatHUD.h"
+#include "UI/HUD/NonCombat/NonCombatHUD.h"
 
 
 void APlayerNonCombatController::OnPossess(APawn* _pawn)

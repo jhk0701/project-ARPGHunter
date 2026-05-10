@@ -7,7 +7,7 @@
 #include "Components/TextBlock.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Data/ItemData.h"
 #include "Item/Item.h"
 

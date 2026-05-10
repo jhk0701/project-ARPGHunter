@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Core/Subsystem/PlayerManager.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
 
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Define/Enum.h"
 #include "Data/PlayerConfig.h"
 #include "Data/WeaponConfig.h"
@@ -12,7 +12,7 @@
 #include "Player/SkillDevelop.h"
 #include "Item/Item.h"
 
-#include "Core/Subsystem/SaveLoadManager.h"
+#include "Core/Subsystem/SaveLoadManager/SaveLoadManager.h"
 #include "SaveGame/PlayerSaveGame.h"
 
 UPlayerManager::UPlayerManager()

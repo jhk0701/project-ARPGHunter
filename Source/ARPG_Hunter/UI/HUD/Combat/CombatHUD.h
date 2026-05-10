@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/PlayerHUD.h"
+#include "UI/HUD/PlayerHUD.h"
 #include "CombatHUD.generated.h"
 
 class UUWCombatHUD;

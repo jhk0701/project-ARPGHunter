@@ -9,7 +9,7 @@
 
 #include "Define/Enum.h"
 #include "Player/PlayerCharacter.h"
-#include "UI/PlayerHUD.h"
+#include "UI/HUD/PlayerHUD.h"
 
 APlayerCharacterController::APlayerCharacterController()
 {

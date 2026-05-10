@@ -1,12 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/UserWidget/UWItemTrade.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 
-#include "Core/Subsystem/PlayerManager.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Data/ItemTradeData.h"
 
 #include "UI/UserWidget/UWItemDetail.h"

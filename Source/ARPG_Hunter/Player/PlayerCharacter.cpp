@@ -14,8 +14,8 @@
 
 #include "Interface/Interactable.h"
 #include "Define/Enum.h"
-#include "Core/Subsystem/PlayerManager.h"
-#include "Core/GameMode/CombatGameMode.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
 #include "Controller/PlayerCombatController.h"
 #include "Component/StatComponent.h"
 #include "Component/ActionComponent/PlayerActionComponent.h"
@@ -26,7 +26,7 @@
 #include "AI/Sense/AISense_PlayerAction.h" // 플레이어가 특정 동작을 했음을 AI들에게 이벤트 발행
 #include "AI/Sense/AISenseEvent_PlayerAction.h"
 
-#include "UI/CombatHUD.h"
+#include "UI/HUD/Combat/CombatHUD.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWPlayerStatusBar.h"
 #include "UI/UserWidget/UWActionGuide.h"

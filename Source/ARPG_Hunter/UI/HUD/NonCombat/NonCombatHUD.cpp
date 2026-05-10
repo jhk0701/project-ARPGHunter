@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/NonCombatHUD.h"
+#include "UI/HUD/NonCombat/NonCombatHUD.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/PlayerManager.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
 #include "Player/Inventory.h"
 #include "Player/Equipment.h"
 #include "Player/QuickSlot.h"

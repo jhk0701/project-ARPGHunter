@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Core/GameMode/CombatGameMode.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
 #include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -10,8 +10,8 @@
 
 #include "Define/Enum.h"
 #include "Core/ARPGGameInstance.h"
-#include "Core/Subsystem/PlayerManager.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Core/WorldSubsystem/ObjectPoolManager.h"
 #include "Core/GameState/CombatGameState.h"
 #include "Controller/PlayerCombatController.h"
@@ -21,7 +21,7 @@
 #include "Data/Action.h"
 #include "Monster/MonsterBase.h"
 #include "SubObject/SubObject.h"
-#include "UI/CombatHUD.h"
+#include "UI/HUD/Combat/CombatHUD.h"
 
 #include "Define/Debug.h"
 

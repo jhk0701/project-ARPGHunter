@@ -5,7 +5,7 @@
 
 #include "Interface/Effectable.h"
 #include "Define/Enum.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Data/ItemData.h"
 #include "Data/EffectData.h"
 #include "Data/EquipmentUpgradeData.h"

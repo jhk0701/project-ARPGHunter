@@ -7,7 +7,7 @@
 #include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
 
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Data/StageData.h"
 #include "Data/ItemData.h"
 #include "UI/UserWidget/UWItemSlot.h"

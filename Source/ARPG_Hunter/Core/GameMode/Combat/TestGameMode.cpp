@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Core/GameMode/TestGameMode.h"
+#include "Core/GameMode/Combat/TestGameMode.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/PlayerManager.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
 #include "Player/QuickSlot.h"
 #include "Player/Inventory.h"
 

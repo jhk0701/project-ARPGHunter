@@ -1,9 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "UI/CombatHUD.h"
+#include "UI/HUD/Combat/CombatHUD.h"
 
-#include "Core/GameMode/CombatGameMode.h"
-#include "Core/Subsystem/PlayerManager.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
+#include "Core/Subsystem/PlayerManager/PlayerManager.h"
 #include "Player/QuickSlot.h"
 #include "UI/UserWidget/UWPlayerHUD.h"
 #include "UI/UserWidget/UWStageResult.h"

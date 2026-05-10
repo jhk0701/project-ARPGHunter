@@ -4,7 +4,7 @@
 #include "Player/Equipment.h"
 
 #include "Define/Enum.h"
-#include "Core/Subsystem/DataManager.h"
+#include "Core/Subsystem/DataManager/DataManager.h"
 #include "Item/Item.h"
 
 UEquipment::UEquipment()

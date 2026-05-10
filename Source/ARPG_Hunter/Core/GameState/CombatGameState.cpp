@@ -4,7 +4,7 @@
 #include "Core/GameState/CombatGameState.h"
 
 #include "Data/StageData.h"
-#include "Core/GameMode/CombatGameMode.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
 
 void ACombatGameState::Init(uint8 _playerCnt, const TArray<FSection>& _section)
 {

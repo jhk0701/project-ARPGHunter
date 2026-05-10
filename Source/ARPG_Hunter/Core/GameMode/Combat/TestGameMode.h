@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/GameMode/CombatGameMode.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
 #include "TestGameMode.generated.h"
 
 /**

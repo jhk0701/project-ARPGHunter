@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 
 #include "Define/Debug.h"
-#include "Core/GameMode/CombatGameMode.h"
+#include "Core/GameMode/Combat/CombatGameMode.h"
 
 
 // Sets default values
