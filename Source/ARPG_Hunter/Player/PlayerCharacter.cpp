@@ -3,7 +3,6 @@
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "Curves/CurveVector.h"
@@ -143,8 +142,7 @@ void APlayerCharacter::Init()
 	StimuliSourceComp->RegisterWithPerceptionSystem();
 
 	// 기타 수치 조절
-	if (TObjectPtr<UCharacterMovementComponent> CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
-		CharMove->MaxWalkSpeed = WalkSpeed;
+	SetMoveSpeed(false);
 }
 
 void APlayerCharacter::InitStat(UPlayerManager* _pm)
@@ -266,6 +264,7 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 void APlayerCharacter::SetMove(bool _bIsOn)
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+
 	if (_bIsOn)
 		ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(ARPGGameplayTags::Character_Ability_Move));
 	else
@@ -282,8 +281,15 @@ void APlayerCharacter::SetIsSprint(bool _isSprint)
 	else
 		bIsSprint = _isSprint;
 
-	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
-		CharMove->MaxWalkSpeed = bIsSprint ? SprintSpeed : WalkSpeed;
+	// SetMoveSpeed(_isSprint);
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (bIsSprint)
+		ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(ARPGGameplayTags::Character_Ability_Sprint));
+	else
+	{
+		FGameplayTagContainer TagsToCancel = FGameplayTagContainer(ARPGGameplayTags::Character_Ability_Sprint);
+		ASC->CancelAbilities(&TagsToCancel);
+	}
 }
 
 void APlayerCharacter::SetIsCombat(bool _bIsCombat)

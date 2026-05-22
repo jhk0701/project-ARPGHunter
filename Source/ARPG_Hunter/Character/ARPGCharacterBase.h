@@ -45,6 +45,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GAS")
 	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 
+	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
+	float WalkSpeed{ 300.0f };
+	UPROPERTY(EditAnywhere, Category = "Attribute|Speed")
+	float SprintSpeed{ 600.0f };
+
 public:
 	// Inherited via IEffectable
 	TObjectPtr<UStatComponent> GetStatComp() const override { return StatComp; };
@@ -53,6 +58,8 @@ public:
 	virtual uint32 HitBy(const FHitInfo& _hitInfo) override;
 
 	bool IsDead() const;
+
+	virtual void SetMoveSpeed(bool _bIsSprint);
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -65,6 +72,9 @@ protected:
 	template<typename T>
 	TObjectPtr<T> GetActionComp() const;
 
+	// Inherited via IAbilitySystemInterface
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
 #pragma region Need To Override
 
 public:
@@ -76,9 +86,6 @@ protected:
 	virtual void OnCharacterHit() {};
 
 #pragma endregion
-
-	// Inherited via IAbilitySystemInterface
-	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 };
 
 template<typename T>

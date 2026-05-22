@@ -2,6 +2,7 @@
 
 
 #include "Character/ARPGCharacterBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
 
@@ -44,6 +45,12 @@ void AARPGCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 
 UAbilitySystemComponent* AARPGCharacterBase::GetAbilitySystemComponent() const { return ASComp; }
+
+void AARPGCharacterBase::SetMoveSpeed(bool _bIsSprint)
+{
+	if (UCharacterMovementComponent* CharMove = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+		CharMove->MaxWalkSpeed = _bIsSprint ? SprintSpeed : WalkSpeed;
+}
 
 void AARPGCharacterBase::ApplyEffect(const FApplyEffectParam& _param)
 {

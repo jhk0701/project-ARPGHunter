@@ -97,7 +97,7 @@ public:
 	EMonsterType GetType() const;
 	EMonsterState GetState() const { return CurState; }
 	bool IsMovable() const { return bIsMovable; }
-	void SetMoveSpeed(bool _bIsChasing);
+	void SetMoveSpeed(bool _bIsSprint) override;
 
 #pragma region Monster Action
 	

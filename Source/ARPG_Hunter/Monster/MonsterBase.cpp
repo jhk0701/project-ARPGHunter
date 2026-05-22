@@ -175,9 +175,9 @@ void AMonsterBase::SetMovable(bool _bIsMovable)
 	GetCharacterMovement()->MaxWalkSpeed = _bIsMovable ? MoveSpeed : 0.0f;
 }
 
-void AMonsterBase::SetMoveSpeed(bool _bIsChasing)
+void AMonsterBase::SetMoveSpeed(bool _bIsSprint)
 {
-	MoveSpeed = _bIsChasing ? GetData()->ChaseSpeed : GetData()->MoveSpeed;
+	MoveSpeed = _bIsSprint ? GetData()->ChaseSpeed : GetData()->MoveSpeed;
 
 	if (bIsMovable)
 		GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
