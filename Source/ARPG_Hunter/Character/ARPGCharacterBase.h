@@ -7,14 +7,16 @@
 #include "Interface/Hitable.h"
 #include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
+#include "AbilitySystemInterface.h"
 #include "ARPGCharacterBase.generated.h"
 
 UCLASS(Abstract)
-class ARPG_HUNTER_API AARPGCharacterBase : 
-	public ACharacter, 
-	public IHitable, 
-	public IEffectable, 
-	public IAttackNotifyHandler
+class ARPG_HUNTER_API AARPGCharacterBase :
+	public ACharacter,
+	public IHitable,
+	public IEffectable,
+	public IAttackNotifyHandler,
+	public IAbilitySystemInterface // GAS
 {
 	GENERATED_BODY()
 
@@ -31,6 +33,9 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UAbilitySystemComponent> ASC;
 
 	/// <summary>
 	/// 캐릭터가 공격 시, 감지할 적 객체의 충돌 채널
@@ -67,6 +72,9 @@ protected:
 	virtual void OnCharacterHit() {};
 
 #pragma endregion
+
+	// Inherited via IAbilitySystemInterface
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 };
 
 template<typename T>

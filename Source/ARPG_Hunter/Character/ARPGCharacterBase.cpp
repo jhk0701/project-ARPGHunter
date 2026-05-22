@@ -2,6 +2,7 @@
 
 
 #include "Character/ARPGCharacterBase.h"
+#include "AbilitySystemComponent.h"
 
 #include "Define/Enum.h"
 #include "Core/GameMode/Combat/CombatGameMode.h"
@@ -13,6 +14,7 @@ AARPGCharacterBase::AARPGCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
+	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
 }
 
 // Called when the game starts or when spawned
@@ -56,4 +58,9 @@ uint32 AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)
 	Stat->TakeDamage(Damage, [this]() { OnCharacterHit(); });
 
 	return Damage;
+}
+
+UAbilitySystemComponent* AARPGCharacterBase::GetAbilitySystemComponent() const
+{
+	return ASC;
 }

@@ -17,7 +17,8 @@ public class ARPG_Hunter : ModuleRules
 				"Niagara", 
 				"Slate", "SlateCore", 
 				"LevelSequence", "MovieScene",
-        "AIModule"
+        "AIModule",
+				"GameplayAbilities", "GameplayTags", "GameplayTasks"
     });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

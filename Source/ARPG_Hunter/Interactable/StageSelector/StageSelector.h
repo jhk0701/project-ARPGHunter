@@ -14,9 +14,9 @@ class ARPG_HUNTER_API AStageSelector : public AInteractableActor
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UBoxComponent> ColliderComp;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> MeshComp;
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<UUWStageSelect> StageSelectUIClass;

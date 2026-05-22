@@ -19,9 +19,9 @@ public:
 	ANPC();
 
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UCapsuleComponent> ColliderComp;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USkeletalMeshComponent> MeshComp;
 
 	UPROPERTY(EditAnywhere, Category = "NPC")
