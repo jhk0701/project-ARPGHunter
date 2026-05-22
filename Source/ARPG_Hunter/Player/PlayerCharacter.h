@@ -115,7 +115,7 @@ public:
 	void Init();
 
 #pragma region Input Action
-	
+	void SetMove(bool _bIsOn);
 	void SetInputDirection(FVector2D _dir)
 	{
 		InputDirection = _dir;

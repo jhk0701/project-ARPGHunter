@@ -84,22 +84,14 @@ void APlayerCharacterController::SetupInputComponent()
 	}	
 }
 
+
 void APlayerCharacterController::InputMove(const FInputActionValue& _value)
 {
 	if (!ControlledCharacter || ControlledCharacter->IsDead() || bCursorIsLocked)
 		return;
 
-	FVector2D Dir = _value.Get<FVector2D>();
-	FVector Fwd = GetTransformComponent()->GetForwardVector();
-	Fwd.Z = 0;
-	Fwd.Normalize();
-	FVector Rht = GetTransformComponent()->GetRightVector();
-	Rht.Z = 0;
-	Rht.Normalize();
-
-	ControlledCharacter->AddMovementInput(Fwd, Dir.X);
-	ControlledCharacter->AddMovementInput(Rht, Dir.Y);
-	ControlledCharacter->SetInputDirection(Dir);
+	ControlledCharacter->SetInputDirection(_value.Get<FVector2D>());
+	ControlledCharacter->SetMove(true);
 }
 
 void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
@@ -107,6 +99,7 @@ void APlayerCharacterController::InputMoveEnd(const FInputActionValue& _value)
 	if (!ControlledCharacter) return;
 
 	ControlledCharacter->SetInputDirection(FVector2D::ZeroVector);
+	ControlledCharacter->SetMove(false);
 }
 
 void APlayerCharacterController::InputRotate(const FInputActionValue& _value)

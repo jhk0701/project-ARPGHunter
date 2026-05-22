@@ -5,5 +5,6 @@
 
 namespace ARPGGameplayTags 
 {
-	// UE_DEFINE_GAMEPLAY_TAG(Event_Character_Action, TEXT("Event.Character.Action"));
+	UE_DEFINE_GAMEPLAY_TAG(Character_Ability_Move, TEXT("Character.Ability.Move"));
+
 }

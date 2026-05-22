@@ -11,9 +11,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Damage.h" // 플레이어가 데미지를 줬을 경우, 몬스터 AI가 감지할 수 있게 이벤트 발행
+#include "AbilitySystemComponent.h"
 
-#include "Interface/Interactable.h"
+#include "GAS/ARPGTags.h"
 #include "Define/Enum.h"
+#include "Interface/Interactable.h"
 #include "Core/Subsystem/PlayerManager/PlayerManager.h"
 #include "Core/GameMode/Combat/CombatGameMode.h"
 #include "Controller/Player/PlayerCombatController.h"
@@ -102,7 +104,6 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	Init();
 }
 
@@ -260,6 +261,18 @@ void APlayerCharacter::SmoothRotateToInputDir(float DeltaTime)
 	TargetRot.Yaw = GetControlRotation().Yaw + FMath::RadiansToDegrees(FMath::Atan2(InputDirection.Y, InputDirection.X));
 
 	SetActorRotation(FQuat::Slerp(GetActorQuat(), TargetRot.Quaternion(), RotateSpeedToInputDir * DeltaTime));
+}
+
+void APlayerCharacter::SetMove(bool _bIsOn)
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (_bIsOn)
+		ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(ARPGGameplayTags::Character_Ability_Move));
+	else
+	{
+		FGameplayTagContainer TagsToCancel = FGameplayTagContainer(ARPGGameplayTags::Character_Ability_Move);
+		ASC->CancelAbilities(&TagsToCancel);
+	}
 }
 
 void APlayerCharacter::SetIsSprint(bool _isSprint)

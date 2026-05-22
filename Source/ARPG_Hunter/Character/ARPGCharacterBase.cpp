@@ -3,6 +3,7 @@
 
 #include "Character/ARPGCharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "Abilities/GameplayAbility.h"
 
 #include "Define/Enum.h"
 #include "Core/GameMode/Combat/CombatGameMode.h"
@@ -14,7 +15,17 @@ AARPGCharacterBase::AARPGCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	StatComp = CreateDefaultSubobject<UStatComponent>(TEXT("StatComp"));
-	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+	ASComp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
+}
+
+void AARPGCharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ASComp->InitAbilityActorInfo(this, this);
+
+	for (TSubclassOf<UGameplayAbility>& ability : Abilities)
+		ASComp->GiveAbility(FGameplayAbilitySpec(ability));
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +42,8 @@ void AARPGCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	StatComp->Clear();
 }
+
+UAbilitySystemComponent* AARPGCharacterBase::GetAbilitySystemComponent() const { return ASComp; }
 
 void AARPGCharacterBase::ApplyEffect(const FApplyEffectParam& _param)
 {
@@ -58,9 +71,4 @@ uint32 AARPGCharacterBase::HitBy(const FHitInfo& _hitInfo)
 	Stat->TakeDamage(Damage, [this]() { OnCharacterHit(); });
 
 	return Damage;
-}
-
-UAbilitySystemComponent* AARPGCharacterBase::GetAbilitySystemComponent() const
-{
-	return ASC;
 }

@@ -34,13 +34,16 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UStatComponent> StatComp;
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UAbilitySystemComponent> ASC;
-
 	/// <summary>
 	/// 캐릭터가 공격 시, 감지할 적 객체의 충돌 채널
 	/// </summary>
 	ECollisionChannel EnemyCollisionChannel;
+
+	UPROPERTY(VisibleAnywhere, Category = "GAS")
+	TObjectPtr<class UAbilitySystemComponent> ASComp;
+
+	UPROPERTY(EditAnywhere, Category = "GAS")
+	TArray<TSubclassOf<class UGameplayAbility>> Abilities;
 
 public:
 	// Inherited via IEffectable
@@ -52,6 +55,7 @@ public:
 	bool IsDead() const;
 
 protected:
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 		

@@ -8,5 +8,5 @@
 
 namespace ARPGGameplayTags
 {
-	// UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Character_Action);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Character_Ability_Move);
 }
