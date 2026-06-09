@@ -182,12 +182,17 @@ void APlayerCharacter::InitAction(UPlayerManager* _pm)
 
 	TObjectPtr<UAnimInstance> AnimInst = GetMesh()->GetAnimInstance();
 
-	PlayerActionComp->Init({
-			_pm->GetWeaponConfig(),
-			AnimInst,
-			MapEquipmentMeshComp[EEquipmentType::WEAPON],
-			_pm->GetSkillDevelop()->GetSkillSelectPtr()
+	FPlayerActionInitParam InitParam;
+	InitParam.WeaonConfig = _pm->GetWeaponConfig();
+	InitParam.OwnerAnimInstance = AnimInst;
+	InitParam.SkillDevelop = _pm->GetSkillDevelop()->GetSkillSelectPtr();
+	InitParam.FirePointComp = MapEquipmentMeshComp[EEquipmentType::WEAPON];
+	InitParam.OnInitAbility.BindLambda(
+		[this](TSubclassOf<UGameplayAbility> _ability) 
+		{
+			GetAbilitySystemComponent()->GiveAbility(FGameplayAbilitySpec(_ability));
 		});
+	PlayerActionComp->Init(InitParam);
 	PlayerActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
 
 	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);

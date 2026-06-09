@@ -59,7 +59,7 @@ public:
 	TObjectPtr<UAnimMontage> Montage;
 
 	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
-	TSubclassOf<class UGA_Action> Ability;
+	TSubclassOf<class UGameplayAbility> Ability;
 	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
 	FGameplayTag AbilityTag;
 	

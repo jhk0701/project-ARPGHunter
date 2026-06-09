@@ -2,7 +2,6 @@
 
 
 #include "Component/Action/Player/PlayerActionComponent.h"
-
 #include "Interface/Effectable.h"
 
 #include "Define/Enum.h"
@@ -18,7 +17,14 @@ void UPlayerActionComponent::Init(const FPlayerActionInitParam& _param)
 {
 	SetAnimInstance(_param.OwnerAnimInstance);
 	SetFirePointComp(_param.FirePointComp);
+	InitActionGraph(_param);
+	InitActionAbility(_param);
 
+	ResetAction();
+}
+
+void UPlayerActionComponent::InitActionGraph(const FPlayerActionInitParam& _param)
+{
 	// 플레이어 데이터를 기반으로 장비 모션을 적용
 	CurWeapon = _param.WeaonConfig;
 
@@ -77,8 +83,12 @@ void UPlayerActionComponent::Init(const FPlayerActionInitParam& _param)
 			UpgradeInfo.Upgrade->AdjustSkillNode(UpgradeInfo.TargetIndex, SkillAdjustParam);
 		}
 	}
+}
 
-	ResetAction();
+void UPlayerActionComponent::InitActionAbility(const FPlayerActionInitParam& _param)
+{
+	for (TObjectPtr<UActionInstance>& Inst : AppliedGraph.Actions) 
+		_param.OnInitAbility.ExecuteIfBound(Inst->GetAction()->Ability);
 }
 
 void UPlayerActionComponent::Clear()
@@ -300,7 +310,6 @@ void UPlayerActionComponent::ProcessAttackEnd()
 
 	ClearActionProgressTimer();
 }
-
 
 // 현재 공격 입력이 유효한지 확인
 bool UPlayerActionComponent::IsValidAttackInput(EAttackType _type)

@@ -15,17 +15,6 @@ enum class EAttackType : uint8;
 enum class EActionEvent : uint8;
 
 USTRUCT()
-struct FPlayerActionInitParam 
-{
-	GENERATED_BODY()
-public:
-	TWeakObjectPtr<UWeaponConfig> WeaonConfig;
-	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance;
-	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp;
-	const TMap<uint8, TMap<uint8, int8>>* SkillDevelop;
-};
-
-USTRUCT()
 struct FActionConnect
 {
 	GENERATED_BODY()
@@ -47,6 +36,20 @@ public:
 
 DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, int8, const FAppliedGraph*);
 DECLARE_DELEGATE_RetVal_OneParam(bool, FStaminaUsagePredicate, uint32);
+DECLARE_DELEGATE_OneParam(FOnInitAbility, TSubclassOf<class UGameplayAbility>);
+
+USTRUCT()
+struct FPlayerActionInitParam
+{
+	GENERATED_BODY()
+public:
+	TWeakObjectPtr<UWeaponConfig> WeaonConfig;
+	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance;
+	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp;
+	const TMap<uint8, TMap<uint8, int8>>* SkillDevelop;
+	FOnInitAbility OnInitAbility;
+};
+
 
 UCLASS()
 class ARPG_HUNTER_API UPlayerActionComponent : public UActionComponent
@@ -70,18 +73,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ActionResetSecond{ 1.5f };
 	FTimerHandle ActionResetTimer;
-
-	bool IsValidAttackInput(EAttackType _type);
-	bool IsInAttackCombo() const { return CurAttackActionID >= 0; } // bool bIsInAttackCombo{ false };
-	void SetActionResetTimer(float _second);
-	void ClearActionResetTimer();
-	void ClearActionProgressTimer();
-	void BroadcastActionUpdated();
-	TObjectPtr<UAnimMontage> GetCurrentMontage();
-
-protected:
-	TWeakObjectPtr<class UAction> GetCurrentAction() const override;
-	void PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults) override;
 
 public:
 	FOnActionUpdated OnActionUpdated;
@@ -112,4 +103,20 @@ public:
 	EAttackType GetAttackActionType();
 
 	void ActivateActionInstanceEffect(EActionEvent _type, TObjectPtr<AActor> _target, TWeakObjectPtr<UActionInstance> _actionInst);
+
+protected:
+	TWeakObjectPtr<class UAction> GetCurrentAction() const override;
+	void PostProcessAttack(uint8 _opt, const TArray<FHitResult>& _inHitResults) override;
+
+private:
+	void InitActionGraph(const FPlayerActionInitParam& _param);
+	void InitActionAbility(const FPlayerActionInitParam& _param);
+
+	bool IsValidAttackInput(EAttackType _type);
+	bool IsInAttackCombo() const { return CurAttackActionID >= 0; } // bool bIsInAttackCombo{ false };
+	void SetActionResetTimer(float _second);
+	void ClearActionResetTimer();
+	void ClearActionProgressTimer();
+	void BroadcastActionUpdated();
+	TObjectPtr<UAnimMontage> GetCurrentMontage();
 };
