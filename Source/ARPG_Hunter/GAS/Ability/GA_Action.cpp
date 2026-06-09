@@ -13,6 +13,8 @@ UGA_Action::UGA_Action()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	// AbilityTags.AddTag(); // BP에서 추가 -> 액션마다 부여해야하는 Tag들이 다름
+	// 콤보 그래프 구조
+	// 태그 기반 연결
 	ActivationOwnedTags.AddTag(ARPGGameplayTags::Character_State_InAction);
 }
 

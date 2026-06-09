@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Define/InnerTypes.h"
+#include "NativeGameplayTags.h"
 #include "Action.generated.h"
 
 class UEffectData;
@@ -56,7 +57,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
 	TObjectPtr<UAnimMontage> Montage;
-	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
+
+	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
+	TSubclassOf<class UGA_Action> Ability;
+	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
+	FGameplayTag AbilityTag;
+	
+	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
 	TArray<FActionOption> ArrOption;
 	UPROPERTY(EditAnywhere, Category = "Appearance|Effect")
 	TObjectPtr<class UNiagaraSystem> VFXOnHit;

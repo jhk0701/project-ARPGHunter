@@ -29,7 +29,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAnimMontage> Montage;
 
-	// 데이터 -> UAction의 대체가 되나? -> 데이터의 검열
+	// 데이터 -> UAction의 대체가 되나? 
+	// 행위 수행 Ability
+	// 행위에 필요한 데이터는 UAction 그대로 사용하던가
 	// 여기선 행동, 행위에 집중
 	UPROPERTY(EditDefaultsOnly)
 	float PlayRate{ 1.0f };
