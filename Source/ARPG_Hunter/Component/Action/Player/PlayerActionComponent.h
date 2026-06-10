@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Component/Action/ActionComponent.h"
+#include "NativeGameplayTags.h"
 #include "PlayerActionComponent.generated.h"
 
 class UWeaponConfig;
@@ -36,17 +37,20 @@ public:
 
 DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, int8, const FAppliedGraph*);
 DECLARE_DELEGATE_RetVal_OneParam(bool, FStaminaUsagePredicate, uint32);
+
 DECLARE_DELEGATE_OneParam(FOnInitAbility, TSubclassOf<class UGameplayAbility>);
+DECLARE_DELEGATE_RetVal_OneParam(bool, FOnAbilityTagActivated, const FGameplayTag&);
 
 USTRUCT()
 struct FPlayerActionInitParam
 {
 	GENERATED_BODY()
-public:
+
 	TWeakObjectPtr<UWeaponConfig> WeaonConfig;
 	TWeakObjectPtr<UAnimInstance> OwnerAnimInstance;
 	TWeakObjectPtr<USkeletalMeshComponent> FirePointComp;
 	const TMap<uint8, TMap<uint8, int8>>* SkillDevelop;
+	
 	FOnInitAbility OnInitAbility;
 };
 
@@ -75,8 +79,9 @@ private:
 	FTimerHandle ActionResetTimer;
 
 public:
-	FOnActionUpdated OnActionUpdated;
 	FStaminaUsagePredicate StaminaUsagePredicate;
+	FOnActionUpdated OnActionUpdated;
+	FOnAbilityTagActivated OnAbilityTagActivated;
 
 	void Init(const FPlayerActionInitParam& _param);
 	virtual void Clear() override;

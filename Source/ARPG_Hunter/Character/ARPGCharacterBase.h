@@ -8,6 +8,7 @@
 #include "Interface/Effectable.h"
 #include "Interface/AttackNotifyHandler.h"
 #include "AbilitySystemInterface.h"
+#include "NativeGameplayTags.h"
 #include "ARPGCharacterBase.generated.h"
 
 UCLASS(Abstract)
@@ -54,12 +55,16 @@ public:
 	// Inherited via IEffectable
 	TObjectPtr<UStatComponent> GetStatComp() const override { return StatComp; };
 	void ApplyEffect(const FApplyEffectParam& _param) override;
+
 	// Inherited via IHitable
 	virtual uint32 HitBy(const FHitInfo& _hitInfo) override;
+	
+	// Inherited via IAbilitySystemInterface
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	bool IsDead() const;
-
 	virtual void SetMoveSpeed(bool _bIsSprint);
+	bool TryActivateAbility(const FGameplayTag& _abilityTag);
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -71,9 +76,6 @@ protected:
 
 	template<typename T>
 	TObjectPtr<T> GetActionComp() const;
-
-	// Inherited via IAbilitySystemInterface
-	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 #pragma region Need To Override
 

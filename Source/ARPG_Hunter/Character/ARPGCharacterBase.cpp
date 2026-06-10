@@ -52,6 +52,11 @@ void AARPGCharacterBase::SetMoveSpeed(bool _bIsSprint)
 		CharMove->MaxWalkSpeed = _bIsSprint ? SprintSpeed : WalkSpeed;
 }
 
+bool AARPGCharacterBase::TryActivateAbility(const FGameplayTag& _abilityTag)
+{
+	return ASComp->TryActivateAbilitiesByTag(FGameplayTagContainer(_abilityTag));
+}
+
 void AARPGCharacterBase::ApplyEffect(const FApplyEffectParam& _param)
 {
 	if (IsDead())

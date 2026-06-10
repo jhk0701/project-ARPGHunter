@@ -87,6 +87,9 @@ void UPlayerActionComponent::InitActionGraph(const FPlayerActionInitParam& _para
 
 void UPlayerActionComponent::InitActionAbility(const FPlayerActionInitParam& _param)
 {
+	if (_param.WeaonConfig.IsValid())
+		_param.OnInitAbility.ExecuteIfBound(_param.WeaonConfig->DodgeAbility);
+
 	for (TObjectPtr<UActionInstance>& Inst : AppliedGraph.Actions) 
 		_param.OnInitAbility.ExecuteIfBound(Inst->GetAction()->Ability);
 }
@@ -166,7 +169,6 @@ void UPlayerActionComponent::SetActionProcess(EActionProcess _eProcess)
 		TimerManager.SetTimer(ActionProgressTimer, this, &UPlayerActionComponent::ProcessAttackProgress, ActionProgressRate, true);
 	}
 }
-
 
 bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving)
 {
@@ -260,8 +262,9 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type)
 	// bIsInAttackCombo = true;
 	BroadcastActionUpdated(); // SetCurrentAction(Action);
 
-
-	GetAnimInstance()->Montage_Play(ActionData->Montage);
+	// GetAnimInstance()->Montage_Play(ActionData->Montage);
+	if (OnAbilityTagActivated.IsBound())
+		OnAbilityTagActivated.Execute(ActionData->AbilityTag);
 	
 	ClearActionResetTimer(); // 이전 콤보에 대한 리셋 타이머 클리어
 
