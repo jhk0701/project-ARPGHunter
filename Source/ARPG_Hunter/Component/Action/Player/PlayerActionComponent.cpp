@@ -183,8 +183,8 @@ bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving)
 		StaminaUsagePredicate.Execute(DodgeAction->StaminaUsage) == false)
 		return false;
 
-	AnimInst->Montage_Play(DodgeAction->Montage);
 
+	AnimInst->Montage_Play(DodgeAction->Montage);
 	if (_isMoving)
 		AnimInst->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeAction->Montage);
 
