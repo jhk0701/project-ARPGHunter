@@ -195,7 +195,7 @@ void APlayerCharacter::InitAction(UPlayerManager* _pm)
 		});
 
 	PlayerActionComp->StaminaUsagePredicate.BindUObject(Stat.Get(), &UStatComponent::TryUseStamina);
-	PlayerActionComp->OnAbilityTagActivated.BindUObject(this, &AARPGCharacterBase::TryActivateAbility);
+	PlayerActionComp->AbilityActivateDelegate.BindUObject(this, &AARPGCharacterBase::TryActivateAbility);
 
 	AnimInst->OnMontageEnded.AddUniqueDynamic(this, &APlayerCharacter::OnMontageEnded);
 }

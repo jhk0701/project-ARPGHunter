@@ -56,12 +56,10 @@ public:
 	EActionInput InputType;
 
 	UPROPERTY(EditAnywhere, Category = "Appearance|Motion")
-	TObjectPtr<UAnimMontage> Montage;
+	TObjectPtr<UAnimMontage> Montage; // TODO : 제거 예정
 
 	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
 	TSubclassOf<class UGameplayAbility> Ability;
-	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
-	FGameplayTag AbilityTag;
 	
 	UPROPERTY(EditAnywhere, Category = "Appearance|Ability")
 	TArray<FActionOption> ArrOption;

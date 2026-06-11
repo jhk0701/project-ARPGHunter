@@ -65,6 +65,7 @@ public:
 	bool IsDead() const;
 	virtual void SetMoveSpeed(bool _bIsSprint);
 	bool TryActivateAbility(const FGameplayTag& _abilityTag);
+	bool TryActivateAbility(const TSubclassOf<class UGameplayAbility>& _abilityClass);
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;

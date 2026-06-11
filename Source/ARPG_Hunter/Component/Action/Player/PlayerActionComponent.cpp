@@ -88,7 +88,7 @@ void UPlayerActionComponent::InitActionGraph(const FPlayerActionInitParam& _para
 void UPlayerActionComponent::InitActionAbility(const FPlayerActionInitParam& _param)
 {
 	if (_param.WeaonConfig.IsValid())
-		_param.OnInitAbility.ExecuteIfBound(_param.WeaonConfig->DodgeAbility);
+		_param.OnInitAbility.ExecuteIfBound(_param.WeaonConfig->DodgeAction->Ability);
 
 	for (TObjectPtr<UActionInstance>& Inst : AppliedGraph.Actions) 
 		_param.OnInitAbility.ExecuteIfBound(Inst->GetAction()->Ability);
@@ -187,8 +187,6 @@ bool UPlayerActionComponent::PlayDodgeAction(bool _isMoving)
 
 	if (_isMoving)
 		AnimInst->Montage_JumpToSection(FName(TEXT("Fwd")), DodgeAction->Montage);
-	else
-		AnimInst->Montage_JumpToSection(FName(TEXT("Bwd")), DodgeAction->Montage);
 
 	if (DodgeAction->EventEffect.Contains(EActionEvent::ON_START))
 		ActivateActionEffect(GetOwner(), DodgeAction->EventEffect[EActionEvent::ON_START].Effects);
@@ -263,8 +261,8 @@ bool UPlayerActionComponent::PlayAttackAction(EAttackType _type)
 	BroadcastActionUpdated(); // SetCurrentAction(Action);
 
 	// GetAnimInstance()->Montage_Play(ActionData->Montage);
-	if (OnAbilityTagActivated.IsBound())
-		OnAbilityTagActivated.Execute(ActionData->AbilityTag);
+	if (AbilityActivateDelegate.IsBound())
+		AbilityActivateDelegate.Execute(ActionData->Ability);
 	
 	ClearActionResetTimer(); // 이전 콤보에 대한 리셋 타이머 클리어
 

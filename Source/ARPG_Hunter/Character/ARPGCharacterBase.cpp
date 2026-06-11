@@ -57,6 +57,11 @@ bool AARPGCharacterBase::TryActivateAbility(const FGameplayTag& _abilityTag)
 	return ASComp->TryActivateAbilitiesByTag(FGameplayTagContainer(_abilityTag));
 }
 
+bool AARPGCharacterBase::TryActivateAbility(const TSubclassOf<UGameplayAbility>& _abilityClass)
+{
+	return ASComp->TryActivateAbilityByClass(_abilityClass);
+}
+
 void AARPGCharacterBase::ApplyEffect(const FApplyEffectParam& _param)
 {
 	if (IsDead())

@@ -24,10 +24,15 @@ public:
 	UFUNCTION()
 	void OnCanceled();
 
+	void SetSectionName(const FName& _name) { SectionName = _name; };
+
 private:
 	// Ability 캐릭터가 하는 구체적 동작
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAnimMontage> Montage;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FName SectionName{ NAME_None };
 
 	// 데이터 -> UAction의 대체가 되나? 
 	// 행위 수행 Ability

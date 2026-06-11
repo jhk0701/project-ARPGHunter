@@ -22,17 +22,13 @@ void UGA_Action::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 {
 	Super::ActivateAbility(Handle, OwnerInfo, ActivationInfo, TriggerEventData);
 
-	// Effect,
-	// GC
-	// 중요사항 -> AttackNotify idx
-
 	if (nullptr == Montage)
 	{
 		EndAbility(Handle, OwnerInfo, ActivationInfo, true, true);
 		return;
 	}
 
-	UAbilityTask_PlayMontageAndWait* Task = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, Montage, PlayRate);
+	UAbilityTask_PlayMontageAndWait* Task = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, Montage, PlayRate, SectionName);
 	if (nullptr == Task)
 	{
 		EndAbility(Handle, OwnerInfo, ActivationInfo, true, true);

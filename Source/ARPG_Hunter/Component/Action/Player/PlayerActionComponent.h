@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Component/Action/ActionComponent.h"
-#include "NativeGameplayTags.h"
 #include "PlayerActionComponent.generated.h"
 
 class UWeaponConfig;
@@ -38,8 +37,8 @@ public:
 DECLARE_DELEGATE_ThreeParams(FOnActionUpdated, bool, int8, const FAppliedGraph*);
 DECLARE_DELEGATE_RetVal_OneParam(bool, FStaminaUsagePredicate, uint32);
 
-DECLARE_DELEGATE_OneParam(FOnInitAbility, TSubclassOf<class UGameplayAbility>);
-DECLARE_DELEGATE_RetVal_OneParam(bool, FOnAbilityTagActivated, const FGameplayTag&);
+DECLARE_DELEGATE_OneParam(FOnInitAbility, const TSubclassOf<class UGameplayAbility>);
+DECLARE_DELEGATE_RetVal_OneParam(bool, FAbilityActivateDelegate, const TSubclassOf<class UGameplayAbility>&);
 
 USTRUCT()
 struct FPlayerActionInitParam
@@ -81,7 +80,7 @@ private:
 public:
 	FStaminaUsagePredicate StaminaUsagePredicate;
 	FOnActionUpdated OnActionUpdated;
-	FOnAbilityTagActivated OnAbilityTagActivated;
+	FAbilityActivateDelegate AbilityActivateDelegate;
 
 	void Init(const FPlayerActionInitParam& _param);
 	virtual void Clear() override;
