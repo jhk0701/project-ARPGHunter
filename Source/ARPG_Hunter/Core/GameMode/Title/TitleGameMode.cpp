@@ -24,6 +24,8 @@ void ATitleGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	BindShaderCompileEvent();
+
 	if (TitleUIClass == nullptr)
 		return;
 
@@ -38,6 +40,24 @@ void ATitleGameMode::BeginPlay()
 
 	TitleUI->ShowContinueButton(GetGameInstance()->GetSubsystem<USaveLoadManager>()->DoesDataExist<UPlayerSaveGame>());
 	TitleUI->ShowUI();
+}
+
+void ATitleGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnbindShaderCompileEvent();
+	Super::EndPlay(EndPlayReason);
+}
+
+void ATitleGameMode::BindShaderCompileEvent()
+{
+	HandleShaderCompileBegin = FShaderPipelineCache::GetPrecompilationBeginDelegate().AddUObject(this, &ATitleGameMode::OnShaderCompileBegin);
+	HandleShaderCompileComplete = FShaderPipelineCache::GetPrecompilationCompleteDelegate().AddUObject(this, &ATitleGameMode::OnShaderCompileComplete);
+}
+
+void ATitleGameMode::UnbindShaderCompileEvent()
+{
+	FShaderPipelineCache::GetPrecompilationBeginDelegate().Remove(HandleShaderCompileBegin);
+	FShaderPipelineCache::GetPrecompilationCompleteDelegate().Remove(HandleShaderCompileComplete);
 }
 
 void ATitleGameMode::ClickNewGame()
@@ -67,4 +87,18 @@ void ATitleGameMode::ClickContinue()
 	);
 
 	SaveLoad->LoadGame<UPlayerSaveGame>(Callback);
+}
+
+void ATitleGameMode::OnShaderCompileBegin(uint32 Count, const FShaderPipelineCache::FShaderCachePrecompileContext& ShaderCachePrecompileContext)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Begin Shader Compile Count : %d"), Count));
+}
+
+void ATitleGameMode::OnShaderCompileComplete(uint32 Count, double Seconds, const FShaderPipelineCache::FShaderCachePrecompileContext& ShaderCachePrecompileContext)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, FString::Printf(TEXT("Begin Shader Compile Count : %d"), Count));
+}
+
+void ATitleGameMode::OnShaderCompileProgress()
+{
 }

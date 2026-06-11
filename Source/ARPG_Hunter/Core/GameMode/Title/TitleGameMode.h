@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PipelineStateCache.h"
+#include "ShaderPipelineCache.h"
 #include "Core/GameMode/ARPGGameMode.h"
 #include "TitleGameMode.generated.h"
 
@@ -16,19 +18,32 @@ class ARPG_HUNTER_API ATitleGameMode : public AARPGGameMode
 
 public:
 	ATitleGameMode();
-
+	
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> TitleUIClass;
 	UPROPERTY()
 	TObjectPtr<UUserWidget> TitleUIInst;
-	
-protected:
-	virtual void BeginPlay() override;
+
+	FDelegateHandle HandleShaderCompileBegin;
+	FDelegateHandle HandleShaderCompileComplete;
+	FDelegateHandle HandleShaderCompileProgress;
 
 public:
 	UFUNCTION()
 	void ClickNewGame();
 	UFUNCTION()
 	void ClickContinue();
+
+	void OnShaderCompileBegin(uint32 Count, const FShaderPipelineCache::FShaderCachePrecompileContext& ShaderCachePrecompileContext);
+	void OnShaderCompileComplete(uint32 Count, double Seconds, const FShaderPipelineCache::FShaderCachePrecompileContext& ShaderCachePrecompileContext);
+	void OnShaderCompileProgress();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+private:
+	void BindShaderCompileEvent();
+	void UnbindShaderCompileEvent();
 };
